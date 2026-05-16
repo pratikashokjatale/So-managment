@@ -1,0 +1,93 @@
+// Logo / header alignment
+.css-x5zaxz {
+  align-items: center;
+}
+
+// Loading spinner (uses dynamic theme: var(--primary-main) updates when presetColor changes)
+.material-spinner {
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  min-height: 50px;
+  width: 50px;
+  border-radius: 100px;
+  border: 5px transparent solid;
+  border-top: 5px var(--primary-main, #1976d2) solid;
+  animation: material-spinner 4s infinite;
+}
+
+@keyframes material-spinner {
+  0% {
+    transform: rotate(0deg);
+    border-top: 5px var(--primary-main, #1976d2) solid;
+  }
+  25% {
+    transform: rotate(360deg);
+    border-top: 5px var(--error-main, #ef4444) solid;
+  }
+  50% {
+    transform: rotate(720deg);
+    border-top: 5px var(--secondary-main, #2196f3) solid;
+  }
+  75% {
+    transform: rotate(1080deg);
+    border-top: 5px var(--success-main, #22c55e) solid;
+  }
+  100% {
+    transform: rotate(1440deg);
+    border-top: 5px var(--warning-main, #f59e0b) solid;
+  }
+}
+
+// Form button loading
+.loading-form-button {
+  position: relative;
+  padding: 12px 20px;
+  height: 44px;
+  width: 92px;
+  text-align: center;
+  color: transparent;
+  transition: all 0.4s ease-in-out;
+
+  &::before {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -4px;
+    margin-left: -4px;
+    content: '';
+    height: 10px;
+    width: 10px;
+    background: white;
+    border-radius: 100%;
+    transition: all 0.4s linear;
+    animation: test 2s infinite;
+    opacity: 1;
+  }
+}
+
+@keyframes one-two {
+  0% { left: 30%; top: 50%; }
+  12.5% { top: 30%; }
+  25% { top: 50%; }
+  37.5% { top: 70%; }
+  50% { left: 70%; top: 50%; }
+  62.5% { top: 30%; }
+  75% { top: 50%; }
+  87.5% { top: 70%; }
+  100% { left: 30%; top: 50%; }
+}
+
+@keyframes test {
+  0% { left: 30%; }
+  50% { left: 70%; }
+  100% { left: 30%; }
+}
+
+// Form label color (uses var(--grey-600) for dynamic theme)
+form label {
+  color: var(--grey-600, #64748b) !important;
+  font-weight: 500 !important;
+}

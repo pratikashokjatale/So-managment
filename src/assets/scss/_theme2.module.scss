@@ -1,0 +1,105 @@
+// Theme 2: Teal & Orange (alternate preset)
+
+$paper: #ffffff;
+$primaryLight: #e0f2f1;
+$primaryMain: #009688;
+$primaryDark: #00796b;
+$primary200: #80cbc4;
+$primary800: #00695c;
+
+$secondaryLight: #e1f5fe;
+$secondaryMain: #03a9f4;
+$secondaryDark: #0288d1;
+$secondary200: #81d4fa;
+$secondary800: #01579b;
+
+$successLight: #e8f5e9;
+$successMain: #22c55e;
+$successDark: #16a34a;
+$errorLight: #ffebee;
+$errorMain: #ef4444;
+$errorDark: #dc2626;
+$warningLight: #fffbeb;
+$warningMain: #f59e0b;
+$warningDark: #d97706;
+$orangeLight: #fff3e0;
+$orangeMain: #ff9800;
+$orangeDark: #e65100;
+
+$grey50: #fafafa;
+$grey100: #f5f5f5;
+$grey200: #eeeeee;
+$grey300: #e0e0e0;
+$grey500: #9e9e9e;
+$grey600: #757575;
+$grey700: #616161;
+$grey900: #212121;
+
+$darkPaper: #0d1f1d;
+$darkBackground: #1a2f2d;
+$darkLevel1: #263d3b;
+$darkLevel2: #2e4947;
+$darkTextPrimary: #e0f2f1;
+$darkTextSecondary: #80cbc4;
+$darkTextTitle: #b2dfdb;
+$darkPrimaryLight: #e0f2f1;
+$darkPrimaryMain: #26a69a;
+$darkPrimaryDark: #009688;
+$darkPrimary200: #80cbc4;
+$darkPrimary800: #00695c;
+$darkSecondaryLight: #fff3e0;
+$darkSecondaryMain: #ffb74d;
+$darkSecondaryDark: #ff9800;
+$darkSecondary200: #ffcc80;
+$darkSecondary800: #f57c00;
+
+:export {
+  paper: $paper;
+  primaryLight: $primaryLight;
+  primaryMain: $primaryMain;
+  primaryDark: $primaryDark;
+  primary200: $primary200;
+  primary800: $primary800;
+  secondaryLight: $secondaryLight;
+  secondaryMain: $secondaryMain;
+  secondaryDark: $secondaryDark;
+  secondary200: $secondary200;
+  secondary800: $secondary800;
+  successLight: $successLight;
+  successMain: $successMain;
+  successDark: $successDark;
+  errorLight: $errorLight;
+  errorMain: $errorMain;
+  errorDark: $errorDark;
+  warningLight: $warningLight;
+  warningMain: $warningMain;
+  warningDark: $warningDark;
+  orangeLight: $orangeLight;
+  orangeMain: $orangeMain;
+  orangeDark: $orangeDark;
+  grey50: $grey50;
+  grey100: $grey100;
+  grey200: $grey200;
+  grey300: $grey300;
+  grey500: $grey500;
+  grey600: $grey600;
+  grey700: $grey700;
+  grey900: $grey900;
+  darkPaper: $darkPaper;
+  darkBackground: $darkBackground;
+  darkLevel1: $darkLevel1;
+  darkLevel2: $darkLevel2;
+  darkTextPrimary: $darkTextPrimary;
+  darkTextSecondary: $darkTextSecondary;
+  darkTextTitle: $darkTextTitle;
+  darkPrimaryLight: $darkPrimaryLight;
+  darkPrimaryMain: $darkPrimaryMain;
+  darkPrimaryDark: $darkPrimaryDark;
+  darkPrimary200: $darkPrimary200;
+  darkPrimary800: $darkPrimary800;
+  darkSecondaryLight: $darkSecondaryLight;
+  darkSecondaryMain: $darkSecondaryMain;
+  darkSecondaryDark: $darkSecondaryDark;
+  darkSecondary200: $darkSecondary200;
+  darkSecondary800: $darkSecondary800;
+}

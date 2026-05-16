@@ -1,0 +1,105 @@
+// Default theme: Blue & White (SM-Management primary)
+
+$paper: #ffffff;
+$primaryLight: #fce4ec;
+$primaryMain: #e91e63;
+$primaryDark: #c2185b;
+$primary200: #f48fb1;
+$primary800: #ad1457;
+
+$secondaryLight: #fce4ec;
+$secondaryMain: #0f0f0f;
+$secondaryDark: #e91e63;
+$secondary200: #f8bbd0;
+$secondary800: #c2185b;
+
+$successLight: #e8f5e9;
+$successMain: #22c55e;
+$successDark: #16a34a;
+$errorLight: #ffebee;
+$errorMain: #ef4444;
+$errorDark: #dc2626;
+$warningLight: #fffbeb;
+$warningMain: #f59e0b;
+$warningDark: #d97706;
+$orangeLight: #fff3e0;
+$orangeMain: #ff9800;
+$orangeDark: #e65100;
+
+$grey50: #f8fafc;
+$grey100: #f1f5f9;
+$grey200: #e2e8f0;
+$grey300: #cbd5e1;
+$grey500: #64748b;
+$grey600: #475569;
+$grey700: #334155;
+$grey900: #1e293b;
+
+$darkPaper: #0f172a;
+$darkBackground: #1e293b;
+$darkLevel1: #334155;
+$darkLevel2: #475569;
+$darkTextPrimary: #f1f5f9;
+$darkTextSecondary: #94a3b8;
+$darkTextTitle: #e2e8f0;
+$darkPrimaryLight: #e3f2fd;
+$darkPrimaryMain: #2196f3;
+$darkPrimaryDark: #1976d2;
+$darkPrimary200: #90caf9;
+$darkPrimary800: #1565c0;
+$darkSecondaryLight: #e3f2fd;
+$darkSecondaryMain: #2196f3;
+$darkSecondaryDark: #1976d2;
+$darkSecondary200: #90caf9;
+$darkSecondary800: #0d47a1;
+
+:export {
+  paper: $paper;
+  primaryLight: $primaryLight;
+  primaryMain: $primaryMain;
+  primaryDark: $primaryDark;
+  primary200: $primary200;
+  primary800: $primary800;
+  secondaryLight: $secondaryLight;
+  secondaryMain: $secondaryMain;
+  secondaryDark: $secondaryDark;
+  secondary200: $secondary200;
+  secondary800: $secondary800;
+  successLight: $successLight;
+  successMain: $successMain;
+  successDark: $successDark;
+  errorLight: $errorLight;
+  errorMain: $errorMain;
+  errorDark: $errorDark;
+  warningLight: $warningLight;
+  warningMain: $warningMain;
+  warningDark: $warningDark;
+  orangeLight: $orangeLight;
+  orangeMain: $orangeMain;
+  orangeDark: $orangeDark;
+  grey50: $grey50;
+  grey100: $grey100;
+  grey200: $grey200;
+  grey300: $grey300;
+  grey500: $grey500;
+  grey600: $grey600;
+  grey700: $grey700;
+  grey900: $grey900;
+  darkPaper: $darkPaper;
+  darkBackground: $darkBackground;
+  darkLevel1: $darkLevel1;
+  darkLevel2: $darkLevel2;
+  darkTextPrimary: $darkTextPrimary;
+  darkTextSecondary: $darkTextSecondary;
+  darkTextTitle: $darkTextTitle;
+  darkPrimaryLight: $darkPrimaryLight;
+  darkPrimaryMain: $darkPrimaryMain;
+  darkPrimaryDark: $darkPrimaryDark;
+  darkPrimary200: $darkPrimary200;
+  darkPrimary800: $darkPrimary800;
+  darkSecondaryLight: $darkSecondaryLight;
+  darkSecondaryMain: $darkSecondaryMain;
+  darkSecondaryDark: $darkSecondaryDark;
+  darkSecondary200: $darkSecondary200;
+  darkSecondary800: $darkSecondary800;
+}

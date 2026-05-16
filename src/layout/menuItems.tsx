@@ -1,0 +1,30 @@
+import {
+  Dashboard as DashboardIcon,
+  Settings as SettingsIcon,
+  Apartment as ApartmentIcon,
+  Person as StaffIcon,
+  CardMembership as MembershipIcon,
+  CalendarMonth as BookingIcon,
+  Payment as PaymentIcon,
+  Person as GuestIcon,
+  DoorBackSharp as DoorBackSharp,
+  CampaignSharp as CampaignIcon,
+  ContactSupportSharp as ContactSupportIcon,
+  Assessment as ReportIcon,
+} from "@mui/icons-material";
+
+export const menuItems = [
+  { text: "Dashboard", icon: <DashboardIcon />, path: "/" },
+  { text: "Residents", icon: <ApartmentIcon />, path: "/residents" },
+  { text: "Guest", icon: <GuestIcon />, path: "/guest" },
+  { text: "Staff", icon: <StaffIcon />, path: "/staff" },
+  { text: "Membership", icon: <MembershipIcon />, path: "/membership" },
+  { text: "Booking", icon: <BookingIcon />, path: "/booking" },
+  { text: "Payment", icon: <PaymentIcon />, path: "/payment" },
+  { text: "facility", icon: <ApartmentIcon />, path: "/facility" },
+  { text: "Gate Entry", icon: <DoorBackSharp />, path: "/gate" },
+  { text: "Announcements", icon: <CampaignIcon />, path: "/announcements" },
+  { text: "Report", icon: <ReportIcon />, path: "/report" },
+  { text: "Support", icon: <ContactSupportIcon />, path: "/support" },
+  { text: "Settings", icon: <SettingsIcon />, path: "/settings" },
+];
