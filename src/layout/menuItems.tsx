@@ -17,7 +17,15 @@ export const menuItems = [
   { text: "Dashboard", icon: <DashboardIcon />, path: "/" },
   { text: "Residents", icon: <ApartmentIcon />, path: "/residents" },
   { text: "Guest", icon: <GuestIcon />, path: "/guest" },
-  { text: "Staff", icon: <StaffIcon />, path: "/staff" },
+  { 
+    text: "Staff", 
+    icon: <StaffIcon />, 
+    path: "/staff",
+    children: [
+      { text: "All Staff", path: "/staff" },
+      { text: "Attendance", path: "/staff/attendance" }
+    ]
+  },
   { text: "Membership", icon: <MembershipIcon />, path: "/membership" },
   { text: "Booking", icon: <BookingIcon />, path: "/booking" },
   { text: "Payment", icon: <PaymentIcon />, path: "/payment" },

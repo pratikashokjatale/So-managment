@@ -13,10 +13,13 @@ import GetGuest from "@/pages/guest/GetGuest";
 import GetStaff from "@/pages/staff/GetStaff";
 import StaffDetails from "@/pages/staff/StaffDetails";
 import EditStaff from "@/pages/staff/EditStaff";
+import StaffAttendance from "@/pages/staff/StaffAttendance";
 import GetAnnouncement from "@/pages/announcement/GetAnnouncement";
 import GetReport from "@/pages/report/GetReport";
 import GetSettings from "@/pages/settings/GetSettings";
 import GetLogs from "@/pages/logs/GetLogs";
+import GetFacility from "@/pages/facility/GetFacility";
+import GetGateEntry from "@/pages/gate/GetGateEntry";
 
 const DashboardRoutes = {
   path: "/",
@@ -63,12 +66,24 @@ const DashboardRoutes = {
       element: <GetPayment />,
     },
     {
+      path: "facility",
+      element: <GetFacility />,
+    },
+    {
+      path: "gate",
+      element: <GetGateEntry />,
+    },
+    {
       path: "guest",
       element: <GetGuest />,
     },
     {
       path: "staff",
       element: <GetStaff />,
+    },
+    {
+      path: "staff/attendance",
+      element: <StaffAttendance />,
     },
     {
       path: "staff/:id",

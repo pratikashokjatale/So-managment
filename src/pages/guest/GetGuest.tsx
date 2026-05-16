@@ -3,7 +3,8 @@ import {
   Box, Typography, Button, Table, TableBody, TableCell, 
   TableContainer, TableHead, TableRow, IconButton, 
   Breadcrumbs, Link, Tabs, Tab, Avatar, Stack,
-  Dialog, DialogTitle, DialogContent, DialogActions, TextField
+  Dialog, DialogTitle, DialogContent, DialogActions, TextField,
+  Chip
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
@@ -15,14 +16,14 @@ import StatusBadge from '../../components/StatusBadge';
 import Search from '@/components/Search';
 
 const mockGuests = [
-  { id: 1, name: 'Alice Walker', avatar: 'https://i.pravatar.cc/150?u=11', resident: 'John Doe', apartment: 'A-101', date: '16 May 2024', status: 'Checked In' },
-  { id: 2, name: 'Bob Smith', avatar: 'https://i.pravatar.cc/150?u=12', resident: 'Jane Smith', apartment: 'B-202', date: '17 May 2024', status: 'Upcoming' },
-  { id: 3, name: 'Charlie Brown', avatar: 'https://i.pravatar.cc/150?u=13', resident: 'Mike Johnson', apartment: 'C-303', date: '15 May 2024', status: 'Checked Out' },
+  { id: 1, name: 'Alice Walker', avatar: 'https://i.pravatar.cc/150?u=11', resident: 'John Doe', apartment: 'A-101', date: '16 May 2024', status: 'Checked In', validity: '5 Days Left', otpStatus: 'Approved', cardType: 'White' },
+  { id: 2, name: 'Bob Smith', avatar: 'https://i.pravatar.cc/150?u=12', resident: 'Jane Smith', apartment: 'B-202', date: '17 May 2024', status: 'Upcoming', validity: '7 Days Left', otpStatus: 'Pending', cardType: 'White' },
+  { id: 3, name: 'Charlie Brown', avatar: 'https://i.pravatar.cc/150?u=13', resident: 'Mike Johnson', apartment: 'C-303', date: '15 May 2024', status: 'Checked Out', validity: 'Expired', otpStatus: 'Approved', cardType: 'White' },
 ];
 
 const mockRequests = [
-  { id: 1, name: 'David Miller', avatar: 'https://i.pravatar.cc/150?u=14', resident: 'Emily Davis', apartment: 'D-404', date: '18 May 2024', purpose: 'Family Visit', status: 'Pending' },
-  { id: 2, name: 'Eva Green', avatar: 'https://i.pravatar.cc/150?u=15', resident: 'Robert Brown', apartment: 'E-505', date: '19 May 2024', purpose: 'Maintenance', status: 'Pending' },
+  { id: 1, name: 'David Miller', avatar: 'https://i.pravatar.cc/150?u=14', resident: 'Emily Davis', apartment: 'D-404', date: '18 May 2024', purpose: 'Family Visit', status: 'Pending', otpStatus: 'OTP Verified' },
+  { id: 2, name: 'Eva Green', avatar: 'https://i.pravatar.cc/150?u=15', resident: 'Robert Brown', apartment: 'E-505', date: '19 May 2024', purpose: 'Maintenance', status: 'Pending', otpStatus: 'Waiting for Master' },
 ];
 
 export default function GetGuest() {
@@ -114,31 +115,45 @@ export default function GetGuest() {
           <TableHead>
             <TableRow>
               <TableCell sx={{ color: 'text.secondary', fontWeight: 600 }}>Guest Name</TableCell>
-              <TableCell sx={{ color: 'text.secondary', fontWeight: 600 }}>Resident</TableCell>
               <TableCell sx={{ color: 'text.secondary', fontWeight: 600 }}>Apartment</TableCell>
-              <TableCell sx={{ color: 'text.secondary', fontWeight: 600 }}>Date</TableCell>
+              <TableCell sx={{ color: 'text.secondary', fontWeight: 600 }}>Pass Validity</TableCell>
+              <TableCell sx={{ color: 'text.secondary', fontWeight: 600 }}>OTP Status</TableCell>
               {activeTab === 1 && <TableCell sx={{ color: 'text.secondary', fontWeight: 600 }}>Purpose</TableCell>}
               <TableCell sx={{ color: 'text.secondary', fontWeight: 600 }}>Status</TableCell>
               <TableCell sx={{ color: 'text.secondary', fontWeight: 600, textAlign: 'right' }}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {(activeTab === 0 ? mockGuests : mockRequests).map((row) => (
+            {(activeTab === 0 ? mockGuests : mockRequests).map((row: any) => (
               <TableRow key={row.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                 <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
                   <Stack direction="row" spacing={2} alignItems="center">
-                    <Avatar src={row.avatar} sx={{ width: 32, height: 32 }} />
-                    <Typography variant="body2" fontWeight="600" color="#002855">{row.name}</Typography>
+                    <Avatar src={row.avatar} sx={{ width: 36, height: 36, borderRadius: '10px', bgcolor: '#f1f5f9' }} />
+                    <Box>
+                      <Typography variant="body2" fontWeight="800" color="#002855">{row.name}</Typography>
+                      <Typography variant="caption" color="text.secondary">Host: {row.resident}</Typography>
+                    </Box>
                   </Stack>
                 </TableCell>
                 <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Typography variant="body2" color="#002855">{row.resident}</Typography>
+                  <Typography variant="body2" fontWeight="700" color="#002855">{row.apartment}</Typography>
                 </TableCell>
                 <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Typography variant="body2" color="#002855">{row.apartment}</Typography>
+                  <Chip 
+                    label={row.validity || '7 Days Pass'} 
+                    size="small" 
+                    sx={{ 
+                      borderRadius: '6px', 
+                      fontWeight: 800, 
+                      bgcolor: row.validity === 'Expired' ? '#fef2f2' : '#f0fdf4',
+                      color: row.validity === 'Expired' ? '#ef4444' : '#10b981'
+                    }} 
+                  />
                 </TableCell>
                 <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Typography variant="body2" color="#002855">{row.date}</Typography>
+                  <Typography variant="caption" fontWeight="700" color={row.otpStatus?.includes('Waiting') ? 'warning.main' : 'success.main'}>
+                    {row.otpStatus}
+                  </Typography>
                 </TableCell>
                 {activeTab === 1 && (
                   <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>

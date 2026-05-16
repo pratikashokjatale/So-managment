@@ -13,20 +13,26 @@ import {
   useTheme,
   useMediaQuery,
   Avatar,
+  Collapse,
+  Stack,
 } from "@mui/material";
+import { 
+  ExpandLess as ExpandLessIcon, 
+  ExpandMore as ExpandMoreIcon,
+  CloudDone as SyncIcon,
+} from "@mui/icons-material";
 import { useConfig } from "@/contexts/ConfigContext";
 import { menuItems } from "./menuItems";
 import { alpha } from "@mui/material/styles";
 import TopBar from "./TopBar";
 import Loader from "@/components/Loader";
 
-
-
 export default function DashboardLayout() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [mobileOpen, setMobileOpen] = useState(false);
   const [desktopOpen, setDesktopOpen] = useState(true);
+  const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
   const navigate = useNavigate();
   const location = useLocation();
   const { navType } = useConfig();
@@ -37,6 +43,10 @@ export default function DashboardLayout() {
     } else {
       setDesktopOpen(!desktopOpen);
     }
+  };
+
+  const handleMenuToggle = (text: string) => {
+    setOpenMenus(prev => ({ ...prev, [text]: !prev[text] }));
   };
 
   const currentDrawerWidth = isMobile ? 280 : (desktopOpen ? 280 : 88);
@@ -82,12 +92,7 @@ export default function DashboardLayout() {
         {(desktopOpen || isMobile) && (
           <Typography
             variant="h6"
-            sx={{
-              color: "white",
-              fontWeight: 700,
-              letterSpacing: "-0.5px",
-              whiteSpace: "nowrap"
-            }}
+            sx={{ color: "white", fontWeight: 700, letterSpacing: "-0.5px", whiteSpace: "nowrap" }}
           >
             Society Management
           </Typography>
@@ -96,89 +101,127 @@ export default function DashboardLayout() {
 
       <List sx={{ px: desktopOpen || isMobile ? 2 : 1.5, flexGrow: 1 }}>
         {menuItems.map((item) => {
-          const active = location.pathname === item.path;
+          const hasChildren = item.children && item.children.length > 0;
+          const isMenuOpen = openMenus[item.text] || false;
+          const active = location.pathname === item.path || (hasChildren && item.children?.some(child => location.pathname === child.path));
+
           return (
-            <ListItem key={item.text} disablePadding sx={{ mb: 1 }}>
-              <ListItemButton
-                onClick={() => {
-                  navigate(item.path);
-                  if (isMobile) setMobileOpen(false);
-                }}
-                selected={active}
-                sx={{
-                  borderRadius: "12px",
-                  py: 1.5,
-                  px: desktopOpen || isMobile ? 2 : 1.5,
-                  justifyContent: desktopOpen || isMobile ? "initial" : "center",
-                  transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-                  color: alpha(theme.palette.common.white, active ? 1 : 0.7),
-                  "&.Mui-selected": {
-                    bgcolor: alpha(theme.palette.common.white, 0.15),
-                    color: "white",
-                    "& .MuiListItemIcon-root": { color: "white" },
-                    "&:hover": {
-                      bgcolor: alpha(theme.palette.common.white, 0.2),
-                    },
-                  },
-                  "&:hover": {
-                    bgcolor: alpha(theme.palette.common.white, 0.1),
-                    transform: desktopOpen || isMobile ? "translateX(6px)" : "none",
-                  },
-                }}
-              >
-                <ListItemIcon
+            <Box key={item.text}>
+              <ListItem disablePadding sx={{ mb: 0.5 }}>
+                <ListItemButton
+                  onClick={() => {
+                    if (hasChildren) {
+                      handleMenuToggle(item.text);
+                    } else {
+                      navigate(item.path);
+                      if (isMobile) setMobileOpen(false);
+                    }
+                  }}
+                  selected={active && !hasChildren}
                   sx={{
-                    minWidth: desktopOpen || isMobile ? 42 : 0,
-                    mr: desktopOpen || isMobile ? 1 : 0,
-                    justifyContent: "center",
+                    borderRadius: "12px",
+                    py: 1.25,
+                    px: desktopOpen || isMobile ? 2 : 1.5,
+                    justifyContent: desktopOpen || isMobile ? "initial" : "center",
+                    transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
                     color: alpha(theme.palette.common.white, active ? 1 : 0.7),
+                    "&.Mui-selected": {
+                      bgcolor: alpha(theme.palette.common.white, 0.15),
+                      color: "white",
+                      "& .MuiListItemIcon-root": { color: "white" },
+                      "&:hover": { bgcolor: alpha(theme.palette.common.white, 0.2) },
+                    },
+                    "&:hover": {
+                      bgcolor: alpha(theme.palette.common.white, 0.1),
+                      transform: (desktopOpen || isMobile) && !hasChildren ? "translateX(6px)" : "none",
+                    },
                   }}
                 >
-                  {item.icon}
-                </ListItemIcon>
-                {(desktopOpen || isMobile) && (
-                  <ListItemText
-                    primary={item.text}
-                    primaryTypographyProps={{
-                      fontSize: "0.925rem",
-                      fontWeight: active ? 700 : 500,
+                  <ListItemIcon
+                    sx={{
+                      minWidth: desktopOpen || isMobile ? 42 : 0,
+                      mr: desktopOpen || isMobile ? 1 : 0,
+                      justifyContent: "center",
+                      color: alpha(theme.palette.common.white, active ? 1 : 0.7),
                     }}
-                  />
-                )}
-              </ListItemButton>
-            </ListItem>
+                  >
+                    {item.icon}
+                  </ListItemIcon>
+                  {(desktopOpen || isMobile) && (
+                    <>
+                      <ListItemText
+                        primary={item.text}
+                        primaryTypographyProps={{ fontSize: "0.925rem", fontWeight: active ? 700 : 500 }}
+                      />
+                      {hasChildren && (isMenuOpen ? <ExpandLessIcon sx={{ fontSize: 18 }} /> : <ExpandMoreIcon sx={{ fontSize: 18 }} />)}
+                    </>
+                  )}
+                </ListItemButton>
+              </ListItem>
+
+              {hasChildren && (desktopOpen || isMobile) && (
+                <Collapse in={isMenuOpen} timeout="auto" unmountOnExit>
+                  <List component="div" disablePadding sx={{ ml: 3 }}>
+                    {item.children?.map((child) => {
+                      const childActive = location.pathname === child.path;
+                      return (
+                        <ListItemButton
+                          key={child.text}
+                          onClick={() => {
+                            navigate(child.path);
+                            if (isMobile) setMobileOpen(false);
+                          }}
+                          selected={childActive}
+                          sx={{
+                            borderRadius: "10px",
+                            py: 1,
+                            mb: 0.5,
+                            color: alpha(theme.palette.common.white, childActive ? 1 : 0.6),
+                            "&.Mui-selected": {
+                              bgcolor: alpha(theme.palette.common.white, 0.1),
+                              color: "white",
+                              "&:hover": { bgcolor: alpha(theme.palette.common.white, 0.15) },
+                            },
+                            "&:hover": { bgcolor: alpha(theme.palette.common.white, 0.05) },
+                          }}
+                        >
+                          <ListItemText
+                            primary={child.text}
+                            primaryTypographyProps={{ fontSize: "0.85rem", fontWeight: childActive ? 700 : 500 }}
+                          />
+                        </ListItemButton>
+                      );
+                    })}
+                  </List>
+                </Collapse>
+              )}
+            </Box>
           );
         })}
       </List>
+
+      {/* Sync Status & Offline Indicator */}
+      <Box sx={{ p: 3, borderTop: `1px solid ${alpha(theme.palette.common.white, 0.1)}` }}>
+        <Stack direction="row" spacing={2} alignItems="center">
+          <SyncIcon sx={{ color: '#4caf50', fontSize: 20 }} />
+          {(desktopOpen || isMobile) && (
+            <Box>
+              <Typography variant="caption" sx={{ color: alpha(theme.palette.common.white, 0.6), fontWeight: 800, display: 'block' }}>RFID OFFLINE SYNC</Typography>
+              <Typography variant="caption" sx={{ color: 'white', fontWeight: 900 }}>v3.42 • SECURE</Typography>
+            </Box>
+          )}
+        </Stack>
+      </Box>
     </Box>
   );
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        minHeight: "100vh",
-        bgcolor: navType === "light" ? "#f8fafc" : "background.default",
-      }}
-    >
+    <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: navType === "light" ? "#f8fafc" : "background.default" }}>
       <Loader />
       <CssBaseline />
-      <TopBar
-        handleDrawerToggle={handleDrawerToggle}
-        drawerWidth={currentDrawerWidth}
-      />
+      <TopBar handleDrawerToggle={handleDrawerToggle} drawerWidth={currentDrawerWidth} />
 
-      <Box
-        component="nav"
-        sx={{ 
-          width: { md: currentDrawerWidth }, 
-          flexShrink: { md: 0 },
-          transition: theme.transitions.create("width", {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.enteringScreen,
-          }),
-        }}
-      >
+      <Box component="nav" sx={{ width: { md: currentDrawerWidth }, flexShrink: { md: 0 }, transition: theme.transitions.create("width", { easing: theme.transitions.easing.sharp, duration: theme.transitions.duration.enteringScreen }) }}>
         <Drawer
           variant="temporary"
           open={mobileOpen}
@@ -209,10 +252,7 @@ export default function DashboardLayout() {
               backgroundImage: "none",
               bgcolor: "primary.main",
               borderRadius: 0,
-              transition: theme.transitions.create("width", {
-                easing: theme.transitions.easing.sharp,
-                duration: theme.transitions.duration.enteringScreen,
-              }),
+              transition: theme.transitions.create("width", { easing: theme.transitions.easing.sharp, duration: theme.transitions.duration.enteringScreen }),
               overflowX: "hidden"
             },
           }}
@@ -222,44 +262,9 @@ export default function DashboardLayout() {
         </Drawer>
       </Box>
 
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          py: { xs: 3, md: 5, lg: 6 },
-          px: { xs: 2, md: 4 },
-          width: { md: `calc(100% - ${currentDrawerWidth}px)` },
-          transition: theme.transitions.create(["width", "margin"], {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.enteringScreen,
-          }),
-        }}
-      >
+      <Box component="main" sx={{ flexGrow: 1, py: { xs: 3, md: 5, lg: 6 }, px: { xs: 2, md: 4 }, width: { md: `calc(100% - ${currentDrawerWidth}px)` }, transition: theme.transitions.create(["width", "margin"], { easing: theme.transitions.easing.sharp, duration: theme.transitions.duration.enteringScreen }) }}>
         <Outlet />
       </Box>
-
-      <style>
-        {`
-          @keyframes pulse {
-            0% { transform: scale(0.9); opacity: 0.8; }
-            50% { transform: scale(1.1); opacity: 1; }
-            100% { transform: scale(0.9); opacity: 0.8; }
-          }
-          .MuiListItemButton-root {
-            position: relative;
-            overflow: hidden;
-          }
-          .MuiListItemButton-root.Mui-selected::before {
-            content: "";
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            width: 4px;
-            background-color: ${theme.palette.primary.main};
-          }
-        `}
-      </style>
     </Box>
   );
 }
