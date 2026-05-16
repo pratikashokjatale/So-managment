@@ -17,7 +17,7 @@ import StaffAttendance from "@/pages/staff/StaffAttendance";
 import GetAnnouncement from "@/pages/announcement/GetAnnouncement";
 import GetReport from "@/pages/report/GetReport";
 import GetSettings from "@/pages/settings/GetSettings";
-import GetLogs from "@/pages/logs/GetLogs";
+import GetLogs from "../pages/logs/GetLogs";
 import GetFacility from "@/pages/facility/GetFacility";
 import GetGateEntry from "@/pages/gate/GetGateEntry";
 
