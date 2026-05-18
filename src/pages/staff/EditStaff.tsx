@@ -1,214 +1,340 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
-  Box, Typography, Button, Paper, Breadcrumbs, Link, TextField, MenuItem, Avatar
+  Box, Typography, Button, Paper, Breadcrumbs, Link, TextField, MenuItem, Avatar, Grid
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import SaveIcon from '@mui/icons-material/Save';
 import EditIcon from '@mui/icons-material/Edit';
+import { getStaffById, saveStaff } from '@/utils/staffStore';
+import { getFacilities } from '@/utils/facilityStore';
+
+const DEPARTMENTS = [
+  'Security',
+  'Housekeeping',
+  'Maintenance',
+  'Front Office',
+  'Fitness & Gym Training',
+  'Pool Operations',
+  'Wellness & Spa',
+  'Park & Gardens'
+];
 
 export default function EditStaff() {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const isAddMode = !id || id === 'add';
 
-  // Mock staff data
-  const [staff, setStaff] = useState({
-    name: 'Sumanth Kumar',
-    department: 'Security',
-    phone: '9876500001',
-    email: 'sumanth.k@society.com',
-    cardNo: 'CM21001',
-    status: 'Active',
-    joiningDate: '2023-01-12',
-    address: '123, Marbella Club, Road No. 5, Jubilee Hills, Hyderabad',
-    emergencyContact: '9876511111'
-  });
+  const [facilities, setFacilities] = useState<any[]>([]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setStaff({ ...staff, [e.target.name]: e.target.value });
+  // Form Fields State
+  const [name, setName] = useState('');
+  const [department, setDepartment] = useState('Security');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [joiningDate, setJoiningDate] = useState(new Date().toISOString().split('T')[0]);
+  const [address, setAddress] = useState('');
+  const [emergencyContact, setEmergencyContact] = useState('');
+  const [facilityId, setFacilityId] = useState('');
+  const [status, setStatus] = useState<'Active' | 'Inactive'>('Active');
+  const [avatar, setAvatar] = useState('https://i.pravatar.cc/150?u=staff');
+
+  // Load facilities and staff details if in edit mode
+  useEffect(() => {
+    const activeFacilities = getFacilities();
+    setFacilities(activeFacilities);
+    if (activeFacilities.length > 0) {
+      setFacilityId(activeFacilities[0].id);
+    }
+
+    if (!isAddMode && id) {
+      const staff = getStaffById(id);
+      if (staff) {
+        setName(staff.name);
+        setDepartment(staff.department);
+        setPhone(staff.phone);
+        setEmail(staff.email);
+        setJoiningDate(staff.joiningDate);
+        setAddress(staff.address);
+        setEmergencyContact(staff.emergencyContact);
+        setFacilityId(staff.facilityId);
+        setStatus(staff.status);
+        setAvatar(staff.avatar);
+      }
+    }
+  }, [id, isAddMode]);
+
+  // Form Validation State
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validate = () => {
+    const tempErrors: Record<string, string> = {};
+    if (!name.trim()) tempErrors.name = 'Full Name is required';
+    if (!phone.trim()) tempErrors.phone = 'Phone Number is required';
+    if (!email.trim()) tempErrors.email = 'Email Address is required';
+    if (!address.trim()) tempErrors.address = 'Address is required';
+    if (!emergencyContact.trim()) tempErrors.emergencyContact = 'Emergency Contact is required';
+    
+    setErrors(tempErrors);
+    return Object.keys(tempErrors).length === 0;
   };
 
-  const handleSave = () => {
-    console.log('Saving staff:', staff);
-    navigate(`/staff/${id}`);
+  const handleSave = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validate()) return;
+
+    // Generate random avatar seed if adding new
+    const finalAvatar = isAddMode 
+      ? `https://i.pravatar.cc/150?u=${encodeURIComponent(name)}` 
+      : avatar;
+
+    const saved = saveStaff({
+      id: isAddMode ? 'add' : id,
+      name,
+      department,
+      phone,
+      email,
+      joiningDate,
+      address,
+      emergencyContact,
+      facilityId,
+      status,
+      avatar: finalAvatar,
+      facilityName: '' // Will be resolved dynamically by the store
+    });
+
+    // Automatically navigate to the details page, where their premium ID Card is instantly compiled and displayed!
+    navigate(`/staff/${saved.id}`);
   };
 
   const textFieldSx = {
     '& .MuiOutlinedInput-root': {
-      borderRadius: '12px',
-      bgcolor: '#fcfdfe'
+      borderRadius: '16px',
+      bgcolor: '#f8fafc'
     }
   };
 
   return (
-    <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: '#ffffff', minHeight: '100vh', borderRadius: 2 }}>
+    <Box sx={{ p: { xs: 2, md: 5 }, bgcolor: '#f8fafc', minHeight: '100vh' }}>
       
       {/* Header Section */}
       <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <Box>
-          <Typography variant="h4" fontWeight="bold" sx={{ mb: 1, color: '#002855' }}>
-            Edit Staff Profile
+          <Typography variant="h3" fontWeight="900" sx={{ mb: 1, color: '#002855' }}>
+            {isAddMode ? 'Add New Staff Member' : 'Edit Staff Profile'}
           </Typography>
-          <Breadcrumbs separator=">" aria-label="breadcrumb">
-            <Link underline="hover" color="inherit" onClick={() => navigate('/')} sx={{ cursor: 'pointer' }}>
+          <Breadcrumbs separator="›" aria-label="breadcrumb">
+            <Link underline="hover" color="inherit" onClick={() => navigate('/')} sx={{ cursor: 'pointer', fontWeight: 700 }}>
               Dashboard
             </Link>
-            <Link underline="hover" color="inherit" onClick={() => navigate('/staff')} sx={{ cursor: 'pointer' }}>
-              Staff
+            <Link underline="hover" color="inherit" onClick={() => navigate('/staff')} sx={{ cursor: 'pointer', fontWeight: 700 }}>
+              Staff Management
             </Link>
-            <Typography color="text.primary">Edit</Typography>
+            <Typography color="text.primary" sx={{ fontWeight: 900 }}>
+              {isAddMode ? 'Create' : 'Edit'}
+            </Typography>
           </Breadcrumbs>
         </Box>
         <Button 
           variant="outlined" 
           startIcon={<ArrowBackIcon />} 
-          onClick={() => navigate(`/staff/${id}`)}
-          sx={{ borderRadius: '10px', textTransform: 'none', fontWeight: 600 }}
+          onClick={() => navigate(isAddMode ? '/staff' : `/staff/${id}`)}
+          sx={{ borderRadius: '16px', textTransform: 'none', fontWeight: 900, borderColor: '#e2e8f0', color: '#002855' }}
         >
           Cancel
         </Button>
       </Box>
 
-      <Paper elevation={0} sx={{ p: 4, border: '1px solid #f0f0f0', borderRadius: 6 }}>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          {/* Avatar Edit Section */}
-          <Box sx={{ textAlign: 'center' }}>
-            <Box sx={{ position: 'relative', display: 'inline-block' }}>
-              <Avatar 
-                src="https://i.pravatar.cc/150?u=21" 
-                sx={{ width: 120, height: 120, border: '4px solid #f0f0f0' }} 
-              />
+      <Paper elevation={0} sx={{ p: { xs: 3, md: 5 }, border: '1px solid #e2e8f0', borderRadius: '32px' }}>
+        <form onSubmit={handleSave}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            
+            {/* Avatar Section */}
+            <Box sx={{ textAlign: 'center' }}>
+              <Box sx={{ position: 'relative', display: 'inline-block' }}>
+                <Avatar 
+                  src={isAddMode ? 'https://img.icons8.com/color/150/user-male-circle.png' : avatar} 
+                  sx={{ width: 120, height: 120, border: '5px solid #f1f5f9', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }} 
+                />
+                {!isAddMode && (
+                  <Button 
+                    variant="contained" 
+                    size="small" 
+                    sx={{ 
+                      position: 'absolute', 
+                      bottom: 0, 
+                      right: 0, 
+                      borderRadius: '50%', 
+                      minWidth: 40, 
+                      height: 40, 
+                      p: 0,
+                      bgcolor: '#002855',
+                      '&:hover': { bgcolor: '#001a35' }
+                    }}
+                  >
+                    <EditIcon fontSize="small" />
+                  </Button>
+                )}
+              </Box>
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5, fontWeight: 700 }}>
+                {isAddMode ? 'Avatar automatically generated upon profile creation' : 'Staff Profile Identity'}
+              </Typography>
+            </Box>
+
+            {/* Form Fields Grid */}
+            <Grid container spacing={3}>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  label="Full Name"
+                  fullWidth
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  error={!!errors.name}
+                  helperText={errors.name}
+                  sx={textFieldSx}
+                  placeholder="e.g. Sumanth Kumar"
+                />
+              </Grid>
+
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  select
+                  label="Department"
+                  fullWidth
+                  value={department}
+                  onChange={(e) => setDepartment(e.target.value)}
+                  sx={textFieldSx}
+                >
+                  {DEPARTMENTS.map((dept) => (
+                    <MenuItem key={dept} value={dept}>{dept}</MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+
+              {/* Dynamic Facility Selection Dropdown */}
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  select
+                  label="Assigned Duty Facility"
+                  fullWidth
+                  value={facilityId}
+                  onChange={(e) => setFacilityId(e.target.value)}
+                  sx={textFieldSx}
+                  helperText="Assign the staff member to manage an active society facility"
+                >
+                  {facilities.map((fac) => (
+                    <MenuItem key={fac.id} value={fac.id}>
+                      {fac.name} ({fac.category})
+                    </MenuItem>
+                  ))}
+                  {facilities.length === 0 && (
+                    <MenuItem value="">No facilities available</MenuItem>
+                  )}
+                </TextField>
+              </Grid>
+
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  label="Phone Number"
+                  fullWidth
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  error={!!errors.phone}
+                  helperText={errors.phone}
+                  sx={textFieldSx}
+                  placeholder="e.g. 98765 00001"
+                />
+              </Grid>
+
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  label="Email Address"
+                  fullWidth
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  error={!!errors.email}
+                  helperText={errors.email}
+                  sx={textFieldSx}
+                  placeholder="e.g. sumanth.k@society.com"
+                />
+              </Grid>
+
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  type="date"
+                  label="Joining Date"
+                  fullWidth
+                  InputLabelProps={{ shrink: true }}
+                  value={joiningDate}
+                  onChange={(e) => setJoiningDate(e.target.value)}
+                  sx={textFieldSx}
+                />
+              </Grid>
+
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  label="Emergency Contact Number"
+                  fullWidth
+                  value={emergencyContact}
+                  onChange={(e) => setEmergencyContact(e.target.value)}
+                  error={!!errors.emergencyContact}
+                  helperText={errors.emergencyContact}
+                  sx={textFieldSx}
+                  placeholder="e.g. 98765 11111"
+                />
+              </Grid>
+
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  select
+                  label="Employment Status"
+                  fullWidth
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value as 'Active' | 'Inactive')}
+                  sx={textFieldSx}
+                >
+                  <MenuItem value="Active">Active</MenuItem>
+                  <MenuItem value="Inactive">Inactive</MenuItem>
+                </TextField>
+              </Grid>
+
+              <Grid size={12}>
+                <TextField
+                  label="Permanent Home Address"
+                  fullWidth
+                  multiline
+                  rows={3}
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  error={!!errors.address}
+                  helperText={errors.address}
+                  sx={textFieldSx}
+                  placeholder="Street, City, State, ZIP..."
+                />
+              </Grid>
+            </Grid>
+
+            {/* Action Buttons */}
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 2 }}>
               <Button 
-                variant="contained" 
-                size="small" 
-                sx={{ 
-                  position: 'absolute', 
-                  bottom: 0, 
-                  right: 0, 
-                  borderRadius: '50%', 
-                  minWidth: 40, 
-                  height: 40, 
-                  p: 0,
-                  bgcolor: '#002855',
-                  '&:hover': { bgcolor: '#001a35' }
-                }}
+                variant="outlined" 
+                onClick={() => navigate(isAddMode ? '/staff' : `/staff/${id}`)}
+                sx={{ borderRadius: '16px', textTransform: 'none', px: 4, py: 1.5, fontWeight: 900, borderColor: '#e2e8f0', color: '#64748b' }}
               >
-                <EditIcon fontSize="small" />
+                Cancel
+              </Button>
+              <Button 
+                type="submit"
+                variant="contained" 
+                startIcon={<SaveIcon />}
+                sx={{ borderRadius: '16px', textTransform: 'none', px: 4, py: 1.5, fontWeight: 900, bgcolor: '#002855', boxShadow: 'none' }}
+              >
+                {isAddMode ? 'Create Staff & Generate I-Card' : 'Save Profile Changes'}
               </Button>
             </Box>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>Update Profile Picture</Typography>
-          </Box>
 
-          {/* Form Fields Grid */}
-          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 4 }}>
-            <TextField
-              label="Full Name"
-              name="name"
-              fullWidth
-              value={staff.name}
-              onChange={handleChange}
-              sx={textFieldSx}
-            />
-            <TextField
-              select
-              label="Department"
-              name="department"
-              fullWidth
-              value={staff.department}
-              onChange={handleChange}
-              sx={textFieldSx}
-            >
-              <MenuItem value="Security">Security</MenuItem>
-              <MenuItem value="Housekeeping">Housekeeping</MenuItem>
-              <MenuItem value="Maintenance">Maintenance</MenuItem>
-              <MenuItem value="Front Office">Front Office</MenuItem>
-            </TextField>
-            <TextField
-              label="Phone Number"
-              name="phone"
-              fullWidth
-              value={staff.phone}
-              onChange={handleChange}
-              sx={textFieldSx}
-            />
-            <TextField
-              label="Email Address"
-              name="email"
-              fullWidth
-              value={staff.email}
-              onChange={handleChange}
-              sx={textFieldSx}
-            />
-            <TextField
-              label="Card Number"
-              name="cardNo"
-              fullWidth
-              value={staff.cardNo}
-              onChange={handleChange}
-              sx={textFieldSx}
-            />
-            <TextField
-              type="date"
-              label="Joining Date"
-              name="joiningDate"
-              fullWidth
-              InputLabelProps={{ shrink: true }}
-              value={staff.joiningDate}
-              onChange={handleChange}
-              sx={textFieldSx}
-            />
-            <Box sx={{ gridColumn: { md: 'span 2' } }}>
-              <TextField
-                label="Permanent Address"
-                name="address"
-                fullWidth
-                multiline
-                rows={3}
-                value={staff.address}
-                onChange={handleChange}
-                sx={textFieldSx}
-              />
-            </Box>
-            <TextField
-              label="Emergency Contact"
-              name="emergencyContact"
-              fullWidth
-              value={staff.emergencyContact}
-              onChange={handleChange}
-              sx={textFieldSx}
-            />
-            <TextField
-              select
-              label="Status"
-              name="status"
-              fullWidth
-              value={staff.status}
-              onChange={handleChange}
-              sx={textFieldSx}
-            >
-              <MenuItem value="Active">Active</MenuItem>
-              <MenuItem value="Inactive">Inactive</MenuItem>
-            </TextField>
           </Box>
-
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 2 }}>
-            <Button 
-              variant="outlined" 
-              onClick={() => navigate(`/staff/${id}`)}
-              sx={{ borderRadius: '10px', textTransform: 'none', px: 4, fontWeight: 600 }}
-            >
-              Cancel
-            </Button>
-            <Button 
-              variant="contained" 
-              startIcon={<SaveIcon />}
-              onClick={handleSave}
-              sx={{ borderRadius: '10px', textTransform: 'none', px: 4, fontWeight: 600, bgcolor: '#0047b3', boxShadow: 'none' }}
-            >
-              Save Changes
-            </Button>
-          </Box>
-        </Box>
+        </form>
       </Paper>
     </Box>
   );

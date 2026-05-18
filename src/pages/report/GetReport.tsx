@@ -1,179 +1,131 @@
-import { useState } from 'react';
 import { 
-  Box, Typography, Button, Paper, Breadcrumbs, Link, Select, MenuItem, Stack
+  Box, Typography, Paper, Grid, Stack, Chip, Button, Avatar
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import DownloadIcon from '@mui/icons-material/Download';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
-import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 import { 
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
-  PieChart, Pie, Cell 
-} from 'recharts';
+  TrendingUp as RevenueIcon,
+  People as TrafficIcon,
+  Timer as PeakIcon,
+  Download as ExportIcon,
+  ChevronRight as ChevronIcon,
+  Bolt as AIIcon
+} from '@mui/icons-material';
 
-const lineData = [
-  { name: 'Mon', total: 40, online: 24, offline: 10 },
-  { name: 'Tue', total: 55, online: 35, offline: 15 },
-  { name: 'Wed', total: 45, online: 30, offline: 12 },
-  { name: 'Thu', total: 68, online: 45, offline: 20 },
-  { name: 'Fri', total: 52, online: 38, offline: 18 },
-  { name: 'Sat', total: 75, online: 55, offline: 25 },
-  { name: 'Sun', total: 90, online: 65, offline: 30 },
-];
-
-const pieData = [
-  { name: 'Gym', value: 40, color: '#0047b3' },
-  { name: 'Swimming Pool', value: 25, color: '#2196f3' },
-  { name: 'Tennis Court', value: 20, color: '#4caf50' },
-  { name: 'Badminton Court', value: 10, color: '#ff9800' },
-  { name: 'Others', value: 5, color: '#9e9e9e' },
+const facilityStats = [
+  { id: 1, name: 'Grand Gym', usage: '88%', peak: '06:00 PM', trend: '+12%', revenue: '₹45,200', color: '#1d4ed8' },
+  { id: 2, name: 'Squash Court', usage: '65%', peak: '07:30 PM', trend: '+5%', revenue: '₹22,100', color: '#10b981' },
+  { id: 3, name: 'Home Theatre', usage: '92%', peak: '08:00 PM', trend: '+20%', revenue: '₹85,500', color: '#7c3aed' },
+  { id: 4, name: 'Table Tennis', usage: '42%', peak: '04:00 PM', trend: '-2%', revenue: '₹8,400', color: '#ea580c' },
 ];
 
 export default function GetReport() {
-  const navigate = useNavigate();
-  const [timeFilter, setTimeFilter] = useState('This Month');
-
-  const StatCard = ({ title, value, percentage, isPositive }: { title: string, value: string, percentage: string, isPositive: boolean }) => (
-    <Paper elevation={0} sx={{ p: 3, border: '1px solid #f0f0f0', borderRadius: 4 }}>
-      <Typography variant="body2" color="text.secondary" fontWeight="600" gutterBottom>{title}</Typography>
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Typography variant="h4" fontWeight="bold" sx={{ color: '#002855' }}>{value}</Typography>
-        <Box sx={{ display: 'flex', alignItems: 'center', color: isPositive ? '#4caf50' : '#f44336' }}>
-          {isPositive ? <TrendingUpIcon fontSize="small" /> : <TrendingDownIcon fontSize="small" />}
-          <Typography variant="body2" fontWeight="700" sx={{ ml: 0.5 }}>{percentage}</Typography>
-        </Box>
-      </Box>
-    </Paper>
-  );
-
   return (
-    <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: '#ffffff', minHeight: '100vh', borderRadius: 2 }}>
+    <Box sx={{ p: { xs: 2, md: 5 }, bgcolor: '#f8fafc', minHeight: '100vh' }}>
       
-      {/* Header Section */}
-      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
+      {/* Page Header */}
+      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 6 }}>
         <Box>
-          <Typography variant="h4" fontWeight="bold" sx={{ mb: 1, color: '#002855' }}>
-            Reports & Analytics
-          </Typography>
-          <Breadcrumbs separator=">" aria-label="breadcrumb">
-            <Link underline="hover" color="inherit" onClick={() => navigate('/')} sx={{ cursor: 'pointer' }}>
-              Dashboard
-            </Link>
-            <Typography color="text.primary">Reports</Typography>
-          </Breadcrumbs>
+          <Typography variant="h3" fontWeight="900" color="#002855">AI Operational Insights</Typography>
+          <Typography variant="subtitle1" color="text.secondary" fontWeight="700">Predictive usage patterns and financial health auditing</Typography>
         </Box>
-        <Stack direction="row" spacing={2}>
-          <Select 
-            value={timeFilter} 
-            onChange={(e) => setTimeFilter(e.target.value as string)} 
-            size="small"
-            sx={{ borderRadius: '10px', minWidth: 140, bgcolor: '#f8fafc', '& fieldset': { border: 'none' } }}
-          >
-            <MenuItem value="This Week">This Week</MenuItem>
-            <MenuItem value="This Month">This Month</MenuItem>
-            <MenuItem value="This Year">This Year</MenuItem>
-          </Select>
-          <Button 
-            variant="text" 
-            startIcon={<DownloadIcon />} 
-            sx={{ borderRadius: '10px', textTransform: 'none', fontWeight: 600, color: '#002855' }}
-          >
-            Export
-          </Button>
-        </Stack>
-      </Box>
+        <Button 
+          variant="contained" 
+          startIcon={<ExportIcon />} 
+          sx={{ borderRadius: '16px', px: 4, py: 1.5, fontWeight: 900, bgcolor: '#002855' }}
+        >
+          Export Executive Summary
+        </Button>
+      </Stack>
 
-      {/* Stats Summary Section */}
-      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '1fr 1fr 1fr 1fr' }, gap: 3, mb: 5 }}>
-        <Box>
-          <StatCard title="Total Revenue" value="₹45,230" percentage="+22%" isPositive={true} />
-        </Box>
-        <Box>
-          <StatCard title="Total Bookings" value="1,560" percentage="+10%" isPositive={true} />
-        </Box>
-        <Box>
-          <StatCard title="Active Members" value="1,245" percentage="+12%" isPositive={true} />
-        </Box>
-        <Box>
-          <StatCard title="Guests This Week" value="56" percentage="-5%" isPositive={false} />
-        </Box>
-      </Box>
+      <Grid container spacing={4}>
+        {/* KPI Cards */}
+        <Grid size={{ xs: 12, md: 3 }}>
+          <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
+            <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
+              <Box sx={{ p: 1, bgcolor: '#eff6ff', borderRadius: '12px', color: '#1d4ed8' }}><RevenueIcon /></Box>
+              <Typography variant="caption" fontWeight="900" color="#64748b">MONTHLY REVENUE</Typography>
+            </Stack>
+            <Typography variant="h4" fontWeight="900" color="#002855">₹8,45,200</Typography>
+            <Typography variant="caption" sx={{ color: '#10b981', fontWeight: 800 }}>+18.4% VS LAST MONTH</Typography>
+          </Paper>
+        </Grid>
+        <Grid size={{ xs: 12, md: 3 }}>
+          <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
+            <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
+              <Box sx={{ p: 1, bgcolor: '#f0fdf4', borderRadius: '12px', color: '#10b981' }}><TrafficIcon /></Box>
+              <Typography variant="caption" fontWeight="900" color="#64748b">CLUB TRAFFIC</Typography>
+            </Stack>
+            <Typography variant="h4" fontWeight="900" color="#002855">1,240</Typography>
+            <Typography variant="caption" sx={{ color: '#10b981', fontWeight: 800 }}>85% ACTIVE RESIDENTS</Typography>
+          </Paper>
+        </Grid>
+        <Grid size={{ xs: 12, md: 3 }}>
+          <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
+            <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
+              <Box sx={{ p: 1, bgcolor: '#fef2f2', borderRadius: '12px', color: '#ef4444' }}><PeakIcon /></Box>
+              <Typography variant="caption" fontWeight="900" color="#64748b">PEAK LOAD TIME</Typography>
+            </Stack>
+            <Typography variant="h4" fontWeight="900" color="#002855">07:45 PM</Typography>
+            <Typography variant="caption" sx={{ color: '#ef4444', fontWeight: 800 }}>HIGH CONGESTION ALERT</Typography>
+          </Paper>
+        </Grid>
+        <Grid size={{ xs: 12, md: 3 }}>
+          <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #002855', bgcolor: '#002855', color: 'white' }}>
+            <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
+              <Box sx={{ p: 1, bgcolor: 'rgba(255,255,255,0.1)', borderRadius: '12px', color: 'white' }}><AIIcon /></Box>
+              <Typography variant="caption" fontWeight="900" color="rgba(255,255,255,0.7)">AI RECOMMENDATION</Typography>
+            </Stack>
+            <Typography variant="body2" fontWeight="700" sx={{ mb: 1 }}>Optimize GYM staffing for 6 PM - 9 PM slots.</Typography>
+            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.5)', fontWeight: 800 }}>BASED ON 30-DAY PATTERN</Typography>
+          </Paper>
+        </Grid>
 
-      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: '2fr 1fr' }, gap: 4 }}>
-        {/* Revenue Overview Chart */}
-        <Box>
-          <Paper elevation={0} sx={{ p: 4, border: '1px solid #f0f0f0', borderRadius: 6 }}>
-            <Typography variant="h6" fontWeight="bold" sx={{ mb: 4, color: '#002855' }}>Revenue Overview</Typography>
-            <Box sx={{ height: 400, width: '100%' }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={lineData}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                  <XAxis 
-                    dataKey="name" 
-                    axisLine={false} 
-                    tickLine={false} 
-                    tick={{ fill: '#9e9e9e', fontSize: 12 }} 
-                    dy={10}
-                  />
-                  <YAxis 
-                    axisLine={false} 
-                    tickLine={false} 
-                    tick={{ fill: '#9e9e9e', fontSize: 12 }} 
-                  />
-                  <Tooltip 
-                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 30px rgba(0,0,0,0.1)' }} 
-                  />
-                  <Line type="monotone" dataKey="total" stroke="#0047b3" strokeWidth={3} dot={{ r: 4, fill: '#0047b3' }} activeDot={{ r: 6 }} />
-                  <Line type="monotone" dataKey="online" stroke="#4caf50" strokeWidth={3} dot={{ r: 4, fill: '#4caf50' }} activeDot={{ r: 6 }} />
-                  <Line type="monotone" dataKey="offline" stroke="#ff9800" strokeWidth={3} dot={{ r: 4, fill: '#ff9800' }} activeDot={{ r: 6 }} />
-                </LineChart>
-              </ResponsiveContainer>
+        {/* Heatmap Placeholder & usage charts */}
+        <Grid size={{ xs: 12, md: 8 }}>
+          <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: 'white', minHeight: 400 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+              <Typography variant="h6" fontWeight="900" color="#002855">Hourly Usage Heatmap</Typography>
+              <Chip label="Real-time" size="small" sx={{ fontWeight: 900, bgcolor: '#f0fdf4', color: '#10b981' }} />
+            </Box>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {['Gym', 'Pool', 'Theatre', 'Squash'].map((fac) => (
+                <Box key={fac}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                    <Typography variant="caption" fontWeight="800" color="#475569">{fac.toUpperCase()}</Typography>
+                    <Typography variant="caption" fontWeight="800" color="#64748b">LOAD: {Math.floor(Math.random() * 100)}%</Typography>
+                  </Box>
+                  <Box sx={{ height: 12, bgcolor: '#f1f5f9', borderRadius: '6px', overflow: 'hidden' }}>
+                    <Box sx={{ height: '100%', width: `${Math.floor(Math.random() * 100)}%`, bgcolor: '#1d4ed8', borderRadius: '6px' }} />
+                  </Box>
+                </Box>
+              ))}
             </Box>
           </Paper>
-        </Box>
+        </Grid>
 
-        {/* Booking by Facility Chart */}
-        <Box>
-          <Paper elevation={0} sx={{ p: 4, border: '1px solid #f0f0f0', borderRadius: 6, height: '100%' }}>
-            <Typography variant="h6" fontWeight="bold" sx={{ mb: 4, color: '#002855' }}>Booking by Facility</Typography>
-            <Box sx={{ height: 300, width: '100%', position: 'relative' }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={pieData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={80}
-                    outerRadius={110}
-                    paddingAngle={5}
-                    dataKey="value"
-                  >
-                    {pieData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-              <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
-                <Typography variant="h4" fontWeight="bold" color="#002855">1,560</Typography>
-                <Typography variant="caption" color="text.secondary">Total</Typography>
-              </Box>
-            </Box>
-            <Stack spacing={2} sx={{ mt: 4 }}>
-              {pieData.map((item) => (
-                <Box key={item.name} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                    <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: item.color }} />
-                    <Typography variant="body2" fontWeight="500">{item.name}</Typography>
-                  </Box>
-                  <Typography variant="body2" fontWeight="700">{item.value}%</Typography>
+        {/* Facility performance ledger */}
+        <Grid size={{ xs: 12, md: 4 }}>
+          <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
+            <Typography variant="h6" fontWeight="900" color="#002855" sx={{ mb: 4 }}>Facility Efficiency</Typography>
+            <Stack spacing={3}>
+              {facilityStats.map((fac) => (
+                <Box key={fac.id}>
+                  <Stack direction="row" justifyContent="space-between" alignItems="center">
+                    <Stack direction="row" spacing={2} alignItems="center">
+                      <Avatar sx={{ width: 8, height: 8, bgcolor: fac.color }}> </Avatar>
+                      <Typography variant="body2" fontWeight="800" color="#002855">{fac.name}</Typography>
+                    </Stack>
+                    <Typography variant="body2" fontWeight="900" color="#1d4ed8">{fac.usage}</Typography>
+                  </Stack>
+                  <Typography variant="caption" color="text.secondary" fontWeight="700">Revenue: {fac.revenue} • Peak: {fac.peak}</Typography>
                 </Box>
               ))}
             </Stack>
+            <Button fullWidth sx={{ mt: 4, borderRadius: '12px', textTransform: 'none', fontWeight: 800, color: '#002855' }} endIcon={<ChevronIcon />}>
+              View Detailed Analytics
+            </Button>
           </Paper>
-        </Box>
-      </Box>
+        </Grid>
+      </Grid>
 
     </Box>
   );

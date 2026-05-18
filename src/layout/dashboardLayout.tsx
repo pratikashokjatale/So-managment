@@ -14,13 +14,14 @@ import {
   useMediaQuery,
   Avatar,
   Collapse,
-  Stack,
+  IconButton,
 } from "@mui/material";
 import { 
   ExpandLess as ExpandLessIcon, 
   ExpandMore as ExpandMoreIcon,
-  CloudDone as SyncIcon,
+  Logout as LogoutIcon,
 } from "@mui/icons-material";
+import { useAuth } from "@/contexts/AuthContext";
 import { useConfig } from "@/contexts/ConfigContext";
 import { menuItems } from "./menuItems";
 import { alpha } from "@mui/material/styles";
@@ -36,6 +37,7 @@ export default function DashboardLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const { navType } = useConfig();
+  const { logout } = useAuth();
 
   const handleDrawerToggle = () => {
     if (isMobile) {
@@ -162,7 +164,7 @@ export default function DashboardLayout() {
               {hasChildren && (desktopOpen || isMobile) && (
                 <Collapse in={isMenuOpen} timeout="auto" unmountOnExit>
                   <List component="div" disablePadding sx={{ ml: 3 }}>
-                    {item.children?.map((child) => {
+                    {item.children?.map((child: any) => {
                       const childActive = location.pathname === child.path;
                       return (
                         <ListItemButton
@@ -185,6 +187,18 @@ export default function DashboardLayout() {
                             "&:hover": { bgcolor: alpha(theme.palette.common.white, 0.05) },
                           }}
                         >
+                          {child.icon && (
+                            <ListItemIcon
+                              sx={{
+                                minWidth: 32,
+                                mr: 0.5,
+                                justifyContent: "center",
+                                color: "inherit",
+                              }}
+                            >
+                              {child.icon}
+                            </ListItemIcon>
+                          )}
                           <ListItemText
                             primary={child.text}
                             primaryTypographyProps={{ fontSize: "0.85rem", fontWeight: childActive ? 700 : 500 }}
@@ -200,17 +214,48 @@ export default function DashboardLayout() {
         })}
       </List>
 
-      {/* Sync Status & Offline Indicator */}
-      <Box sx={{ p: 3, borderTop: `1px solid ${alpha(theme.palette.common.white, 0.1)}` }}>
-        <Stack direction="row" spacing={2} alignItems="center">
-          <SyncIcon sx={{ color: '#4caf50', fontSize: 20 }} />
-          {(desktopOpen || isMobile) && (
-            <Box>
-              <Typography variant="caption" sx={{ color: alpha(theme.palette.common.white, 0.6), fontWeight: 800, display: 'block' }}>RFID OFFLINE SYNC</Typography>
-              <Typography variant="caption" sx={{ color: 'white', fontWeight: 900 }}>v3.42 • SECURE</Typography>
-            </Box>
-          )}
-        </Stack>
+      {/* Logout Action Area */}
+      <Box sx={{ p: 2, borderTop: `1px solid ${alpha(theme.palette.common.white, 0.1)}` }}>
+        {(desktopOpen || isMobile) ? (
+          <ListItemButton
+            onClick={logout}
+            sx={{
+              borderRadius: "16px",
+             
+              color: "#ef4444",
+              px: 2.5,
+              py: 1.5,
+             
+            }}
+          >
+            <ListItemIcon sx={{ color: "#ef4444", minWidth: 40 }}>
+              <LogoutIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary="Logout"
+              primaryTypographyProps={{
+                fontSize: "0.95rem",
+                fontWeight: 900,
+                letterSpacing: 0.5,
+              }}
+            />
+          </ListItemButton>
+        ) : (
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <IconButton
+              onClick={logout}
+              sx={{
+                bgcolor: "rgba(239, 68, 68, 0.08)",
+                color: "#ef4444",
+                "&:hover": {
+                  bgcolor: "rgba(239, 68, 68, 0.2)",
+                },
+              }}
+            >
+              <LogoutIcon />
+            </IconButton>
+          </Box>
+        )}
       </Box>
     </Box>
   );

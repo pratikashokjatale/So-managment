@@ -1,34 +1,31 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Box, Typography, Button, Table, TableBody, TableCell, 
   TableContainer, TableHead, TableRow, IconButton, 
-  Select, MenuItem, Breadcrumbs, Link, Avatar, Stack, Switch
+  Select, MenuItem, Avatar, Stack, Switch, Paper, Chip
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-
 import Pagination from '../../components/Pagination';
-
 import Search from '@/components/Search';
-
-const mockStaff = [
-  { id: 1, name: 'Sumanth Kumar', avatar: 'https://i.pravatar.cc/150?u=21', department: 'Security', phone: '9876500001', cardNo: 'CM21001', status: 'Active' },
-  { id: 2, name: 'Suresh Yadav', avatar: 'https://i.pravatar.cc/150?u=22', department: 'Housekeeping', phone: '9876500002', cardNo: 'CM21002', status: 'Active' },
-  { id: 3, name: 'Amit Singh', avatar: 'https://i.pravatar.cc/150?u=23', department: 'Maintenance', phone: '9876500003', cardNo: 'CM21003', status: 'Active' },
-  { id: 4, name: 'Vikram Patel', avatar: 'https://i.pravatar.cc/150?u=24', department: 'Front Office', phone: '9876500004', cardNo: 'CM21004', status: 'Inactive' },
-  { id: 5, name: 'Deepak Sharma', avatar: 'https://i.pravatar.cc/150?u=25', department: 'Security', phone: '9876500005', cardNo: 'CM21005', status: 'Active' },
-];
+import { getStaffList, toggleStaffStatus, deleteStaff } from '@/utils/staffStore';
+import type { Staff } from '@/utils/staffStore';
 
 export default function GetStaff() {
   const navigate = useNavigate();
+  const [staffList, setStaffList] = useState<Staff[]>([]);
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const [deptFilter, setDeptFilter] = useState('All Departments');
   const [statusFilter, setStatusFilter] = useState('All Status');
+
+  useEffect(() => {
+    setStaffList(getStaffList());
+  }, []);
 
   const handlePageChange = (_event: any, value: number) => {
     setPage(value);
@@ -39,140 +36,196 @@ export default function GetStaff() {
     setPage(1);
   };
 
+  const handleStatusToggle = (id: string) => {
+    const updated = toggleStaffStatus(id);
+    setStaffList(prev => prev.map(s => s.id === id ? updated : s));
+  };
+
+  const handleDelete = (id: string) => {
+    deleteStaff(id);
+    const updated = getStaffList();
+    setStaffList(updated);
+    
+    // Auto-adjust page index if current page is empty
+    const totalPages = Math.ceil(updated.length / rowsPerPage);
+    if (page > totalPages && totalPages > 0) {
+      setPage(totalPages);
+    }
+  };
+
+  // Filter and Search Logic
+  const filteredStaff = staffList.filter(staff => {
+    const matchesSearch = staff.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          staff.phone.includes(searchQuery) ||
+                          staff.cardNo.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesDept = deptFilter === 'All Departments' || staff.department === deptFilter;
+    const matchesStatus = statusFilter === 'All Status' || staff.status === statusFilter;
+
+    return matchesSearch && matchesDept && matchesStatus;
+  });
+
+  // Pagination bounds
+  const totalResults = filteredStaff.length;
+  const paginatedStaff = filteredStaff.slice((page - 1) * rowsPerPage, page * rowsPerPage);
+
   const filterSelectSx = {
-    height: 40,
+    height: 44,
+    minWidth: 180,
     fontSize: '0.875rem',
-    fontWeight: 500,
-    color: 'text.primary',
-    borderRadius: '10px',
+    fontWeight: 700,
+    color: '#002855',
+    borderRadius: '16px',
     bgcolor: '#f8fafc',
-    '.MuiOutlinedInput-notchedOutline': { border: 'none' },
+    '.MuiOutlinedInput-notchedOutline': { borderColor: '#e2e8f0' },
+    '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#cbd5e1' },
+    '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#002855' }
   };
 
   return (
-    <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: '#ffffff', minHeight: '100vh', borderRadius: 2 }}>
+    <Box sx={{ p: { xs: 2, md: 5 }, bgcolor: '#f8fafc', minHeight: '100vh' }}>
       
       {/* Header Section */}
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" fontWeight="bold" sx={{ mb: 1, color: '#002855' }}>
-          Staff Management
-        </Typography>
-        <Breadcrumbs separator=">" aria-label="breadcrumb">
-          <Link underline="hover" color="inherit" onClick={() => navigate('/')} sx={{ cursor: 'pointer' }}>
-            Dashboard
-          </Link>
-          <Typography color="text.primary">Staff</Typography>
-        </Breadcrumbs>
-      </Box>
-
-      {/* Filters Section */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
-        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-          <Select value={deptFilter} onChange={(e) => setDeptFilter(e.target.value as string)} sx={filterSelectSx}>
-            <MenuItem value="All Departments">All Departments</MenuItem>
-            <MenuItem value="Security">Security</MenuItem>
-            <MenuItem value="Housekeeping">Housekeeping</MenuItem>
-            <MenuItem value="Maintenance">Maintenance</MenuItem>
-            <MenuItem value="Front Office">Front Office</MenuItem>
-          </Select>
-          <Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as string)} sx={filterSelectSx}>
-            <MenuItem value="All Status">All Status</MenuItem>
-            <MenuItem value="Active">Active</MenuItem>
-            <MenuItem value="Inactive">Inactive</MenuItem>
-          </Select>
-          <Search 
-            placeholder="Search staff by name, phone..." 
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            sx={{ width: { xs: '100%', md: 300 }, '& fieldset': { borderRadius: '10px' } }}
-          />
+      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 6 }}>
+        <Box>
+          <Typography variant="h3" fontWeight="900" color="#002855">Staff Management</Typography>
+          <Typography variant="subtitle1" color="text.secondary" fontWeight="700">Manage estate crew, assigned facilities, and digital I-Cards</Typography>
         </Box>
         <Button 
           variant="contained" 
-          color="primary" 
           onClick={() => navigate('/staff/add')}
-          sx={{ borderRadius: '10px', textTransform: 'none', px: 3, fontWeight: 600, bgcolor: '#0047b3', '&:hover': { bgcolor: '#003380' }, boxShadow: 'none' }}
+          sx={{ borderRadius: '16px', px: 4, py: 1.5, fontWeight: 900, bgcolor: '#002855' }}
         >
-          Add Staff
+          Add Staff Member
         </Button>
-      </Box>
+      </Stack>
+
+      {/* Filters Section */}
+      <Paper elevation={0} sx={{ p: 3, border: '1px solid #e2e8f0', borderRadius: '24px', mb: 4, bgcolor: 'white' }}>
+        <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} alignItems="center" justifyContent="space-between">
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ width: '100%' }}>
+            <Select value={deptFilter} onChange={(e) => setDeptFilter(e.target.value as string)} sx={filterSelectSx}>
+              <MenuItem value="All Departments">All Departments</MenuItem>
+              <MenuItem value="Security">Security</MenuItem>
+              <MenuItem value="Housekeeping">Housekeeping</MenuItem>
+              <MenuItem value="Maintenance">Maintenance</MenuItem>
+              <MenuItem value="Front Office">Front Office</MenuItem>
+              <MenuItem value="Fitness & Gym Training">Fitness & Gym Training</MenuItem>
+              <MenuItem value="Pool Operations">Pool Operations</MenuItem>
+              <MenuItem value="Wellness & Spa">Wellness & Spa</MenuItem>
+              <MenuItem value="Park & Gardens">Park & Gardens</MenuItem>
+            </Select>
+
+            <Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as string)} sx={filterSelectSx}>
+              <MenuItem value="All Status">All Status</MenuItem>
+              <MenuItem value="Active">Active</MenuItem>
+              <MenuItem value="Inactive">Inactive</MenuItem>
+            </Select>
+
+            <Search 
+              placeholder="Search by name, phone or card..." 
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setPage(1);
+              }}
+              sx={{ width: { xs: '100%', sm: 320 }, '& fieldset': { borderRadius: '16px', borderColor: '#e2e8f0' } }}
+            />
+          </Stack>
+        </Stack>
+      </Paper>
 
       {/* Table Section */}
-      <TableContainer sx={{ overflowX: 'auto' }}>
-        <Table sx={{ minWidth: 900 }} aria-label="staff table">
-          <TableHead>
-            <TableRow>
-              <TableCell sx={{ color: 'text.secondary', fontWeight: 600 }}>Name</TableCell>
-              <TableCell sx={{ color: 'text.secondary', fontWeight: 600 }}>Department</TableCell>
-              <TableCell sx={{ color: 'text.secondary', fontWeight: 600 }}>Phone</TableCell>
-              <TableCell sx={{ color: 'text.secondary', fontWeight: 600 }}>Card No.</TableCell>
-              <TableCell sx={{ color: 'text.secondary', fontWeight: 600 }}>Status</TableCell>
-              <TableCell sx={{ color: 'text.secondary', fontWeight: 600, textAlign: 'right' }}>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {mockStaff.map((row) => (
-              <TableRow key={row.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                <TableCell sx={{ borderBottomColor: '#f0f0f0', py: 2 }}>
-                  <Stack direction="row" spacing={2} alignItems="center">
-                    <Avatar src={row.avatar} sx={{ width: 40, height: 40 }} />
-                    <Typography variant="body2" sx={{ color: '#002855', fontWeight: 600 }}>{row.name}</Typography>
-                  </Stack>
-                </TableCell>
-                <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>{row.department}</Typography>
-                </TableCell>
-                <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Typography variant="body2" sx={{ color: '#002855', fontWeight: 500 }}>{row.phone}</Typography>
-                </TableCell>
-                <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Typography variant="body2" sx={{ color: '#002855' }}>{row.cardNo}</Typography>
-                </TableCell>
-                <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Switch 
-                    checked={row.status === 'Active'} 
-                    size="small"
-                    color="success"
-                    sx={{
-                      '& .MuiSwitch-switchBase.Mui-checked': {
-                        color: '#4caf50',
-                      },
-                      '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-                        backgroundColor: '#4caf50',
-                      },
-                    }}
-                  />
-                </TableCell>
-                <TableCell align="right" sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Stack direction="row" spacing={0.5} justifyContent="flex-end">
-                    <IconButton size="small" sx={{ color: 'text.secondary' }} onClick={() => navigate(`/staff/${row.id}`)}>
-                      <VisibilityOutlinedIcon fontSize="small" />
-                    </IconButton>
-                    <IconButton size="small" sx={{ color: 'text.secondary' }} onClick={() => navigate(`/staff/edit/${row.id}`)}>
-                      <EditOutlinedIcon fontSize="small" />
-                    </IconButton>
-                    <IconButton size="small" sx={{ color: '#f44336' }}>
-                      <DeleteOutlineIcon fontSize="small" />
-                    </IconButton>
-                  </Stack>
-                </TableCell>
+      <Paper elevation={0} sx={{ borderRadius: '32px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
+        <TableContainer>
+          <Table sx={{ minWidth: 900 }} aria-label="staff table">
+            <TableHead sx={{ bgcolor: '#f8fafc' }}>
+              <TableRow>
+                <TableCell sx={{ fontWeight: 800, py: 3, pl: 4 }}>STAFF IDENTITY</TableCell>
+                <TableCell sx={{ fontWeight: 800 }}>DEPARTMENT</TableCell>
+                <TableCell sx={{ fontWeight: 800 }}>DUTY LOCATION / FACILITY</TableCell>
+                <TableCell sx={{ fontWeight: 800 }}>PHONE NUMBER</TableCell>
+                <TableCell sx={{ fontWeight: 800 }}>CARD NUMBER</TableCell>
+                <TableCell sx={{ fontWeight: 800 }}>ACTIVE STATUS</TableCell>
+                <TableCell sx={{ fontWeight: 800 }} align="right">ACTIONS</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody sx={{ bgcolor: 'white' }}>
+              {paginatedStaff.map((row) => (
+                <TableRow key={row.id} hover>
+                  <TableCell sx={{ py: 2.5, pl: 4 }}>
+                    <Stack direction="row" spacing={2} alignItems="center" onClick={() => navigate(`/staff/${row.id}`)} sx={{ cursor: 'pointer' }}>
+                      <Avatar src={row.avatar} sx={{ width: 44, height: 44, border: '2px solid #f1f5f9' }} />
+                      <Typography variant="body1" fontWeight="800" color="#002855" sx={{ '&:hover': { color: '#1d4ed8' } }}>
+                        {row.name}
+                      </Typography>
+                    </Stack>
+                  </TableCell>
+                  
+                  <TableCell>
+                    <Chip label={row.department} size="small" sx={{ fontWeight: 900, borderRadius: '8px', bgcolor: '#eff6ff', color: '#1d4ed8' }} />
+                  </TableCell>
 
-      {/* Pagination Section */}
-      <Box sx={{ mt: 3 }}>
-        <Pagination 
-          page={page} 
-          totalResults={38} 
-          rowsPerPage={rowsPerPage} 
-          onPageChange={handlePageChange} 
-          onRowsPerPageChange={handleRowsPerPageChange} 
-          rowsPerPageOptions={[5, 10, 25]}
-        />
-      </Box>
+                  <TableCell>
+                    <Chip label={row.facilityName} size="small" sx={{ fontWeight: 900, borderRadius: '8px', bgcolor: '#f0fdf4', color: '#16a34a' }} />
+                  </TableCell>
+
+                  <TableCell sx={{ fontWeight: 700, color: '#1e293b' }}>
+                    {row.phone}
+                  </TableCell>
+
+                  <TableCell sx={{ fontWeight: 800, color: '#002855' }}>
+                    {row.cardNo}
+                  </TableCell>
+
+                  <TableCell>
+                    <Switch 
+                      checked={row.status === 'Active'} 
+                      onChange={() => handleStatusToggle(row.id)}
+                      size="small"
+                      color="success"
+                    />
+                  </TableCell>
+
+                  <TableCell align="right" sx={{ pr: 4 }}>
+                    <Stack direction="row" spacing={1} justifyContent="flex-end">
+                      <IconButton size="small" sx={{ color: '#0284c7' }} onClick={() => navigate(`/staff/${row.id}`)}>
+                        <VisibilityOutlinedIcon fontSize="small" />
+                      </IconButton>
+                      <IconButton size="small" sx={{ color: '#002855' }} onClick={() => navigate(`/staff/edit/${row.id}`)}>
+                        <EditOutlinedIcon fontSize="small" />
+                      </IconButton>
+                      <IconButton size="small" sx={{ color: '#f44336' }} onClick={() => handleDelete(row.id)}>
+                        <DeleteOutlineIcon fontSize="small" />
+                      </IconButton>
+                    </Stack>
+                  </TableCell>
+                </TableRow>
+              ))}
+
+              {paginatedStaff.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={7} align="center" sx={{ py: 8 }}>
+                    <Typography variant="body1" color="text.secondary" fontWeight="700">No staff members found matching the active criteria.</Typography>
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        {/* Spaced Pagination Wrapper */}
+        <Box sx={{ px: 4, py: 1.5, borderTop: '1px solid #e2e8f0' }}>
+          <Pagination 
+            page={page} 
+            totalResults={totalResults} 
+            rowsPerPage={rowsPerPage} 
+            onPageChange={handlePageChange} 
+            onRowsPerPageChange={handleRowsPerPageChange} 
+            rowsPerPageOptions={[5, 10, 25]}
+          />
+        </Box>
+      </Paper>
 
     </Box>
   );

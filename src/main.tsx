@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ConfigProvider } from './contexts/ConfigContext';
+import { AuthProvider } from './contexts/AuthContext';
 import ThemeCustomization from './theme';
 import App from './App';
 import './index.css';
@@ -10,7 +11,9 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ConfigProvider>
       <ThemeCustomization>
-        <App />
+        <AuthProvider>
+          <App />
+        </AuthProvider>
       </ThemeCustomization>
     </ConfigProvider>
   </StrictMode>

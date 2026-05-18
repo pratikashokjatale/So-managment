@@ -10,6 +10,9 @@ import GetBooking from "@/pages/booking/GetBooking";
 import BookingCalendar from "@/pages/booking/BookingCalendar";
 import GetPayment from "@/pages/payment/GetPayment";
 import GetGuest from "@/pages/guest/GetGuest";
+import AddGuest from "@/pages/guest/AddGuest";
+import GuestDetails from "@/pages/guest/GuestDetails";
+import EditGuest from "@/pages/guest/EditGuest";
 import GetStaff from "@/pages/staff/GetStaff";
 import StaffDetails from "@/pages/staff/StaffDetails";
 import EditStaff from "@/pages/staff/EditStaff";
@@ -17,9 +20,24 @@ import StaffAttendance from "@/pages/staff/StaffAttendance";
 import GetAnnouncement from "@/pages/announcement/GetAnnouncement";
 import GetReport from "@/pages/report/GetReport";
 import GetSettings from "@/pages/settings/GetSettings";
+import GetSupport from "@/pages/support/GetSupport";
 import GetLogs from "@/pages/logs/GetLogs";
 import GetFacility from "@/pages/facility/GetFacility";
+import AddFacility from "@/pages/facility/AddFacility";
+import FacilityDetails from "@/pages/facility/FacilityDetails";
+import EditFacility from "@/pages/facility/EditFacility";
 import GetGateEntry from "@/pages/gate/GetGateEntry";
+import GetProject from "@/pages/project/GetProject";
+import AddProject from "@/pages/project/AddProject";
+import EditProject from "@/pages/project/EditProject";
+import ProjectDetails from "@/pages/project/ProjectDetails";
+import GetTower from "@/pages/tower/GetTower";
+import AddTower from "@/pages/tower/AddTower";
+import EditTower from "@/pages/tower/EditTower";
+import TowerDetails from "@/pages/tower/TowerDetails";
+import GetFlat from "@/pages/flat/GetFlat";
+import AddFlat from "@/pages/flat/AddFlat";
+import EditFlat from "@/pages/flat/EditFlat";
 
 const DashboardRoutes = {
   path: "/",
@@ -70,6 +88,18 @@ const DashboardRoutes = {
       element: <GetFacility />,
     },
     {
+      path: "facility/add",
+      element: <AddFacility />,
+    },
+    {
+      path: "facility/:id",
+      element: <FacilityDetails />,
+    },
+    {
+      path: "facility/edit/:id",
+      element: <EditFacility />,
+    },
+    {
       path: "gate",
       element: <GetGateEntry />,
     },
@@ -78,12 +108,28 @@ const DashboardRoutes = {
       element: <GetGuest />,
     },
     {
+      path: "guest/add",
+      element: <AddGuest />,
+    },
+    {
+      path: "guest/:id",
+      element: <GuestDetails />,
+    },
+    {
+      path: "guest/edit/:id",
+      element: <EditGuest />,
+    },
+    {
       path: "staff",
       element: <GetStaff />,
     },
     {
       path: "staff/attendance",
       element: <StaffAttendance />,
+    },
+    {
+      path: "staff/add",
+      element: <EditStaff />,
     },
     {
       path: "staff/:id",
@@ -106,8 +152,56 @@ const DashboardRoutes = {
       element: <GetSettings />,
     },
     {
+      path: "support",
+      element: <GetSupport />,
+    },
+    {
       path: "logs",
       element: <GetLogs />,
+    },
+    {
+      path: "project",
+      element: <GetProject />,
+    },
+    {
+      path: "project/add",
+      element: <AddProject />,
+    },
+    {
+      path: "project/edit/:id",
+      element: <EditProject />,
+    },
+    {
+      path: "project/:id",
+      element: <ProjectDetails />,
+    },
+    {
+      path: "tower",
+      element: <GetTower />,
+    },
+    {
+      path: "tower/add",
+      element: <AddTower />,
+    },
+    {
+      path: "tower/edit/:id",
+      element: <EditTower />,
+    },
+    {
+      path: "tower/:id",
+      element: <TowerDetails />,
+    },
+    {
+      path: "flat",
+      element: <GetFlat />,
+    },
+    {
+      path: "flat/add",
+      element: <AddFlat />,
+    },
+    {
+      path: "flat/edit/:id",
+      element: <EditFlat />,
     },
   ],
 };

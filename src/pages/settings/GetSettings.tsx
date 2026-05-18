@@ -1,239 +1,175 @@
 import { useState } from 'react';
 import { 
-  Box, Typography, Button, Breadcrumbs, Link, Stack, TextField, MenuItem, Divider
+  Box, Typography, Button, Breadcrumbs, Link, Stack, TextField, MenuItem, Divider, Paper, Switch, FormControlLabel, Grid
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import SettingsIcon from '@mui/icons-material/Settings';
-import CardMembershipIcon from '@mui/icons-material/CardMembership';
-import PaymentIcon from '@mui/icons-material/Payment';
-import SecurityIcon from '@mui/icons-material/Security';
-import EmailIcon from '@mui/icons-material/Email';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import BackupIcon from '@mui/icons-material/Backup';
-import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
+import {
+  Settings as GeneralIcon,
+  CardMembership as MembershipIcon,
+  Payment as PaymentIcon,
+  Security as AccessIcon,
+  Email as EmailIcon,
+  Notifications as NotificationIcon,
+  CloudUpload as BackupIcon,
+  Lock as SecurityIcon,
+  ChevronRight as ChevronIcon
+} from '@mui/icons-material';
 
 const settingTabs = [
-  { id: 'general', label: 'General Settings', icon: <SettingsIcon fontSize="small" />, description: 'View and update your society basic details.' },
-  { id: 'membership', label: 'Membership Settings', icon: <CardMembershipIcon fontSize="small" />, description: 'Configure membership types and rules.' },
-  { id: 'payment', label: 'Payment Settings', icon: <PaymentIcon fontSize="small" />, description: 'Manage payment gateways and methods.' },
-  { id: 'access', label: 'Access Control', icon: <SecurityIcon fontSize="small" />, description: 'Define user roles and permissions.' },
-  { id: 'email', label: 'Email & SMS', icon: <EmailIcon fontSize="small" />, description: 'Setup communication channels.' },
-  { id: 'notification', label: 'Notification Settings', icon: <NotificationsIcon fontSize="small" />, description: 'Manage push and email alerts.' },
-  { id: 'backup', label: 'Backup Settings', icon: <BackupIcon fontSize="small" />, description: 'Configure system backups.' },
-  { id: 'security', label: 'Security Settings', icon: <VerifiedUserIcon fontSize="small" />, description: 'Update passwords and auth settings.' },
+  { id: 'general', label: 'General Settings', icon: <GeneralIcon /> },
+  { id: 'membership', label: 'Membership Settings', icon: <MembershipIcon /> },
+  { id: 'payment', label: 'Payment Settings', icon: <PaymentIcon /> },
+  { id: 'access', label: 'Access Control', icon: <AccessIcon /> },
+  { id: 'email', label: 'Email & SMS', icon: <EmailIcon /> },
+  { id: 'notification', label: 'Notification Settings', icon: <NotificationIcon /> },
+  { id: 'backup', label: 'Backup Settings', icon: <BackupIcon /> },
+  { id: 'security', label: 'Security Settings', icon: <SecurityIcon /> },
 ];
 
 export default function GetSettings() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('general');
 
-  const [generalSettings, setGeneralSettings] = useState({
-    clubName: 'Club Marbella',
-    address: 'Marbella Club, Main Gate, Pearl City',
-    contactNumber: '+91 98765 43210',
-    email: 'info@clubmarbella.com',
-    timezone: 'Asia/Kolkata',
-  });
-
   const textFieldSx = {
     '& .MuiOutlinedInput-root': {
-      borderRadius: '12px',
+      borderRadius: '14px',
       bgcolor: '#f8fafc',
       '& fieldset': { border: '1px solid #e2e8f0' },
-      '&:hover fieldset': { borderColor: '#0047b3' },
-    },
-    '& .MuiInputLabel-root': {
-      fontWeight: 500,
-      color: 'text.secondary',
+      '&:hover fieldset': { borderColor: '#002855' },
     }
   };
 
   return (
-    <Box sx={{ p: { xs: 2, md: 5 }, bgcolor: '#ffffff', minHeight: '100vh', borderRadius: 2 }}>
+    <Box sx={{ p: { xs: 2, md: 5 }, bgcolor: '#f8fafc', minHeight: '100vh' }}>
       
-      {/* Header Section */}
+      {/* Page Header */}
       <Box sx={{ mb: 6 }}>
-        <Typography variant="h3" fontWeight="800" sx={{ mb: 1, color: '#002855', letterSpacing: '-0.5px' }}>
-          Settings
-        </Typography>
-        <Breadcrumbs separator="•" aria-label="breadcrumb">
-          <Link underline="hover" color="inherit" onClick={() => navigate('/')} sx={{ cursor: 'pointer', fontWeight: 500 }}>
-            Dashboard
-          </Link>
-          <Typography color="text.primary" fontWeight="600">Preferences</Typography>
+        <Typography variant="h3" fontWeight="900" color="#002855" sx={{ mb: 1 }}>Settings</Typography>
+        <Breadcrumbs separator=">" sx={{ fontWeight: 600 }}>
+          <Link underline="hover" color="inherit" onClick={() => navigate('/')} sx={{ cursor: 'pointer' }}>Dashboard</Link>
+          <Typography color="text.primary" fontWeight="800">Command Center</Typography>
         </Breadcrumbs>
       </Box>
 
-      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '300px 1fr' }, gap: 8 }}>
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '350px 1fr' }, gap: 6 }}>
         
-        {/* Navigation Sidebar */}
-        <Box>
-          <Stack spacing={1}>
-            {settingTabs.map((tab) => (
+        {/* Category Sidebar */}
+        <Stack spacing={2}>
+          {settingTabs.map((tab) => {
+            const isActive = activeTab === tab.id;
+            return (
               <Box
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 sx={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: 2,
-                  p: 2,
-                  borderRadius: '16px',
+                  gap: 3,
+                  p: 2.5,
+                  borderRadius: '24px',
                   cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                  bgcolor: activeTab === tab.id ? 'rgba(0, 71, 179, 0.05)' : 'transparent',
-                  border: activeTab === tab.id ? '1px solid rgba(0, 71, 179, 0.1)' : '1px solid transparent',
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  bgcolor: isActive ? '#eff6ff' : 'white',
+                  border: `2px solid ${isActive ? '#bfdbfe' : 'transparent'}`,
+                  boxShadow: isActive ? 'none' : '0 4px 6px -1px rgba(0,0,0,0.05)',
                   '&:hover': {
-                    bgcolor: activeTab === tab.id ? 'rgba(0, 71, 179, 0.08)' : '#f8fafc',
+                    transform: isActive ? 'none' : 'translateY(-2px)',
+                    boxShadow: isActive ? 'none' : '0 10px 15px -3px rgba(0,0,0,0.1)',
+                    bgcolor: isActive ? '#eff6ff' : '#f8fafc'
                   }
                 }}
               >
                 <Box sx={{ 
-                  width: 40, 
-                  height: 40, 
-                  borderRadius: '12px', 
+                  width: 52, 
+                  height: 52, 
+                  borderRadius: '16px', 
                   display: 'flex', 
                   alignItems: 'center', 
                   justifyContent: 'center',
-                  bgcolor: activeTab === tab.id ? '#0047b3' : '#f1f5f9',
-                  color: activeTab === tab.id ? 'white' : '#64748b',
+                  bgcolor: isActive ? '#002855' : '#f1f5f9',
+                  color: isActive ? 'white' : '#64748b',
+                  transition: '0.3s'
                 }}>
                   {tab.icon}
                 </Box>
-                <Box>
-                  <Typography variant="body2" fontWeight="700" color={activeTab === tab.id ? '#0047b3' : '#1e293b'}>
-                    {tab.label}
-                  </Typography>
-                </Box>
+                <Typography variant="h6" fontWeight="800" sx={{ flexGrow: 1, color: isActive ? '#002855' : '#475569' }}>
+                  {tab.label}
+                </Typography>
+                {isActive && <ChevronIcon sx={{ color: '#002855' }} />}
               </Box>
-            ))}
-          </Stack>
-        </Box>
+            );
+          })}
+        </Stack>
 
-        {/* Content Section */}
-        <Box>
+        {/* Dynamic Content Pane */}
+        <Paper elevation={0} sx={{ p: 5, borderRadius: '40px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
           {activeTab === 'general' && (
             <Box>
-              <Box sx={{ mb: 4 }}>
-                <Typography variant="h5" fontWeight="800" color="#002855" sx={{ mb: 1 }}>General Settings</Typography>
-                <Typography variant="body2" color="text.secondary">Manage your society's identity and basic information.</Typography>
-              </Box>
+              <Typography variant="h4" fontWeight="900" color="#002855" sx={{ mb: 1 }}>General Settings</Typography>
+              <Typography variant="body1" color="text.secondary" sx={{ mb: 5 }}>Configure your society's primary identity and global preferences.</Typography>
               
-              <Stack spacing={6}>
-                {/* Society Information */}
+              <Stack spacing={5}>
                 <Box>
-                  <Typography variant="subtitle1" fontWeight="700" sx={{ mb: 3, color: '#002855' }}>Society Identity</Typography>
-                  <Box sx={{ display: 'grid', gridTemplateColumns: '1fr', gap: 4 }}>
-                    <TextField
-                      label="Society Name"
-                      fullWidth
-                      value={generalSettings.clubName}
-                      onChange={(e) => setGeneralSettings({ ...generalSettings, clubName: e.target.value })}
-                      sx={textFieldSx}
-                    />
-                    <TextField
-                      label="Physical Address"
-                      fullWidth
-                      multiline
-                      rows={3}
-                      value={generalSettings.address}
-                      onChange={(e) => setGeneralSettings({ ...generalSettings, address: e.target.value })}
-                      sx={textFieldSx}
-                    />
-                  </Box>
+                  <Typography variant="subtitle1" fontWeight="800" sx={{ mb: 2, color: '#002855' }}>SOCIETY IDENTITY</Typography>
+                  <Stack spacing={3}>
+                    <TextField label="Society Name" fullWidth defaultValue="Club Marbella" sx={textFieldSx} />
+                    <TextField label="Official Email" fullWidth defaultValue="admin@marbellaclub.com" sx={textFieldSx} />
+                    <TextField label="Society Address" fullWidth multiline rows={3} defaultValue="Marbella Club, Pearl City, Wing A" sx={textFieldSx} />
+                  </Stack>
                 </Box>
-
-                <Divider sx={{ borderStyle: 'dashed' }} />
-
-                {/* Contact Information */}
+                <Divider />
                 <Box>
-                  <Typography variant="subtitle1" fontWeight="700" sx={{ mb: 3, color: '#002855' }}>Contact Information</Typography>
-                  <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 4 }}>
-                    <TextField
-                      label="Primary Contact Number"
-                      fullWidth
-                      value={generalSettings.contactNumber}
-                      onChange={(e) => setGeneralSettings({ ...generalSettings, contactNumber: e.target.value })}
-                      sx={textFieldSx}
-                    />
-                    <TextField
-                      label="Official Email Address"
-                      fullWidth
-                      value={generalSettings.email}
-                      onChange={(e) => setGeneralSettings({ ...generalSettings, email: e.target.value })}
-                      sx={textFieldSx}
-                    />
-                  </Box>
-                </Box>
-
-                <Divider sx={{ borderStyle: 'dashed' }} />
-
-                {/* Regional Preferences */}
-                <Box>
-                  <Typography variant="subtitle1" fontWeight="700" sx={{ mb: 3, color: '#002855' }}>Regional Preferences</Typography>
-                  <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 4 }}>
-                    <TextField
-                      select
-                      label="System Timezone"
-                      fullWidth
-                      value={generalSettings.timezone}
-                      onChange={(e) => setGeneralSettings({ ...generalSettings, timezone: e.target.value })}
-                      sx={textFieldSx}
-                    >
-                      <MenuItem value="Asia/Kolkata">Asia/Kolkata (IST)</MenuItem>
-                      <MenuItem value="UTC">UTC (Universal Time)</MenuItem>
-                      <MenuItem value="America/New_York">America/New_York (EST)</MenuItem>
-                    </TextField>
-                  </Box>
+                  <Typography variant="subtitle1" fontWeight="800" sx={{ mb: 2, color: '#002855' }}>REGIONAL CONFIG</Typography>
+                  <TextField select label="Timezone" fullWidth defaultValue="Asia/Kolkata" sx={textFieldSx}>
+                    <MenuItem value="Asia/Kolkata">Asia/Kolkata (IST)</MenuItem>
+                    <MenuItem value="UTC">UTC (Universal Time)</MenuItem>
+                  </TextField>
                 </Box>
               </Stack>
-
-              <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 8, pt: 4, borderTop: '1px solid #f1f5f9' }}>
-                <Button 
-                  variant="contained" 
-                  sx={{ 
-                    borderRadius: '14px', 
-                    textTransform: 'none', 
-                    px: 8, 
-                    py: 1.8, 
-                    fontWeight: 800, 
-                    bgcolor: '#0047b3', 
-                    boxShadow: '0 4px 14px 0 rgba(0,71,179,0.39)',
-                    '&:hover': {
-                      bgcolor: '#003380',
-                      boxShadow: '0 6px 20px rgba(0,71,179,0.23)'
-                    }
-                  }}
-                >
-                  Save Changes
-                </Button>
-              </Box>
             </Box>
           )}
 
-          {activeTab !== 'general' && (
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: 500, bgcolor: '#f8fafc', borderRadius: '24px' }}>
-              <Box sx={{ 
-                width: 80, 
-                height: 80, 
-                borderRadius: '24px', 
-                bgcolor: 'white', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center',
-                boxShadow: '0 10px 30px rgba(0,0,0,0.05)',
-                mb: 3
-              }}>
-                {settingTabs.find(t => t.id === activeTab)?.icon}
-              </Box>
-              <Typography variant="h6" color="#002855" fontWeight="800">
-                {settingTabs.find(t => t.id === activeTab)?.label}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>{settingTabs.find(t => t.id === activeTab)?.description}</Typography>
-              <Button variant="outlined" sx={{ mt: 4, borderRadius: '12px', textTransform: 'none', fontWeight: 700 }}>Request Access</Button>
+          {activeTab === 'membership' && (
+            <Box>
+              <Typography variant="h4" fontWeight="900" color="#002855" sx={{ mb: 1 }}>Membership Logic</Typography>
+              <Typography variant="body1" color="text.secondary" sx={{ mb: 5 }}>Manage enrollment rules and card identity standards.</Typography>
+              
+              <Stack spacing={4}>
+                <FormControlLabel control={<Switch defaultChecked />} label={<Typography fontWeight="700">Auto-Expiry on Payment Overdue</Typography>} />
+                <FormControlLabel control={<Switch defaultChecked />} label={<Typography fontWeight="700">Allow Master User Guest Creation</Typography>} />
+                <Divider />
+                <Typography variant="subtitle1" fontWeight="800" color="#002855">DEFAULT FEE STRUCTURE</Typography>
+                <Grid container spacing={3}>
+                  <Grid size={{ xs: 6 }}><TextField label="Monthly Fee" fullWidth defaultValue="₹2,500.00" sx={textFieldSx} /></Grid>
+                  <Grid size={{ xs: 6 }}><TextField label="Security Deposit" fullWidth defaultValue="₹5,000.00" sx={textFieldSx} /></Grid>
+                </Grid>
+              </Stack>
             </Box>
           )}
-        </Box>
+
+          {activeTab === 'payment' && (
+            <Box>
+              <Typography variant="h4" fontWeight="900" color="#002855" sx={{ mb: 1 }}>Payment Gateway</Typography>
+              <Typography variant="body1" color="text.secondary" sx={{ mb: 5 }}>Configure financial transaction protocols and wallet rules.</Typography>
+              
+              <Stack spacing={4}>
+                <TextField select label="Primary Gateway" fullWidth defaultValue="Razorpay" sx={textFieldSx}>
+                  <MenuItem value="Razorpay">Razorpay (India)</MenuItem>
+                  <MenuItem value="Stripe">Stripe (International)</MenuItem>
+                </TextField>
+                <TextField label="GST Number" fullWidth sx={textFieldSx} />
+                <Divider />
+                <FormControlLabel control={<Switch defaultChecked />} label={<Typography fontWeight="700">Enable Activity Wallet Auto-Recharge</Typography>} />
+              </Stack>
+            </Box>
+          )}
+
+          {/* Action Footer */}
+          <Box sx={{ mt: 8, pt: 4, borderTop: '1px solid #f1f5f9', display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+            <Button sx={{ borderRadius: '14px', textTransform: 'none', px: 4, fontWeight: 700, color: '#64748b' }}>Discard</Button>
+            <Button variant="contained" sx={{ borderRadius: '16px', textTransform: 'none', px: 6, py: 1.5, fontWeight: 900, bgcolor: '#002855' }}>Apply Changes</Button>
+          </Box>
+        </Paper>
       </Box>
 
     </Box>

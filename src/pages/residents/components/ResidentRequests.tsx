@@ -17,6 +17,7 @@ import {
   CreditCard as PanIcon,
   ZoomIn as ZoomIcon
 } from '@mui/icons-material';
+import Pagination from '@/components/Pagination';
 
 // Mock Document Images (Using generated artifacts)
 const AADHAAR_URL = '/Users/pratikjatale/.gemini/antigravity/brain/c6057e1c-898f-46a0-bb20-ae0c5e641faa/aadhaar_mockup_1778944455202.png';
@@ -35,7 +36,26 @@ const mockRequests = [
     aadhaar: 'XXXX XXXX 1234',
     pan: 'ABCDE1234F',
     category: 'Owner',
-    family: ['John Walker (Spouse)', 'Lily Walker (Child)']
+    family: [
+      { 
+        name: 'John Walker', 
+        relationship: 'Spouse', 
+        gender: 'Male', 
+        mobile: '+91 98765 43220', 
+        aadhaar: 'XXXX XXXX 8891', 
+        pan: 'BCDEF9012A', 
+        vcard: 'CMR-V201' 
+      },
+      { 
+        name: 'Lily Walker', 
+        relationship: 'Child', 
+        gender: 'Female', 
+        mobile: 'N/A', 
+        aadhaar: 'XXXX XXXX 8892', 
+        pan: 'N/A', 
+        vcard: 'CMR-V202' 
+      }
+    ]
   },
   { 
     id: 2, 
@@ -58,6 +78,10 @@ export default function ResidentRequests() {
   const [kycOpen, setKycOpen] = useState(false);
   const [rejectOpen, setRejectOpen] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
+  
+  // Pagination State
+  const [page, setPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   
   // Document Viewer State
   const [docOpen, setDocOpen] = useState(false);
@@ -111,7 +135,7 @@ export default function ResidentRequests() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {mockRequests.map((request) => (
+            {mockRequests.slice((page - 1) * rowsPerPage, page * rowsPerPage).map((request) => (
               <TableRow key={request.id} hover>
                 <TableCell>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -146,6 +170,22 @@ export default function ResidentRequests() {
             ))}
           </TableBody>
         </Table>
+        
+        {mockRequests.length > 0 && (
+          <Box sx={{ p: 2, borderTop: '1px solid #f1f5f9' }}>
+            <Pagination 
+              page={page} 
+              totalResults={mockRequests.length} 
+              rowsPerPage={rowsPerPage} 
+              onPageChange={(_, newPage) => setPage(newPage)} 
+              onRowsPerPageChange={(e) => {
+                setRowsPerPage(e.target.value as number);
+                setPage(1);
+              }} 
+              rowsPerPageOptions={[5, 10, 25]}
+            />
+          </Box>
+        )}
       </TableContainer>
 
       {/* KYC Details Dialog */}
@@ -224,12 +264,44 @@ export default function ResidentRequests() {
                 <Divider />
 
                 <Box>
-                  <Typography variant="caption" fontWeight="800" color="text.secondary" sx={{ display: 'block', mb: 1 }}>FAMILY MEMBERS</Typography>
-                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                    {selectedRequest.family.length > 0 ? selectedRequest.family.map((f: string) => (
-                      <Chip key={f} label={f} size="small" variant="outlined" sx={{ borderRadius: '8px', fontWeight: 600 }} />
-                    )) : <Typography variant="body2" color="text.secondary">No family details provided.</Typography>}
-                  </Box>
+                  <Typography variant="caption" fontWeight="800" color="text.secondary" sx={{ display: 'block', mb: 1.5 }}>
+                    FAMILY MEMBERS & ACCESS PERMISSIONS ({selectedRequest.family.length})
+                  </Typography>
+                  <Stack spacing={2}>
+                    {selectedRequest.family.length > 0 ? selectedRequest.family.map((f: any, idx: number) => (
+                      <Box 
+                        key={idx} 
+                        sx={{ 
+                          p: 2, 
+                          border: '1px solid #e2e8f0', 
+                          borderRadius: '12px', 
+                          bgcolor: '#f8fafc' 
+                        }}
+                      >
+                        <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 1 }}>
+                          <Typography variant="body2" fontWeight="800" color="#002855">{f.name}</Typography>
+                          <Chip label={f.relationship} size="small" sx={{ bgcolor: '#eff6ff', color: '#0047b3', fontWeight: 700, borderRadius: '6px' }} />
+                          {f.gender && <Chip label={f.gender} size="small" variant="outlined" sx={{ borderRadius: '6px', fontSize: '0.7rem' }} />}
+                        </Stack>
+                        <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1 }}>
+                          <Typography variant="caption" color="text.secondary">
+                            <strong>Mobile:</strong> {f.mobile || 'N/A'}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            <strong>VCard:</strong> {f.vcard || 'N/A'}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            <strong>Aadhaar:</strong> {f.aadhaar || 'N/A'}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            <strong>PAN Card:</strong> {f.pan || 'N/A'}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    )) : (
+                      <Typography variant="body2" color="text.secondary">No family details provided.</Typography>
+                    )}
+                  </Stack>
                 </Box>
               </Stack>
             </DialogContent>

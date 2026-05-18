@@ -1,12 +1,18 @@
-import { Box, Typography, Pagination as MuiPagination, Select, MenuItem } from '@mui/material';
-import type { SelectChangeEvent } from '@mui/material';
+import {
+  Box,
+  Typography,
+  Pagination as MuiPagination,
+  Select,
+  MenuItem,
+} from "@mui/material";
+import type { SelectChangeEvent } from "@mui/material";
 
 interface CustomPaginationProps {
   page: number;
   totalResults: number;
   rowsPerPage: number;
   onPageChange: (event: React.ChangeEvent<unknown>, value: number) => void;
-  onRowsPerPageChange: (event: SelectChangeEvent<number>) => void;
+  onRowsPerPageChange?: (event: SelectChangeEvent<number>) => void;
   rowsPerPageOptions?: number[];
 }
 
@@ -16,51 +22,86 @@ export default function Pagination({
   rowsPerPage,
   onPageChange,
   onRowsPerPageChange,
-  rowsPerPageOptions = [10, 20, 50]
+  rowsPerPageOptions = [5, 10, 15],
 }: CustomPaginationProps) {
   const totalPages = Math.ceil(totalResults / rowsPerPage);
-  const startResult = (page - 1) * rowsPerPage + 1;
-  const endResult = Math.min(page * rowsPerPage, totalResults);
 
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2, flexWrap: 'wrap', gap: 2 }}>
-      <Typography variant="body2" color="text.secondary">
-        Showing {totalResults === 0 ? 0 : startResult} to {endResult} of {totalResults} results
-      </Typography>
-
-      <MuiPagination 
-        count={totalPages} 
-        page={page} 
-        onChange={onPageChange} 
-        color="primary"
-        shape="rounded"
-        sx={{
-          '& .MuiPaginationItem-root': {
-            fontWeight: 500,
-          }
-        }}
-      />
-
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        py: 1.5,
+        flexWrap: "wrap",
+        gap: 2,
+      }}
+    >
+      {/* Left aligned: Rows per page dropdown with options [5, 10, 15] */}
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          fontWeight="700"
+          sx={{ fontSize: "0.85rem" }}
+        >
+          Rows per page:
+        </Typography>
         <Select
           value={rowsPerPage}
           onChange={onRowsPerPageChange}
           size="small"
-          sx={{ 
-            height: 32, 
-            fontSize: '0.875rem',
-            '& fieldset': { border: 'none' },
-            bgcolor: 'transparent'
+          variant="standard"
+          sx={{
+            fontSize: "0.85rem",
+            fontWeight: "800",
+            color: "#002855",
+            "& .MuiSelect-select": { py: 0.5, pr: "20px !important" },
+            "&:before, &:after": { display: "none" },
+            bgcolor: "transparent",
           }}
-          IconComponent={() => <Box component="span" sx={{ px: 1, fontSize: '0.75rem', color: 'text.secondary' }}>▼</Box>}
         >
           {rowsPerPageOptions.map((option) => (
             <MenuItem key={option} value={option}>
-              {option} / page
+              {option}
             </MenuItem>
           ))}
         </Select>
       </Box>
+
+      {/* Right aligned: Numeric page and arrow buttons */}
+      <MuiPagination
+        count={totalPages}
+        page={page}
+        onChange={onPageChange}
+        color="primary"
+        shape="rounded"
+        size="small"
+        siblingCount={0}
+        boundaryCount={0}
+        sx={{
+          '& .MuiPaginationItem-ellipsis': {
+            display: 'none'
+          },
+          "& .MuiPaginationItem-root": {
+            fontWeight: 800,
+            borderRadius: "8px",
+            border: "1px solid #e2e8f0",
+            bgcolor: "white",
+            "&.Mui-selected": {
+              bgcolor: "#002855",
+              color: "white",
+              borderColor: "#002855",
+              "&:hover": {
+                bgcolor: "#001f40",
+              },
+            },
+            "&:hover": {
+              bgcolor: "#f1f5f9",
+            },
+          },
+        }}
+      />
     </Box>
   );
 }

@@ -3,7 +3,7 @@ import {
   Box, Typography, Button, Table, TableBody, TableCell, 
   TableContainer, TableHead, TableRow, Avatar, IconButton, 
   Select, MenuItem, Breadcrumbs, Link, Switch,
-  Tabs, Tab, Chip
+  Tabs, Tab
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import DownloadIcon from '@mui/icons-material/Download';
@@ -17,11 +17,11 @@ import StatusBadge from '../../components/StatusBadge';
 import ResidentRequests from './components/ResidentRequests';
 
 const mockResidents = [
-  { id: 1, name: 'John Doe', avatar: 'https://i.pravatar.cc/150?u=1', apartment: 'A-101', phone: '9876543210', role: 'Master', cardColor: 'Blue', membership: 'Active', expiry: '2026-06-15', status: 'Active' },
-  { id: 2, name: 'Jane Smith', avatar: 'https://i.pravatar.cc/150?u=2', apartment: 'A-101', phone: '9876543211', role: 'Dependent', cardColor: 'Blue', membership: 'Active', expiry: '2026-06-15', status: 'Active' },
-  { id: 3, name: 'Mike Johnson', avatar: 'https://i.pravatar.cc/150?u=3', apartment: 'A-103', phone: '9876543212', role: 'Master', cardColor: 'Blue', membership: 'Active', expiry: '2026-07-01', status: 'Active' },
-  { id: 4, name: 'Emily Davis', avatar: 'https://i.pravatar.cc/150?u=4', apartment: 'A-104', phone: '9876543213', role: 'Master', cardColor: 'White', membership: '7-Day Pass', expiry: '2026-05-20', status: 'Pending' },
-  { id: 5, name: 'Robert Brown', avatar: 'https://i.pravatar.cc/150?u=5', apartment: 'A-105', phone: '9876543214', role: 'Master', cardColor: 'Blue', membership: 'Active', expiry: '2026-08-10', status: 'Active' },
+  { id: 1, name: 'John Doe', avatar: 'https://i.pravatar.cc/150?u=1', apartment: 'A-101', tower: 'Tower A', familyMembers: 4, phone: '9876543210', role: 'Master', cardColor: 'Blue', membership: 'Active', expiry: '2026-06-15', status: 'Active' },
+  { id: 2, name: 'Jane Smith', avatar: 'https://i.pravatar.cc/150?u=2', apartment: 'A-101', tower: 'Tower A', familyMembers: 3, phone: '9876543211', role: 'Dependent', cardColor: 'Blue', membership: 'Active', expiry: '2026-06-15', status: 'Active' },
+  { id: 3, name: 'Mike Johnson', avatar: 'https://i.pravatar.cc/150?u=3', apartment: 'A-103', tower: 'Tower A', familyMembers: 2, phone: '9876543212', role: 'Master', cardColor: 'Blue', membership: 'Active', expiry: '2026-07-01', status: 'Active' },
+  { id: 4, name: 'Emily Davis', avatar: 'https://i.pravatar.cc/150?u=4', apartment: 'A-104', tower: 'Tower A', familyMembers: 1, phone: '9876543213', role: 'Master', cardColor: 'White', membership: '7-Day Pass', expiry: '2026-05-20', status: 'Pending' },
+  { id: 5, name: 'Robert Brown', avatar: 'https://i.pravatar.cc/150?u=5', apartment: 'A-105', tower: 'Tower A', familyMembers: 5, phone: '9876543214', role: 'Master', cardColor: 'Blue', membership: 'Active', expiry: '2026-08-10', status: 'Active' },
 ];
 
 export default function GetResident() {
@@ -141,8 +141,9 @@ export default function GetResident() {
               <TableHead>
                 <TableRow>
                   <TableCell sx={{ color: 'text.secondary', fontWeight: 600, borderBottom: 'none' }}>Resident</TableCell>
+                  <TableCell sx={{ color: 'text.secondary', fontWeight: 600, borderBottom: 'none' }}>Tower</TableCell>
                   <TableCell sx={{ color: 'text.secondary', fontWeight: 600, borderBottom: 'none' }}>Apartment</TableCell>
-                  <TableCell sx={{ color: 'text.secondary', fontWeight: 600, borderBottom: 'none' }}>Role</TableCell>
+                  <TableCell sx={{ color: 'text.secondary', fontWeight: 600, borderBottom: 'none' }}>Family Members</TableCell>
                   <TableCell sx={{ color: 'text.secondary', fontWeight: 600, borderBottom: 'none' }}>Card Type</TableCell>
                   <TableCell sx={{ color: 'text.secondary', fontWeight: 600, borderBottom: 'none' }}>Membership</TableCell>
                   <TableCell sx={{ color: 'text.secondary', fontWeight: 600, borderBottom: 'none' }}>Expiry</TableCell>
@@ -163,19 +164,15 @@ export default function GetResident() {
                       </Box>
                     </TableCell>
                     <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
+                      <Typography variant="body2" fontWeight="600" color="#002855">{row.tower}</Typography>
+                    </TableCell>
+                    <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
                       <Typography variant="body2" fontWeight="600">{row.apartment}</Typography>
                     </TableCell>
                     <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                      <Chip 
-                        label={row.role} 
-                        size="small" 
-                        sx={{ 
-                          borderRadius: '6px', 
-                          fontWeight: 700, 
-                          bgcolor: row.role === 'Master' ? '#eff6ff' : '#f8fafc',
-                          color: row.role === 'Master' ? '#1d4ed8' : 'text.secondary'
-                        }} 
-                      />
+                      <Typography variant="body2" fontWeight="600" color="text.secondary" sx={{ pl: 2 }}>
+                        {row.familyMembers}
+                      </Typography>
                     </TableCell>
                     <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>

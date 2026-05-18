@@ -6,7 +6,6 @@ import {
 } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { 
-  ArrowBack as BackIcon,
   EditOutlined as EditIcon,
   Description as FileIcon,
   CalendarMonth as CalendarIcon,
@@ -19,6 +18,7 @@ import {
 import ResidentWallets from './components/ResidentWallets';
 import ResidentAmenities from './components/ResidentAmenities';
 import bannerImg from '../../assets/marbella-banner.png';
+import BackButton from '@/components/BackButton';
 
 export default function ResidentDetails() {
   const navigate = useNavigate();
@@ -57,8 +57,30 @@ export default function ResidentDetails() {
   };
 
   const mockFamily = [
-    { id: 1, name: 'John Smith', role: 'Dependent (Spouse)', cardNo: 'CMR101-D01', status: 'Active', cardColor: 'Blue' },
-    { id: 2, name: 'Emma Smith', role: 'Dependent (Daughter)', cardNo: 'CMR101-D02', status: 'Active', cardColor: 'Blue' },
+    { 
+      id: 1, 
+      name: 'John Smith', 
+      role: 'Dependent (Spouse)', 
+      cardNo: 'CMR101-D01', 
+      status: 'Active', 
+      cardColor: 'Blue',
+      gender: 'Male',
+      aadhaar: 'XXXX-XXXX-9901',
+      pan: 'BCDFG5678H',
+      vcard: 'CMR-V101'
+    },
+    { 
+      id: 2, 
+      name: 'Emma Smith', 
+      role: 'Dependent (Daughter)', 
+      cardNo: 'CMR101-D02', 
+      status: 'Active', 
+      cardColor: 'Blue',
+      gender: 'Female',
+      aadhaar: 'XXXX-XXXX-9902',
+      pan: 'N/A',
+      vcard: 'CMR-V102'
+    },
   ];
 
   const mockBookings = [
@@ -84,17 +106,17 @@ export default function ResidentDetails() {
           boxShadow: 'inset 0 -80px 100px -40px rgba(0,0,0,0.5), 0 10px 30px -10px rgba(0,0,0,0.1)'
         }} />
         
-        <IconButton 
-          onClick={() => navigate('/residents')} 
+        <BackButton 
+          to="/residents" 
+          label="Back to Residents"
           sx={{ 
-            position: 'absolute', top: 20, left: 20, 
+            position: 'absolute', top: 20, right: 20, 
             bgcolor: 'rgba(255,255,255,0.95)', zIndex: 2, 
             boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-            '&:hover': { bgcolor: 'white' } 
-          }}
-        >
-          <BackIcon sx={{ color: '#002855' }} />
-        </IconButton>
+            '&:hover': { bgcolor: 'white' },
+            color: '#002855'
+          }} 
+        />
 
         <Box sx={{ px: { xs: 2, md: 6 }, mt: -6, position: 'relative', zIndex: 3 }}>
           <Stack direction="row" alignItems="flex-end" spacing={4}>
@@ -131,6 +153,7 @@ export default function ResidentDetails() {
               <Button 
                 variant="contained" 
                 startIcon={<EditIcon />} 
+                onClick={() => navigate(`/residents/edit/${id || '1'}`)}
                 sx={{ 
                   borderRadius: '12px', textTransform: 'none', fontWeight: 800, 
                   height: 48, px: 4, bgcolor: '#002855'
@@ -227,23 +250,52 @@ export default function ResidentDetails() {
           <Box>
             <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 4 }}>
               <Typography variant="h6" fontWeight="900" color="#002855">Dependent Management</Typography>
-              <Button variant="contained" startIcon={<AddIcon />} sx={{ bgcolor: '#002855', borderRadius: '12px', fontWeight: 800 }}>Enroll Member</Button>
+              <Button 
+                variant="contained" 
+                startIcon={<AddIcon />} 
+                onClick={() => navigate(`/residents/edit/${resident.id}`)}
+                sx={{ bgcolor: '#002855', borderRadius: '12px', fontWeight: 800, textTransform: 'none' }}
+              >
+                Enroll Member
+              </Button>
             </Stack>
             <Grid container spacing={3}>
               {mockFamily.map((m) => (
                 <Grid size={{ xs: 12, md: 6 }} key={m.id}>
-                  <Paper elevation={0} sx={{ p: 4, borderRadius: '24px', border: '1px solid #e2e8f0' }}>
+                  <Paper elevation={0} sx={{ p: 4, borderRadius: '24px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
                     <Stack direction="row" spacing={3} alignItems="center">
-                      <Avatar sx={{ width: 60, height: 60, bgcolor: '#f1f5f9', color: '#002855', fontWeight: 900 }}>{m.name[0]}</Avatar>
+                      <Avatar sx={{ width: 60, height: 60, bgcolor: '#f0f4f8', color: '#002855', fontWeight: 900 }}>{m.name[0]}</Avatar>
                       <Box sx={{ flexGrow: 1 }}>
-                        <Typography variant="h6" fontWeight="900">{m.name}</Typography>
+                        <Stack direction="row" spacing={1} alignItems="center">
+                          <Typography variant="h6" fontWeight="900" color="#002855">{m.name}</Typography>
+                          {m.gender && <Chip label={m.gender} size="small" variant="outlined" sx={{ borderRadius: '6px', height: 20, fontSize: '0.7rem' }} />}
+                        </Stack>
                         <Typography variant="body2" color="#64748b" fontWeight="700">{m.role}</Typography>
                       </Box>
                       <Chip label="Blue Card" size="small" sx={{ bgcolor: '#eff6ff', color: '#1d4ed8', fontWeight: 900 }} />
                     </Stack>
                     <Divider sx={{ my: 3 }} />
+                    <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, mb: 3 }}>
+                      <Box>
+                        <Typography variant="caption" color="#94a3b8" fontWeight="800" sx={{ display: 'block' }}>MOBILE NUMBER</Typography>
+                        <Typography variant="body2" fontWeight="700" color="text.primary">+91 98765 43210</Typography>
+                      </Box>
+                      <Box>
+                        <Typography variant="caption" color="#94a3b8" fontWeight="800" sx={{ display: 'block' }}>ACCESS CARD / VCARD</Typography>
+                        <Typography variant="body2" fontWeight="700" color="text.primary">{m.vcard !== 'N/A' ? m.vcard : 'Not Assigned'}</Typography>
+                      </Box>
+                      <Box>
+                        <Typography variant="caption" color="#94a3b8" fontWeight="800" sx={{ display: 'block' }}>AADHAAR CARD</Typography>
+                        <Typography variant="body2" fontWeight="700" color="text.primary">{m.aadhaar}</Typography>
+                      </Box>
+                      <Box>
+                        <Typography variant="caption" color="#94a3b8" fontWeight="800" sx={{ display: 'block' }}>PAN CARD</Typography>
+                        <Typography variant="body2" fontWeight="700" color="text.primary">{m.pan}</Typography>
+                      </Box>
+                    </Box>
+                    <Divider sx={{ mb: 2 }} />
                     <Stack direction="row" justifyContent="space-between">
-                      <Typography variant="caption" fontWeight="800" color="#94a3b8">CARD: {m.cardNo}</Typography>
+                      <Typography variant="caption" fontWeight="800" color="#94a3b8">CARD FOB: {m.cardNo}</Typography>
                       <Typography variant="caption" fontWeight="800" color="#10b981">STATUS: {m.status}</Typography>
                     </Stack>
                   </Paper>
@@ -257,16 +309,48 @@ export default function ResidentDetails() {
           <Box>
             <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 4 }}>
               <Typography variant="h6" fontWeight="900" color="#002855">KYC Compliance Repository</Typography>
-              <Button variant="outlined" startIcon={<UploadIcon />} sx={{ borderRadius: '12px', fontWeight: 800, borderColor: '#002855', color: '#002855' }}>Upload New</Button>
+              <Button variant="outlined" startIcon={<UploadIcon />} sx={{ borderRadius: '12px', fontWeight: 800, borderColor: '#002855', color: '#002855', textTransform: 'none' }}>Upload New Document</Button>
             </Stack>
+            
+            <Typography variant="subtitle1" fontWeight="800" color="#002855" sx={{ mb: 2 }}>Master Resident Documents</Typography>
+            <Grid container spacing={4} sx={{ mb: 5 }}>
+              {[
+                { name: 'Aadhaar Card Copy', number: resident.kyc.aadhaar, file: 'aadhaar_scan.pdf', size: '1.2 MB' },
+                { name: 'PAN Card Copy', number: resident.kyc.pan, file: 'pan_scan.pdf', size: '840 KB' },
+                { name: 'Official Branded Photo', number: 'Verified Avatar', file: 'profile_picture.png', size: '2.1 MB' }
+              ].map((doc) => (
+                <Grid size={{ xs: 12, md: 4 }} key={doc.name}>
+                  <Paper elevation={0} sx={{ p: 4, borderRadius: '24px', border: '1px solid #e2e8f0', textAlign: 'center', bgcolor: 'white' }}>
+                    <Box sx={{ p: 4, bgcolor: '#f8fafc', borderRadius: '20px', mb: 2, display: 'flex', justifyContent: 'center' }}>
+                      <FileIcon sx={{ fontSize: 44, color: '#002855' }} />
+                    </Box>
+                    <Typography variant="body1" fontWeight="900" color="#002855">{doc.name}</Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>{doc.number}</Typography>
+                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>{doc.file} ({doc.size})</Typography>
+                    <Typography variant="caption" color="#10b981" fontWeight="800" sx={{ mb: 3, display: 'block' }}>✓ VERIFIED BY ADMIN</Typography>
+                    <Button fullWidth variant="outlined" sx={{ borderRadius: '10px', fontWeight: 800, textTransform: 'none', borderColor: '#e2e8f0', color: 'text.primary' }}>View Document</Button>
+                  </Paper>
+                </Grid>
+              ))}
+            </Grid>
+
+            <Typography variant="subtitle1" fontWeight="800" color="#002855" sx={{ mb: 2 }}>Family Member KYC Documents</Typography>
             <Grid container spacing={4}>
-              {['Aadhaar Card', 'PAN Card', 'Official Photo'].map((doc) => (
-                <Grid size={{ xs: 12, md: 4 }} key={doc}>
-                  <Paper elevation={0} sx={{ p: 4, borderRadius: '24px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
-                    <Box sx={{ p: 4, bgcolor: '#f8fafc', borderRadius: '20px', mb: 2 }}><FileIcon sx={{ fontSize: 40, color: '#cbd5e1' }} /></Box>
-                    <Typography variant="body1" fontWeight="900">{doc}</Typography>
-                    <Typography variant="caption" color="#10b981" fontWeight="800" sx={{ mb: 3, display: 'block' }}>VERIFIED BY ADMIN</Typography>
-                    <Button fullWidth variant="outlined" sx={{ borderRadius: '10px', fontWeight: 800 }}>Audit Document</Button>
+              {[
+                { member: 'John Smith (Spouse)', doc: 'Aadhaar Card Copy', file: 'spouse_aadhaar.pdf', size: '1.1 MB', status: 'Verified' },
+                { member: 'John Smith (Spouse)', doc: 'PAN Card Copy', file: 'spouse_pan.pdf', size: '920 KB', status: 'Verified' },
+                { member: 'Emma Smith (Daughter)', doc: 'Aadhaar Card Copy', file: 'daughter_aadhaar.pdf', size: '890 KB', status: 'Verified' }
+              ].map((doc, idx) => (
+                <Grid size={{ xs: 12, md: 4 }} key={idx}>
+                  <Paper elevation={0} sx={{ p: 4, borderRadius: '24px', border: '1px solid #e2e8f0', textAlign: 'center', bgcolor: 'white' }}>
+                    <Box sx={{ p: 4, bgcolor: '#f8fafc', borderRadius: '20px', mb: 2, display: 'flex', justifyContent: 'center' }}>
+                      <FileIcon sx={{ fontSize: 44, color: '#0047b3' }} />
+                    </Box>
+                    <Typography variant="caption" color="primary" fontWeight="800" sx={{ display: 'block', mb: 0.5 }}>{doc.member}</Typography>
+                    <Typography variant="body1" fontWeight="900" color="#002855">{doc.doc}</Typography>
+                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>{doc.file} ({doc.size})</Typography>
+                    <Typography variant="caption" color="#10b981" fontWeight="800" sx={{ mb: 3, display: 'block' }}>✓ VERIFIED BY ADMIN</Typography>
+                    <Button fullWidth variant="outlined" sx={{ borderRadius: '10px', fontWeight: 800, textTransform: 'none', borderColor: '#e2e8f0', color: 'text.primary' }}>View Document</Button>
                   </Paper>
                 </Grid>
               ))}

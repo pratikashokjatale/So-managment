@@ -1,33 +1,26 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Box, Typography, Button, Table, TableBody, TableCell, 
   TableContainer, TableHead, TableRow, IconButton, 
   Breadcrumbs, Link, Tabs, Tab, Avatar, Stack,
   Dialog, DialogTitle, DialogContent, DialogActions, TextField,
-  Chip
+  Chip, Tooltip
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 
 import Pagination from '../../components/Pagination';
 import StatusBadge from '../../components/StatusBadge';
 import Search from '@/components/Search';
-
-const mockGuests = [
-  { id: 1, name: 'Alice Walker', avatar: 'https://i.pravatar.cc/150?u=11', resident: 'John Doe', apartment: 'A-101', date: '16 May 2024', status: 'Checked In', validity: '5 Days Left', otpStatus: 'Approved', cardType: 'White' },
-  { id: 2, name: 'Bob Smith', avatar: 'https://i.pravatar.cc/150?u=12', resident: 'Jane Smith', apartment: 'B-202', date: '17 May 2024', status: 'Upcoming', validity: '7 Days Left', otpStatus: 'Pending', cardType: 'White' },
-  { id: 3, name: 'Charlie Brown', avatar: 'https://i.pravatar.cc/150?u=13', resident: 'Mike Johnson', apartment: 'C-303', date: '15 May 2024', status: 'Checked Out', validity: 'Expired', otpStatus: 'Approved', cardType: 'White' },
-];
-
-const mockRequests = [
-  { id: 1, name: 'David Miller', avatar: 'https://i.pravatar.cc/150?u=14', resident: 'Emily Davis', apartment: 'D-404', date: '18 May 2024', purpose: 'Family Visit', status: 'Pending', otpStatus: 'OTP Verified' },
-  { id: 2, name: 'Eva Green', avatar: 'https://i.pravatar.cc/150?u=15', resident: 'Robert Brown', apartment: 'E-505', date: '19 May 2024', purpose: 'Maintenance', status: 'Pending', otpStatus: 'Waiting for Master' },
-];
+import { getGuests, approveGuestRequest, rejectGuestRequest } from '@/utils/guestStore';
+import type { Guest } from '@/utils/guestStore';
 
 export default function GetGuest() {
   const navigate = useNavigate();
+  const [guests, setGuests] = useState<Guest[]>([]);
   const [activeTab, setActiveTab] = useState(0);
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
@@ -35,8 +28,17 @@ export default function GetGuest() {
 
   // Rejection Dialog State
   const [openRejectDialog, setOpenRejectDialog] = useState(false);
-  const [selectedRequest, setSelectedRequest] = useState<any>(null);
+  const [selectedRequest, setSelectedRequest] = useState<Guest | null>(null);
   const [rejectReason, setRejectReason] = useState('');
+
+  // Load guests dynamically
+  const refreshGuests = () => {
+    setGuests(getGuests());
+  };
+
+  useEffect(() => {
+    refreshGuests();
+  }, []);
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
@@ -52,17 +54,39 @@ export default function GetGuest() {
     setPage(1);
   };
 
-  const handleRejectClick = (request: any) => {
-    setSelectedRequest(request);
+  const handleApproveClick = (id: string) => {
+    approveGuestRequest(id);
+    refreshGuests();
+  };
+
+  const handleRejectClick = (guest: Guest) => {
+    setSelectedRequest(guest);
     setOpenRejectDialog(true);
   };
 
   const handleConfirmReject = () => {
-    console.log(`Rejected ${selectedRequest.name} for: ${rejectReason}`);
-    setOpenRejectDialog(false);
-    setSelectedRequest(null);
-    setRejectReason('');
+    if (selectedRequest) {
+      rejectGuestRequest(selectedRequest.id, rejectReason);
+      setOpenRejectDialog(false);
+      setSelectedRequest(null);
+      setRejectReason('');
+      refreshGuests();
+    }
   };
+
+  // Filter based on Tab selection & search query
+  const filteredRows = guests.filter((row) => {
+    const matchesSearch = 
+      row.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      row.resident.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      row.apartment.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      row.purpose.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const isRequest = row.status === 'Pending' || row.status === 'Rejected';
+    return matchesSearch && (activeTab === 0 ? !isRequest : isRequest);
+  });
+
+  const paginatedRows = filteredRows.slice((page - 1) * rowsPerPage, page * rowsPerPage);
 
   return (
     <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: '#ffffff', minHeight: '100vh', borderRadius: 2 }}>
@@ -124,63 +148,97 @@ export default function GetGuest() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {(activeTab === 0 ? mockGuests : mockRequests).map((row: any) => (
-              <TableRow key={row.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Stack direction="row" spacing={2} alignItems="center">
-                    <Avatar src={row.avatar} sx={{ width: 36, height: 36, borderRadius: '10px', bgcolor: '#f1f5f9' }} />
-                    <Box>
-                      <Typography variant="body2" fontWeight="800" color="#002855">{row.name}</Typography>
-                      <Typography variant="caption" color="text.secondary">Host: {row.resident}</Typography>
-                    </Box>
-                  </Stack>
-                </TableCell>
-                <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Typography variant="body2" fontWeight="700" color="#002855">{row.apartment}</Typography>
-                </TableCell>
-                <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Chip 
-                    label={row.validity || '7 Days Pass'} 
-                    size="small" 
-                    sx={{ 
-                      borderRadius: '6px', 
-                      fontWeight: 800, 
-                      bgcolor: row.validity === 'Expired' ? '#fef2f2' : '#f0fdf4',
-                      color: row.validity === 'Expired' ? '#ef4444' : '#10b981'
-                    }} 
-                  />
-                </TableCell>
-                <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Typography variant="caption" fontWeight="700" color={row.otpStatus?.includes('Waiting') ? 'warning.main' : 'success.main'}>
-                    {row.otpStatus}
+            {paginatedRows.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={activeTab === 1 ? 7 : 6} align="center" sx={{ py: 6 }}>
+                  <Typography variant="body1" color="text.secondary" fontWeight="600">
+                    No guests found.
                   </Typography>
                 </TableCell>
-                {activeTab === 1 && (
-                  <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                    <Typography variant="body2" color="text.secondary">{(row as any).purpose}</Typography>
-                  </TableCell>
-                )}
-                <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <StatusBadge status={row.status} variantType="text" />
-                </TableCell>
-                <TableCell align="right" sx={{ borderBottomColor: '#f0f0f0' }}>
-                  {activeTab === 0 ? (
-                    <IconButton size="small" sx={{ color: 'text.secondary' }}>
-                      <VisibilityOutlinedIcon fontSize="small" />
-                    </IconButton>
-                  ) : (
-                    <Stack direction="row" spacing={1} justifyContent="flex-end">
-                      <IconButton size="small" sx={{ color: '#4caf50' }} title="Approve">
-                        <CheckCircleOutlineIcon fontSize="small" />
-                      </IconButton>
-                      <IconButton size="small" sx={{ color: '#f44336' }} title="Reject" onClick={() => handleRejectClick(row)}>
-                        <HighlightOffIcon fontSize="small" />
-                      </IconButton>
-                    </Stack>
-                  )}
-                </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              paginatedRows.map((row) => (
+                <TableRow key={row.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                  <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
+                    <Stack direction="row" spacing={2} alignItems="center">
+                      <Avatar src={row.avatar} sx={{ width: 36, height: 36, borderRadius: '10px', bgcolor: '#f1f5f9' }} />
+                      <Box>
+                        <Typography variant="body2" fontWeight="800" color="#002855">{row.name}</Typography>
+                        <Typography variant="caption" color="text.secondary">Host: {row.resident}</Typography>
+                      </Box>
+                    </Stack>
+                  </TableCell>
+                  <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
+                    <Typography variant="body2" fontWeight="700" color="#002855">
+                      {row.apartment.split('•').slice(-1)[0]?.trim() || row.apartment}
+                    </Typography>
+                  </TableCell>
+                  <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
+                    <Chip 
+                      label={row.validity || '7 Days Pass'} 
+                      size="small" 
+                      sx={{ 
+                        borderRadius: '6px', 
+                        fontWeight: 800, 
+                        bgcolor: row.validity === 'Expired' ? '#fef2f2' : '#f0fdf4',
+                        color: row.validity === 'Expired' ? '#ef4444' : '#10b981'
+                      }} 
+                    />
+                  </TableCell>
+                  <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
+                    <Typography variant="caption" fontWeight="700" color={row.otpStatus?.includes('Waiting') || row.otpStatus === 'Pending' ? 'warning.main' : row.otpStatus === 'Rejected' ? 'error.main' : 'success.main'}>
+                      {row.otpStatus}
+                    </Typography>
+                  </TableCell>
+                  {activeTab === 1 && (
+                    <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
+                      <Typography variant="body2" color="text.secondary">{row.purpose}</Typography>
+                    </TableCell>
+                  )}
+                  <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
+                    <StatusBadge status={row.status} variantType="text" />
+                  </TableCell>
+                  <TableCell align="right" sx={{ borderBottomColor: '#f0f0f0' }}>
+                    {activeTab === 0 ? (
+                      <Stack direction="row" spacing={1} justifyContent="flex-end">
+                        <Tooltip title="View Guest Details">
+                          <IconButton size="small" sx={{ color: 'text.secondary' }} onClick={() => navigate(`/guest/${row.id}`)}>
+                            <VisibilityOutlinedIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Edit Guest">
+                          <IconButton size="small" sx={{ color: 'text.secondary' }} onClick={() => navigate(`/guest/edit/${row.id}`)}>
+                            <EditOutlinedIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                      </Stack>
+                    ) : (
+                      <Stack direction="row" spacing={1} justifyContent="flex-end">
+                        <Tooltip title="View Guest Details">
+                          <IconButton size="small" sx={{ color: 'text.secondary' }} onClick={() => navigate(`/guest/${row.id}`)}>
+                            <VisibilityOutlinedIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                        {row.status === 'Pending' && (
+                          <>
+                            <Tooltip title="Approve Request">
+                              <IconButton size="small" sx={{ color: '#4caf50' }} onClick={() => handleApproveClick(row.id)}>
+                                <CheckCircleOutlineIcon fontSize="small" />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Reject Request">
+                              <IconButton size="small" sx={{ color: '#f44336' }} onClick={() => handleRejectClick(row)}>
+                                <HighlightOffIcon fontSize="small" />
+                              </IconButton>
+                            </Tooltip>
+                          </>
+                        )}
+                      </Stack>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </TableContainer>
@@ -222,16 +280,18 @@ export default function GetGuest() {
       </Dialog>
 
       {/* Pagination Section */}
-      <Box sx={{ mt: 3 }}>
-        <Pagination 
-          page={page} 
-          totalResults={activeTab === 0 ? 150 : 25} 
-          rowsPerPage={rowsPerPage} 
-          onPageChange={handlePageChange} 
-          onRowsPerPageChange={handleRowsPerPageChange} 
-          rowsPerPageOptions={[5, 10, 25]}
-        />
-      </Box>
+      {filteredRows.length > 0 && (
+        <Box sx={{ mt: 3 }}>
+          <Pagination 
+            page={page} 
+            totalResults={filteredRows.length} 
+            rowsPerPage={rowsPerPage} 
+            onPageChange={handlePageChange} 
+            onRowsPerPageChange={handleRowsPerPageChange} 
+            rowsPerPageOptions={[5, 10, 25]}
+          />
+        </Box>
+      )}
 
     </Box>
   );

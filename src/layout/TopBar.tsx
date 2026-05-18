@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Box,
   Divider,
@@ -13,10 +13,15 @@ import {
   Avatar,
   Menu,
   alpha,
+  Badge,
 } from "@mui/material";
-import {
-  Menu as MenuIcon,
+import { 
+  Menu as MenuIcon, 
   Palette as PaletteIcon,
+  NotificationsNone as NotificationsIcon,
+  PersonOutline as ProfileIcon,
+  SettingsOutlined as SettingsIcon,
+  HelpOutline as SupportIcon
 } from "@mui/icons-material";
 import { useConfig, type PresetColor } from "@/contexts/ConfigContext";
 import { menuItems } from "./menuItems";
@@ -42,12 +47,14 @@ export default function TopBar({
 }: TopBarProps) {
   const theme = useTheme();
   const location = useLocation();
+  const navigate = useNavigate();
   const { presetColor, setPresetColor } = useConfig() as any;
 
   const [_langAnchorEl, _setLangAnchorEl] = useState<null | HTMLElement>(null);
   const [paletteAnchorEl, setPaletteAnchorEl] = useState<null | HTMLElement>(
     null,
   );
+  const [profileAnchorEl, setProfileAnchorEl] = useState<null | HTMLElement>(null);
 
   const currentTitle =
     menuItems.find((item) => item.path === location.pathname)?.text ||
@@ -233,13 +240,33 @@ export default function TopBar({
             </MenuItem>
           </Menu> */}
 
+          {/* Notifications Icon */}
+          <Tooltip title="Notifications">
+            <IconButton
+              sx={{
+                bgcolor: alpha(theme.palette.primary.main, 0.08),
+                color: "primary.main",
+                "&:hover": {
+                  bgcolor: alpha(theme.palette.primary.main, 0.15),
+                },
+              }}
+            >
+              <Badge badgeContent={3} color="error" sx={{ '& .MuiBadge-badge': { fontWeight: 900 } }}>
+                <NotificationsIcon fontSize="small" />
+              </Badge>
+            </IconButton>
+          </Tooltip>
+
           <Divider
             orientation="vertical"
             flexItem
             sx={{ mx: 0.5, height: 24, alignSelf: "center" }}
           />
 
-          <IconButton sx={{ p: 0.5, ml: 0.5 }}>
+          <IconButton 
+            onClick={(e) => setProfileAnchorEl(e.currentTarget)}
+            sx={{ p: 0.5, ml: 0.5 }}
+          >
             <Avatar
               sx={{
                 width: 38,
@@ -254,6 +281,92 @@ export default function TopBar({
               JD
             </Avatar>
           </IconButton>
+
+          {/* Profile Dropdown Menu */}
+          <Menu
+            anchorEl={profileAnchorEl}
+            open={Boolean(profileAnchorEl)}
+            onClose={() => setProfileAnchorEl(null)}
+            PaperProps={{
+              sx: {
+                width: 200,
+                mt: 1.5,
+                borderRadius: "20px",
+                p: 1,
+                boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
+                border: `1px solid ${theme.palette.divider}`,
+              },
+            }}
+          >
+            <Typography
+              variant="overline"
+              sx={{
+                px: 2,
+                py: 1,
+                fontWeight: 900,
+                color: "text.secondary",
+                display: "block",
+              }}
+            >
+              User Account
+            </Typography>
+            
+            <MenuItem
+              onClick={() => {
+                setProfileAnchorEl(null);
+                navigate('/staff');
+              }}
+              sx={{
+                borderRadius: "12px",
+                mb: 0.5,
+                py: 1,
+                gap: 1.5,
+                "&:hover": { bgcolor: alpha(theme.palette.primary.main, 0.08) }
+              }}
+            >
+              <ProfileIcon fontSize="small" sx={{ color: "text.secondary" }} />
+              <Typography variant="body2" sx={{ fontWeight: 800, color: "#002855" }}>
+                Profile
+              </Typography>
+            </MenuItem>
+
+            <MenuItem
+              onClick={() => {
+                setProfileAnchorEl(null);
+                navigate('/settings');
+              }}
+              sx={{
+                borderRadius: "12px",
+                mb: 0.5,
+                py: 1,
+                gap: 1.5,
+                "&:hover": { bgcolor: alpha(theme.palette.primary.main, 0.08) }
+              }}
+            >
+              <SettingsIcon fontSize="small" sx={{ color: "text.secondary" }} />
+              <Typography variant="body2" sx={{ fontWeight: 800, color: "#002855" }}>
+                Settings
+              </Typography>
+            </MenuItem>
+
+            <MenuItem
+              onClick={() => {
+                setProfileAnchorEl(null);
+                navigate('/support');
+              }}
+              sx={{
+                borderRadius: "12px",
+                py: 1,
+                gap: 1.5,
+                "&:hover": { bgcolor: alpha(theme.palette.primary.main, 0.08) }
+              }}
+            >
+              <SupportIcon fontSize="small" sx={{ color: "text.secondary" }} />
+              <Typography variant="body2" sx={{ fontWeight: 800, color: "#002855" }}>
+                Support
+              </Typography>
+            </MenuItem>
+          </Menu>
         </Box>
       </Toolbar>
     </Box>

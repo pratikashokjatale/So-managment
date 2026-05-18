@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { 
-  Box, Typography, Button, Paper, Avatar, Breadcrumbs, Link, Divider, Stack
+  Box, Typography, Button, Paper, Avatar, Breadcrumbs, Link, Divider, Stack, Chip, Grid
 } from '@mui/material';
 import { QRCodeSVG } from 'qrcode.react';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -9,192 +10,300 @@ import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
 import BadgeIcon from '@mui/icons-material/Badge';
 import ApartmentIcon from '@mui/icons-material/Apartment';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import PlaceIcon from '@mui/icons-material/Place';
+import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
+import ContactPhoneOutlinedIcon from '@mui/icons-material/ContactPhoneOutlined';
+import { getStaffById } from '@/utils/staffStore';
+import type { Staff } from '@/utils/staffStore';
 
 export default function StaffDetails() {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [staff, setStaff] = useState<Staff | null>(null);
 
-  // Mock staff data
-  const staff = {
-    id: id,
-    name: 'Sumanth Kumar',
-    avatar: 'https://i.pravatar.cc/150?u=21',
-    department: 'Security',
-    phone: '+91 98765 00001',
-    email: 'sumanth.k@society.com',
-    cardNo: 'CM21001',
-    status: 'Active',
-    joiningDate: '12 Jan 2023',
-    address: '123, Marbella Club, Road No. 5, Jubilee Hills, Hyderabad',
-    emergencyContact: '+91 98765 11111'
-  };
+  useEffect(() => {
+    if (id) {
+      const found = getStaffById(id);
+      if (found) {
+        setStaff(found);
+      }
+    }
+  }, [id]);
+
+  if (!staff) {
+    return (
+      <Box sx={{ p: 5 }}>
+        <Typography variant="h5" color="error">Staff member not found</Typography>
+        <Button onClick={() => navigate('/staff')} sx={{ mt: 2 }} variant="contained">
+          Back to Staff List
+        </Button>
+      </Box>
+    );
+  }
 
   return (
-    <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: '#ffffff', minHeight: '100vh', borderRadius: 2 }}>
+    <Box sx={{ p: { xs: 2, md: 5 }, bgcolor: '#f8fafc', minHeight: '100vh' }}>
       
       {/* Header Section */}
-      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <Box sx={{ mb: 5, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
         <Box>
-          <Typography variant="h4" fontWeight="bold" sx={{ mb: 1, color: '#002855' }}>
-            Staff Details
-          </Typography>
-          <Breadcrumbs separator=">" aria-label="breadcrumb">
-            <Link underline="hover" color="inherit" onClick={() => navigate('/')} sx={{ cursor: 'pointer' }}>
+          <Breadcrumbs separator="›" aria-label="breadcrumb" sx={{ mb: 1 }}>
+            <Link underline="hover" color="inherit" onClick={() => navigate('/')} sx={{ cursor: 'pointer', fontWeight: 700 }}>
               Dashboard
             </Link>
-            <Link underline="hover" color="inherit" onClick={() => navigate('/staff')} sx={{ cursor: 'pointer' }}>
-              Staff
+            <Link underline="hover" color="inherit" onClick={() => navigate('/staff')} sx={{ cursor: 'pointer', fontWeight: 700 }}>
+              Staff Management
             </Link>
-            <Typography color="text.primary">Details</Typography>
+            <Typography color="text.primary" sx={{ fontWeight: 900 }}>{staff.name}</Typography>
           </Breadcrumbs>
+          <Typography variant="h3" fontWeight="900" color="#002855">Staff Details</Typography>
         </Box>
         <Stack direction="row" spacing={2}>
           <Button 
             variant="outlined" 
             startIcon={<ArrowBackIcon />} 
             onClick={() => navigate('/staff')}
-            sx={{ borderRadius: '10px', textTransform: 'none', fontWeight: 600 }}
+            sx={{ borderRadius: '16px', px: 3, py: 1.25, fontWeight: 900, borderColor: '#e2e8f0', color: '#002855', bgcolor: 'white', '&:hover': { bgcolor: '#f1f5f9' } }}
           >
             Back to List
           </Button>
           <Button 
             variant="contained" 
             startIcon={<EditIcon />} 
-            onClick={() => navigate(`/staff/edit/${id}`)}
-            sx={{ borderRadius: '10px', textTransform: 'none', fontWeight: 600, bgcolor: '#0047b3', boxShadow: 'none' }}
+            onClick={() => navigate(`/staff/edit/${staff.id}`)}
+            sx={{ borderRadius: '16px', px: 3, py: 1.25, fontWeight: 900, bgcolor: '#002855', boxShadow: 'none', '&:hover': { bgcolor: '#001a35' } }}
           >
             Edit Profile
           </Button>
         </Stack>
       </Box>
 
-      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '4.5fr 7.5fr' }, gap: 4 }}>
-        {/* ID Card Column */}
-        <Box>
+      <Grid container spacing={4}>
+        
+        {/* Left Column: Photorealistic Society ID Card (I-Card) */}
+        <Grid size={{ xs: 12, md: 5, lg: 4.5 }}>
           <Paper 
             elevation={0} 
             sx={{ 
               p: 0, 
-              borderRadius: 6, 
+              borderRadius: '32px', 
               overflow: 'hidden', 
-              border: '1px solid #f0f0f0',
-              boxShadow: '0 10px 40px rgba(0,0,0,0.05)',
-              background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
+              border: '1px solid #e2e8f0',
+              boxShadow: '0 25px 50px -12px rgba(0, 40, 85, 0.08)',
+              background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
               position: 'relative'
             }}
           >
+            {/* Holographic Security Band */}
+            <Box sx={{ height: '6px', background: 'linear-gradient(90deg, #3b82f6 0%, #10b981 50%, #7c3aed 100%)' }} />
+
             {/* ID Card Header */}
-            <Box sx={{ bgcolor: '#002855', p: 3, color: 'white', textAlign: 'center' }}>
-              <Typography variant="h6" fontWeight="800" sx={{ letterSpacing: 1 }}>SOCIETY ID CARD</Typography>
-              <Typography variant="caption" sx={{ opacity: 0.8 }}>PREMIUM RESIDENCY</Typography>
+            <Box sx={{ bgcolor: '#002855', p: 4, color: 'white', textAlign: 'center', position: 'relative' }}>
+              <Typography variant="h5" fontWeight="900" sx={{ letterSpacing: 2, mb: 0.5 }}>MARBELLA CLUB</Typography>
+              <Typography variant="caption" sx={{ opacity: 0.8, fontWeight: 900, letterSpacing: 1.5, display: 'block' }}>OFFICIAL CREW IDENTITY CARD</Typography>
+              
+              {/* Dynamic Status Beacon */}
+              <Chip 
+                label={staff.status} 
+                size="small" 
+                sx={{ 
+                  position: 'absolute',
+                  top: 16,
+                  right: 16,
+                  fontWeight: 900,
+                  fontSize: '0.65rem',
+                  height: 20,
+                  bgcolor: staff.status === 'Active' ? '#10b981' : '#64748b',
+                  color: 'white'
+                }} 
+              />
             </Box>
 
             <Box sx={{ p: 4, textAlign: 'center' }}>
-              <Avatar 
-                src={staff.avatar} 
+              
+              {/* Styled Avatar with Gold Ring Accent */}
+              <Box sx={{ display: 'inline-block', position: 'relative', mb: 3 }}>
+                <Avatar 
+                  src={staff.avatar} 
+                  sx={{ 
+                    width: 150, 
+                    height: 150, 
+                    border: '5px solid white',
+                    boxShadow: '0 12px 28px rgba(0, 40, 85, 0.15)'
+                  }} 
+                />
+              </Box>
+
+              <Typography variant="h4" fontWeight="900" color="#002855" sx={{ mb: 0.5 }}>{staff.name}</Typography>
+              <Typography variant="subtitle1" fontWeight="800" color="#1d4ed8" sx={{ mb: 2 }}>{staff.department}</Typography>
+              
+              {/* Dynamic Assigned Duty Location Badge */}
+              <Chip 
+                label={`Assigned Location: ${staff.facilityName}`} 
+                size="medium" 
                 sx={{ 
-                  width: 140, 
-                  height: 140, 
-                  mx: 'auto', 
-                  mb: 3, 
-                  border: '5px solid white',
-                  boxShadow: '0 5px 15px rgba(0,0,0,0.1)'
+                  fontWeight: 900, 
+                  px: 2, 
+                  py: 2, 
+                  borderRadius: '12px', 
+                  bgcolor: '#f0fdf4', 
+                  color: '#16a34a', 
+                  border: '1px solid #dcfce7',
+                  mb: 4,
+                  fontSize: '0.85rem'
                 }} 
               />
-              <Typography variant="h5" fontWeight="800" color="#002855" sx={{ mb: 0.5 }}>{staff.name}</Typography>
-              <Typography variant="subtitle1" fontWeight="600" color="primary" sx={{ mb: 3 }}>{staff.department}</Typography>
-              
-              <Divider sx={{ mb: 3 }} />
 
-              <Stack spacing={2} sx={{ mb: 4 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', px: 2 }}>
-                  <Typography variant="body2" color="text.secondary">Card Number</Typography>
-                  <Typography variant="body2" fontWeight="700" color="#002855">{staff.cardNo}</Typography>
+              <Divider sx={{ mb: 4 }} />
+
+              {/* ID Metadata Fields */}
+              <Stack spacing={2} sx={{ mb: 4, bgcolor: '#f8fafc', p: 2.5, borderRadius: '20px', border: '1px solid #f1f5f9' }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Typography variant="body2" color="text.secondary" fontWeight="700">Card Number</Typography>
+                  <Typography variant="body2" fontWeight="900" color="#002855">{staff.cardNo}</Typography>
                 </Box>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', px: 2 }}>
-                  <Typography variant="body2" color="text.secondary">Joining Date</Typography>
-                  <Typography variant="body2" fontWeight="700" color="#002855">{staff.joiningDate}</Typography>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Typography variant="body2" color="text.secondary" fontWeight="700">Joining Date</Typography>
+                  <Typography variant="body2" fontWeight="900" color="#002855">{staff.joiningDate}</Typography>
                 </Box>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', px: 2 }}>
-                  <Typography variant="body2" color="text.secondary">Status</Typography>
-                  <Typography variant="body2" fontWeight="700" color="#4caf50">{staff.status}</Typography>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Typography variant="body2" color="text.secondary" fontWeight="700">Verification</Typography>
+                  <Typography variant="body2" fontWeight="900" color="#16a34a">SECURITY CLEARED</Typography>
                 </Box>
               </Stack>
 
-              <Box sx={{ p: 2, bgcolor: 'white', borderRadius: 4, display: 'inline-block', border: '1px solid #f0f0f0' }}>
-                <QRCodeSVG value={`STAFF:${staff.cardNo}:${staff.name}`} size={120} level="H" />
+              {/* Verified QR Scanner Block */}
+              <Box sx={{ 
+                p: 2, 
+                bgcolor: 'white', 
+                borderRadius: '24px', 
+                display: 'inline-block', 
+                border: '1px solid #e2e8f0', 
+                boxShadow: '0 8px 24px rgba(0,0,0,0.02)' 
+              }}>
+                <QRCodeSVG value={`STAFF_VERIFIED:${staff.cardNo}:${staff.name}:${staff.department}:${staff.facilityName}`} size={140} level="H" />
               </Box>
-              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>Scan to verify identity</Typography>
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 2, fontWeight: 800 }}>
+                Scan with Gate Access Terminal to verify crew identity
+              </Typography>
             </Box>
           </Paper>
-        </Box>
+        </Grid>
 
-        {/* Detailed Info Column */}
-        <Box>
-          <Paper elevation={0} sx={{ p: 4, border: '1px solid #f0f0f0', borderRadius: 6 }}>
-            <Typography variant="h6" fontWeight="bold" sx={{ mb: 4, color: '#002855' }}>General Information</Typography>
+        {/* Right Column: Detailed Info Ledger */}
+        <Grid size={{ xs: 12, md: 7, lg: 7.5 }}>
+          <Stack spacing={4}>
             
-            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 4 }}>
-              <Box>
-                <Stack spacing={1}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                    <BadgeIcon color="primary" fontSize="small" />
-                    <Typography variant="subtitle2" color="text.secondary">Full Name</Typography>
-                  </Box>
-                  <Typography variant="body1" fontWeight="600">{staff.name}</Typography>
-                </Stack>
-              </Box>
-              <Box>
-                <Stack spacing={1}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                    <ApartmentIcon color="primary" fontSize="small" />
-                    <Typography variant="subtitle2" color="text.secondary">Department</Typography>
-                  </Box>
-                  <Typography variant="body1" fontWeight="600">{staff.department}</Typography>
-                </Stack>
-              </Box>
-              <Box>
-                <Stack spacing={1}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                    <PhoneIcon color="primary" fontSize="small" />
-                    <Typography variant="subtitle2" color="text.secondary">Phone Number</Typography>
-                  </Box>
-                  <Typography variant="body1" fontWeight="600">{staff.phone}</Typography>
-                </Stack>
-              </Box>
-              <Box>
-                <Stack spacing={1}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                    <EmailIcon color="primary" fontSize="small" />
-                    <Typography variant="subtitle2" color="text.secondary">Email Address</Typography>
-                  </Box>
-                  <Typography variant="body1" fontWeight="600">{staff.email}</Typography>
-                </Stack>
-              </Box>
-            </Box>
-
-            <Divider sx={{ my: 4 }} />
-
-            <Typography variant="h6" fontWeight="bold" sx={{ mb: 4, color: '#002855' }}>Additional Details</Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-              <Box>
-                <Stack spacing={1}>
-                  <Typography variant="subtitle2" color="text.secondary">Permanent Address</Typography>
-                  <Typography variant="body1" fontWeight="500">{staff.address}</Typography>
-                </Stack>
-              </Box>
-              <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 4 }}>
-                <Box>
+            {/* General Info Profile */}
+            <Paper elevation={0} sx={{ p: 4, border: '1px solid #e2e8f0', borderRadius: '32px', bgcolor: 'white' }}>
+              <Typography variant="h5" fontWeight="900" sx={{ mb: 4, color: '#002855' }}>General Information</Typography>
+              
+              <Grid container spacing={4}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <Stack spacing={1}>
-                    <Typography variant="subtitle2" color="text.secondary">Emergency Contact</Typography>
-                    <Typography variant="body1" fontWeight="600" color="error">{staff.emergencyContact}</Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                      <BadgeIcon color="primary" fontSize="small" sx={{ color: '#1d4ed8' }} />
+                      <Typography variant="subtitle2" color="text.secondary" fontWeight="700">Full Legal Name</Typography>
+                    </Box>
+                    <Typography variant="body1" fontWeight="800" color="#1e293b">{staff.name}</Typography>
                   </Stack>
-                </Box>
-              </Box>
-            </Box>
-          </Paper>
-        </Box>
-      </Box>
+                </Grid>
+
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Stack spacing={1}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                      <ApartmentIcon color="primary" fontSize="small" sx={{ color: '#1d4ed8' }} />
+                      <Typography variant="subtitle2" color="text.secondary" fontWeight="700">Department</Typography>
+                    </Box>
+                    <Typography variant="body1" fontWeight="800" color="#1e293b">{staff.department}</Typography>
+                  </Stack>
+                </Grid>
+
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Stack spacing={1}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                      <PhoneIcon color="primary" fontSize="small" sx={{ color: '#1d4ed8' }} />
+                      <Typography variant="subtitle2" color="text.secondary" fontWeight="700">Phone Number</Typography>
+                    </Box>
+                    <Typography variant="body1" fontWeight="800" color="#1e293b">{staff.phone}</Typography>
+                  </Stack>
+                </Grid>
+
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Stack spacing={1}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                      <EmailIcon color="primary" fontSize="small" sx={{ color: '#1d4ed8' }} />
+                      <Typography variant="subtitle2" color="text.secondary" fontWeight="700">Email Address</Typography>
+                    </Box>
+                    <Typography variant="body1" fontWeight="800" color="#1e293b">{staff.email}</Typography>
+                  </Stack>
+                </Grid>
+              </Grid>
+            </Paper>
+
+            {/* Employment and Contact Info */}
+            <Paper elevation={0} sx={{ p: 4, border: '1px solid #e2e8f0', borderRadius: '32px', bgcolor: 'white' }}>
+              <Typography variant="h5" fontWeight="900" sx={{ mb: 4, color: '#002855' }}>Employment & Security Details</Typography>
+              
+              <Grid container spacing={4}>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Stack spacing={1}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                      <CalendarTodayIcon color="primary" fontSize="small" sx={{ color: '#1d4ed8' }} />
+                      <Typography variant="subtitle2" color="text.secondary" fontWeight="700">Date of Joining</Typography>
+                    </Box>
+                    <Typography variant="body1" fontWeight="800" color="#1e293b">{staff.joiningDate}</Typography>
+                  </Stack>
+                </Grid>
+
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Stack spacing={1}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                      <PlaceIcon color="primary" fontSize="small" sx={{ color: '#16a34a' }} />
+                      <Typography variant="subtitle2" color="text.secondary" fontWeight="700">Assigned Duty Facility</Typography>
+                    </Box>
+                    <Typography variant="body1" fontWeight="800" color="#16a34a">{staff.facilityName}</Typography>
+                  </Stack>
+                </Grid>
+
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Stack spacing={1}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                      <ShieldOutlinedIcon color="primary" fontSize="small" sx={{ color: '#16a34a' }} />
+                      <Typography variant="subtitle2" color="text.secondary" fontWeight="700">Security Clearance</Typography>
+                    </Box>
+                    <Typography variant="body1" fontWeight="800" color="#16a34a">Approved (Level 1)</Typography>
+                  </Stack>
+                </Grid>
+
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Stack spacing={1}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                      <ContactPhoneOutlinedIcon color="primary" fontSize="small" sx={{ color: '#ef4444' }} />
+                      <Typography variant="subtitle2" color="text.secondary" fontWeight="700">Emergency Contact</Typography>
+                    </Box>
+                    <Typography variant="body1" fontWeight="900" color="#ef4444">{staff.emergencyContact}</Typography>
+                  </Stack>
+                </Grid>
+
+                <Grid size={12}>
+                  <Divider sx={{ my: 1 }} />
+                </Grid>
+
+                <Grid size={12}>
+                  <Stack spacing={1}>
+                    <Typography variant="subtitle2" color="text.secondary" fontWeight="700">Permanent Home Address</Typography>
+                    <Typography variant="body1" fontWeight="700" color="#1e293b" sx={{ lineHeight: 1.7 }}>{staff.address}</Typography>
+                  </Stack>
+                </Grid>
+              </Grid>
+            </Paper>
+
+          </Stack>
+        </Grid>
+
+      </Grid>
     </Box>
   );
 }
