@@ -13,13 +13,17 @@ import {
   getCookie,
   setCookies,
   setRefreshToken,
+  getRefreshToken,
 } from "../utils/cookies";
 import {
   clearSession,
   getSession,
   setSession,
   setSessionRefreshToken,
+  getSessionRefreshToken,
 } from "../utils/session";
+import { loginApi, logoutApi } from "../apis/auth";
+import { getCachedMe, clearApiCache } from "@/utils/apiCache";
 
 type AuthContextType = {
   isLoggedIn: any;
@@ -34,10 +38,10 @@ type AuthContextType = {
     email: string,
     password: string,
     isLoggingIn: boolean,
-  ) => Promise<void>;
+  ) => Promise<any>;
   register: (email: string, password: string, name?: string) => Promise<void>;
   refreshUser: () => void;
-  logout: () => void;
+  logout: () => Promise<void>;
 };
 
 const initialState = {
@@ -82,11 +86,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const token = getCookie() || getSession();
 
       if (token) {
+        const res = await getCachedMe();
         dispatch({
           type: SET_USER,
           payload: {
             isLoggedIn: true,
-            user: {},
+            user: res?.data?.user || res?.user || res?.data || res || {},
           },
         });
       } else {
@@ -107,8 +112,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const login = async (
-    _username: string,
-    _password: string,
+    email: string,
+    password: string,
     isLogin: boolean,
   ) => {
     dispatch({
@@ -116,25 +121,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       payload: true,
     });
     try {
-      const res = {
-        accessToken: "",
-        refreshToken: "",
-        user: {},
-      };
-      if (res?.accessToken) {
+      clearApiCache();
+      const res = await loginApi({ identifier: email, password });
+      
+      const accessToken = res?.data?.tokens?.accessToken || res?.tokens?.accessToken || res?.accessToken || res?.token || res?.data?.accessToken || res?.data?.token;
+      const refreshToken = res?.data?.tokens?.refreshToken || res?.tokens?.refreshToken || res?.refreshToken || res?.data?.refreshToken;
+      const user = res?.data?.user || res?.user || res?.data || res;
+
+      if (accessToken) {
         if (isLogin) {
-          setCookies(res.accessToken);
-          setRefreshToken(res?.refreshToken);
+          setCookies(accessToken);
+          if (refreshToken) setRefreshToken(refreshToken);
         } else {
-          setSession(res.accessToken);
-          setSessionRefreshToken(res?.refreshToken);
+          setSession(accessToken);
+          if (refreshToken) setSessionRefreshToken(refreshToken);
         }
       }
+
       dispatch({
         type: LOGIN,
         payload: {
           isLoggedIn: true,
-          user: res.user,
+          user: user,
         },
       });
 
@@ -150,18 +158,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
     dispatch({
       type: AUTH_LOADING,
       payload: true,
     });
-    clearCookies();
-    clearSession();
-    dispatch({ type: LOGOUT });
+    try {
+      const refreshToken = getRefreshToken() || getSessionRefreshToken();
+      if (refreshToken) {
+        await logoutApi(refreshToken);
+      }
+    } catch (error) {
+      console.error("Logout API error:", error);
+    } finally {
+      clearCookies();
+      clearSession();
+      clearApiCache();
+      dispatch({ type: LOGOUT });
+    }
   };
 
   const isAdmin =
-    state.user?.roles?.some((role: string) => role === "admin") ?? false;
+    state.user?.role?.toLowerCase() === "admin" ||
+    state.user?.roles?.some((role: string) => role?.toLowerCase() === "admin") ||
+    state.user?.roles?.includes("admin") ||
+    false;
 
   return (
     <AuthContext.Provider

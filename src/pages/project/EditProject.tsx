@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { 
   Box, Typography, Button, TextField, Breadcrumbs, Link, 
-  Paper, MenuItem, Divider 
+  Paper, MenuItem, Divider, CircularProgress 
 } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -10,6 +10,8 @@ import {
 
 import BackButton from '@/components/BackButton';
 import { getProjects, saveProject } from '@/utils/setupStore';
+import { getProjectDetailsApi, updateProjectApi } from '@/apis/project';
+import { toast } from 'react-hot-toast';
 
 export default function EditProject() {
   const navigate = useNavigate();
@@ -25,23 +27,51 @@ export default function EditProject() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    const projects = getProjects();
-    const project = projects.find(p => p.id === id);
-    if (project) {
-      setFormData({
-        name: project.name,
-        code: project.code,
-        location: project.location,
-        status: project.status,
-        description: project.description
-      });
-    } else {
-      // Direct back if not found
-      navigate('/project');
-    }
-    setLoading(false);
+    const loadProject = async () => {
+      setLoading(true);
+      try {
+        if (!id) throw new Error("No project ID");
+        const res = await getProjectDetailsApi(id);
+        const project = res?.data || res;
+        if (project) {
+          // Normalize status
+          let normStatus: 'Active' | 'Inactive' = 'Active';
+          if (project.status?.toUpperCase() === 'INACTIVE') {
+            normStatus = 'Inactive';
+          }
+          setFormData({
+            name: project.name || '',
+            code: project.code || '',
+            location: project.location || '',
+            status: normStatus,
+            description: project.description || ''
+          });
+        } else {
+          throw new Error("Project details empty");
+        }
+      } catch (error) {
+        console.warn("Failed to fetch project via API, falling back to local storage:", error);
+        const projects = getProjects();
+        const project = projects.find(p => p.id === id);
+        if (project) {
+          setFormData({
+            name: project.name,
+            code: project.code,
+            location: project.location,
+            status: project.status,
+            description: project.description
+          });
+        } else {
+          navigate('/project');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadProject();
   }, [id, navigate]);
 
   const validate = () => {
@@ -53,19 +83,61 @@ export default function EditProject() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
+    if (!id) return;
     
-    saveProject({
-      ...formData,
-      id: id
-    });
-    navigate('/project');
+    setSaving(true);
+    try {
+      const payload: any = {
+        name: formData.name.trim(),
+        status: formData.status === 'Active' ? 'ACTIVE' : 'INACTIVE',
+      };
+
+      if (formData.description?.trim()) {
+        payload.description = formData.description.trim();
+      } else {
+        payload.description = null;
+      }
+
+      if (formData.location?.trim()) {
+        payload.location = formData.location.trim();
+      } else {
+        payload.location = null;
+      }
+
+      await updateProjectApi(id, payload);
+      toast.success('Project updated successfully');
+      navigate('/project');
+    } catch (error: any) {
+      console.error("API project update failed:", error);
+      const errMsg = error?.message || 'Failed to update project';
+      toast.error(errMsg);
+
+      if (error?.status === 0) {
+        try {
+          saveProject({
+            ...formData,
+            id: id
+          });
+          toast.success('Project updated successfully (offline fallback)');
+          navigate('/project');
+        } catch (localError) {
+          toast.error('Failed to save project locally');
+        }
+      }
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (loading) {
-    return <Typography sx={{ p: 4 }}>Loading...</Typography>;
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
+        <CircularProgress />
+      </Box>
+    );
   }
 
   return (
@@ -176,6 +248,7 @@ export default function EditProject() {
               type="submit"
               variant="contained" 
               startIcon={<SaveIcon />}
+              disabled={saving}
               sx={{ 
                 borderRadius: '8px', 
                 textTransform: 'none', 
@@ -186,7 +259,7 @@ export default function EditProject() {
                 '&:hover': { bgcolor: '#003380' }
               }}
             >
-              Save Changes
+              {saving ? 'Saving...' : 'Save Changes'}
             </Button>
           </Box>
         </form>

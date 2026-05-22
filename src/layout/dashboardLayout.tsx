@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { Outlet, useNavigate, useLocation, Navigate } from "react-router-dom";
 import {
   Box,
   CssBaseline,
@@ -15,6 +15,7 @@ import {
   Avatar,
   Collapse,
   IconButton,
+  Button,
 } from "@mui/material";
 import { 
   ExpandLess as ExpandLessIcon, 
@@ -27,6 +28,7 @@ import { menuItems } from "./menuItems";
 import { alpha } from "@mui/material/styles";
 import TopBar from "./TopBar";
 import Loader from "@/components/Loader";
+import PageNotFound from "@/pages/PageNotFound";
 
 export default function DashboardLayout() {
   const theme = useTheme();
@@ -37,7 +39,45 @@ export default function DashboardLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const { navType } = useConfig();
-  const { logout } = useAuth();
+  const { isLoggedIn, isAdmin, isAuthLoading, logout } = useAuth();
+
+  if (isAuthLoading) {
+    return <Loader />;
+  }
+
+  if (!isLoggedIn) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (!isAdmin) {
+    return (
+      <Box 
+        sx={{ 
+          display: "flex", 
+          flexDirection: "column", 
+          alignItems: "center", 
+          justifyContent: "center", 
+          minHeight: "100vh", 
+          bgcolor: "background.default", 
+          p: 3 
+        }}
+      >
+        <PageNotFound 
+          title="only admin can view" 
+          message="404 - Only admin can view this dashboard." 
+          showBackButton={false}
+        />
+        <Button 
+          variant="outlined" 
+          color="error" 
+          onClick={logout} 
+          sx={{ mt: -2, borderRadius: "12px", fontWeight: 700 }}
+        >
+          Logout
+        </Button>
+      </Box>
+    );
+  }
 
   const handleDrawerToggle = () => {
     if (isMobile) {
@@ -307,7 +347,7 @@ export default function DashboardLayout() {
         </Drawer>
       </Box>
 
-      <Box component="main" sx={{ flexGrow: 1, py: { xs: 3, md: 5, lg: 6 }, px: { xs: 2, md: 4 }, width: { md: `calc(100% - ${currentDrawerWidth}px)` }, transition: theme.transitions.create(["width", "margin"], { easing: theme.transitions.easing.sharp, duration: theme.transitions.duration.enteringScreen }) }}>
+      <Box component="main" sx={{ flexGrow: 1, pt: { xs: "98px", md: "114px" }, pb: { xs: 3, md: 5 }, px: { xs: 2, md: 4 }, width: { md: `calc(100% - ${currentDrawerWidth}px)` }, transition: theme.transitions.create(["width", "margin"], { easing: theme.transitions.easing.sharp, duration: theme.transitions.duration.enteringScreen }) }}>
         <Outlet />
       </Box>
     </Box>

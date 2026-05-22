@@ -16,19 +16,22 @@ import {
 import Pagination from '@/components/Pagination';
 import BackButton from '@/components/BackButton';
 import { getTowers, getFlats, deleteFlat } from '@/utils/setupStore';
-import type { Tower, Flat } from '@/utils/setupStore';
+import { getTowerDetailsApi } from '@/apis/tower';
+import { getFlatsApi } from '@/apis/flat';
+import { CircularProgress } from '@mui/material';
 
 export default function TowerDetails() {
   const navigate = useNavigate();
   const { id } = useParams();
   
-  const [tower, setTower] = useState<Tower | null>(null);
-  const [towerFlats, setTowerFlats] = useState<Flat[]>([]);
+  const [tower, setTower] = useState<any | null>(null);
+  const [towerFlats, setTowerFlats] = useState<any[]>([]);
   const [deleteFlatId, setDeleteFlatId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   // Pagination states
   const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(20);
 
   const handlePageChange = (_event: any, value: number) => {
     setPage(value);
@@ -40,16 +43,69 @@ export default function TowerDetails() {
   };
 
   useEffect(() => {
-    const towers = getTowers();
-    const foundTower = towers.find(t => t.id === id);
-    if (foundTower) {
-      setTower(foundTower);
-      const flats = getFlats();
-      setTowerFlats(flats.filter(f => f.towerId === id));
-      setPage(1);
-    } else {
-      navigate('/tower');
-    }
+    const loadTower = async () => {
+      if (!id) return;
+      setLoading(true);
+      try {
+        const res = await getTowerDetailsApi(id);
+        const foundTower = res?.data || res;
+        if (foundTower) {
+          // Normalize projectName from Project object if it exists
+          const projName = foundTower.Project?.name || foundTower.projectName;
+          setTower({
+            ...foundTower,
+            projectName: projName
+          });
+          
+          // Retrieve flats from API
+          try {
+            const flatsRes = await getFlatsApi(id, { page: 1, limit: 100 });
+            const list = Array.isArray(flatsRes?.data?.data)
+              ? flatsRes.data.data
+              : flatsRes?.data?.flats || flatsRes?.flats || flatsRes?.data || [];
+            const mappedFlats = list.map((f: any) => {
+              let normStatus = f.status || 'Vacant';
+              if (normStatus === 'VACANT') normStatus = 'Vacant';
+              else if (normStatus === 'OCCUPIED') normStatus = 'Occupied';
+              else if (normStatus === 'MAINTENANCE') normStatus = 'Maintenance';
+
+              return {
+                id: f.id,
+                projectId: f.projectId,
+                towerId: f.towerId,
+                number: f.flatNumber || f.number,
+                floor: f.floorNumber || f.floor,
+                type: f.flatType || f.type,
+                status: normStatus
+              };
+            });
+            setTowerFlats(mappedFlats);
+          } catch (flatErr) {
+            console.warn("Failed to fetch tower flats via API, performing local fallback:", flatErr);
+            const flats = getFlats();
+            setTowerFlats(flats.filter(f => f.towerId === id));
+          }
+          setPage(1);
+        } else {
+          throw new Error("Tower details empty");
+        }
+      } catch (error) {
+        console.warn("Failed to fetch tower details via API, performing local storage fallback:", error);
+        const towers = getTowers();
+        const foundTower = towers.find(t => t.id === id);
+        if (foundTower) {
+          setTower(foundTower);
+          const flats = getFlats();
+          setTowerFlats(flats.filter(f => f.towerId === id));
+          setPage(1);
+        } else {
+          navigate('/tower');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadTower();
   }, [id, navigate]);
 
   const handleDeleteFlatClick = (flatId: string) => {
@@ -64,8 +120,16 @@ export default function TowerDetails() {
     }
   };
 
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
   if (!tower) {
-    return <Typography sx={{ p: 4 }}>Loading...</Typography>;
+    return <Typography sx={{ p: 4 }}>Tower not found.</Typography>;
   }
 
   // Count occupancy
@@ -145,7 +209,7 @@ export default function TowerDetails() {
               </Grid>
               <Grid size={{ xs: 6 }}>
                 <Typography variant="caption" color="text.secondary" fontWeight="600" display="block">TOTAL FLOORS</Typography>
-                <Typography variant="body1" fontWeight="700">{tower.floorsCount} Floors</Typography>
+                <Typography variant="body1" fontWeight="700">{tower.totalFloors !== undefined ? tower.totalFloors : tower.floorsCount} Floors</Typography>
               </Grid>
               <Grid size={{ xs: 6 }}>
                 <Typography variant="caption" color="text.secondary" fontWeight="600" display="block">STATUS</Typography>
@@ -158,8 +222,8 @@ export default function TowerDetails() {
                     fontSize: '0.75rem', 
                     fontWeight: 700,
                     mt: 0.5,
-                    bgcolor: tower.status === 'Active' ? '#ecfdf5' : '#fef2f2',
-                    color: tower.status === 'Active' ? '#10b981' : '#ef4444'
+                    bgcolor: (tower.status?.toUpperCase() === 'ACTIVE' || tower.status === 'Active') ? '#ecfdf5' : '#fef2f2',
+                    color: (tower.status?.toUpperCase() === 'ACTIVE' || tower.status === 'Active') ? '#10b981' : '#ef4444'
                   }}
                 >
                   {tower.status}
@@ -318,7 +382,7 @@ export default function TowerDetails() {
               rowsPerPage={rowsPerPage} 
               onPageChange={handlePageChange} 
               onRowsPerPageChange={handleRowsPerPageChange} 
-              rowsPerPageOptions={[5, 10, 20]}
+              rowsPerPageOptions={[5, 10, 20, 50]}
             />
           </Box>
         )}

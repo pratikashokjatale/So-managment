@@ -10,14 +10,16 @@ import {
 
 import BackButton from '@/components/BackButton';
 import { getProjects, saveTower } from '@/utils/setupStore';
-import type { Project } from '@/utils/setupStore';
+import { getProjectsApi } from '@/apis/project';
+import { createTowerApi } from '@/apis/tower';
+import { toast } from 'react-hot-toast';
 
 export default function AddTower() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const queryProjectId = searchParams.get('projectId') || '';
 
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [projects, setProjects] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     projectId: queryProjectId,
     name: '',
@@ -27,9 +29,20 @@ export default function AddTower() {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setProjects(getProjects());
+    const loadProjects = async () => {
+      try {
+        const res = await getProjectsApi({ limit: 100 });
+        const list = res?.data?.data || res?.data?.projects || res?.projects || res?.data || [];
+        setProjects(list);
+      } catch (error) {
+        console.warn("Failed to fetch projects via API, falling back to local storage:", error);
+        setProjects(getProjects());
+      }
+    };
+    loadProjects();
     if (queryProjectId) {
       setFormData(prev => ({ ...prev, projectId: queryProjectId }));
     }
@@ -44,22 +57,44 @@ export default function AddTower() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
     
-    saveTower({
-      projectId: formData.projectId,
-      name: formData.name,
-      floorsCount: Number(formData.floorsCount),
-      status: formData.status,
-      description: formData.description
-    });
-
-    if (queryProjectId) {
-      navigate(`/project/${queryProjectId}`);
-    } else {
-      navigate('/tower');
+    setLoading(true);
+    try {
+      await createTowerApi(formData.projectId, {
+        name: formData.name,
+        description: formData.description,
+        totalFloors: Number(formData.floorsCount)
+      });
+      toast.success('Tower created successfully');
+      if (queryProjectId) {
+        navigate(`/project/${queryProjectId}`);
+      } else {
+        navigate('/tower');
+      }
+    } catch (error: any) {
+      console.warn("API tower creation failed, performing local storage fallback:", error);
+      try {
+        saveTower({
+          projectId: formData.projectId,
+          name: formData.name,
+          floorsCount: Number(formData.floorsCount),
+          status: formData.status,
+          description: formData.description
+        });
+        toast.success('Tower created successfully (offline fallback)');
+        if (queryProjectId) {
+          navigate(`/project/${queryProjectId}`);
+        } else {
+          navigate('/tower');
+        }
+      } catch (localError) {
+        toast.error(error?.message || 'Failed to create tower');
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -188,6 +223,7 @@ export default function AddTower() {
               type="submit"
               variant="contained" 
               startIcon={<SaveIcon />}
+              disabled={loading}
               sx={{ 
                 borderRadius: '8px', 
                 textTransform: 'none', 
@@ -198,7 +234,7 @@ export default function AddTower() {
                 '&:hover': { bgcolor: '#003380' }
               }}
             >
-              Save Tower
+              {loading ? 'Saving...' : 'Save Tower'}
             </Button>
           </Box>
         </form>

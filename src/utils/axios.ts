@@ -5,7 +5,7 @@ import { clearSession, getSession, getSessionRefreshToken } from "./session";
 
 // Create axios instance
 export const api = axios.create({
-  baseURL: `${API_URL}/api`,
+  baseURL: `${API_URL}/api/v1`,
   timeout: 1200000, // 20 minutes
 });
 
@@ -32,11 +32,15 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       try {
         const refreshToken = getRefreshToken() || getSessionRefreshToken()
-        const res: any = await axios.post(`${API_URL}/auth/refresh-token`, { refreshToken })
-        if (res?.accessToken) {
-          api.defaults.headers.common.Authorization = `Bearer ${res.accessToken}`;
-          setCookies(res.accessToken);
-          setRefreshToken(res?.refreshToken);
+        const res: any = await axios.post(`${API_URL}/api/v1/auth/refresh`, { refreshToken })
+        
+        const newAccessToken = res?.data?.tokens?.accessToken || res?.tokens?.accessToken || res?.accessToken || res?.data?.accessToken || res?.token;
+        const newRefreshToken = res?.data?.tokens?.refreshToken || res?.tokens?.refreshToken || res?.refreshToken || res?.data?.refreshToken;
+        
+        if (newAccessToken) {
+          api.defaults.headers.common.Authorization = `Bearer ${newAccessToken}`;
+          setCookies(newAccessToken);
+          if (newRefreshToken) setRefreshToken(newRefreshToken);
         }
       } catch (error) {
         clearCookies();
@@ -75,7 +79,10 @@ export class ApiError extends Error {
 export const handleApiError = (error: any): ApiError => {
   if (error.response) {
     const message =
-      error.response.data?.error || error.response.data?.errors?.[0]?.msg;
+      error.response.data?.message ||
+      error.response.data?.error ||
+      error.response.data?.errors?.[0]?.msg ||
+      "An error occurred";
 
     return new ApiError(message, error.response?.status, error.response?.data);
   } else if (error.request) {

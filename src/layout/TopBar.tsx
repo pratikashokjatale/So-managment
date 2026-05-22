@@ -25,6 +25,7 @@ import {
 } from "@mui/icons-material";
 import { useConfig, type PresetColor } from "@/contexts/ConfigContext";
 import { menuItems } from "./menuItems";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface TopBarProps {
   handleDrawerToggle: () => void;
@@ -48,13 +49,23 @@ export default function TopBar({
   const theme = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
-  const { presetColor, setPresetColor } = useConfig() as any;
+   const { presetColor, setPresetColor } = useConfig() as any;
+  const { user } = useAuth();
 
   const [_langAnchorEl, _setLangAnchorEl] = useState<null | HTMLElement>(null);
   const [paletteAnchorEl, setPaletteAnchorEl] = useState<null | HTMLElement>(
     null,
   );
   const [profileAnchorEl, setProfileAnchorEl] = useState<null | HTMLElement>(null);
+
+  const userName = user?.name || "Admin User";
+  const userEmail = user?.email || "admin@marbellaclub.com";
+  const userInitials = userName
+    .split(" ")
+    .map((n: string) => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 
   const currentTitle =
     menuItems.find((item) => item.path === location.pathname)?.text ||
@@ -68,7 +79,7 @@ export default function TopBar({
         top: 0,
         right: 0,
         zIndex: theme.zIndex.appBar,
-        width: { md: `calc(100% - ${drawerWidth}px)` },
+        width: { xs: "100%", md: `calc(100% - ${drawerWidth}px)` },
         transition: theme.transitions.create(["width", "margin"], {
           easing: theme.transitions.easing.sharp,
           duration: theme.transitions.duration.leavingScreen,
@@ -278,7 +289,7 @@ export default function TopBar({
                 border: `2px solid ${theme.palette.background.paper}`,
               }}
             >
-              JD
+              {userInitials}
             </Avatar>
           </IconButton>
 
@@ -289,7 +300,7 @@ export default function TopBar({
             onClose={() => setProfileAnchorEl(null)}
             PaperProps={{
               sx: {
-                width: 200,
+                width: 220,
                 mt: 1.5,
                 borderRadius: "20px",
                 p: 1,
@@ -298,23 +309,37 @@ export default function TopBar({
               },
             }}
           >
-            <Typography
-              variant="overline"
-              sx={{
-                px: 2,
-                py: 1,
-                fontWeight: 900,
-                color: "text.secondary",
-                display: "block",
-              }}
-            >
-              User Account
-            </Typography>
+            <Box sx={{ px: 2, py: 1.5 }}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 800, color: "text.primary", lineHeight: 1.2 }}>
+                {userName}
+              </Typography>
+              <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mt: 0.5 }}>
+                {userEmail}
+              </Typography>
+              <Typography 
+                variant="caption" 
+                sx={{ 
+                  display: "inline-block", 
+                  mt: 1, 
+                  px: 1, 
+                  py: 0.25, 
+                  bgcolor: "primary.light", 
+                  color: "primary.contrastText", 
+                  borderRadius: "6px",
+                  fontWeight: 900,
+                  fontSize: "0.65rem",
+                  textTransform: "uppercase"
+                }}
+              >
+                {user?.role || "ADMIN"}
+              </Typography>
+            </Box>
+            <Divider sx={{ my: 1 }} />
             
             <MenuItem
               onClick={() => {
                 setProfileAnchorEl(null);
-                navigate('/staff');
+                navigate('/profile');
               }}
               sx={{
                 borderRadius: "12px",

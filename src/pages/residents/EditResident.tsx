@@ -1,13 +1,26 @@
-import { useState, useEffect } from 'react';
-import { 
-  Box, Typography, Button, TextField, Breadcrumbs, Link, 
-  Paper, Avatar, IconButton, Divider, MenuItem 
-} from '@mui/material';
-import { useNavigate, useParams } from 'react-router-dom';
-import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
-import BackButton from '@/components/BackButton';
-import { getProjects, getTowers, getFlats } from '@/utils/setupStore';
-import type { Project, Tower, Flat } from '@/utils/setupStore';
+import { useState, useEffect } from "react";
+import {
+  Box,
+  Typography,
+  Button,
+  TextField,
+  Breadcrumbs,
+  Link,
+  Paper,
+  Avatar,
+  IconButton,
+  Divider,
+  MenuItem,
+  CircularProgress,
+} from "@mui/material";
+import { useNavigate, useParams } from "react-router-dom";
+import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
+import BackButton from "@/components/BackButton";
+import { getProjects, getTowers, getFlats } from "@/utils/setupStore";
+import type { Project, Tower, Flat } from "@/utils/setupStore";
+import { getCachedProjects, getCachedTowers, getCachedFlats } from "@/utils/apiCache";
+import { getUserDetailsApi, updateUserApi } from "@/apis/user";
+import { toast } from "react-hot-toast";
 
 export default function EditResident() {
   const navigate = useNavigate();
@@ -15,118 +28,278 @@ export default function EditResident() {
 
   // Reactive State
   const [formData, setFormData] = useState({
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    phone: '9876543210',
-    apartment: 'A-101',
-    membership: 'Active',
-    cardNo: 'CMR10101',
-    status: 'Active',
-    avatar: 'https://i.pravatar.cc/150?u=1'
+    name: "",
+    email: "",
+    phone: "",
+    apartment: "",
+    membership: "Active",
+    cardNo: "",
+    status: "ACTIVE",
+    avatar: "",
   });
 
   // Cascading states
-  const [projectId, setProjectId] = useState('');
-  const [towerId, setTowerId] = useState('');
-  const [flatId, setFlatId] = useState('');
+  const [projectId, setProjectId] = useState("");
+  const [towerId, setTowerId] = useState("");
+  const [flatId, setFlatId] = useState("");
 
   const [projects, setProjects] = useState<Project[]>([]);
   const [towers, setTowers] = useState<Tower[]>([]);
   const [flats, setFlats] = useState<Flat[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+
+  const loadSetupData = async () => {
+    try {
+      const projectList = await getCachedProjects();
+      setProjects(projectList);
+    } catch (error) {
+      console.warn(
+        "Failed to fetch projects via API, falling back to local storage:",
+        error,
+      );
+      setProjects(getProjects());
+    }
+  };
+
+  const loadTowersForProject = async (projId: string) => {
+    try {
+      const list = await getCachedTowers(projId);
+      setTowers(list);
+    } catch (error) {
+      console.warn(
+        "Failed to fetch towers via API, falling back to local storage:",
+        error,
+      );
+      setTowers(getTowers().filter((t) => t.projectId === projId));
+    }
+  };
+
+  const loadFlatsForTower = async (towId: string) => {
+    try {
+      const list = await getCachedFlats(towId);
+      setFlats(list);
+    } catch (error) {
+      console.warn(
+        "Failed to fetch flats via API, falling back to local storage:",
+        error,
+      );
+      setFlats(getFlats().filter((f) => f.towerId === towId));
+    }
+  };
+
+  const fetchResidentDetails = async () => {
+    setLoading(true);
+    try {
+      await loadSetupData();
+
+      const res = await getUserDetailsApi(id || "");
+      const user = res?.data || res;
+
+      setFormData({
+        name: user.name || "",
+        email: user.email || "",
+        phone: user.phone || "",
+        apartment: user.apartment || "",
+        membership: "Active",
+        cardNo: user.cardNo || `CMR-${user.id?.substring(0, 6).toUpperCase()}`,
+        status: user.status || "ACTIVE",
+        avatar: user.avatar || `https://i.pravatar.cc/150?u=${user.id}`,
+      });
+
+      if (user.flatId) {
+        setFlatId(user.flatId);
+        // Find flat details to pre-populate project and tower selection cascading
+        try {
+          const flat = getFlats().find((f) => f.id === user.flatId);
+          if (flat) {
+            setTowerId(flat.towerId);
+            const tower = getTowers().find((t) => t.id === flat.towerId);
+            if (tower) {
+              setProjectId(tower.projectId);
+            }
+          }
+        } catch (e) {
+          console.warn("Failed to resolve flat/tower mappings:", e);
+        }
+      }
+    } catch (error) {
+      console.warn("Failed to fetch resident details, using fallback:", error);
+      // Fallback
+      setFormData({
+        name: "John Doe",
+        email: "john.doe@example.com",
+        phone: "9876543210",
+        apartment: "A-101",
+        membership: "Active",
+        cardNo: "CMR10101",
+        status: "ACTIVE",
+        avatar: "https://i.pravatar.cc/150?u=1",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    setProjects(getProjects());
-    setTowers(getTowers());
-    setFlats(getFlats());
-    
-    // Simulate fetching database resident details to edit
-    if (id === '2') {
-      setFormData({
-        name: 'Jane Smith',
-        email: 'jane.smith@example.com',
-        phone: '9876543211',
-        apartment: 'A-101',
-        membership: 'Active',
-        cardNo: 'CMR10102',
-        status: 'Active',
-        avatar: 'https://i.pravatar.cc/150?u=2'
-      });
-    } else if (id === '3') {
-      setFormData({
-        name: 'Mike Johnson',
-        email: 'mike.j@example.com',
-        phone: '9876543212',
-        apartment: 'A-103',
-        membership: 'Active',
-        cardNo: 'CMR10103',
-        status: 'Active',
-        avatar: 'https://i.pravatar.cc/150?u=3'
-      });
-    }
+    fetchResidentDetails();
   }, [id]);
 
-  const filteredTowers = projectId ? towers.filter(t => t.projectId === projectId) : [];
-  const filteredFlats = towerId ? flats.filter(f => f.towerId === towerId) : [];
+  useEffect(() => {
+    if (projectId) {
+      loadTowersForProject(projectId);
+    } else {
+      setTowers([]);
+    }
+  }, [projectId]);
+
+  useEffect(() => {
+    if (towerId) {
+      loadFlatsForTower(towerId);
+    } else {
+      setFlats([]);
+    }
+  }, [towerId]);
 
   const handleFlatChange = (selectedFlatId: string) => {
     setFlatId(selectedFlatId);
-    const flat = flats.find(f => f.id === selectedFlatId);
-    const tower = towers.find(t => t.id === towerId);
-    const project = projects.find(p => p.id === projectId);
+    const flat = flats.find((f) => f.id === selectedFlatId);
+    const tower = towers.find((t) => t.id === towerId);
+    const project = projects.find((p) => p.id === projectId);
     if (flat && tower && project) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        apartment: `${project.name} • ${tower.name} • Flat ${flat.number}`
+        apartment: `${project.name} • ${tower.name} • Flat ${(flat as any).flatNumber || flat.number}`,
       }));
     }
   };
 
-  const handleSave = () => {
-    // In real app, save to db
-    navigate('/residents');
+  const handleSave = async () => {
+    if (!formData.name.trim()) {
+      toast.error("Full name is required");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await updateUserApi(id || "", {
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        flatId: flatId || undefined,
+        status: formData.status,
+      });
+      toast.success("Resident details updated successfully");
+      navigate("/residents");
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to update resident details");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "80vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
   return (
-    <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: '#ffffff', minHeight: '100vh', borderRadius: 2 }}>
-      
+    <Box
+      sx={{
+        p: { xs: 2, md: 4 },
+        bgcolor: "#ffffff",
+        minHeight: "100vh",
+        borderRadius: 2,
+      }}
+    >
       {/* Header Section */}
-      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Box
+        sx={{
+          mb: 4,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
         <Box>
-          <Typography variant="h4" fontWeight="bold" sx={{ color: '#002855', mb: 1 }}>
+          <Typography
+            variant="h4"
+            fontWeight="bold"
+            sx={{ color: "#002855", mb: 1 }}
+          >
             Edit Resident
           </Typography>
           <Breadcrumbs separator=">" aria-label="breadcrumb">
-            <Link underline="hover" color="inherit" onClick={() => navigate('/')} sx={{ cursor: 'pointer' }}>
+            <Link
+              underline="hover"
+              color="inherit"
+              onClick={() => navigate("/")}
+              sx={{ cursor: "pointer" }}
+            >
               Dashboard
             </Link>
-            <Link underline="hover" color="inherit" onClick={() => navigate('/residents')} sx={{ cursor: 'pointer' }}>
+            <Link
+              underline="hover"
+              color="inherit"
+              onClick={() => navigate("/residents")}
+              sx={{ cursor: "pointer" }}
+            >
               Residents
             </Link>
-            <Typography color="text.primary" fontWeight="600">{formData.name}</Typography>
+            <Typography color="text.primary" fontWeight="600">
+              {formData.name}
+            </Typography>
           </Breadcrumbs>
         </Box>
         <BackButton to="/residents" label="Back to Residents" />
       </Box>
 
       {/* Form Container */}
-      <Paper elevation={0} sx={{ border: '1px solid #f0f0f0', borderRadius: 4, p: { xs: 3, md: 5 } }}>
-        
+      <Paper
+        elevation={0}
+        sx={{
+          border: "1px solid #f0f0f0",
+          borderRadius: 4,
+          p: { xs: 3, md: 5 },
+        }}
+      >
         {/* Profile Picture Upload */}
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 5 }}>
-          <Box sx={{ position: 'relative' }}>
-            <Avatar 
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            mb: 5,
+          }}
+        >
+          <Box sx={{ position: "relative" }}>
+            <Avatar
               src={formData.avatar}
-              sx={{ width: 100, height: 100, bgcolor: '#f5f7fa', color: '#bdbdbd' }}
+              sx={{
+                width: 100,
+                height: 100,
+                bgcolor: "#f5f7fa",
+                color: "#bdbdbd",
+              }}
             />
-            <IconButton 
-              sx={{ 
-                position: 'absolute', 
-                bottom: 0, 
-                right: -10, 
-                bgcolor: 'primary.main', 
-                color: 'white',
-                '&:hover': { bgcolor: 'primary.dark' },
-                boxShadow: 2
+            <IconButton
+              sx={{
+                position: "absolute",
+                bottom: 0,
+                right: -10,
+                bgcolor: "primary.main",
+                color: "white",
+                "&:hover": { bgcolor: "primary.dark" },
+                boxShadow: 2,
               }}
               size="small"
             >
@@ -144,95 +317,129 @@ export default function EditResident() {
         <Divider sx={{ mb: 4 }} />
 
         {/* Form Fields */}
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 3 }}>
-          <TextField 
-            fullWidth 
-            label="Full Name" 
-            value={formData.name} 
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+            gap: 3,
+          }}
+        >
+          <TextField
+            fullWidth
+            label="Full Name"
+            value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            variant="outlined" 
-            sx={{ '& fieldset': { borderRadius: '12px' } }}
+            variant="outlined"
+            sx={{ "& fieldset": { borderRadius: "12px" } }}
           />
-          <TextField 
-            fullWidth 
-            label="Email Address" 
-            value={formData.email} 
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            variant="outlined" 
-            sx={{ '& fieldset': { borderRadius: '12px' } }}
+          <TextField
+            fullWidth
+            label="Email Address"
+            value={formData.email}
+            onChange={(e) =>
+              setFormData({ ...formData, email: e.target.value })
+            }
+            variant="outlined"
+            sx={{ "& fieldset": { borderRadius: "12px" } }}
           />
-          <TextField 
-            fullWidth 
-            label="Phone Number" 
-            value={formData.phone} 
-            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-            variant="outlined" 
-            sx={{ '& fieldset': { borderRadius: '12px' } }}
+          <TextField
+            fullWidth
+            label="Phone Number"
+            value={formData.phone}
+            onChange={(e) =>
+              setFormData({ ...formData, phone: e.target.value })
+            }
+            variant="outlined"
+            sx={{ "& fieldset": { borderRadius: "12px" } }}
           />
-          <TextField 
-            fullWidth 
-            select 
-            label="Membership Status" 
-            value={formData.membership}
-            onChange={(e) => setFormData({ ...formData, membership: e.target.value })}
-            sx={{ '& fieldset': { borderRadius: '12px' } }}
+          <TextField
+            fullWidth
+            select
+            label="Status"
+            value={formData.status}
+            onChange={(e) =>
+              setFormData({ ...formData, status: e.target.value })
+            }
+            sx={{ "& fieldset": { borderRadius: "12px" } }}
           >
-            <MenuItem value="Active">Active</MenuItem>
-            <MenuItem value="Pending">Pending</MenuItem>
-            <MenuItem value="Expired">Expired</MenuItem>
+            <MenuItem value="ACTIVE">ACTIVE</MenuItem>
+            <MenuItem value="INACTIVE">INACTIVE</MenuItem>
+            <MenuItem value="PENDING">PENDING</MenuItem>
+            <MenuItem value="SUSPENDED">SUSPENDED</MenuItem>
           </TextField>
-          <TextField 
-            fullWidth 
-            label="Access Card Number" 
-            value={formData.cardNo} 
-            onChange={(e) => setFormData({ ...formData, cardNo: e.target.value })}
-            variant="outlined" 
-            sx={{ '& fieldset': { borderRadius: '12px' } }}
+          <TextField
+            fullWidth
+            label="Access Card Number"
+            value={formData.cardNo}
+            disabled
+            variant="outlined"
+            sx={{ "& fieldset": { borderRadius: "12px" } }}
           />
 
-          <Box sx={{ gridColumn: 'span 2' }}>
+          <Box sx={{ gridColumn: "span 2" }}>
             <Divider sx={{ my: 2 }} />
-            <Typography variant="subtitle1" fontWeight="bold" color="#002855" sx={{ mb: 2 }}>
-              Resident Flat Allocation: {formData.apartment || 'Not selected'}
+            <Typography
+              variant="subtitle1"
+              fontWeight="bold"
+              color="#002855"
+              sx={{ mb: 2 }}
+            >
+              Resident Flat Allocation: {formData.apartment || "Not selected"}
             </Typography>
-            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr 1fr' }, gap: 3 }}>
-              <TextField 
-                fullWidth select label="Project" 
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr 1fr" },
+                gap: 3,
+              }}
+            >
+              <TextField
+                fullWidth
+                select
+                label="Project"
                 value={projectId}
                 onChange={(e) => {
                   setProjectId(e.target.value);
-                  setTowerId('');
-                  setFlatId('');
                 }}
-                sx={{ '& fieldset': { borderRadius: '12px' } }}
+                sx={{ "& fieldset": { borderRadius: "12px" } }}
               >
-                {projects.map(p => (
-                  <MenuItem key={p.id} value={p.id}>{p.name}</MenuItem>
+                {projects.map((p) => (
+                  <MenuItem key={p.id} value={p.id}>
+                    {p.name}
+                  </MenuItem>
                 ))}
               </TextField>
-              <TextField 
-                fullWidth select label="Tower" 
+              <TextField
+                fullWidth
+                select
+                label="Tower"
                 value={towerId}
                 disabled={!projectId}
                 onChange={(e) => {
                   setTowerId(e.target.value);
-                  setFlatId('');
                 }}
-                sx={{ '& fieldset': { borderRadius: '12px' } }}
+                sx={{ "& fieldset": { borderRadius: "12px" } }}
               >
-                {filteredTowers.map(t => (
-                  <MenuItem key={t.id} value={t.id}>{t.name}</MenuItem>
+                {towers.map((t) => (
+                  <MenuItem key={t.id} value={t.id}>
+                    {t.name}
+                  </MenuItem>
                 ))}
               </TextField>
-              <TextField 
-                fullWidth select label="Flat" 
+              <TextField
+                fullWidth
+                select
+                label="Flat"
                 value={flatId}
                 disabled={!towerId}
                 onChange={(e) => handleFlatChange(e.target.value)}
-                sx={{ '& fieldset': { borderRadius: '12px' } }}
+                sx={{ "& fieldset": { borderRadius: "12px" } }}
               >
-                {filteredFlats.map(f => (
-                  <MenuItem key={f.id} value={f.id}>{f.number} (Floor {f.floor})</MenuItem>
+                {flats.map((f) => (
+                  <MenuItem key={f.id} value={f.id}>
+                    {(f as any).flatNumber || f.number} (Floor{" "}
+                    {(f as any).floorNumber || f.floor})
+                  </MenuItem>
                 ))}
               </TextField>
             </Box>
@@ -240,24 +447,45 @@ export default function EditResident() {
         </Box>
 
         {/* Action Buttons */}
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 5 }}>
-          <Button 
-            variant="outlined" 
-            onClick={() => navigate('/residents')}
-            sx={{ borderRadius: '8px', textTransform: 'none', px: 4, fontWeight: 600, borderColor: '#e0e0e0', color: 'text.primary' }}
+        <Box
+          sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 5 }}
+        >
+          <Button
+            variant="outlined"
+            disabled={submitting}
+            onClick={() => navigate("/residents")}
+            sx={{
+              borderRadius: "8px",
+              textTransform: "none",
+              px: 4,
+              fontWeight: 600,
+              borderColor: "#e0e0e0",
+              color: "text.primary",
+            }}
           >
             Cancel
           </Button>
-          <Button 
-            variant="contained" 
-            color="primary" 
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={submitting}
             onClick={handleSave}
-            sx={{ borderRadius: '8px', textTransform: 'none', px: 4, fontWeight: 600, boxShadow: 'none', bgcolor: '#0047b3' }}
+            sx={{
+              borderRadius: "8px",
+              textTransform: "none",
+              px: 4,
+              fontWeight: 600,
+              boxShadow: "none",
+              bgcolor: "#0047b3",
+            }}
           >
-            Save Changes
+            {submitting ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              "Save Changes"
+            )}
           </Button>
         </Box>
-
       </Paper>
     </Box>
   );

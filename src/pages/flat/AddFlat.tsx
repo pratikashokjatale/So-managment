@@ -10,42 +10,78 @@ import {
 
 import BackButton from '@/components/BackButton';
 import { getProjects, getTowers, saveFlat } from '@/utils/setupStore';
-import type { Project, Tower } from '@/utils/setupStore';
+import { getProjectsApi } from '@/apis/project';
+import { getTowersApi } from '@/apis/tower';
+import { createFlatApi } from '@/apis/flat';
+import { clearApiCache } from '@/utils/apiCache';
+import { toast } from 'react-hot-toast';
 
 export default function AddFlat() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const queryTowerId = searchParams.get('towerId') || '';
 
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [towers, setTowers] = useState<Tower[]>([]);
+  const [projects, setProjects] = useState<any[]>([]);
+  const [towers, setTowers] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     projectId: '',
     towerId: queryTowerId,
     number: '',
     floor: '',
     type: '2BHK' as '1BHK' | '2BHK' | '3BHK' | '4BHK' | 'Studio' | 'Penthouse',
+    occupancyType: 'OWNER' as 'OWNER' | 'TENANT' | 'VACANT',
     status: 'Vacant' as 'Vacant' | 'Occupied' | 'Maintenance'
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    const loadedProjects = getProjects();
-    const loadedTowers = getTowers();
-    setProjects(loadedProjects);
-    setTowers(loadedTowers);
+    const loadProjectsAndTowers = async () => {
+      try {
+        const projRes = await getProjectsApi({ limit: 100 });
+        const projectList = projRes?.data?.data || projRes?.data?.projects || projRes?.projects || projRes?.data || [];
+        setProjects(projectList);
 
-    if (queryTowerId) {
-      const tower = loadedTowers.find(t => t.id === queryTowerId);
-      if (tower) {
-        setFormData(prev => ({ 
-          ...prev, 
-          towerId: queryTowerId,
-          projectId: tower.projectId 
-        }));
+        const promises = projectList.map((p: any) => 
+          getTowersApi(p.id, { page: 1, limit: 100 })
+            .then(res => Array.isArray(res?.data?.data) ? res.data.data : (res?.data?.towers || res?.towers || res?.data || []))
+            .catch(() => [])
+        );
+        const results = await Promise.all(promises);
+        const towerList = results.flat();
+        setTowers(towerList);
+
+        if (queryTowerId) {
+          const tower = towerList.find(t => t.id === queryTowerId);
+          if (tower) {
+            setFormData(prev => ({ 
+              ...prev, 
+              towerId: queryTowerId,
+              projectId: tower.projectId 
+            }));
+          }
+        }
+      } catch (error) {
+        console.warn("Failed to load projects and towers via API, falling back to local storage:", error);
+        const localProjects = getProjects();
+        const localTowers = getTowers();
+        setProjects(localProjects);
+        setTowers(localTowers);
+
+        if (queryTowerId) {
+          const tower = localTowers.find(t => t.id === queryTowerId);
+          if (tower) {
+            setFormData(prev => ({ 
+              ...prev, 
+              towerId: queryTowerId,
+              projectId: tower.projectId 
+            }));
+          }
+        }
       }
-    }
+    };
+    loadProjectsAndTowers();
   }, [queryTowerId]);
 
   // Dynamically filter towers based on project selection
@@ -71,23 +107,57 @@ export default function AddFlat() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
     
-    saveFlat({
-      projectId: formData.projectId,
-      towerId: formData.towerId,
-      number: formData.number,
-      floor: formData.floor,
-      type: formData.type,
-      status: formData.status
-    });
+    setSubmitting(true);
+    try {
+      const payload = {
+        flatNumber: formData.number.trim(),
+        floorNumber: formData.floor.trim(),
+        flatType: formData.type,
+        occupancyType: formData.occupancyType,
+        status: formData.status === 'Vacant' ? 'VACANT' : formData.status === 'Occupied' ? 'OCCUPIED' : 'MAINTENANCE'
+      };
 
-    if (queryTowerId) {
-      navigate(`/tower/${queryTowerId}`);
-    } else {
-      navigate('/flat');
+      await createFlatApi(formData.towerId, payload);
+      clearApiCache();
+      toast.success('Flat created successfully');
+      
+      if (queryTowerId) {
+        navigate(`/tower/${queryTowerId}`);
+      } else {
+        navigate('/flat');
+      }
+    } catch (error: any) {
+      console.error('API flat creation failed:', error);
+      const errMsg = error?.message || 'Failed to create flat';
+      toast.error(errMsg);
+
+      if (error?.status === 0) {
+        try {
+          saveFlat({
+            projectId: formData.projectId,
+            towerId: formData.towerId,
+            number: formData.number,
+            floor: formData.floor,
+            type: formData.type,
+            status: formData.status
+          });
+          toast.success('Flat saved locally (offline fallback)');
+          
+          if (queryTowerId) {
+            navigate(`/tower/${queryTowerId}`);
+          } else {
+            navigate('/flat');
+          }
+        } catch (localError) {
+          toast.error('Failed to save flat locally');
+        }
+      }
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -195,6 +265,8 @@ export default function AddFlat() {
               <MenuItem value="2BHK">2BHK</MenuItem>
               <MenuItem value="3BHK">3BHK</MenuItem>
               <MenuItem value="4BHK">4BHK</MenuItem>
+              <MenuItem value="Studio">Studio</MenuItem>
+              <MenuItem value="Penthouse">Penthouse</MenuItem>
             </TextField>
 
             <TextField 
@@ -208,6 +280,19 @@ export default function AddFlat() {
               <MenuItem value="Vacant">Vacant</MenuItem>
               <MenuItem value="Occupied">Occupied</MenuItem>
               <MenuItem value="Maintenance">Maintenance</MenuItem>
+            </TextField>
+
+            <TextField 
+              fullWidth 
+              select 
+              label="Occupancy Type *" 
+              value={formData.occupancyType}
+              onChange={(e) => setFormData({ ...formData, occupancyType: e.target.value as any })}
+              sx={{ '& fieldset': { borderRadius: '8px' } }}
+            >
+              <MenuItem value="OWNER">Owner</MenuItem>
+              <MenuItem value="TENANT">Tenant</MenuItem>
+              <MenuItem value="VACANT">Vacant</MenuItem>
             </TextField>
 
           </Box>
@@ -234,6 +319,7 @@ export default function AddFlat() {
             <Button 
               type="submit"
               variant="contained" 
+              disabled={submitting}
               startIcon={<SaveIcon />}
               sx={{ 
                 borderRadius: '8px', 
@@ -245,7 +331,7 @@ export default function AddFlat() {
                 '&:hover': { bgcolor: '#003380' }
               }}
             >
-              Save Flat
+              {submitting ? 'Saving...' : 'Save Flat'}
             </Button>
           </Box>
         </form>

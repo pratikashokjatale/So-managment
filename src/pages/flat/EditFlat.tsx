@@ -10,47 +10,98 @@ import {
 
 import BackButton from '@/components/BackButton';
 import { getProjects, getTowers, saveFlat, getFlats } from '@/utils/setupStore';
-import type { Project, Tower } from '@/utils/setupStore';
+import { getProjectsApi } from '@/apis/project';
+import { getTowersApi } from '@/apis/tower';
+import { getFlatDetailsApi, updateFlatApi } from '@/apis/flat';
+import { clearApiCache } from '@/utils/apiCache';
+import { CircularProgress } from '@mui/material';
+import { toast } from 'react-hot-toast';
 
 export default function EditFlat() {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [towers, setTowers] = useState<Tower[]>([]);
+  const [projects, setProjects] = useState<any[]>([]);
+  const [towers, setTowers] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     projectId: '',
     towerId: '',
     number: '',
     floor: '',
     type: '2BHK' as '1BHK' | '2BHK' | '3BHK' | '4BHK' | 'Studio' | 'Penthouse',
+    occupancyType: 'OWNER' as 'OWNER' | 'TENANT' | 'VACANT',
     status: 'Vacant' as 'Vacant' | 'Occupied' | 'Maintenance'
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    const loadedProjects = getProjects();
-    const loadedTowers = getTowers();
-    setProjects(loadedProjects);
-    setTowers(loadedTowers);
+    const loadFlatData = async () => {
+      setLoading(true);
+      try {
+        if (!id) throw new Error("No flat ID provided");
 
-    const flats = getFlats();
-    const flat = flats.find(f => f.id === id);
-    if (flat) {
-      setFormData({
-        projectId: flat.projectId,
-        towerId: flat.towerId,
-        number: flat.number,
-        floor: flat.floor,
-        type: flat.type,
-        status: flat.status
-      });
-    } else {
-      navigate('/flat');
-    }
-    setLoading(false);
+        // Load projects first
+        const projRes = await getProjectsApi({ limit: 100 });
+        const projectList = projRes?.data?.data || projRes?.data?.projects || projRes?.projects || projRes?.data || [];
+        setProjects(projectList);
+
+        // Load towers for all projects in parallel
+        const promises = projectList.map((p: any) => 
+          getTowersApi(p.id, { page: 1, limit: 100 })
+            .then(res => Array.isArray(res?.data?.data) ? res.data.data : (res?.data?.towers || res?.towers || res?.data || []))
+            .catch(() => [])
+        );
+        const results = await Promise.all(promises);
+        setTowers(results.flat());
+
+        // Fetch flat details
+        const res = await getFlatDetailsApi(id);
+        const flat = res?.data || res;
+        if (flat) {
+          let normStatus: 'Vacant' | 'Occupied' | 'Maintenance' = 'Vacant';
+          if (flat.status === 'OCCUPIED' || flat.status === 'Occupied') normStatus = 'Occupied';
+          else if (flat.status === 'MAINTENANCE' || flat.status === 'Maintenance') normStatus = 'Maintenance';
+
+          setFormData({
+            projectId: flat.projectId || '',
+            towerId: flat.towerId || '',
+            number: flat.flatNumber || flat.number || '',
+            floor: flat.floorNumber || flat.floor || '',
+            type: flat.flatType || flat.type || '2BHK',
+            occupancyType: flat.occupancyType || 'OWNER',
+            status: normStatus
+          });
+        } else {
+          throw new Error("Flat details empty");
+        }
+      } catch (error) {
+        console.warn("Failed to fetch flat via API, performing local storage fallback:", error);
+        setProjects(getProjects());
+        setTowers(getTowers());
+
+        const flats = getFlats();
+        const flat = flats.find(f => f.id === id);
+        if (flat) {
+          setFormData({
+            projectId: flat.projectId,
+            towerId: flat.towerId,
+            number: flat.number,
+            floor: flat.floor,
+            type: flat.type,
+            occupancyType: flat.occupancyType || 'OWNER',
+            status: flat.status
+          });
+        } else {
+          navigate('/flat');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadFlatData();
   }, [id, navigate]);
 
   // Dynamically filter towers based on project selection
@@ -76,20 +127,53 @@ export default function EditFlat() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
+    if (!id) return;
     
-    saveFlat({
-      ...formData,
-      id: id
-    });
+    setSubmitting(true);
+    try {
+      const payload = {
+        flatNumber: formData.number.trim(),
+        floorNumber: formData.floor.trim(),
+        flatType: formData.type,
+        occupancyType: formData.occupancyType,
+        status: formData.status === 'Vacant' ? 'VACANT' : formData.status === 'Occupied' ? 'OCCUPIED' : 'MAINTENANCE'
+      };
 
-    navigate('/flat');
+      await updateFlatApi(id, payload);
+      clearApiCache();
+      toast.success('Flat details updated successfully');
+      navigate('/flat');
+    } catch (error: any) {
+      console.error('API flat update failed:', error);
+      const errMsg = error?.message || 'Failed to update flat details';
+      toast.error(errMsg);
+
+      if (error?.status === 0) {
+        try {
+          saveFlat({
+            ...formData,
+            id: id
+          });
+          toast.success('Flat details saved locally (offline fallback)');
+          navigate('/flat');
+        } catch (localError) {
+          toast.error('Failed to save flat locally');
+        }
+      }
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (loading) {
-    return <Typography sx={{ p: 4 }}>Loading...</Typography>;
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
+        <CircularProgress />
+      </Box>
+    );
   }
 
   return (
@@ -207,6 +291,19 @@ export default function EditFlat() {
               <MenuItem value="Maintenance">Maintenance</MenuItem>
             </TextField>
 
+            <TextField 
+              fullWidth 
+              select 
+              label="Occupancy Type *" 
+              value={formData.occupancyType}
+              onChange={(e) => setFormData({ ...formData, occupancyType: e.target.value as any })}
+              sx={{ '& fieldset': { borderRadius: '8px' } }}
+            >
+              <MenuItem value="OWNER">Owner</MenuItem>
+              <MenuItem value="TENANT">Tenant</MenuItem>
+              <MenuItem value="VACANT">Vacant</MenuItem>
+            </TextField>
+
           </Box>
 
           <Divider sx={{ my: 3 }} />
@@ -231,6 +328,7 @@ export default function EditFlat() {
             <Button 
               type="submit"
               variant="contained" 
+              disabled={submitting}
               startIcon={<SaveIcon />}
               sx={{ 
                 borderRadius: '8px', 
@@ -242,7 +340,7 @@ export default function EditFlat() {
                 '&:hover': { bgcolor: '#003380' }
               }}
             >
-              Save Changes
+              {submitting ? 'Saving...' : 'Save Changes'}
             </Button>
           </Box>
         </form>

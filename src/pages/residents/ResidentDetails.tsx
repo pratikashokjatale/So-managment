@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Box, Typography, Avatar, 
   Button, IconButton, Stack, Tabs, Tab, Paper,
-  Grid, Chip, Divider, Tooltip
+  Grid, Chip, Divider, Tooltip, CircularProgress, Dialog, DialogTitle, DialogContent
 } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { 
@@ -13,83 +13,103 @@ import {
   Add as AddIcon,
   Upload as UploadIcon,
   CreditCard as CardIcon,
-  Warning as WarningIcon
+  Warning as WarningIcon,
+  Close as CloseIcon,
+  CheckCircle as CheckIcon,
+  HourglassEmpty as PendingIcon,
 } from '@mui/icons-material';
 import ResidentWallets from './components/ResidentWallets';
 import ResidentAmenities from './components/ResidentAmenities';
 import bannerImg from '../../assets/marbella-banner.png';
 import BackButton from '@/components/BackButton';
+import { getUserDetailsApi } from '@/apis/user';
+
+const mockBookings = [
+  { id: 101, activity: 'Squash Court', slots: '5:00 PM - 7:00 PM (2 Slots)', date: 'May 18, 2024', amount: '₹400.00', status: 'Confirmed' },
+  { id: 102, activity: 'Table Tennis', slots: '10:00 AM - 11:00 AM (1 Slot)', date: 'May 17, 2024', amount: '₹150.00', status: 'Completed' },
+  { id: 103, activity: 'Home Theatre', slots: '8:00 PM - 10:00 PM (2 Slots)', date: 'May 15, 2024', amount: '₹1,000.00', status: 'Completed' },
+];
 
 export default function ResidentDetails() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [activeTab, setActiveTab] = useState(0);
 
-  const resident = {
-    id: id || 'ERD246534',
-    name: 'Graziele Lopes',
-    email: 'graziele.lopes@society.com',
-    phone: '+91 98765 43210',
-    avatar: 'https://i.pravatar.cc/150?u=graziele',
-    cardColor: 'Blue',
-    cardNo: 'CMR101-M01',
-    category: 'Resident',
-    role: 'Master User (Owner)',
-    status: 'Verified Profile',
-    startDate: '27 Jan 2025',
-    apartment: 'Wing A • Flat 1001',
-    kyc: {
-      aadhaar: 'XXXX-XXXX-8824',
-      pan: 'ABCDE1234F',
-      photoStatus: 'Verified'
-    },
-    wallets: {
-      membership: { 
-        status: 'Active', 
-        currentMonth: 'May 2024 (Paid)',
-        upcomingMonths: ['June 2024', 'July 2024', 'August 2024'],
-        expiry: 'Aug 31, 2024',
-        refundableFuture: '₹7,500.00' 
-      },
-      activity: { balance: '₹12,450.00' },
-      security: { locked: '₹5,000.00', refundable: 'Yes (On exit)', condition: 'Good' }
+  // API Integration States
+  const [resident, setResident] = useState<any>(null);
+  const [family, setFamily] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Document Viewer Dialog State
+  const [docOpen, setDocOpen] = useState(false);
+  const [docToShow, setDocToShow] = useState({ title: '', url: '' });
+
+  const fetchDetails = async () => {
+    setLoading(true);
+    try {
+      const res = await getUserDetailsApi(id || '');
+      // API returns { success, message, data: { id, name, ..., documents, familyMembers } }
+      const user = res?.data || res;
+      setResident(user);
+      // Use embedded familyMembers from the user detail response
+      setFamily(user?.familyMembers || user?.family || []);
+    } catch (error) {
+      console.warn("Failed to fetch resident details via API:", error);
+      setResident({
+        id: id || 'ERD246534',
+        name: 'Graziele Lopes',
+        email: 'graziele.lopes@society.com',
+        phone: '+91 98765 43210',
+        avatar: 'https://i.pravatar.cc/150?u=graziele',
+        cardNo: 'CMR101-M01',
+        role: 'RESIDENT',
+        status: 'ACTIVE',
+        startDate: '27 Jan 2025',
+        documents: { IDENTITY_PROOF: [], PERSONAL_DOCUMENTS: [] },
+        familyMembers: [],
+      });
+      setFamily([]);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const mockFamily = [
-    { 
-      id: 1, 
-      name: 'John Smith', 
-      role: 'Dependent (Spouse)', 
-      cardNo: 'CMR101-D01', 
-      status: 'Active', 
-      cardColor: 'Blue',
-      gender: 'Male',
-      aadhaar: 'XXXX-XXXX-9901',
-      pan: 'BCDFG5678H',
-      vcard: 'CMR-V101'
-    },
-    { 
-      id: 2, 
-      name: 'Emma Smith', 
-      role: 'Dependent (Daughter)', 
-      cardNo: 'CMR101-D02', 
-      status: 'Active', 
-      cardColor: 'Blue',
-      gender: 'Female',
-      aadhaar: 'XXXX-XXXX-9902',
-      pan: 'N/A',
-      vcard: 'CMR-V102'
-    },
-  ];
-
-  const mockBookings = [
-    { id: 101, activity: 'Squash Court', slots: '5:00 PM - 7:00 PM (2 Slots)', date: 'May 18, 2024', amount: '₹400.00', status: 'Confirmed' },
-    { id: 102, activity: 'Table Tennis', slots: '10:00 AM - 11:00 AM (1 Slot)', date: 'May 17, 2024', amount: '₹150.00', status: 'Completed' },
-    { id: 103, activity: 'Home Theatre', slots: '8:00 PM - 10:00 PM (2 Slots)', date: 'May 15, 2024', amount: '₹1,000.00', status: 'Completed' },
-  ];
+  useEffect(() => {
+    fetchDetails();
+  }, [id]);
 
   const handleTabChange = (_: any, newValue: number) => setActiveTab(newValue);
+
+  const handleOpenDoc = (title: string, url: string) => {
+    setDocToShow({ title, url });
+    setDocOpen(true);
+  };
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  const identityProofs = resident?.documents?.IDENTITY_PROOF || [];
+  const personalDocs = resident?.documents?.PERSONAL_DOCUMENTS || [];
+  const allDocs = [...identityProofs, ...personalDocs];
+
+  const familyDocs = family.flatMap((member: any) => {
+    const memberDocs = [...(member.documents?.IDENTITY_PROOF || []), ...(member.documents?.PERSONAL_DOCUMENTS || [])];
+    return memberDocs.map((doc: any) => ({
+      ...doc,
+      member: `${member.name} (${member.relationship})`
+    }));
+  });
+
+  // Build a readable flat label from the embedded flat object
+  const flatObj = resident?.flat;
+  const flatLabel = flatObj
+    ? `Flat ${flatObj.flatNumber} • Floor ${flatObj.floorNumber} • ${flatObj.flatType || ''} (${flatObj.occupancyType || ''})`
+    : (resident?.apartment || (resident?.flatId ? `Flat ID: ${resident.flatId}` : 'N/A'));
 
   return (
     <Box sx={{ bgcolor: '#f8fafc', minHeight: '100vh', pb: 8 }}>
@@ -121,7 +141,7 @@ export default function ResidentDetails() {
         <Box sx={{ px: { xs: 2, md: 6 }, mt: -6, position: 'relative', zIndex: 3 }}>
           <Stack direction="row" alignItems="flex-end" spacing={4}>
             <Avatar 
-              src={resident.avatar} 
+              src={resident.avatar || `https://i.pravatar.cc/150?u=${resident.id}`} 
               sx={{ 
                 width: 140, height: 140, 
                 border: '6px solid #f8fafc', 
@@ -131,17 +151,21 @@ export default function ResidentDetails() {
             />
             <Box sx={{ flexGrow: 1, pb: 1 }}>
               <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 1 }}>
-                <Typography variant="h4" fontWeight="900" color="#1e293b" sx={{ textShadow: '0 2px 4px rgba(255,255,255,0.8)' }}>{resident.name}</Typography>
+                <Typography variant="h4" fontWeight="900" color="#1e293b" sx={{ textShadow: '0 2px 4px rgba(255,255,255,0.8)' }}>
+                  {resident.name}
+                </Typography>
                 <Chip 
                   icon={<VerifiedIcon sx={{ fontSize: '16px !important', color: '#10b981 !important' }} />} 
-                  label={resident.status} 
+                  label={resident.status || 'Active Profile'} 
                   sx={{ bgcolor: 'white', color: '#10b981', fontWeight: 900, borderRadius: '8px', border: '1px solid #dcfce7' }} 
                 />
               </Stack>
               <Stack direction="row" spacing={2} alignItems="center">
                 <Stack direction="row" spacing={1} alignItems="center">
                   <CalendarIcon sx={{ fontSize: 18, color: '#64748b' }} />
-                  <Typography variant="body1" color="#64748b" fontWeight="700">Enrollment: {resident.startDate}</Typography>
+                  <Typography variant="body1" color="#64748b" fontWeight="700">
+                    Enrollment: {resident.startDate || (resident.createdAt ? new Date(resident.createdAt).toLocaleDateString() : 'N/A')}
+                  </Typography>
                 </Stack>
                 <Typography variant="body1" color="#1d4ed8" fontWeight="800">#{resident.id}</Typography>
               </Stack>
@@ -153,7 +177,7 @@ export default function ResidentDetails() {
               <Button 
                 variant="contained" 
                 startIcon={<EditIcon />} 
-                onClick={() => navigate(`/residents/edit/${id || '1'}`)}
+                onClick={() => navigate(`/residents/edit/${id}`)}
                 sx={{ 
                   borderRadius: '12px', textTransform: 'none', fontWeight: 800, 
                   height: 48, px: 4, bgcolor: '#002855'
@@ -200,23 +224,29 @@ export default function ResidentDetails() {
                   </Grid>
                   <Grid size={{ xs: 6 }}>
                     <Typography variant="caption" color="#94a3b8" fontWeight="800">RESIDENCE CATEGORY</Typography>
-                    <Typography variant="body1" fontWeight="700">{resident.category} • {resident.role}</Typography>
+                    <Typography variant="body1" fontWeight="700">
+                      {resident.category || 'Resident'} • {resident.role}
+                    </Typography>
                   </Grid>
                   <Grid size={{ xs: 6 }}>
                     <Typography variant="caption" color="#94a3b8" fontWeight="800">AADHAAR CARD</Typography>
-                    <Typography variant="body1" fontWeight="700">{resident.kyc.aadhaar}</Typography>
+                    <Typography variant="body1" fontWeight="700">
+                      {resident.kyc?.aadhaar || 'Verified Online'}
+                    </Typography>
                   </Grid>
                   <Grid size={{ xs: 6 }}>
                     <Typography variant="caption" color="#94a3b8" fontWeight="800">PAN CARD</Typography>
-                    <Typography variant="body1" fontWeight="700">{resident.kyc.pan}</Typography>
+                    <Typography variant="body1" fontWeight="700">
+                      {resident.kyc?.pan || 'Verified Online'}
+                    </Typography>
                   </Grid>
                   <Grid size={{ xs: 6 }}>
-                    <Typography variant="caption" color="#94a3b8" fontWeight="800">MOBILE NUMBER</Typography>
-                    <Typography variant="body1" fontWeight="700">{resident.phone}</Typography>
+                    <Typography variant="caption" color="#94a3b8" fontWeight="800">CONTACT PHONE</Typography>
+                    <Typography variant="body1" fontWeight="700">{resident.phone || 'N/A'}</Typography>
                   </Grid>
                   <Grid size={{ xs: 6 }}>
-                    <Typography variant="caption" color="#94a3b8" fontWeight="800">APARTMENT</Typography>
-                    <Typography variant="body1" fontWeight="700">{resident.apartment}</Typography>
+                    <Typography variant="caption" color="#94a3b8" fontWeight="800">APARTMENT / FLAT</Typography>
+                    <Typography variant="body1" fontWeight="700">{flatLabel}</Typography>
                   </Grid>
                 </Grid>
               </Paper>
@@ -227,7 +257,9 @@ export default function ResidentDetails() {
                   <Typography variant="h6" fontWeight="900" color="#002855" sx={{ mb: 3 }}>Active Blue Card</Typography>
                   <Box sx={{ p: 4, bgcolor: '#eff6ff', borderRadius: '24px', border: '2px dashed #bfdbfe' }}>
                     <CardIcon sx={{ fontSize: 40, color: '#1d4ed8', mb: 1 }} />
-                    <Typography variant="h4" fontWeight="900" color="#1d4ed8" sx={{ mb: 1 }}>{resident.cardNo}</Typography>
+                    <Typography variant="h4" fontWeight="900" color="#1d4ed8" sx={{ mb: 1 }}>
+                      {resident.cardNo || `CMR-${resident.id?.substring(0,6).toUpperCase()}`}
+                    </Typography>
                     <Chip label="Master Fob" size="small" sx={{ bgcolor: '#1d4ed8', color: 'white', fontWeight: 900 }} />
                   </Box>
                   <Typography variant="caption" fontWeight="800" color="#94a3b8" sx={{ mt: 2, display: 'block' }}>RFID ACTIVATED • OFFLINE SYNCED</Typography>
@@ -235,7 +267,7 @@ export default function ResidentDetails() {
                 <Paper elevation={0} sx={{ p: 3, borderRadius: '24px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
                   <Stack direction="row" justifyContent="space-between" alignItems="center">
                     <Typography variant="body2" fontWeight="800" color="#002855">Card Condition</Typography>
-                    <Chip label={resident.wallets.security.condition} size="small" sx={{ bgcolor: '#f0fdf4', color: '#10b981', fontWeight: 900 }} />
+                    <Chip label={resident.wallets?.security?.condition || 'Good'} size="small" sx={{ bgcolor: '#f0fdf4', color: '#10b981', fontWeight: 900 }} />
                   </Stack>
                 </Paper>
               </Stack>
@@ -243,7 +275,11 @@ export default function ResidentDetails() {
           </Grid>
         )}
 
-        {activeTab === 1 && <ResidentWallets wallets={resident.wallets} />}
+        {activeTab === 1 && <ResidentWallets wallets={resident.wallets || {
+          membership: { status: 'Active', currentMonth: 'Current Month Paid', upcomingMonths: [], expiry: 'N/A', refundableFuture: '₹0.00' },
+          activity: { balance: '₹0.00' },
+          security: { locked: '₹0.00', refundable: 'Yes', condition: 'Good' }
+        }} />}
         {activeTab === 2 && <ResidentAmenities bookings={mockBookings} />}
 
         {activeTab === 3 && (
@@ -260,7 +296,7 @@ export default function ResidentDetails() {
               </Button>
             </Stack>
             <Grid container spacing={3}>
-              {mockFamily.map((m) => (
+              {family.map((m) => (
                 <Grid size={{ xs: 12, md: 6 }} key={m.id}>
                   <Paper elevation={0} sx={{ p: 4, borderRadius: '24px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
                     <Stack direction="row" spacing={3} alignItems="center">
@@ -270,7 +306,9 @@ export default function ResidentDetails() {
                           <Typography variant="h6" fontWeight="900" color="#002855">{m.name}</Typography>
                           {m.gender && <Chip label={m.gender} size="small" variant="outlined" sx={{ borderRadius: '6px', height: 20, fontSize: '0.7rem' }} />}
                         </Stack>
-                        <Typography variant="body2" color="#64748b" fontWeight="700">{m.role}</Typography>
+                        <Typography variant="body2" color="#64748b" fontWeight="700">
+                          Dependent ({m.relationship})
+                        </Typography>
                       </Box>
                       <Chip label="Blue Card" size="small" sx={{ bgcolor: '#eff6ff', color: '#1d4ed8', fontWeight: 900 }} />
                     </Stack>
@@ -278,29 +316,31 @@ export default function ResidentDetails() {
                     <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, mb: 3 }}>
                       <Box>
                         <Typography variant="caption" color="#94a3b8" fontWeight="800" sx={{ display: 'block' }}>MOBILE NUMBER</Typography>
-                        <Typography variant="body2" fontWeight="700" color="text.primary">+91 98765 43210</Typography>
+                        <Typography variant="body2" fontWeight="700" color="text.primary">{m.phone || m.mobile || 'N/A'}</Typography>
                       </Box>
                       <Box>
                         <Typography variant="caption" color="#94a3b8" fontWeight="800" sx={{ display: 'block' }}>ACCESS CARD / VCARD</Typography>
-                        <Typography variant="body2" fontWeight="700" color="text.primary">{m.vcard !== 'N/A' ? m.vcard : 'Not Assigned'}</Typography>
+                        <Typography variant="body2" fontWeight="700" color="text.primary">{m.vcard !== 'N/A' && m.vcard ? m.vcard : 'Not Assigned'}</Typography>
                       </Box>
                       <Box>
-                        <Typography variant="caption" color="#94a3b8" fontWeight="800" sx={{ display: 'block' }}>AADHAAR CARD</Typography>
-                        <Typography variant="body2" fontWeight="700" color="text.primary">{m.aadhaar}</Typography>
+                        <Typography variant="caption" color="#94a3b8" fontWeight="800" sx={{ display: 'block' }}>ACCESS LEVEL</Typography>
+                        <Typography variant="body2" fontWeight="700" color="text.primary">{m.accessLevel || 'FULL'}</Typography>
                       </Box>
                       <Box>
-                        <Typography variant="caption" color="#94a3b8" fontWeight="800" sx={{ display: 'block' }}>PAN CARD</Typography>
-                        <Typography variant="body2" fontWeight="700" color="text.primary">{m.pan}</Typography>
+                        <Typography variant="caption" color="#94a3b8" fontWeight="800" sx={{ display: 'block' }}>STATUS</Typography>
+                        <Typography variant="body2" fontWeight="700" color="text.primary">{m.status || 'ACTIVE'}</Typography>
                       </Box>
                     </Box>
-                    <Divider sx={{ mb: 2 }} />
-                    <Stack direction="row" justifyContent="space-between">
-                      <Typography variant="caption" fontWeight="800" color="#94a3b8">CARD FOB: {m.cardNo}</Typography>
-                      <Typography variant="caption" fontWeight="800" color="#10b981">STATUS: {m.status}</Typography>
-                    </Stack>
                   </Paper>
                 </Grid>
               ))}
+              {family.length === 0 && (
+                <Grid size={{ xs: 12 }}>
+                  <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 4 }}>
+                    No family members enrolled.
+                  </Typography>
+                </Grid>
+              )}
             </Grid>
           </Box>
         )}
@@ -313,51 +353,122 @@ export default function ResidentDetails() {
             </Stack>
             
             <Typography variant="subtitle1" fontWeight="800" color="#002855" sx={{ mb: 2 }}>Master Resident Documents</Typography>
-            <Grid container spacing={4} sx={{ mb: 5 }}>
-              {[
-                { name: 'Aadhaar Card Copy', number: resident.kyc.aadhaar, file: 'aadhaar_scan.pdf', size: '1.2 MB' },
-                { name: 'PAN Card Copy', number: resident.kyc.pan, file: 'pan_scan.pdf', size: '840 KB' },
-                { name: 'Official Branded Photo', number: 'Verified Avatar', file: 'profile_picture.png', size: '2.1 MB' }
-              ].map((doc) => (
-                <Grid size={{ xs: 12, md: 4 }} key={doc.name}>
-                  <Paper elevation={0} sx={{ p: 4, borderRadius: '24px', border: '1px solid #e2e8f0', textAlign: 'center', bgcolor: 'white' }}>
-                    <Box sx={{ p: 4, bgcolor: '#f8fafc', borderRadius: '20px', mb: 2, display: 'flex', justifyContent: 'center' }}>
-                      <FileIcon sx={{ fontSize: 44, color: '#002855' }} />
-                    </Box>
-                    <Typography variant="body1" fontWeight="900" color="#002855">{doc.name}</Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>{doc.number}</Typography>
-                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>{doc.file} ({doc.size})</Typography>
-                    <Typography variant="caption" color="#10b981" fontWeight="800" sx={{ mb: 3, display: 'block' }}>✓ VERIFIED BY ADMIN</Typography>
-                    <Button fullWidth variant="outlined" sx={{ borderRadius: '10px', fontWeight: 800, textTransform: 'none', borderColor: '#e2e8f0', color: 'text.primary' }}>View Document</Button>
-                  </Paper>
-                </Grid>
-              ))}
-            </Grid>
+            {allDocs.length > 0 ? (
+              <Grid container spacing={4} sx={{ mb: 5 }}>
+                {allDocs.map((doc) => (
+                  <Grid size={{ xs: 12, md: 4 }} key={doc.id || doc.title}>
+                    <Paper elevation={0} sx={{ p: 4, borderRadius: '24px', border: '1px solid #e2e8f0', textAlign: 'center', bgcolor: 'white' }}>
+                      <Box sx={{ p: 4, bgcolor: '#f8fafc', borderRadius: '20px', mb: 2, display: 'flex', justifyContent: 'center' }}>
+                        <FileIcon sx={{ fontSize: 44, color: '#002855' }} />
+                      </Box>
+                      <Typography variant="body1" fontWeight="900" color="#002855">{doc.title || doc.documentType}</Typography>
+                      <Chip
+                        icon={doc.isVerified ? <CheckIcon sx={{ fontSize: '14px !important' }} /> : <PendingIcon sx={{ fontSize: '14px !important' }} />}
+                        label={doc.isVerified ? 'Verified' : (doc.status || 'PENDING')}
+                        size="small"
+                        sx={{
+                          mb: 1,
+                          bgcolor: doc.isVerified ? '#f0fdf4' : '#fffbeb',
+                          color: doc.isVerified ? '#10b981' : '#f59e0b',
+                          fontWeight: 800, borderRadius: '8px'
+                        }}
+                      />
+                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
+                        {doc.photoFileName || doc.pdfFileName || 'kyc_document.png'}
+                        {(doc.photoSize || doc.pdfSize) ? ` (${Math.round((doc.photoSize || doc.pdfSize) / 1024)} KB)` : ''}
+                      </Typography>
+                      {doc.verifiedAt && (
+                        <Typography variant="caption" color="#10b981" fontWeight="700" sx={{ display: 'block', mb: 2 }}>
+                          Verified: {new Date(doc.verifiedAt).toLocaleDateString()}
+                        </Typography>
+                      )}
+                      {doc.uploadedBy && (
+                        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
+                          Uploaded by: {doc.uploadedBy}
+                        </Typography>
+                      )}
+                      {(doc.photoUrl || doc.pdfUrl) && (
+                        <Button 
+                          fullWidth 
+                          variant="outlined" 
+                          onClick={() => handleOpenDoc(doc.title || doc.documentType, doc.photoUrl || doc.pdfUrl)}
+                          sx={{ borderRadius: '10px', fontWeight: 800, textTransform: 'none', borderColor: '#e2e8f0', color: 'text.primary' }}
+                        >
+                          View Document
+                        </Button>
+                      )}
+                    </Paper>
+                  </Grid>
+                ))}
+              </Grid>
+            ) : (
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 5 }}>No documents uploaded for master resident.</Typography>
+            )}
 
             <Typography variant="subtitle1" fontWeight="800" color="#002855" sx={{ mb: 2 }}>Family Member KYC Documents</Typography>
-            <Grid container spacing={4}>
-              {[
-                { member: 'John Smith (Spouse)', doc: 'Aadhaar Card Copy', file: 'spouse_aadhaar.pdf', size: '1.1 MB', status: 'Verified' },
-                { member: 'John Smith (Spouse)', doc: 'PAN Card Copy', file: 'spouse_pan.pdf', size: '920 KB', status: 'Verified' },
-                { member: 'Emma Smith (Daughter)', doc: 'Aadhaar Card Copy', file: 'daughter_aadhaar.pdf', size: '890 KB', status: 'Verified' }
-              ].map((doc, idx) => (
-                <Grid size={{ xs: 12, md: 4 }} key={idx}>
-                  <Paper elevation={0} sx={{ p: 4, borderRadius: '24px', border: '1px solid #e2e8f0', textAlign: 'center', bgcolor: 'white' }}>
-                    <Box sx={{ p: 4, bgcolor: '#f8fafc', borderRadius: '20px', mb: 2, display: 'flex', justifyContent: 'center' }}>
-                      <FileIcon sx={{ fontSize: 44, color: '#0047b3' }} />
-                    </Box>
-                    <Typography variant="caption" color="primary" fontWeight="800" sx={{ display: 'block', mb: 0.5 }}>{doc.member}</Typography>
-                    <Typography variant="body1" fontWeight="900" color="#002855">{doc.doc}</Typography>
-                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>{doc.file} ({doc.size})</Typography>
-                    <Typography variant="caption" color="#10b981" fontWeight="800" sx={{ mb: 3, display: 'block' }}>✓ VERIFIED BY ADMIN</Typography>
-                    <Button fullWidth variant="outlined" sx={{ borderRadius: '10px', fontWeight: 800, textTransform: 'none', borderColor: '#e2e8f0', color: 'text.primary' }}>View Document</Button>
-                  </Paper>
-                </Grid>
-              ))}
-            </Grid>
+            {familyDocs.length > 0 ? (
+              <Grid container spacing={4}>
+                {familyDocs.map((doc, idx) => (
+                  <Grid size={{ xs: 12, md: 4 }} key={idx}>
+                    <Paper elevation={0} sx={{ p: 4, borderRadius: '24px', border: '1px solid #e2e8f0', textAlign: 'center', bgcolor: 'white' }}>
+                      <Box sx={{ p: 4, bgcolor: '#f8fafc', borderRadius: '20px', mb: 2, display: 'flex', justifyContent: 'center' }}>
+                        <FileIcon sx={{ fontSize: 44, color: '#0047b3' }} />
+                      </Box>
+                      <Typography variant="caption" color="primary" fontWeight="800" sx={{ display: 'block', mb: 0.5 }}>{doc.member}</Typography>
+                      <Typography variant="body1" fontWeight="900" color="#002855">{doc.title || doc.documentType}</Typography>
+                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
+                        {doc.photoFileName || doc.pdfFileName || 'kyc_document.png'}
+                      </Typography>
+                      <Typography variant="caption" color="#10b981" fontWeight="800" sx={{ mb: 3, display: 'block' }}>✓ VERIFIED BY ADMIN</Typography>
+                      {(doc.photoUrl || doc.pdfUrl) && (
+                        <Button 
+                          fullWidth 
+                          variant="outlined" 
+                          onClick={() => handleOpenDoc(doc.title || doc.documentType, doc.photoUrl || doc.pdfUrl)}
+                          sx={{ borderRadius: '10px', fontWeight: 800, textTransform: 'none', borderColor: '#e2e8f0', color: 'text.primary' }}
+                        >
+                          View Document
+                        </Button>
+                      )}
+                    </Paper>
+                  </Grid>
+                ))}
+              </Grid>
+            ) : (
+              <Typography variant="body2" color="text.secondary">No documents uploaded for family members.</Typography>
+            )}
           </Box>
         )}
       </Box>
+
+      {/* Document Viewer Dialog */}
+      <Dialog 
+        open={docOpen} 
+        onClose={() => setDocOpen(false)} 
+        maxWidth="md"
+        PaperProps={{ sx: { borderRadius: '24px', overflow: 'hidden' } }}
+      >
+        <DialogTitle sx={{ bgcolor: '#002855', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Typography variant="h6" fontWeight="900">{docToShow.title}</Typography>
+          <IconButton onClick={() => setDocOpen(false)} sx={{ color: 'white' }}>
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent sx={{ p: 0, bgcolor: '#f8fafc', display: 'flex', justifyContent: 'center' }}>
+          <Box 
+            component="img" 
+            src={docToShow.url} 
+            sx={{ 
+              maxWidth: '100%', 
+              height: 'auto', 
+              boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
+              m: 4,
+              borderRadius: '12px',
+              border: '1px solid #e2e8f0'
+            }} 
+          />
+        </DialogContent>
+      </Dialog>
 
     </Box>
   );

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -22,12 +22,20 @@ import {
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useTranslation } from "@/i18n/translations";
+import { useAuth } from "@/contexts/AuthContext";
 
 const LoginPage = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { login, isLoginLoading, isLoggedIn, isInitialized } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    if (isInitialized && isLoggedIn) {
+      navigate("/");
+    }
+  }, [isInitialized, isLoggedIn, navigate]);
 
   const handleTogglePassword = () => setShowPassword(!showPassword);
 
@@ -42,9 +50,13 @@ const LoginPage = () => {
         .min(6, t("passwordMin"))
         .required(t("passwordRequired")),
     }),
-    onSubmit: (values) => {
-      console.log("Logging in with:", values);
-      navigate("/");
+    onSubmit: async (values) => {
+      try {
+        await login(values.email, values.password, true);
+        navigate("/");
+      } catch (error) {
+        console.error("Login error:", error);
+      }
     },
   });
 
@@ -213,6 +225,7 @@ const LoginPage = () => {
                 variant="contained"
                 fullWidth
                 size="large"
+                disabled={isLoginLoading}
                 sx={{
                   py: 1.8,
                   borderRadius: "16px",
@@ -230,7 +243,7 @@ const LoginPage = () => {
                   },
                 }}
               >
-                {t("submit")}
+                {isLoginLoading ? "Logging in..." : t("submit")}
               </Button>
             </Box>
           </form>

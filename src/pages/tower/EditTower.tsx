@@ -10,13 +10,16 @@ import {
 
 import BackButton from '@/components/BackButton';
 import { getProjects, getTowers, saveTower } from '@/utils/setupStore';
-import type { Project } from '@/utils/setupStore';
+import { getProjectsApi } from '@/apis/project';
+import { getTowerDetailsApi, updateTowerApi } from '@/apis/tower';
+import { toast } from 'react-hot-toast';
+import { CircularProgress } from '@mui/material';
 
 export default function EditTower() {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [projects, setProjects] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     projectId: '',
     name: '',
@@ -27,23 +30,58 @@ export default function EditTower() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    setProjects(getProjects());
-    const towers = getTowers();
-    const tower = towers.find(t => t.id === id);
-    if (tower) {
-      setFormData({
-        projectId: tower.projectId,
-        name: tower.name,
-        floorsCount: tower.floorsCount,
-        status: tower.status,
-        description: tower.description
-      });
-    } else {
-      navigate('/tower');
-    }
-    setLoading(false);
+    const loadTowerData = async () => {
+      setLoading(true);
+      try {
+        if (!id) throw new Error("No tower ID provided");
+        
+        // Fetch projects first
+        const projRes = await getProjectsApi({ limit: 100 });
+        const projectList = projRes?.data?.data || projRes?.data?.projects || projRes?.projects || projRes?.data || [];
+        setProjects(projectList);
+
+        // Fetch tower details
+        const res = await getTowerDetailsApi(id);
+        const tower = res?.data || res;
+        if (tower) {
+          let normStatus: 'Active' | 'Inactive' = 'Active';
+          if (tower.status?.toUpperCase() === 'INACTIVE') {
+            normStatus = 'Inactive';
+          }
+          setFormData({
+            projectId: tower.projectId || '',
+            name: tower.name || '',
+            floorsCount: tower.totalFloors || tower.floorsCount || 1,
+            status: normStatus,
+            description: tower.description || ''
+          });
+        } else {
+          throw new Error("Tower details empty");
+        }
+      } catch (error) {
+        console.warn("Failed to fetch tower via API, falling back to local storage:", error);
+        setProjects(getProjects());
+        const towers = getTowers();
+        const tower = towers.find(t => t.id === id);
+        if (tower) {
+          setFormData({
+            projectId: tower.projectId,
+            name: tower.name,
+            floorsCount: tower.floorsCount,
+            status: tower.status,
+            description: tower.description
+          });
+        } else {
+          navigate('/tower');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadTowerData();
   }, [id, navigate]);
 
   const validate = () => {
@@ -55,20 +93,45 @@ export default function EditTower() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
+    if (!id) return;
     
-    saveTower({
-      ...formData,
-      id: id,
-      floorsCount: Number(formData.floorsCount)
-    });
-    navigate('/tower');
+    setSaving(true);
+    try {
+      await updateTowerApi(id, {
+        name: formData.name,
+        description: formData.description,
+        totalFloors: Number(formData.floorsCount),
+        status: formData.status === 'Active' ? 'ACTIVE' : 'INACTIVE'
+      });
+      toast.success('Tower updated successfully');
+      navigate('/tower');
+    } catch (error: any) {
+      console.warn("API tower update failed, performing local storage fallback:", error);
+      try {
+        saveTower({
+          ...formData,
+          id: id,
+          floorsCount: Number(formData.floorsCount)
+        });
+        toast.success('Tower updated successfully (offline fallback)');
+        navigate('/tower');
+      } catch (localError) {
+        toast.error(error?.message || 'Failed to update tower');
+      }
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (loading) {
-    return <Typography sx={{ p: 4 }}>Loading...</Typography>;
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
+        <CircularProgress />
+      </Box>
+    );
   }
 
   return (
@@ -189,6 +252,7 @@ export default function EditTower() {
               type="submit"
               variant="contained" 
               startIcon={<SaveIcon />}
+              disabled={saving}
               sx={{ 
                 borderRadius: '8px', 
                 textTransform: 'none', 
@@ -199,7 +263,7 @@ export default function EditTower() {
                 '&:hover': { bgcolor: '#003380' }
               }}
             >
-              Save Changes
+              {saving ? 'Saving...' : 'Save Changes'}
             </Button>
           </Box>
         </form>

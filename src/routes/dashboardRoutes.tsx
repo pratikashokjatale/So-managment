@@ -38,6 +38,7 @@ import TowerDetails from "@/pages/tower/TowerDetails";
 import GetFlat from "@/pages/flat/GetFlat";
 import AddFlat from "@/pages/flat/AddFlat";
 import EditFlat from "@/pages/flat/EditFlat";
+import GetProfile from "@/pages/profile/GetProfile";
 
 const DashboardRoutes = {
   path: "/",
@@ -46,6 +47,10 @@ const DashboardRoutes = {
     {
       index: true,
       element: <Dashboard />,
+    },
+    {
+      path: "profile",
+      element: <GetProfile />,
     },
     {
       path: "residents",

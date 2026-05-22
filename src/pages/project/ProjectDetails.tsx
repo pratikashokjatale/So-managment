@@ -3,7 +3,8 @@ import {
   Box, Typography, Button, Table, TableBody, TableCell, 
   TableContainer, TableHead, TableRow, IconButton, Breadcrumbs, 
   Link, Paper, Grid, Card, CardContent, Divider, Dialog,
-  DialogTitle, DialogContent, DialogContentText, DialogActions
+  DialogTitle, DialogContent, DialogContentText, DialogActions,
+  CircularProgress
 } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -19,15 +20,18 @@ import {
 import Pagination from '@/components/Pagination';
 import BackButton from '@/components/BackButton';
 import { getProjects, getTowers, deleteTower, getFlats } from '@/utils/setupStore';
-import type { Project, Tower } from '@/utils/setupStore';
+import { getProjectDetailsApi } from '@/apis/project';
+import { getCachedFlatsSequentially } from '@/utils/apiCache';
 
 export default function ProjectDetails() {
   const navigate = useNavigate();
   const { id } = useParams();
   
-  const [project, setProject] = useState<Project | null>(null);
-  const [projectTowers, setProjectTowers] = useState<Tower[]>([]);
+  const [project, setProject] = useState<any | null>(null);
+  const [projectTowers, setProjectTowers] = useState<any[]>([]);
+  const [flats, setFlats] = useState<any[]>([]);
   const [deleteTowerId, setDeleteTowerId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   // Pagination states
   const [page, setPage] = useState(1);
@@ -43,16 +47,44 @@ export default function ProjectDetails() {
   };
 
   useEffect(() => {
-    const projects = getProjects();
-    const foundProject = projects.find(p => p.id === id);
-    if (foundProject) {
-      setProject(foundProject);
-      const towers = getTowers();
-      setProjectTowers(towers.filter(t => t.projectId === id));
-      setPage(1);
-    } else {
-      navigate('/project');
-    }
+    const loadProjectDetails = async () => {
+      if (!id) return;
+      setLoading(true);
+      try {
+        const res = await getProjectDetailsApi(id);
+        const foundProject = res?.data || res;
+        if (foundProject) {
+          setProject(foundProject);
+          const towers = foundProject.Towers || foundProject.towers || [];
+          setProjectTowers(towers);
+
+          // Fetch all flats dynamically for the project's towers sequentially
+          const towerIds = towers.map((t: any) => t.id);
+          const allFlats = await getCachedFlatsSequentially(towerIds);
+          setFlats(allFlats);
+          
+          setPage(1);
+        } else {
+          throw new Error("Project not found");
+        }
+      } catch (error) {
+        console.warn("Failed to fetch project details via API, performing local storage fallback:", error);
+        const projects = getProjects();
+        const foundProject = projects.find(p => p.id === id);
+        if (foundProject) {
+          setProject(foundProject);
+          const towers = getTowers();
+          setProjectTowers(towers.filter(t => t.projectId === id));
+          setFlats(getFlats().filter(f => f.projectId === id));
+          setPage(1);
+        } else {
+          navigate('/project');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadProjectDetails();
   }, [id, navigate]);
 
   const handleDeleteTowerClick = (towerId: string) => {
@@ -62,17 +94,30 @@ export default function ProjectDetails() {
   const handleConfirmDeleteTower = () => {
     if (deleteTowerId) {
       deleteTower(deleteTowerId);
-      setProjectTowers(getTowers().filter(t => t.projectId === id));
+      // Refresh local list if needed, or if API supports it. Since delete is local fallback:
+      if (project && (project.Towers || project.towers)) {
+        const remainingTowers = projectTowers.filter(t => t.id !== deleteTowerId);
+        setProjectTowers(remainingTowers);
+      } else {
+        setProjectTowers(getTowers().filter(t => t.projectId === id));
+      }
       setDeleteTowerId(null);
     }
   };
 
-  if (!project) {
-    return <Typography sx={{ p: 4 }}>Loading...</Typography>;
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
+        <CircularProgress />
+      </Box>
+    );
   }
 
-  const flats = getFlats();
-  const projectFlats = flats.filter(f => f.projectId === project.id).length;
+  if (!project) {
+    return <Typography sx={{ p: 4 }}>Project not found.</Typography>;
+  }
+
+  const projectFlats = flats.length;
 
   const paginatedTowers = projectTowers.slice((page - 1) * rowsPerPage, page * rowsPerPage);
 
@@ -240,7 +285,7 @@ export default function ProjectDetails() {
                       </Box>
                     </TableCell>
                     <TableCell sx={{ py: 2, borderBottomColor: '#f0f0f0' }}>
-                      <Typography variant="body2" fontWeight="600">{tower.floorsCount} Floors</Typography>
+                      <Typography variant="body2" fontWeight="600">{tower.totalFloors !== undefined ? tower.totalFloors : tower.floorsCount} Floors</Typography>
                     </TableCell>
                     <TableCell sx={{ py: 2, borderBottomColor: '#f0f0f0' }}>
                       <Typography variant="body2" fontWeight="600" color="#0047b3">{towerFlatsCount} Flats</Typography>
@@ -254,8 +299,8 @@ export default function ProjectDetails() {
                           borderRadius: '6px', 
                           fontSize: '0.75rem', 
                           fontWeight: 700,
-                          bgcolor: tower.status === 'Active' ? '#ecfdf5' : '#fef2f2',
-                          color: tower.status === 'Active' ? '#10b981' : '#ef4444'
+                          bgcolor: (tower.status?.toUpperCase() === 'ACTIVE' || tower.status === 'Active') ? '#ecfdf5' : '#fef2f2',
+                          color: (tower.status?.toUpperCase() === 'ACTIVE' || tower.status === 'Active') ? '#10b981' : '#ef4444'
                         }}
                       >
                         {tower.status}
