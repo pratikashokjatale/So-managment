@@ -127,7 +127,7 @@ const LoginPage = () => {
                 variant="h4"
                 sx={{ color: "white", fontWeight: 900, lineHeight: 1 }}
               >
-                DP
+               SM
               </Typography>
             </Box>
             <Typography
@@ -141,9 +141,9 @@ const LoginPage = () => {
             >
               {t("welcomeBack")}
             </Typography>
-            <Typography variant="body1" color="text.secondary">
+            {/* <Typography variant="body1" color="text.secondary">
               {t("loginSubTitle")}
-            </Typography>
+            </Typography> */}
           </Box>
 
           <form onSubmit={formik.handleSubmit}>
@@ -202,11 +202,11 @@ const LoginPage = () => {
                         {showPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
                     </InputAdornment>
-                  ),
+                  ),  
                 }}
               />
 
-              <Box sx={{ mt: -1, display: "flex", justifyContent: "flex-end" }}>
+              {/* <Box sx={{ mt: -1, display: "flex", justifyContent: "flex-end" }}>
                 <Typography
                   variant="caption"
                   sx={{
@@ -218,7 +218,7 @@ const LoginPage = () => {
                 >
                   {t("forgotPassword")}
                 </Typography>
-              </Box>
+              </Box> */}
 
               <Button
                 type="submit"
