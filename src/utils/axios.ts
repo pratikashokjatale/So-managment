@@ -25,57 +25,72 @@ api.interceptors.request.use(
 );
 
 api.interceptors.response.use(
-  (response: AxiosResponse) => {
-    return response;
-  },
+  (response: AxiosResponse) => response,
   async (error: AxiosError) => {
     const originalRequest: any = error.config;
-    if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
+
+    // Skip refresh logic for auth endpoints to prevent loops
+    const isAuthEndpoint = originalRequest?.url?.includes('/auth/');
+
+    if (
+      error.response?.status === 401 &&
+      originalRequest &&
+      !originalRequest._retry &&
+      !isAuthEndpoint
+    ) {
       originalRequest._retry = true;
       try {
         const refreshToken = getRefreshToken() || getSessionRefreshToken();
         if (refreshToken) {
           const res: any = await axios.post(`${API_URL}/api/v1/auth/refresh`, { refreshToken });
-          
+
           const newAccessToken =
+            res?.data?.data?.tokens?.accessToken ||
             res?.data?.data?.accessToken ||
             res?.data?.tokens?.accessToken ||
-            res?.tokens?.accessToken ||
-            res?.accessToken ||
             res?.data?.accessToken ||
-            res?.token;
+            res?.tokens?.accessToken ||
+            res?.accessToken;
+
           const newRefreshToken =
+            res?.data?.data?.tokens?.refreshToken ||
             res?.data?.data?.refreshToken ||
             res?.data?.tokens?.refreshToken ||
-            res?.tokens?.refreshToken ||
-            res?.refreshToken ||
-            res?.data?.refreshToken;
-          
+            res?.data?.refreshToken ||
+            res?.tokens?.refreshToken;
+
           if (newAccessToken) {
+            // Update global default + stored token
             api.defaults.headers.common.Authorization = `Bearer ${newAccessToken}`;
             setCookies(newAccessToken);
             if (newRefreshToken) setRefreshToken(newRefreshToken);
-            
-            originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+
+            // Patch the retried request header directly
+            originalRequest.headers = {
+              ...originalRequest.headers,
+              Authorization: `Bearer ${newAccessToken}`,
+            };
             return api(originalRequest);
           }
         }
       } catch (refreshError) {
-        console.error("Refresh token expired or invalid, cleaning up:", refreshError);
-        clearCookies();
-        clearSession();
+        console.error('Refresh token expired or invalid, redirecting to login:', refreshError);
+      }
+
+      // Refresh failed or no refresh token — clear session and redirect to login
+      clearCookies();
+      clearSession();
+      if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
+        window.location.href = '/login';
       }
     }
 
     if (error.response?.status === 403) {
-      console.error("Access forbidden");
+      console.error('Access forbidden');
     }
 
-    if (
-      typeof error.response?.status === "number" &&
-      error.response.status >= 500
-    ) {
-      console.error("Server error occurred");
+    if (typeof error.response?.status === 'number' && error.response.status >= 500) {
+      console.error('Server error occurred');
     }
 
     return Promise.reject(error);
