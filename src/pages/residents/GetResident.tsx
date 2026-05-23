@@ -144,11 +144,14 @@ export default function GetResident() {
 
   useEffect(() => {
     loadSetupData();
+    fetchRejectedResidents();
   }, []);
 
   useEffect(() => {
     if (tabValue === 0) {
       fetchResidents();
+    } else if (tabValue === 2) {
+      fetchRejectedResidents();
     }
   }, [page, rowsPerPage, searchQuery, tabValue, statusFilter]);
 

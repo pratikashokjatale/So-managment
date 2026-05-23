@@ -248,80 +248,9 @@ const LoginPage = () => {
             </Box>
           </form>
 
-          <Box sx={{ my: 5 }}>
-            <Divider>
-              <Typography
-                variant="caption"
-                sx={{ color: "text.disabled", px: 2, fontWeight: 700 }}
-              >
-                {t("orContinueWith")}
-              </Typography>
-            </Divider>
-          </Box>
+         
 
-          <Box sx={{ display: "flex", gap: 2 }}>
-            <Button
-              fullWidth
-              variant="outlined"
-              startIcon={<GoogleIcon />}
-              sx={{
-                borderRadius: "16px",
-                py: 1.5,
-                borderColor: theme.palette.divider,
-                color: "text.primary",
-                fontWeight: 700,
-                textTransform: "none",
-                "&:hover": {
-                  bgcolor: alpha(theme.palette.primary.main, 0.04),
-                  borderColor: theme.palette.primary.main,
-                },
-              }}
-            >
-              Google
-            </Button>
-            <Button
-              fullWidth
-              variant="outlined"
-              startIcon={<GitHubIcon />}
-              sx={{
-                borderRadius: "16px",
-                py: 1.5,
-                borderColor: theme.palette.divider,
-                color: "text.primary",
-                fontWeight: 700,
-                textTransform: "none",
-                "&:hover": {
-                  bgcolor: alpha(theme.palette.primary.main, 0.04),
-                  borderColor: theme.palette.primary.main,
-                },
-              }}
-            >
-              GitHub
-            </Button>
-          </Box>
-
-          <Box sx={{ mt: 6, textAlign: "center" }}>
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{ fontWeight: 500 }}
-            >
-              {t("dontHaveAccount")}{" "}
-              <Typography
-                component="span"
-                variant="body2"
-                sx={{
-                  color: "primary.main",
-                  fontWeight: 800,
-                  cursor: "pointer",
-                  ml: 0.5,
-                  "&:hover": { textDecoration: "underline" },
-                }}
-              >
-                {t("signUp")}
-              </Typography>
-            </Typography>
-          </Box>
+         
         </Paper>
       </Container>
     </Box>

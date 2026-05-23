@@ -87,8 +87,8 @@ export default function EditFlat() {
           setFormData({
             projectId: flat.projectId || "",
             towerId: flat.towerId || "",
-            number: flat.flatNumber || flat.number || "",
-            floor: flat.floorNumber || flat.floor || "",
+            number: String(flat.flatNumber || flat.number || ""),
+            floor: String(flat.floorNumber || flat.floor || ""),
             type: flat.flatType || flat.type || "2BHK",
             occupancyType: flat.occupancyType || "OWNER",
             status: normStatus,
@@ -292,6 +292,7 @@ export default function EditFlat() {
             <TextField
               fullWidth
               select
+              disabled
               label="Select Project *"
               value={formData.projectId}
               onChange={(e) => handleProjectChange(e.target.value as string)}
@@ -310,6 +311,7 @@ export default function EditFlat() {
             <TextField
               fullWidth
               select
+              disabled
               label="Select Tower *"
               value={formData.towerId}
               onChange={(e) =>
@@ -320,7 +322,6 @@ export default function EditFlat() {
                 errors.towerId ||
                 (!formData.projectId ? "Please select a Project first" : "")
               }
-              disabled={!formData.projectId}
               sx={{ "& fieldset": { borderRadius: "8px" } }}
             >
               {filteredTowers.map((t) => (
