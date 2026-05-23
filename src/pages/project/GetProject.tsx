@@ -4,7 +4,7 @@ import {
   TableContainer, TableHead, TableRow, IconButton, Breadcrumbs, 
   Link, Card, CardContent, Grid, Dialog, DialogTitle, 
   DialogContent, DialogContentText, DialogActions, TableSortLabel,
-  CircularProgress
+  CircularProgress, Select, MenuItem
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -12,8 +12,6 @@ import {
   EditOutlined as EditOutlinedIcon,
   DeleteOutline as DeleteIcon,
   Business as ProjectIcon,
-  Apartment as TowerIcon,
-  DoorBackSharp as FlatIcon,
   Add as AddIcon,
   LocationOn as LocationIcon,
   FiberManualRecord as DotIcon
@@ -21,20 +19,16 @@ import {
 
 import Search from '@/components/Search';
 import Pagination from '@/components/Pagination';
-import { getProjects, deleteProject, getTowers, getFlats } from '@/utils/setupStore';
+import { getProjects, deleteProject } from '@/utils/setupStore';
 import type { Project } from '@/utils/setupStore';
 import { getProjectsApi } from '@/apis/project';
-import { getCachedProjects, getCachedTowersSequentially, getCachedFlatsSequentially } from '@/utils/apiCache';
 
 export default function GetProject() {
   const navigate = useNavigate();
   const [projects, setProjects] = useState<Project[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [deleteId, setDeleteId] = useState<string | null>(null);
-
-  // Dynamic API states for metrics
-  const [towers, setTowers] = useState<any[]>([]);
-  const [flats, setFlats] = useState<any[]>([]);
+  const [statusFilter, setStatusFilter] = useState<string>('ALL');
 
   // Sorting states
   const [sortBy, setSortBy] = useState<string>('name');
@@ -68,31 +62,20 @@ export default function GetProject() {
       const res = await getProjectsApi({
         page,
         limit: rowsPerPage,
+        status: statusFilter === 'ALL' ? undefined : statusFilter,
       });
       const projectList = res?.data?.data || res?.data?.projects || res?.projects || res?.data || [];
       const pagination = res?.data?.pagination || res?.pagination;
       setProjects(projectList);
       setTotalCount(pagination?.total || projectList.length);
       setIsApiMode(true);
-
-      // Fetch all projects/towers/flats sequentially via cache to dynamically compute metrics
-      const allProjects = await getCachedProjects();
-      const projectIds = allProjects.map((p: any) => p.id);
-      const allTowers = await getCachedTowersSequentially(projectIds);
-      setTowers(allTowers);
-
-      const towerIds = allTowers.map((t: any) => t.id);
-      const allFlats = await getCachedFlatsSequentially(towerIds);
-      setFlats(allFlats);
+      setLoading(false);
     } catch (error) {
       console.warn("Failed to fetch projects via API, falling back to local storage:", error);
       const localProjects = getProjects();
       setProjects(localProjects);
-      setTowers(getTowers());
-      setFlats(getFlats());
       setTotalCount(localProjects.length);
       setIsApiMode(false);
-    } finally {
       setLoading(false);
     }
   };
@@ -100,18 +83,16 @@ export default function GetProject() {
   // Load data
   useEffect(() => {
     fetchProjects();
-  }, [page, rowsPerPage]);
+  }, [page, rowsPerPage, statusFilter]);
 
   // Reset page to 1 on filter changes
   useEffect(() => {
     setPage(1);
-  }, [searchQuery]);
+  }, [searchQuery, statusFilter]);
 
   // Metrics
   const totalProjects = isApiMode ? totalCount : projects.length;
   const activeProjects = projects.filter(p => p.status?.toUpperCase() === 'ACTIVE' || p.status === 'Active').length;
-  const totalTowers = towers.length;
-  const totalFlats = flats.length;
 
   const handleDeleteClick = (id: string) => {
     setDeleteId(id);
@@ -194,7 +175,7 @@ export default function GetProject() {
 
       {/* Metrics Cards */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+        <Grid size={{ xs: 12, sm: 6 }}>
           <Card sx={{ bgcolor: '#eff6ff', borderRadius: '12px', boxShadow: 'none', border: '1px solid #d0e1fd' }}>
             <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <Box sx={{ p: 1.5, bgcolor: '#0047b3', color: '#ffffff', borderRadius: '8px', display: 'flex' }}>
@@ -207,7 +188,7 @@ export default function GetProject() {
             </CardContent>
           </Card>
         </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+        <Grid size={{ xs: 12, sm: 6 }}>
           <Card sx={{ bgcolor: '#ecfdf5', borderRadius: '12px', boxShadow: 'none', border: '1px solid #a7f3d0' }}>
             <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <Box sx={{ p: 1.5, bgcolor: '#10b981', color: '#ffffff', borderRadius: '8px', display: 'flex' }}>
@@ -220,42 +201,30 @@ export default function GetProject() {
             </CardContent>
           </Card>
         </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <Card sx={{ bgcolor: '#faf5ff', borderRadius: '12px', boxShadow: 'none', border: '1px solid #f3e8ff' }}>
-            <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              <Box sx={{ p: 1.5, bgcolor: '#8b5cf6', color: '#ffffff', borderRadius: '8px', display: 'flex' }}>
-                <TowerIcon />
-              </Box>
-              <Box>
-                <Typography variant="caption" color="text.secondary" fontWeight="600">TOTAL TOWERS</Typography>
-                <Typography variant="h5" fontWeight="800" sx={{ color: '#5b21b6' }}>{totalTowers}</Typography>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <Card sx={{ bgcolor: '#fffbeb', borderRadius: '12px', boxShadow: 'none', border: '1px solid #fef3c7' }}>
-            <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              <Box sx={{ p: 1.5, bgcolor: '#f59e0b', color: '#ffffff', borderRadius: '8px', display: 'flex' }}>
-                <FlatIcon />
-              </Box>
-              <Box>
-                <Typography variant="caption" color="text.secondary" fontWeight="600">TOTAL FLATS</Typography>
-                <Typography variant="h5" fontWeight="800" sx={{ color: '#92400e' }}>{totalFlats}</Typography>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
       </Grid>
 
       {/* Search Filter section */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
         <Search 
           placeholder="Search by project name, code, or location..." 
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           sx={{ width: { xs: '100%', md: 400 }, '& fieldset': { borderRadius: '8px' } }}
         />
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Typography variant="body2" color="text.secondary" fontWeight="600">Status:</Typography>
+          <Select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            size="small"
+            sx={{ minWidth: 150, borderRadius: '8px', bgcolor: '#ffffff' }}
+          >
+            <MenuItem value="ALL">All Status</MenuItem>
+            <MenuItem value="ACTIVE">Active</MenuItem>
+            <MenuItem value="INACTIVE">Inactive</MenuItem>
+            <MenuItem value="MAINTENANCE">Maintenance</MenuItem>
+          </Select>
+        </Box>
       </Box>
 
       {/* Table Section */}
@@ -290,8 +259,6 @@ export default function GetProject() {
                   Location
                 </TableSortLabel>
               </TableCell>
-              <TableCell sx={{ color: '#002855', fontWeight: 700, py: 2 }}>Towers</TableCell>
-              <TableCell sx={{ color: '#002855', fontWeight: 700, py: 2 }}>Flats</TableCell>
               <TableCell sx={{ color: '#002855', fontWeight: 700, py: 2 }}>
                 <TableSortLabel
                   active={sortBy === 'status'}
@@ -307,15 +274,12 @@ export default function GetProject() {
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={7} align="center" sx={{ py: 6 }}>
+                <TableCell colSpan={5} align="center" sx={{ py: 6 }}>
                   <CircularProgress size={30} />
                 </TableCell>
               </TableRow>
             ) : (
               paginatedProjects.map((row) => {
-                const projectTowers = towers.filter(t => t.projectId === row.id).length;
-                const projectFlats = flats.filter(f => f.projectId === row.id).length;
-
                 return (
                   <TableRow key={row.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                     <TableCell component="th" scope="row" sx={{ py: 2, fontWeight: 700, color: '#0047b3', borderBottomColor: '#f0f0f0' }}>
@@ -332,12 +296,6 @@ export default function GetProject() {
                         <LocationIcon fontSize="inherit" sx={{ color: 'text.secondary' }} />
                         <Typography variant="body2" color="text.secondary">{row.location}</Typography>
                       </Box>
-                    </TableCell>
-                    <TableCell sx={{ py: 2, borderBottomColor: '#f0f0f0' }}>
-                      <Typography variant="body2" fontWeight="600" color="text.primary">{projectTowers}</Typography>
-                    </TableCell>
-                    <TableCell sx={{ py: 2, borderBottomColor: '#f0f0f0' }}>
-                      <Typography variant="body2" fontWeight="600" color="text.primary">{projectFlats}</Typography>
                     </TableCell>
                     <TableCell sx={{ py: 2, borderBottomColor: '#f0f0f0' }}>
                       <Box 
@@ -384,7 +342,7 @@ export default function GetProject() {
             )}
             {!loading && filteredProjects.length === 0 && (
               <TableRow>
-                <TableCell colSpan={7} align="center" sx={{ py: 6 }}>
+                <TableCell colSpan={5} align="center" sx={{ py: 6 }}>
                   <Typography variant="body2" color="text.secondary">
                     No projects found matching the criteria.
                   </Typography>

@@ -29,24 +29,42 @@ api.interceptors.response.use(
     return response;
   },
   async (error: AxiosError) => {
-    if (error.response?.status === 401) {
+    const originalRequest: any = error.config;
+    if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
+      originalRequest._retry = true;
       try {
-        const refreshToken = getRefreshToken() || getSessionRefreshToken()
-        const res: any = await axios.post(`${API_URL}/api/v1/auth/refresh`, { refreshToken })
-        
-        const newAccessToken = res?.data?.tokens?.accessToken || res?.tokens?.accessToken || res?.accessToken || res?.data?.accessToken || res?.token;
-        const newRefreshToken = res?.data?.tokens?.refreshToken || res?.tokens?.refreshToken || res?.refreshToken || res?.data?.refreshToken;
-        
-        if (newAccessToken) {
-          api.defaults.headers.common.Authorization = `Bearer ${newAccessToken}`;
-          setCookies(newAccessToken);
-          if (newRefreshToken) setRefreshToken(newRefreshToken);
+        const refreshToken = getRefreshToken() || getSessionRefreshToken();
+        if (refreshToken) {
+          const res: any = await axios.post(`${API_URL}/api/v1/auth/refresh`, { refreshToken });
+          
+          const newAccessToken =
+            res?.data?.data?.accessToken ||
+            res?.data?.tokens?.accessToken ||
+            res?.tokens?.accessToken ||
+            res?.accessToken ||
+            res?.data?.accessToken ||
+            res?.token;
+          const newRefreshToken =
+            res?.data?.data?.refreshToken ||
+            res?.data?.tokens?.refreshToken ||
+            res?.tokens?.refreshToken ||
+            res?.refreshToken ||
+            res?.data?.refreshToken;
+          
+          if (newAccessToken) {
+            api.defaults.headers.common.Authorization = `Bearer ${newAccessToken}`;
+            setCookies(newAccessToken);
+            if (newRefreshToken) setRefreshToken(newRefreshToken);
+            
+            originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+            return api(originalRequest);
+          }
         }
-      } catch (error) {
+      } catch (refreshError) {
+        console.error("Refresh token expired or invalid, cleaning up:", refreshError);
         clearCookies();
-        clearSession()
+        clearSession();
       }
-
     }
 
     if (error.response?.status === 403) {

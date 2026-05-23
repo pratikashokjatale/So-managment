@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, 
   Chip, Stack, Avatar, IconButton, TextField, InputAdornment, 
@@ -20,8 +20,10 @@ import {
 } from '@mui/icons-material';
 import Pagination from '../../components/Pagination';
 
+import { getAttendanceListApi } from '@/apis/attendance';
+
 interface AttendanceRecord {
-  id: number;
+  id: any;
   name: string;
   role: string;
   shift: string;
@@ -29,6 +31,7 @@ interface AttendanceRecord {
   checkOut: string;
   status: 'Present' | 'Late' | 'Absent' | 'On Break';
   avatar: string;
+  rawLog?: any;
 }
 
 const INITIAL_ATTENDANCE: AttendanceRecord[] = [
@@ -57,117 +60,17 @@ interface LogEntry {
 }
 
 // Pre-seeded high-fidelity access logs for each staff member
-const ATTENDANCE_TIMELINES: Record<number, LogEntry> = {
-  1: {
-    checkInTime: '08:02 AM',
-    checkInStatus: 'Checked In (On Time)',
-    checkInTerminal: 'Main Entrance Gate A',
-    breakTime: '01:00 PM - 01:45 PM',
-    breakDuration: '45 mins (Lunch Break)',
-    breakTerminal: 'Clubhouse Cafeteria',
-    checkOutTime: 'Active',
-    checkOutStatus: 'Still On Duty / Shift Active',
-    checkOutTerminal: '-'
-  },
-  2: {
-    checkInTime: '09:15 AM',
-    checkInStatus: 'Checked In (15 Mins Late)',
-    checkInTerminal: 'Service Gate Entrance B',
-    breakTime: '02:00 PM - 02:30 PM',
-    breakDuration: '30 mins (Tea Break)',
-    breakTerminal: 'Staff Lounge Area',
-    checkOutTime: 'Active',
-    checkOutStatus: 'Still On Duty / Shift Active',
-    checkOutTerminal: '-'
-  },
-  3: {
-    checkInTime: '-',
-    checkInStatus: 'No Log Registered',
-    checkInTerminal: '-',
-    breakTime: '-',
-    breakDuration: '-',
-    breakTerminal: '-',
-    checkOutTime: '-',
-    checkOutStatus: 'Absent / Not Checked In',
-    checkOutTerminal: '-'
-  },
-  4: {
-    checkInTime: '08:00 PM (Yesterday)',
-    checkInStatus: 'Checked In (Shift Started)',
-    checkInTerminal: 'Main Entrance Gate A',
-    breakTime: '01:00 AM - 01:45 AM',
-    breakDuration: '45 mins (Midnight Break)',
-    breakTerminal: 'Security Room B Lounge',
-    checkOutTime: '08:00 AM (Today)',
-    checkOutStatus: 'Checked Out (Shift Completed)',
-    checkOutTerminal: 'Main Entrance Gate A'
-  },
-  5: {
-    checkInTime: '08:55 AM',
-    checkInStatus: 'Checked In (On Time)',
-    checkInTerminal: 'East Gardens Entrance C',
-    breakTime: '12:30 PM - 01:15 PM',
-    breakDuration: '45 mins (Lunch Break)',
-    breakTerminal: 'Nursery Break Room',
-    checkOutTime: 'Active',
-    checkOutStatus: 'Still On Duty / Shift Active',
-    checkOutTerminal: '-'
-  },
-  6: {
-    checkInTime: '09:05 AM',
-    checkInStatus: 'Checked In (5 Mins Late)',
-    checkInTerminal: 'Main Reception Desk Lobby',
-    breakTime: '01:00 PM - 01:45 PM',
-    breakDuration: '45 mins (Lunch Break)',
-    breakTerminal: 'Lobby Cafe Lounge',
-    checkOutTime: 'Active',
-    checkOutStatus: 'Still On Duty / Shift Active',
-    checkOutTerminal: '-'
-  },
-  7: {
-    checkInTime: '-',
-    checkInStatus: 'No Log Registered',
-    checkInTerminal: '-',
-    breakTime: '-',
-    breakDuration: '-',
-    breakTerminal: '-',
-    checkOutTime: '-',
-    checkOutStatus: 'Absent / Not Checked In',
-    checkOutTerminal: '-'
-  },
-  8: {
-    checkInTime: '08:50 AM',
-    checkInStatus: 'Checked In (On Time)',
-    checkInTerminal: 'Admin Office Entrance',
-    breakTime: '01:00 PM - 02:00 PM',
-    breakDuration: '60 mins (Lunch Break)',
-    breakTerminal: 'Central Food Court',
-    checkOutTime: 'Active',
-    checkOutStatus: 'Still On Duty / Shift Active',
-    checkOutTerminal: '-'
-  },
-  9: {
-    checkInTime: '09:30 AM',
-    checkInStatus: 'Checked In (30 Mins Late)',
-    checkInTerminal: 'Service Gate Entrance B',
-    breakTime: '02:00 PM - 02:30 PM',
-    breakDuration: '30 mins (Tea Break)',
-    breakTerminal: 'Staff Lounge Area',
-    checkOutTime: 'Active',
-    checkOutStatus: 'Still On Duty / Shift Active',
-    checkOutTerminal: '-'
-  },
-  10: {
-    checkInTime: '09:00 AM',
-    checkInStatus: 'Checked In (On Time)',
-    checkInTerminal: 'Service Gate Entrance B',
-    breakTime: '01:30 PM - 02:15 PM',
-    breakDuration: '45 mins (Lunch Break)',
-    breakTerminal: 'Central Food Court',
-    checkOutTime: 'Active',
-    checkOutStatus: 'Still On Duty / Shift Active',
-    checkOutTerminal: '-'
-  }
+const ATTENDANCE_TIMELINES: Record<any, LogEntry> = {
+  1: { checkInTime: '08:02 AM', checkInStatus: 'Checked In (On Time)', checkInTerminal: 'Main Entrance Gate A', breakTime: '01:00 PM - 01:45 PM', breakDuration: '45 mins (Lunch Break)', breakTerminal: 'Clubhouse Cafeteria', checkOutTime: 'Active', checkOutStatus: 'Still On Duty / Shift Active', checkOutTerminal: '-' },
+  2: { checkInTime: '09:15 AM', checkInStatus: 'Checked In (15 Mins Late)', checkInTerminal: 'Service Gate Entrance B', breakTime: '02:00 PM - 02:30 PM', breakDuration: '30 mins (Tea Break)', breakTerminal: 'Staff Lounge Area', checkOutTime: 'Active', checkOutStatus: 'Still On Duty / Shift Active', checkOutTerminal: '-' },
+  3: { checkInTime: '-', checkInStatus: 'No Log Registered', checkInTerminal: '-', breakTime: '-', breakDuration: '-', breakTerminal: '-', checkOutTime: '-', checkOutStatus: 'Absent / Not Checked In', checkOutTerminal: '-' },
+  4: { checkInTime: '08:00 PM (Yesterday)', checkInStatus: 'Checked In (Shift Started)', checkInTerminal: 'Main Entrance Gate A', breakTime: '01:00 AM - 01:45 AM', breakDuration: '45 mins (Midnight Break)', breakTerminal: 'Security Room B Lounge', checkOutTime: '08:00 AM (Today)', checkOutStatus: 'Checked Out (Shift Completed)', checkOutTerminal: 'Main Entrance Gate A' },
+  5: { checkInTime: '08:55 AM', checkInStatus: 'Checked In (On Time)', checkInTerminal: 'East Gardens Entrance C', breakTime: '12:30 PM - 01:15 PM', breakDuration: '45 mins (Lunch Break)', breakTerminal: 'Nursery Break Room', checkOutTime: 'Active', checkOutStatus: 'Still On Duty / Shift Active', checkOutTerminal: '-' },
+  6: { checkInTime: '09:05 AM', checkInStatus: 'Checked In (5 Mins Late)', checkInTerminal: 'Main Reception Desk Lobby', breakTime: '01:00 PM - 01:45 PM', breakDuration: '45 mins (Lunch Break)', breakTerminal: 'Lobby Cafe Lounge', checkOutTime: 'Active', checkOutStatus: 'Still On Duty / Shift Active', checkOutTerminal: '-' },
+  7: { checkInTime: '-', checkInStatus: 'No Log Registered', checkInTerminal: '-', breakTime: '-', breakDuration: '-', breakTerminal: '-', checkOutTime: '-', checkOutStatus: 'Absent / Not Checked In', checkOutTerminal: '-' },
+  8: { checkInTime: '08:50 AM', checkInStatus: 'Checked In (On Time)', checkInTerminal: 'Admin Office Entrance', breakTime: '01:00 PM - 02:00 PM', breakDuration: '60 mins (Lunch Break)', breakTerminal: 'Central Food Court', checkOutTime: 'Active', checkOutStatus: 'Still On Duty / Shift Active', checkOutTerminal: '-' },
+  9: { checkInTime: '09:30 AM', checkInStatus: 'Checked In (30 Mins Late)', checkInTerminal: 'Service Gate Entrance B', breakTime: '02:00 PM - 02:30 PM', breakDuration: '30 mins (Tea Break)', breakTerminal: 'Staff Lounge Area', checkOutTime: 'Active', checkOutStatus: 'Still On Duty / Shift Active', checkOutTerminal: '-' },
+  10: { checkInTime: '09:00 AM', checkInStatus: 'Checked In (On Time)', checkInTerminal: 'Service Gate Entrance B', breakTime: '01:30 PM - 02:15 PM', breakDuration: '45 mins (Lunch Break)', breakTerminal: 'Central Food Court', checkOutTime: 'Active', checkOutStatus: 'Still On Duty / Shift Active', checkOutTerminal: '-' }
 };
 
 interface StatCardProps {
@@ -204,14 +107,62 @@ const StatCard = ({ label, value, total, color }: StatCardProps) => {
   );
 };
 
+const mapBackendAttendanceToFrontend = (a: any) => {
+  const checkIn = a.checkInAt ? new Date(a.checkInAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '-';
+  const checkOut = a.checkOutAt ? new Date(a.checkOutAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '-';
+  
+  let status: 'Present' | 'Late' | 'Absent' | 'On Break' = 'Absent';
+  if (a.status === 'PRESENT') status = 'Present';
+  else if (a.status === 'LATE') status = 'Late';
+  else if (a.status === 'ABSENT') status = 'Absent';
+  else if (a.status === 'HALF_DAY') status = 'Late';
+
+  let dept = a.staff?.department || 'Staff';
+  if (dept === 'SECURITY') dept = 'Security Guard';
+  else if (dept === 'HOUSEKEEPING') dept = 'Housekeeping';
+  else if (dept === 'MAINTENANCE') dept = 'Maintenance Crew';
+  else if (dept === 'ADMINISTRATION') dept = 'Receptionist';
+
+  return {
+    id: a.id,
+    name: a.staff?.name || 'Unknown Crew',
+    role: a.staff?.designation || dept,
+    shift: a.staff?.shiftStart ? `${a.staff.shiftStart} - ${a.staff.shiftEnd}` : 'General (9 AM - 6 PM)',
+    checkIn,
+    checkOut,
+    status,
+    avatar: a.staff?.profilePhotoUrl || `https://i.pravatar.cc/150?u=${a.id}`,
+    rawLog: a
+  };
+};
+
 export default function StaffAttendance() {
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-
+  const [attendance, setAttendance] = useState<AttendanceRecord[]>([]);
   // Dialog State (View-Only Log Timeline)
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<AttendanceRecord | null>(null);
+
+  const fetchAttendance = async () => {
+    try {
+      const res = await getAttendanceListApi({ limit: 100 });
+      const list = res?.data?.attendance || res?.data?.items || res?.attendance || (Array.isArray(res?.data) ? res.data : null);
+      if (Array.isArray(list)) {
+        setAttendance(list.map(mapBackendAttendanceToFrontend));
+      } else {
+        setAttendance(INITIAL_ATTENDANCE);
+      }
+    } catch (err) {
+      console.warn("Failed to fetch attendance logs via API, falling back:", err);
+      setAttendance(INITIAL_ATTENDANCE);
+    }
+  };
+
+  useEffect(() => {
+    fetchAttendance();
+  }, []);
 
   const handleOpenDialog = (record: AttendanceRecord) => {
     setSelectedRecord(record);
@@ -223,7 +174,7 @@ export default function StaffAttendance() {
     setSelectedRecord(null);
   };
 
-  const filteredAttendance = INITIAL_ATTENDANCE.filter(a => 
+  const filteredAttendance = attendance.filter(a => 
     a.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     a.role.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -246,14 +197,24 @@ export default function StaffAttendance() {
   };
 
   // Statistics
-  const totalCount = INITIAL_ATTENDANCE.length;
-  const presentCount = INITIAL_ATTENDANCE.filter(a => a.status === 'Present' || a.status === 'Late' || a.status === 'On Break').length;
-  const absentCount = INITIAL_ATTENDANCE.filter(a => a.status === 'Absent').length;
-  const onTimeCount = INITIAL_ATTENDANCE.filter(a => a.status === 'Present').length;
-  const lateCount = INITIAL_ATTENDANCE.filter(a => a.status === 'Late').length;
+  const totalCount = attendance.length;
+  const presentCount = attendance.filter(a => a.status === 'Present' || a.status === 'Late' || a.status === 'On Break').length;
+  const absentCount = attendance.filter(a => a.status === 'Absent').length;
+  const onTimeCount = attendance.filter(a => a.status === 'Present').length;
+  const lateCount = attendance.filter(a => a.status === 'Late').length;
 
   // Resolve current active log
-  const activeLog: LogEntry = selectedRecord ? (ATTENDANCE_TIMELINES[selectedRecord.id] || {
+  const activeLog: LogEntry = selectedRecord ? (selectedRecord.rawLog ? {
+    checkInTime: selectedRecord.checkIn,
+    checkInStatus: selectedRecord.rawLog.status === 'LATE' ? 'Checked In (Late)' : 'Checked In (On Time)',
+    checkInTerminal: selectedRecord.rawLog.accessZone || 'Main Gate Terminal',
+    breakTime: '-',
+    breakDuration: '-',
+    breakTerminal: '-',
+    checkOutTime: selectedRecord.checkOut === '-' ? 'Active' : selectedRecord.checkOut,
+    checkOutStatus: selectedRecord.checkOut === '-' ? 'Still On Duty / Shift Active' : 'Checked Out (Shift Completed)',
+    checkOutTerminal: selectedRecord.checkOut === '-' ? '-' : 'Main Exit Terminal'
+  } : (ATTENDANCE_TIMELINES[selectedRecord.id] || {
     checkInTime: '-',
     checkInStatus: 'No Log Found',
     checkInTerminal: '-',
@@ -263,7 +224,7 @@ export default function StaffAttendance() {
     checkOutTime: '-',
     checkOutStatus: 'Absent',
     checkOutTerminal: '-'
-  }) : {
+  })) : {
     checkInTime: '-',
     checkInStatus: '-',
     checkInTerminal: '-',

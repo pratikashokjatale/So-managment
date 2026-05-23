@@ -60,9 +60,8 @@ export default function TowerDetails() {
           // Retrieve flats from API
           try {
             const flatsRes = await getFlatsApi(id, { page: 1, limit: 100 });
-            const list = Array.isArray(flatsRes?.data?.data)
-              ? flatsRes.data.data
-              : flatsRes?.data?.flats || flatsRes?.flats || flatsRes?.data || [];
+            const _frd = flatsRes?.data;
+            const list = (Array.isArray(_frd?.data?.data) ? _frd.data.data : null) || (Array.isArray(_frd?.data) ? _frd.data : null) || _frd?.flats || [];
             const mappedFlats = list.map((f: any) => {
               let normStatus = f.status || 'Vacant';
               if (normStatus === 'VACANT') normStatus = 'Vacant';

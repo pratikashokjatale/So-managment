@@ -8,6 +8,8 @@ import SaveIcon from '@mui/icons-material/Save';
 import EditIcon from '@mui/icons-material/Edit';
 import { getStaffById, saveStaff } from '@/utils/staffStore';
 import { getFacilities } from '@/utils/facilityStore';
+import { getFacilitiesApi } from '@/apis/facility';
+import { getStaffDetailsApi, createStaffApi, updateStaffApi } from '@/apis/staff';
 
 const DEPARTMENTS = [
   'Security',
@@ -38,30 +40,88 @@ export default function EditStaff() {
   const [facilityId, setFacilityId] = useState('');
   const [status, setStatus] = useState<'Active' | 'Inactive'>('Active');
   const [avatar, setAvatar] = useState('https://i.pravatar.cc/150?u=staff');
+  const [idProofType, setIdProofType] = useState('AADHAAR');
+  const [idProofNumber, setIdProofNumber] = useState('');
+  const [notes, setNotes] = useState('');
 
   // Load facilities and staff details if in edit mode
   useEffect(() => {
-    const activeFacilities = getFacilities();
-    setFacilities(activeFacilities);
-    if (activeFacilities.length > 0) {
-      setFacilityId(activeFacilities[0].id);
-    }
-
-    if (!isAddMode && id) {
-      const staff = getStaffById(id);
-      if (staff) {
-        setName(staff.name);
-        setDepartment(staff.department);
-        setPhone(staff.phone);
-        setEmail(staff.email);
-        setJoiningDate(staff.joiningDate);
-        setAddress(staff.address);
-        setEmergencyContact(staff.emergencyContact);
-        setFacilityId(staff.facilityId);
-        setStatus(staff.status);
-        setAvatar(staff.avatar);
+    const loadData = async () => {
+      let activeFacilities: any[] = [];
+      let apiSucceeded = false;
+      try {
+        const res = await getFacilitiesApi({ limit: 100 });
+        const list = res?.data?.facilities || res?.facilities || res?.data || [];
+        if (Array.isArray(list)) {
+          activeFacilities = list;
+          apiSucceeded = true;
+        }
+      } catch (err) {
+        console.warn("Failed to fetch facilities via API, falling back:", err);
       }
-    }
+
+      if (!apiSucceeded) {
+        activeFacilities = getFacilities();
+      }
+      
+      setFacilities(activeFacilities);
+      if (activeFacilities.length > 0) {
+        setFacilityId(activeFacilities[0].id);
+      }
+
+      if (!isAddMode && id) {
+        try {
+          const res = await getStaffDetailsApi(id);
+          const staff = res?.data || res;
+          if (staff) {
+            setName(staff.name || '');
+            
+            let dept = staff.department || 'SECURITY';
+            if (dept === 'SECURITY') dept = 'Security';
+            else if (dept === 'HOUSEKEEPING') dept = 'Housekeeping';
+            else if (dept === 'MAINTENANCE') dept = 'Maintenance';
+            else if (dept === 'ADMINISTRATION') dept = 'Front Office';
+            else if (dept === 'SUPPORT') dept = 'Front Office';
+            else if (dept === 'FACILITY') dept = 'Maintenance';
+            else if (dept === 'OTHER') dept = 'Other';
+            setDepartment(dept);
+
+            setPhone(staff.phone || '');
+            setEmail(staff.email || '');
+            setJoiningDate(staff.joiningDate ? staff.joiningDate.split('T')[0] : '');
+            setAddress(staff.address || '');
+            setEmergencyContact(staff.emergencyContactPhone || staff.emergencyContact || '');
+            setFacilityId(staff.facilityId || '');
+            setStatus(staff.status === 'ACTIVE' ? 'Active' : 'Inactive');
+            setAvatar(staff.profilePhotoUrl || staff.avatar || '');
+            setIdProofType(staff.idProofType || 'AADHAAR');
+            setIdProofNumber(staff.idProofNumber || '');
+            setNotes(staff.notes || '');
+            return;
+          }
+        } catch (error) {
+          console.warn("Failed to load staff details via API, falling back:", error);
+        }
+
+        const staff = getStaffById(id);
+        if (staff) {
+          setName(staff.name);
+          setDepartment(staff.department);
+          setPhone(staff.phone);
+          setEmail(staff.email);
+          setJoiningDate(staff.joiningDate);
+          setAddress(staff.address);
+          setEmergencyContact(staff.emergencyContact);
+          setFacilityId(staff.facilityId);
+          setStatus(staff.status);
+          setAvatar(staff.avatar);
+          setIdProofType((staff as any).idProofType || 'AADHAAR');
+          setIdProofNumber((staff as any).idProofNumber || '');
+          setNotes((staff as any).notes || '');
+        }
+      }
+    };
+    loadData();
   }, [id, isAddMode]);
 
   // Form Validation State
@@ -79,7 +139,7 @@ export default function EditStaff() {
     return Object.keys(tempErrors).length === 0;
   };
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
 
@@ -88,23 +148,75 @@ export default function EditStaff() {
       ? `https://i.pravatar.cc/150?u=${encodeURIComponent(name)}` 
       : avatar;
 
-    const saved = saveStaff({
-      id: isAddMode ? 'add' : id,
-      name,
-      department,
-      phone,
-      email,
-      joiningDate,
-      address,
-      emergencyContact,
-      facilityId,
-      status,
-      avatar: finalAvatar,
-      facilityName: '' // Will be resolved dynamically by the store
-    });
+    let apiDept = 'SECURITY';
+    if (department === 'Housekeeping') apiDept = 'HOUSEKEEPING';
+    else if (department === 'Maintenance') apiDept = 'MAINTENANCE';
+    else if (department === 'Front Office') apiDept = 'ADMINISTRATION';
+    else if (department === 'Fitness & Gym Training') apiDept = 'FACILITY';
+    else if (department === 'Pool Operations') apiDept = 'FACILITY';
+    else if (department === 'Wellness & Spa') apiDept = 'FACILITY';
+    else if (department === 'Park & Gardens') apiDept = 'FACILITY';
 
-    // Automatically navigate to the details page, where their premium ID Card is instantly compiled and displayed!
-    navigate(`/staff/${saved.id}`);
+    const payload: any = {
+      name,
+      phone,
+      department: apiDept,
+      joiningDate,
+      status: status === 'Active' ? 'ACTIVE' : 'INACTIVE',
+      employmentType: 'FULL_TIME',
+      shiftStart: '09:00',
+      shiftEnd: '18:00',
+      workDays: ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'],
+      allowedZones: ['CLUBHOUSE'],
+      accessLevel: 'FACILITY_ONLY',
+      attendanceMode: 'RFID',
+      profilePhotoUrl: finalAvatar
+    };
+
+    if (email) payload.email = email;
+    if (facilityId && !facilityId.startsWith('fac-')) payload.facilityId = facilityId;
+    if (department) payload.designation = department;
+    if (emergencyContact) {
+      payload.emergencyContactName = 'Emergency Contact';
+      payload.emergencyContactPhone = emergencyContact;
+    }
+    if (address) payload.address = address;
+    if (idProofType) payload.idProofType = idProofType;
+    if (idProofNumber) payload.idProofNumber = idProofNumber;
+    if (notes) payload.notes = notes;
+
+    let savedId = id;
+
+    try {
+      if (isAddMode) {
+        const res = await createStaffApi(payload);
+        savedId = res?.data?.id || res?.id || `staff-${Date.now()}`;
+      } else if (id) {
+        await updateStaffApi(id, payload);
+      }
+    } catch (err) {
+      console.warn("Failed to save staff via API, falling back:", err);
+      const saved = saveStaff({
+        id: isAddMode ? 'add' : id,
+        name,
+        department,
+        phone,
+        email,
+        joiningDate,
+        address,
+        emergencyContact,
+        facilityId,
+        status,
+        avatar: finalAvatar,
+        facilityName: '',
+        idProofType,
+        idProofNumber,
+        notes
+      } as any);
+      savedId = saved.id;
+    }
+
+    navigate(`/staff/${savedId}`);
   };
 
   const textFieldSx = {

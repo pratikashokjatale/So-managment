@@ -71,6 +71,7 @@ export default function AddResident() {
     aadhaar: "",
     pan: "",
     photo: null as string | null,
+    role: "RESIDENT",
   });
 
   const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
@@ -233,7 +234,7 @@ export default function AddResident() {
         email: residentData.email.trim(),
         phone: residentData.mobile.trim(),
         password: residentData.password,
-        role: "RESIDENT",
+        role: residentData.role || "RESIDENT",
         flatId: flatId,
       });
       const createdUser = userRes?.data?.user || userRes?.data || userRes;
@@ -437,6 +438,19 @@ export default function AddResident() {
                     {(f as any).floorNumber || f.floor})
                   </MenuItem>
                 ))}
+              </TextField>
+              <TextField
+                fullWidth
+                select
+                label="Account Role *"
+                value={residentData.role || "RESIDENT"}
+                onChange={(e) =>
+                  setResidentData({ ...residentData, role: e.target.value })
+                }
+                sx={{ "& fieldset": { borderRadius: "12px" } }}
+              >
+                <MenuItem value="RESIDENT">Resident</MenuItem>
+                <MenuItem value="GUEST">Guest</MenuItem>
               </TextField>
               <TextField
                 fullWidth

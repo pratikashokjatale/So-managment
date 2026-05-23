@@ -59,3 +59,20 @@ export const updateFlatApi = async (flatId: string, data: UpdateFlatPayload) => 
   }
 };
 
+export interface ListFlatsParams {
+  page?: number;
+  limit?: number;
+  projectId?: string;
+  towerId?: string;
+  status?: string;
+}
+
+export const getAllFlatsApi = async (params?: ListFlatsParams) => {
+  try {
+    const res = await api.get("flats", { params });
+    return res?.data;
+  } catch (error) {
+    throw handleApiError(error);
+  }
+};
+

@@ -20,6 +20,7 @@ import {
 } from '@mui/icons-material';
 import Pagination from '../../components/Pagination';
 import { getFacilities, toggleFacilityStatus, deleteFacility } from '@/utils/facilityStore';
+import { getFacilitiesApi, getFacilityStatsApi, updateFacilityApi, deleteFacilityApi } from '@/apis/facility';
 
 // Dynamic category icons helper
 function getFacilityIcon(iconName: string) {
@@ -43,42 +44,126 @@ function getFacilityIcon(iconName: string) {
   }
 }
 
+const mapBackendFacilityToFrontend = (f: any) => {
+  let normStatus = f.status || 'Operational';
+  if (normStatus === 'OPERATIONAL') normStatus = 'Operational';
+  else if (normStatus === 'IN_USE') normStatus = 'In Use';
+  else if (normStatus === 'MAINTENANCE') normStatus = 'Maintenance';
+  else if (normStatus === 'CLOSED') normStatus = 'Inactive';
+
+  let normCategory = f.category || 'Other';
+  if (normCategory === 'SPORTS') normCategory = 'Sports';
+  else if (normCategory === 'FITNESS') normCategory = 'Fitness';
+  else if (normCategory === 'LEISURE') normCategory = 'Leisure';
+  else if (normCategory === 'WELLNESS') normCategory = 'Wellness';
+  else if (normCategory === 'OTHER') normCategory = 'Other';
+
+  const price = f.priceLabel || f.price || (f.priceAmount ? `₹${f.priceAmount}/${f.pricingModel?.toLowerCase() === 'hourly' ? 'hr' : f.pricingModel?.toLowerCase()}` : 'Free');
+  const slots = `${f.bookedSlots || 0}/${f.totalSlots || 12} Booked`;
+
+  let color = '#4b5563';
+  const catLower = normCategory.toLowerCase();
+  if (catLower === 'sports') color = '#1d4ed8';
+  else if (catLower === 'fitness') color = '#ea580c';
+  else if (catLower === 'leisure') color = '#7c3aed';
+  else if (catLower === 'wellness') color = '#db2777';
+
+  return {
+    id: f.id,
+    name: f.name,
+    category: normCategory,
+    status: normStatus,
+    price,
+    slots,
+    color,
+    description: f.description || '',
+    managerName: f.managerName || '',
+    managerContact: f.managerContact || '',
+    iconName: f.iconKey || 'SportsTennis',
+    createdAt: f.createdAt ? f.createdAt.split('T')[0] : new Date().toISOString().split('T')[0],
+  };
+};
+
 export default function GetFacility() {
   const navigate = useNavigate();
   const [facilities, setFacilities] = useState<any[]>([]);
+  const [stats, setStats] = useState<any>(null);
 
   // Pagination states
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  useEffect(() => {
-    setFacilities(getFacilities());
-  }, []);
-
-  const handleStatusToggle = (id: string, currentStatus: string) => {
-    const isCurrentlyActive = currentStatus !== 'Inactive';
-    const updated = toggleFacilityStatus(id, !isCurrentlyActive);
-    
-    // Proactively update state
-    setFacilities(prev => prev.map(f => f.id === id ? updated : f));
+  const fetchFacilities = async () => {
+    try {
+      const res = await getFacilitiesApi({ limit: 100 });
+      const list = res?.data?.facilities || res?.facilities || res?.data || [];
+      if (Array.isArray(list)) {
+        setFacilities(list.map(mapBackendFacilityToFrontend));
+      } else {
+        setFacilities(getFacilities());
+      }
+    } catch (error) {
+      console.warn("Failed to fetch facilities via API, falling back:", error);
+      setFacilities(getFacilities());
+    }
   };
 
-  const handleDelete = (id: string) => {
-    deleteFacility(id);
-    const updated = getFacilities();
-    setFacilities(updated);
+  const fetchStats = async () => {
+    try {
+      const res = await getFacilityStatsApi();
+      const data = res?.data || res;
+      if (data && data.totalUnits !== undefined) {
+        setStats(data);
+      }
+    } catch (error) {
+      console.warn("Failed to fetch facility stats via API:", error);
+    }
+  };
 
-    // Auto-adjust page index if current page is empty
-    const totalPages = Math.ceil(updated.length / rowsPerPage);
+  useEffect(() => {
+    fetchFacilities();
+    fetchStats();
+  }, []);
+
+  const handleStatusToggle = async (id: string, currentStatus: string) => {
+    const isCurrentlyActive = currentStatus !== 'Inactive';
+    const newStatus = isCurrentlyActive ? 'CLOSED' : 'OPERATIONAL';
+    const newIsActive = !isCurrentlyActive;
+    
+    try {
+      await updateFacilityApi(id, { status: newStatus, isActive: newIsActive });
+      fetchFacilities();
+      fetchStats();
+    } catch (err) {
+      console.warn("Failed to toggle facility status via API, falling back:", err);
+      const updated = toggleFacilityStatus(id, newIsActive);
+      setFacilities(prev => prev.map(f => f.id === id ? updated : f));
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteFacilityApi(id);
+      fetchFacilities();
+      fetchStats();
+    } catch (err) {
+      console.warn("Failed to delete facility via API, falling back:", err);
+      deleteFacility(id);
+      const updated = getFacilities();
+      setFacilities(updated);
+    }
+
+    const totalPages = Math.ceil(facilities.length / rowsPerPage);
     if (page > totalPages && totalPages > 0) {
       setPage(totalPages);
     }
   };
 
+
   // Compute analytics
-  const totalUnits = facilities.length;
-  const activeOccupancy = facilities.filter(f => f.status === 'In Use').length * 12 + 24; // Simulated high occupancy
-  const maintenanceCount = facilities.filter(f => f.status === 'Maintenance').length;
+  const totalUnits = stats?.totalUnits !== undefined ? stats.totalUnits : facilities.length;
+  const activeOccupancy = stats?.activeBookings !== undefined ? stats.activeBookings : (facilities.filter((f: any) => f.status === 'In Use').length * 12 + 24);
+  const maintenanceCount = stats?.maintenance !== undefined ? stats.maintenance : facilities.filter((f: any) => f.status === 'Maintenance').length;
 
   // Pagination calculations
   const totalResults = facilities.length;

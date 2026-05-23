@@ -9,6 +9,7 @@ import SupervisorAccountOutlinedIcon from '@mui/icons-material/SupervisorAccount
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import BackButton from '@/components/BackButton';
+import { getFacilityDetailsApi, updateFacilityApi } from '@/apis/facility';
 import { getFacilityById, toggleFacilityStatus } from '@/utils/facilityStore';
 
 // Dynamic category icons helper
@@ -49,13 +50,65 @@ export default function FacilityDetails() {
   const { id } = useParams<{ id: string }>();
   const [facility, setFacility] = useState<any>(null);
 
-  useEffect(() => {
+  const loadFacility = async () => {
     if (id) {
+      try {
+        const res = await getFacilityDetailsApi(id);
+        const f = res?.data || res;
+        if (f) {
+          let normStatus = f.status || 'Operational';
+          if (normStatus === 'OPERATIONAL') normStatus = 'Operational';
+          else if (normStatus === 'IN_USE') normStatus = 'In Use';
+          else if (normStatus === 'MAINTENANCE') normStatus = 'Maintenance';
+          else if (normStatus === 'CLOSED') normStatus = 'Inactive';
+
+          let normCategory = f.category || 'Sports';
+          if (normCategory === 'SPORTS') normCategory = 'Sports';
+          else if (normCategory === 'FITNESS') normCategory = 'Fitness';
+          else if (normCategory === 'LEISURE') normCategory = 'Leisure';
+          else if (normCategory === 'WELLNESS') normCategory = 'Wellness';
+          else if (normCategory === 'OTHER') normCategory = 'Other';
+
+          const price = f.priceLabel || f.price || (f.priceAmount ? `₹${f.priceAmount}/${f.pricingModel?.toLowerCase() === 'hourly' ? 'hr' : f.pricingModel?.toLowerCase()}` : 'Free');
+          const slots = `${f.bookedSlots || 0}/${f.totalSlots || 12} Booked`;
+
+          let color = '#4b5563';
+          const catLower = normCategory.toLowerCase();
+          if (catLower === 'sports') color = '#1d4ed8';
+          else if (catLower === 'fitness') color = '#ea580c';
+          else if (catLower === 'leisure') color = '#7c3aed';
+          else if (catLower === 'wellness') color = '#db2777';
+
+          setFacility({
+            id: f.id,
+            name: f.name,
+            category: normCategory,
+            status: normStatus,
+            price,
+            slots,
+            color,
+            description: f.description || '',
+            managerName: f.managerName || '',
+            managerContact: f.managerContact || '',
+            iconName: f.iconKey || f.iconName || 'SportsTennis',
+            createdAt: f.createdAt ? f.createdAt.split('T')[0] : new Date().toISOString().split('T')[0],
+            staffMembers: f.staffMembers || []
+          });
+          return;
+        }
+      } catch (error) {
+        console.warn("Failed to load facility via API, falling back:", error);
+      }
+
       const found = getFacilityById(id);
       if (found) {
         setFacility(found);
       }
     }
+  };
+
+  useEffect(() => {
+    loadFacility();
   }, [id]);
 
   if (!facility) {
@@ -67,10 +120,18 @@ export default function FacilityDetails() {
     );
   }
 
-  const handleStatusToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleStatusToggle = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const active = e.target.checked;
-    const updated = toggleFacilityStatus(facility.id, active);
-    setFacility(updated);
+    const newStatus = active ? 'OPERATIONAL' : 'CLOSED';
+    
+    try {
+      await updateFacilityApi(facility.id, { status: newStatus, isActive: active });
+      loadFacility();
+    } catch (err) {
+      console.warn("Failed to toggle status via API, falling back:", err);
+      const updated = toggleFacilityStatus(facility.id, active);
+      setFacility(updated);
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -267,6 +328,32 @@ export default function FacilityDetails() {
                 </Grid>
               </Grid>
             </Paper>
+
+            {/* Assigned Staff Members */}
+            {facility.staffMembers && facility.staffMembers.length > 0 && (
+              <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
+                <Typography variant="h5" fontWeight="900" color="#002855" sx={{ mb: 3 }}>
+                  Assigned Staff Members
+                </Typography>
+                <Stack spacing={2.5}>
+                  {facility.staffMembers.map((staff: any, idx: number) => (
+                    <Box key={staff.id || idx}>
+                      <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between">
+                        <Stack direction="row" spacing={2} alignItems="center">
+                          <Avatar src={staff.profilePhotoUrl || staff.avatar} sx={{ width: 40, height: 40 }} />
+                          <Box>
+                            <Typography variant="body2" fontWeight="800" color="#002855">{staff.name}</Typography>
+                            <Typography variant="caption" color="text.secondary" fontWeight="700">{staff.designation || staff.department}</Typography>
+                          </Box>
+                        </Stack>
+                        <Chip label={staff.status || 'ACTIVE'} size="small" sx={{ fontWeight: 800, borderRadius: '8px', bgcolor: '#f0fdf4', color: '#10b981' }} />
+                      </Stack>
+                      {idx < facility.staffMembers.length - 1 && <Divider sx={{ mt: 2.5 }} />}
+                    </Box>
+                  ))}
+                </Stack>
+              </Paper>
+            )}
 
           </Stack>
         </Grid>

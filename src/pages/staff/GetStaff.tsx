@@ -12,6 +12,37 @@ import Pagination from '../../components/Pagination';
 import Search from '@/components/Search';
 import { getStaffList, toggleStaffStatus, deleteStaff } from '@/utils/staffStore';
 import type { Staff } from '@/utils/staffStore';
+import { getStaffListApi, updateStaffApi, deleteStaffApi } from '@/apis/staff';
+
+const mapBackendStaffToFrontend = (s: any) => {
+  let dept = s.department || 'Other';
+  if (dept === 'SECURITY') dept = 'Security';
+  else if (dept === 'HOUSEKEEPING') dept = 'Housekeeping';
+  else if (dept === 'MAINTENANCE') dept = 'Maintenance';
+  else if (dept === 'ADMINISTRATION') dept = 'Front Office';
+  else if (dept === 'SUPPORT') dept = 'Front Office';
+  else if (dept === 'FACILITY') dept = 'Maintenance';
+  else if (dept === 'OTHER') dept = 'Other';
+
+  let status = 'Inactive';
+  if (s.status === 'ACTIVE') status = 'Active';
+
+  return {
+    id: s.id,
+    name: s.name,
+    avatar: s.profilePhotoUrl || s.avatar || `https://i.pravatar.cc/150?u=${s.id}`,
+    department: dept,
+    phone: s.phone || '',
+    email: s.email || '',
+    cardNo: s.employeeCode || s.iCardNumber || s.cardNo || '',
+    status: status as 'Active' | 'Inactive',
+    joiningDate: s.joiningDate || '',
+    address: s.address || '',
+    emergencyContact: s.emergencyContactPhone || s.emergencyContact || '',
+    facilityId: s.facilityId || '',
+    facilityName: s.facility ? s.facility.name : (s.facilityName || 'General Duty')
+  };
+};
 
 export default function GetStaff() {
   const navigate = useNavigate();
@@ -22,9 +53,23 @@ export default function GetStaff() {
 
   const [deptFilter, setDeptFilter] = useState('All Departments');
   const [statusFilter, setStatusFilter] = useState('All Status');
+  const fetchStaff = async () => {
+    try {
+      const res = await getStaffListApi({ limit: 100 });
+      const list = res?.data?.staff || res?.data?.items || res?.staff || (Array.isArray(res?.data) ? res.data : null);
+      if (Array.isArray(list)) {
+        setStaffList(list.map(mapBackendStaffToFrontend));
+      } else {
+        setStaffList(getStaffList());
+      }
+    } catch (err) {
+      console.warn("Failed to fetch staff list via API, falling back:", err);
+      setStaffList(getStaffList());
+    }
+  };
 
   useEffect(() => {
-    setStaffList(getStaffList());
+    fetchStaff();
   }, []);
 
   const handlePageChange = (_event: any, value: number) => {
@@ -36,18 +81,34 @@ export default function GetStaff() {
     setPage(1);
   };
 
-  const handleStatusToggle = (id: string) => {
-    const updated = toggleStaffStatus(id);
-    setStaffList(prev => prev.map(s => s.id === id ? updated : s));
+  const handleStatusToggle = async (id: string) => {
+    const staff = staffList.find(s => s.id === id);
+    if (!staff) return;
+    const isCurrentlyActive = staff.status === 'Active';
+    const newStatus = isCurrentlyActive ? 'INACTIVE' : 'ACTIVE';
+
+    try {
+      await updateStaffApi(id, { status: newStatus });
+      fetchStaff();
+    } catch (err) {
+      console.warn("Failed to toggle staff status via API, falling back:", err);
+      const updated = toggleStaffStatus(id);
+      setStaffList(prev => prev.map(s => s.id === id ? updated : s));
+    }
   };
 
-  const handleDelete = (id: string) => {
-    deleteStaff(id);
-    const updated = getStaffList();
-    setStaffList(updated);
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteStaffApi(id);
+      fetchStaff();
+    } catch (err) {
+      console.warn("Failed to delete staff member via API, falling back:", err);
+      deleteStaff(id);
+      const updated = getStaffList();
+      setStaffList(updated);
+    }
     
-    // Auto-adjust page index if current page is empty
-    const totalPages = Math.ceil(updated.length / rowsPerPage);
+    const totalPages = Math.ceil(staffList.length / rowsPerPage);
     if (page > totalPages && totalPages > 0) {
       setPage(totalPages);
     }

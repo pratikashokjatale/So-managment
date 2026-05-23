@@ -16,6 +16,7 @@ import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
 import ContactPhoneOutlinedIcon from '@mui/icons-material/ContactPhoneOutlined';
 import { getStaffById } from '@/utils/staffStore';
 import type { Staff } from '@/utils/staffStore';
+import { getStaffDetailsApi } from '@/apis/staff';
 
 export default function StaffDetails() {
   const { id } = useParams<{ id: string }>();
@@ -23,12 +24,52 @@ export default function StaffDetails() {
   const [staff, setStaff] = useState<Staff | null>(null);
 
   useEffect(() => {
-    if (id) {
-      const found = getStaffById(id);
-      if (found) {
-        setStaff(found);
+    const loadStaff = async () => {
+      if (id) {
+        try {
+          const res = await getStaffDetailsApi(id);
+          const s = res?.data || res;
+          if (s) {
+            let dept = s.department || 'SECURITY';
+            if (dept === 'SECURITY') dept = 'Security';
+            else if (dept === 'HOUSEKEEPING') dept = 'Housekeeping';
+            else if (dept === 'MAINTENANCE') dept = 'Maintenance';
+            else if (dept === 'ADMINISTRATION') dept = 'Front Office';
+            else if (dept === 'SUPPORT') dept = 'Front Office';
+            else if (dept === 'FACILITY') dept = 'Maintenance';
+            else if (dept === 'OTHER') dept = 'Other';
+
+            let status = 'Inactive';
+            if (s.status === 'ACTIVE') status = 'Active';
+
+            setStaff({
+              id: s.id,
+              name: s.name,
+              avatar: s.profilePhotoUrl || s.avatar || `https://i.pravatar.cc/150?u=${s.id}`,
+              department: dept,
+              phone: s.phone || '',
+              email: s.email || '',
+              cardNo: s.employeeCode || s.iCardNumber || s.cardNo || '',
+              status: status as 'Active' | 'Inactive',
+              joiningDate: s.joiningDate ? s.joiningDate.split('T')[0] : '',
+              address: s.address || '',
+              emergencyContact: s.emergencyContactPhone || s.emergencyContact || '',
+              facilityId: s.facilityId || '',
+              facilityName: s.facility ? s.facility.name : (s.facilityName || 'General Duty')
+            });
+            return;
+          }
+        } catch (err) {
+          console.warn("Failed to fetch staff details via API, falling back:", err);
+        }
+
+        const found = getStaffById(id);
+        if (found) {
+          setStaff(found);
+        }
       }
-    }
+    };
+    loadStaff();
   }, [id]);
 
   if (!staff) {

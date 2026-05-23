@@ -33,7 +33,7 @@ import ResidentRequests from "./components/ResidentRequests";
 import { getUsersApi, updateUserApi } from "@/apis/user";
 import { getTowers, getFlats } from "@/utils/setupStore";
 import { toast } from "react-hot-toast";
-import { getCachedProjects, getCachedTowersSequentially, getCachedFlatsSequentially } from "@/utils/apiCache";
+
 
 
 
@@ -44,6 +44,7 @@ export default function GetResident() {
   const [searchQuery, setSearchQuery] = useState("");
 
   const [statusFilter, setStatusFilter] = useState("Active");
+  const [roleFilter, setRoleFilter] = useState("ALL");
   const [aptFilter, setAptFilter] = useState("All Apartments");
   const [membershipFilter, setMembershipFilter] = useState("All Memberships");
   const [cardFilter, setCardFilter] = useState("All Cards");
@@ -53,8 +54,6 @@ export default function GetResident() {
   const [residents, setResidents] = useState<any[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [towers, setTowers] = useState<any[]>([]);
-  const [flats, setFlats] = useState<any[]>([]);
 
   // Rejected residents state
   const [rejectedResidents, setRejectedResidents] = useState<any[]>([]);
@@ -74,25 +73,6 @@ export default function GetResident() {
     setPage(1);
   };
 
-  const loadSetupData = async () => {
-    try {
-      const projectList = await getCachedProjects();
-      const projectIds = projectList.map((p: any) => p.id);
-      const towerList = await getCachedTowersSequentially(projectIds);
-      setTowers(towerList);
-
-      const towerIds = towerList.map((t: any) => t.id);
-      const flatList = await getCachedFlatsSequentially(towerIds);
-      setFlats(flatList);
-    } catch (error) {
-      console.warn(
-        "Failed to load setup configurations, falling back to local storage:",
-        error,
-      );
-      setTowers(getTowers());
-      setFlats(getFlats());
-    }
-  };
 
   const fetchResidents = async () => {
     setLoading(true);
@@ -105,7 +85,7 @@ export default function GetResident() {
         page,
         limit: rowsPerPage,
         search: searchQuery || undefined,
-        role: "RESIDENT",
+        role: roleFilter === "ALL" ? undefined : roleFilter,
         status: statusParam,
       });
 
@@ -143,7 +123,6 @@ export default function GetResident() {
   };
 
   useEffect(() => {
-    loadSetupData();
     fetchRejectedResidents();
   }, []);
 
@@ -153,7 +132,7 @@ export default function GetResident() {
     } else if (tabValue === 2) {
       fetchRejectedResidents();
     }
-  }, [page, rowsPerPage, searchQuery, tabValue, statusFilter]);
+  }, [page, rowsPerPage, searchQuery, tabValue, statusFilter, roleFilter]);
 
   const fetchRejectedResidents = async () => {
     setRejectedLoading(true);
@@ -350,6 +329,20 @@ export default function GetResident() {
               <MenuItem value="Inactive">Inactive</MenuItem>
             </Select>
             <Select
+              value={roleFilter}
+              onChange={(e) => setRoleFilter(e.target.value as string)}
+              sx={filterSelectSx}
+            >
+              <MenuItem value="ALL">All Roles</MenuItem>
+              <MenuItem value="RESIDENT">Resident</MenuItem>
+              <MenuItem value="GUEST">Guest</MenuItem>
+              <MenuItem value="STAFF">Staff</MenuItem>
+              <MenuItem value="SECURITY">Security</MenuItem>
+              <MenuItem value="MANAGER">Manager</MenuItem>
+              <MenuItem value="ADMIN">Admin</MenuItem>
+              <MenuItem value="SUPER_ADMIN">Super Admin</MenuItem>
+            </Select>
+            <Select
               value={aptFilter}
               onChange={(e) => setAptFilter(e.target.value as string)}
               sx={filterSelectSx}
@@ -430,11 +423,11 @@ export default function GetResident() {
                 </TableHead>
                 <TableBody>
                   {residents.map((row) => {
-                    const flat = row.flat || flats.find((f) => f.id === row.flatId);
-                    const tower = towers.find((t) => t.id === flat?.towerId);
-                    const towerName = tower?.name || "N/A";
+                    const flat = row.flat || getFlats().find((f) => f.id === row.flatId);
+                    const tower = getTowers().find((t) => t.id === flat?.towerId);
+                    const towerName = row.towerName || flat?.tower?.name || flat?.towerName || tower?.name || (flat?.towerId ? "Tower " + flat.towerId.slice(0, 4).toUpperCase() : "N/A");
                     const flatNumber =
-                      flat?.flatNumber || flat?.number || "N/A";
+                      flat?.flatNumber || flat?.number || row.flatNumber || "N/A";
                     const isMock = row.id.startsWith("mock-");
 
                     return (

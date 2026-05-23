@@ -30,24 +30,21 @@ import {
   EditOutlined as EditOutlinedIcon,
   DeleteOutline as DeleteIcon,
   Apartment as TowerIcon,
-  DoorBackSharp as FlatIcon,
   Add as AddIcon,
   FiberManualRecord as DotIcon,
 } from "@mui/icons-material";
 
 import Search from "@/components/Search";
 import Pagination from "@/components/Pagination";
-import { getTowers, deleteTower, getFlats } from "@/utils/setupStore";
+import { getTowers, deleteTower } from "@/utils/setupStore";
 import { getProjectsApi } from "@/apis/project";
-import { getTowersApi } from "@/apis/tower";
+import { getTowersApi, getAllTowersApi } from "@/apis/tower";
 import { CircularProgress } from "@mui/material";
-import { getCachedFlatsSequentially } from "@/utils/apiCache";
 
 export default function GetTower() {
   const navigate = useNavigate();
   const [towers, setTowers] = useState<any[]>([]);
   const [projects, setProjects] = useState<any[]>([]);
-  const [flats, setFlats] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [projectFilter, setProjectFilter] = useState("All Projects");
   const [statusFilter, setStatusFilter] = useState("All Status");
@@ -103,24 +100,11 @@ export default function GetTower() {
           : res?.data?.towers || res?.towers || res?.data || [];
         mergedTowers = list;
       } else {
-        const promises = projectList.map((p: any) =>
-          getTowersApi(p.id, { page: 1, limit: 100 })
-            .then((res) => {
-              const list = Array.isArray(res?.data?.data)
-                ? res.data.data
-                : res?.data?.towers || res?.towers || res?.data || [];
-              return list.map((t: any) => ({
-                ...t,
-                projectName: p.name,
-              }));
-            })
-            .catch((err) => {
-              console.warn(`Failed to fetch towers for project ${p.id}:`, err);
-              return [];
-            }),
-        );
-        const results = await Promise.all(promises);
-        mergedTowers = results.flat();
+        const res = await getAllTowersApi({ page: 1, limit: 100 });
+        const list = Array.isArray(res?.data?.data)
+          ? res.data.data
+          : res?.data?.towers || res?.towers || res?.data || [];
+        mergedTowers = list;
       }
 
       mergedTowers = mergedTowers.map((t) => {
@@ -134,11 +118,6 @@ export default function GetTower() {
       setTowers(mergedTowers);
       setTotalCount(mergedTowers.length);
       setIsApiMode(true);
-
-      // Fetch all flats dynamically for these towers sequentially
-      const towerIds = mergedTowers.map((t: any) => t.id);
-      const allFlats = await getCachedFlatsSequentially(towerIds);
-      setFlats(allFlats);
     } catch (error) {
       console.warn(
         "Failed to fetch towers via API, falling back to local storage:",
@@ -146,7 +125,6 @@ export default function GetTower() {
       );
       const localTowers = getTowers();
       setTowers(localTowers);
-      setFlats(getFlats());
       setTotalCount(localTowers.length);
       setIsApiMode(false);
     } finally {
@@ -173,7 +151,6 @@ export default function GetTower() {
     (acc, t) => acc + (t.totalFloors || t.floorsCount || 0),
     0,
   );
-  const totalFlats = flats.length;
 
   const handleDeleteClick = (id: string) => {
     setDeleteId(id);
@@ -308,7 +285,7 @@ export default function GetTower() {
 
       {/* Metrics Cards */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+        <Grid size={{ xs: 12, sm: 4 }}>
           <Card
             sx={{
               bgcolor: "#faf5ff",
@@ -348,7 +325,7 @@ export default function GetTower() {
             </CardContent>
           </Card>
         </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+        <Grid size={{ xs: 12, sm: 4 }}>
           <Card
             sx={{
               bgcolor: "#ecfdf5",
@@ -388,7 +365,7 @@ export default function GetTower() {
             </CardContent>
           </Card>
         </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+        <Grid size={{ xs: 12, sm: 4 }}>
           <Card
             sx={{
               bgcolor: "#eff6ff",
@@ -423,46 +400,6 @@ export default function GetTower() {
                   sx={{ color: "#002855" }}
                 >
                   {totalFloors}
-                </Typography>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <Card
-            sx={{
-              bgcolor: "#fffbeb",
-              borderRadius: "12px",
-              boxShadow: "none",
-              border: "1px solid #fef3c7",
-            }}
-          >
-            <CardContent sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-              <Box
-                sx={{
-                  p: 1.5,
-                  bgcolor: "#f59e0b",
-                  color: "#ffffff",
-                  borderRadius: "8px",
-                  display: "flex",
-                }}
-              >
-                <FlatIcon />
-              </Box>
-              <Box>
-                <Typography
-                  variant="caption"
-                  color="text.secondary"
-                  fontWeight="600"
-                >
-                  TOTAL FLATS
-                </Typography>
-                <Typography
-                  variant="h5"
-                  fontWeight="800"
-                  sx={{ color: "#92400e" }}
-                >
-                  {totalFlats}
                 </Typography>
               </Box>
             </CardContent>
@@ -556,9 +493,6 @@ export default function GetTower() {
                 </TableSortLabel>
               </TableCell>
               <TableCell sx={{ color: "#002855", fontWeight: 700, py: 2 }}>
-                Flats Count
-              </TableCell>
-              <TableCell sx={{ color: "#002855", fontWeight: 700, py: 2 }}>
                 <TableSortLabel
                   active={sortBy === "status"}
                   direction={sortBy === "status" ? sortOrder : "asc"}
@@ -582,16 +516,12 @@ export default function GetTower() {
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={6} align="center" sx={{ py: 6 }}>
+                <TableCell colSpan={5} align="center" sx={{ py: 6 }}>
                   <CircularProgress size={30} />
                 </TableCell>
               </TableRow>
             ) : (
               paginatedTowers.map((row) => {
-                const towerFlatsCount = flats.filter(
-                  (f) => f.towerId === row.id,
-                ).length;
-
                 return (
                   <TableRow
                     key={row.id}
@@ -647,16 +577,6 @@ export default function GetTower() {
                         ? row.totalFloors
                         : row.floorsCount}{" "}
                       Floors
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        py: 2,
-                        borderBottomColor: "#f0f0f0",
-                        fontWeight: 600,
-                        color: "#0047b3",
-                      }}
-                    >
-                      {towerFlatsCount} Flats
                     </TableCell>
                     <TableCell sx={{ py: 2, borderBottomColor: "#f0f0f0" }}>
                       <Box
@@ -719,7 +639,7 @@ export default function GetTower() {
             )}
             {!loading && filteredTowers.length === 0 && (
               <TableRow>
-                <TableCell colSpan={6} align="center" sx={{ py: 6 }}>
+                <TableCell colSpan={5} align="center" sx={{ py: 6 }}>
                   <Typography variant="body2" color="text.secondary">
                     No towers found matching the filters.
                   </Typography>

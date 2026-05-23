@@ -38,10 +38,10 @@ import Search from "@/components/Search";
 import Pagination from "@/components/Pagination";
 import { getFlats, deleteFlat } from "@/utils/setupStore";
 import { getProjectsApi } from "@/apis/project";
-import { getTowersApi } from "@/apis/tower";
-import { getFlatsApi } from "@/apis/flat";
+import { getTowersApi, getAllTowersApi } from "@/apis/tower";
+import { getFlatsApi, getAllFlatsApi } from "@/apis/flat";
 import { CircularProgress } from "@mui/material";
-import { getCachedTowersSequentially, getCachedFlatsSequentially } from "@/utils/apiCache";
+
 export default function GetFlat() {
   const navigate = useNavigate();
   const [flats, setFlats] = useState<any[]>([]);
@@ -97,70 +97,60 @@ export default function GetFlat() {
         setProjects(projectList);
       }
 
+      let currentProjectId = projectFilter;
       let towerList = towers;
-      if (projectFilter !== "All Projects") {
-        const res = await getTowersApi(projectFilter, { page: 1, limit: 100 });
-        const list = Array.isArray(res?.data?.data)
-          ? res.data.data
-          : res?.data?.towers || res?.towers || res?.data || [];
+
+      // Fetch towers for selected project if not "All Projects"
+      if (currentProjectId && currentProjectId !== "All Projects") {
+        const res = await getTowersApi(currentProjectId, { page: 1, limit: 100 });
+        const _td1 = res?.data;
+        const list = (Array.isArray(_td1?.data?.data) ? _td1.data.data : null) || (Array.isArray(_td1?.data) ? _td1.data : null) || _td1?.towers || [];
         towerList = list;
         setTowers(list);
       } else {
-        const projectIds = projectList.map((p: any) => p.id);
-        const list = await getCachedTowersSequentially(projectIds);
-        
-        // Add projectName attribute mapping
-        const mappedList = list.map((t: any) => {
-          const p = projectList.find((proj: any) => proj.id === t.projectId);
-          return { ...t, projectName: p ? p.name : "" };
-        });
-        
-        towerList = mappedList;
-        setTowers(mappedList);
+        // If All Projects selected, we fetch all towers
+        const res = await getAllTowersApi({ page: 1, limit: 100 });
+        const _td2 = res?.data;
+        const list = (Array.isArray(_td2?.data?.data) ? _td2.data.data : null) || (Array.isArray(_td2?.data) ? _td2.data : null) || _td2?.towers || [];
+        towerList = list;
+        setTowers(list);
       }
 
+      let currentTowerId = towerFilter;
       let mergedFlats: any[] = [];
 
-      if (towerFilter !== "All Towers") {
-        const res = await getFlatsApi(towerFilter, { page: 1, limit: 100 });
-        const list = Array.isArray(res?.data?.data)
-          ? res.data.data
-          : res?.data?.flats || res?.flats || res?.data || [];
-        
-        const currentTower = towerList.find((t) => t.id === towerFilter);
-        mergedFlats = list.map((f: any) => ({
-          ...f,
-          towerName: currentTower ? currentTower.name : "",
-          projectName: currentTower ? currentTower.projectName : "",
-        }));
+      // Query flats
+      if (currentTowerId && currentTowerId !== "All Towers") {
+        const res = await getFlatsApi(currentTowerId, { page: 1, limit: 100 });
+        const _ff1 = res?.data;
+        mergedFlats = (Array.isArray(_ff1?.data?.data) ? _ff1.data.data : null) || (Array.isArray(_ff1?.data) ? _ff1.data : null) || _ff1?.flats || [];
       } else {
-        const targetTowers =
-          projectFilter === "All Projects"
-            ? towerList
-            : towerList.filter((t) => t.projectId === projectFilter);
-
-        const towerIds = targetTowers.map((t) => t.id);
-        const flatsList = await getCachedFlatsSequentially(towerIds);
-        
-        // Map flats back to project / tower names
-        mergedFlats = flatsList.map((f: any) => {
-          const t = targetTowers.find((tw) => tw.id === f.towerId);
-          return {
-            ...f,
-            towerName: t ? t.name : "",
-            projectName: t ? t.projectName : "",
-          };
-        });
+        // Fetch all flats across all projects or filtered by projectId
+        const params: any = { page: 1, limit: 100 };
+        if (currentProjectId && currentProjectId !== "All Projects") {
+          params.projectId = currentProjectId;
+        }
+        const res = await getAllFlatsApi(params);
+        const _ff2 = res?.data;
+        mergedFlats = (Array.isArray(_ff2?.data?.data) ? _ff2.data.data : null) || (Array.isArray(_ff2?.data) ? _ff2.data : null) || _ff2?.flats || [];
       }
+
+      // Map project and tower names
+      mergedFlats = mergedFlats.map((f: any) => {
+        const t = towerList.find((tower) => tower.id === f.towerId);
+        const p = projectList.find((proj) => proj.id === (f.projectId || t?.projectId));
+        return {
+          ...f,
+          towerName: t ? t.name : "",
+          projectName: p ? p.name : "",
+        };
+      });
 
       const uiFlats = mergedFlats.map((f) => {
         let normStatus = f.status || "Vacant";
         if (normStatus === "VACANT") normStatus = "Vacant";
         else if (normStatus === "OCCUPIED") normStatus = "Occupied";
         else if (normStatus === "MAINTENANCE") normStatus = "Maintenance";
-
-        const t = towerList.find((tw) => tw.id === f.towerId);
-        const p = projectList.find((pr) => pr.id === f.projectId);
 
         return {
           id: f.id,
@@ -171,8 +161,8 @@ export default function GetFlat() {
           type: f.flatType || f.type,
           occupancyType: f.occupancyType,
           status: normStatus,
-          projectName: f.projectName || p?.name || "Unknown Project",
-          towerName: f.towerName || t?.name || "Unknown Tower",
+          projectName: f.projectName || "Unknown Project",
+          towerName: f.towerName || "Unknown Tower",
         };
       });
 
@@ -204,15 +194,13 @@ export default function GetFlat() {
   }, [searchQuery, projectFilter, towerFilter, typeFilter, statusFilter]);
 
   // Cascaded towers dropdown
-  const filteredTowersForSelect =
-    projectFilter === "All Projects"
-      ? towers
-      : towers.filter((t) => t.projectId === projectFilter);
+  const filteredTowersForSelect = towers;
 
-  // Reset tower filter if project filter changes and old tower does not belong to new project
+  // Reset tower filter if project filter changes
   const handleProjectFilterChange = (projId: string) => {
     setProjectFilter(projId);
-    setTowerFilter("All Towers"); // Reset tower selection
+    setTowerFilter("All Towers"); // Reset tower filter to All Towers
+    setTowers([]); // Clear current towers while loading new ones
   };
 
   // Metrics
@@ -245,9 +233,9 @@ export default function GetFlat() {
       (f.projectName || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
       (f.towerName || "").toLowerCase().includes(searchQuery.toLowerCase());
     const matchesProject =
-      projectFilter === "All Projects" || f.projectId === projectFilter;
+      projectFilter === "All Projects" || !projectFilter || f.projectId === projectFilter;
     const matchesTower =
-      towerFilter === "All Towers" || f.towerId === towerFilter;
+      towerFilter === "All Towers" || !towerFilter || f.towerId === towerFilter;
     const matchesType = typeFilter === "All Types" || f.type === typeFilter;
     const matchesStatus =
       statusFilter === "All Status" || f.status === statusFilter;
@@ -565,6 +553,7 @@ export default function GetFlat() {
               handleProjectFilterChange(e.target.value as string)
             }
             sx={filterSelectSx}
+            displayEmpty
           >
             <MenuItem value="All Projects">All Projects</MenuItem>
             {projects.map((p) => (
@@ -578,12 +567,12 @@ export default function GetFlat() {
             value={towerFilter}
             onChange={(e) => setTowerFilter(e.target.value as string)}
             sx={filterSelectSx}
-            disabled={projectFilter === "All Projects" && towers.length > 5}
+            displayEmpty
           >
             <MenuItem value="All Towers">All Towers</MenuItem>
             {filteredTowersForSelect.map((t) => (
               <MenuItem key={t.id} value={t.id}>
-                {t.name} ({t.projectName})
+                {t.name}
               </MenuItem>
             ))}
           </Select>

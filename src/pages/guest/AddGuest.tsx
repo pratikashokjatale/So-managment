@@ -1,376 +1,400 @@
-import { useState, useEffect } from 'react';
-import { 
-  Box, Typography, Button, TextField, Breadcrumbs, Link, 
-  Paper, MenuItem, Select, FormControl, InputLabel, FormHelperText, Stack, Grid, IconButton
+import { useState, useEffect, useRef } from 'react';
+import {
+  Box, Typography, Button, TextField, Breadcrumbs, Link,
+  Paper, Grid, InputAdornment, IconButton as MuiIconButton,
+  LinearProgress, Chip
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import BackButton from '@/components/BackButton';
-import { getFlats } from '@/utils/setupStore';
-import { addGuest } from '@/utils/guestStore';
+import { addGuestApi, uploadDocumentApi } from '@/apis/guest';
+import { getAllFlatsApi } from '@/apis/flat';
+import { toast } from 'react-hot-toast';
 
+// ── helpers ────────────────────────────────────────────────────────────────────
+const extractList = (res: any): any[] => {
+  if (!res) return [];
+  const d = res?.data ?? res;
+  if (Array.isArray(d)) return d;
+  if (Array.isArray(d?.items)) return d.items;
+  if (Array.isArray(d?.data?.items)) return d.data.items;
+  if (Array.isArray(d?.data)) return d.data;
+  return [];
+};
+
+const inputSx = { '& .MuiOutlinedInput-root': { borderRadius: '12px' } };
+
+// ── file upload widget ─────────────────────────────────────────────────────────
+interface UploadWidgetProps {
+  label: string;
+  required?: boolean;
+  url: string;
+  uploading: boolean;
+  error?: string;
+  onFileSelect: (file: File) => void;
+  onRemove: () => void;
+}
+
+function UploadWidget({ label, required, url, uploading, error, onFileSelect, onRemove }: UploadWidgetProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  return (
+    <Box>
+      <Typography variant="body2" fontWeight={700} color="text.secondary" sx={{ mb: 1 }}>
+        {label} {required && <Typography component="span" color="error">*</Typography>}
+      </Typography>
+
+      {url ? (
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, p: 2, bgcolor: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '12px' }}>
+          <CheckCircleIcon sx={{ color: '#10b981', flexShrink: 0 }} />
+          <Box sx={{ flex: 1, overflow: 'hidden' }}>
+            <Typography variant="body2" fontWeight={700} color="#002855" noWrap>Uploaded successfully</Typography>
+            <Typography variant="caption" color="text.secondary" noWrap>{url.split('/').pop()}</Typography>
+          </Box>
+          <MuiIconButton size="small" onClick={onRemove} sx={{ color: '#ef4444' }}>
+            <DeleteOutlineIcon fontSize="small" />
+          </MuiIconButton>
+        </Box>
+      ) : (
+        <Box
+          onClick={() => !uploading && inputRef.current?.click()}
+          sx={{
+            border: error ? '2px dashed #ef4444' : '2px dashed #cbd5e1',
+            borderRadius: '12px', bgcolor: '#f8fafc', p: 3,
+            textAlign: 'center', cursor: uploading ? 'wait' : 'pointer',
+            transition: 'all 0.2s',
+            '&:hover': !uploading ? { borderColor: '#002855', bgcolor: '#f1f5f9' } : {},
+          }}
+        >
+          <input ref={inputRef} type="file" accept=".png,.jpg,.jpeg,.pdf" style={{ display: 'none' }}
+            onChange={(e) => { const f = e.target.files?.[0]; if (f) onFileSelect(f); e.target.value = ''; }} />
+          <CloudUploadOutlinedIcon sx={{ fontSize: 32, color: error ? '#ef4444' : '#94a3b8', mb: 1 }} />
+          <Typography variant="body2" fontWeight={700} color={error ? 'error' : '#002855'}>
+            {uploading ? 'Uploading…' : 'Click to upload'}
+          </Typography>
+          <Typography variant="caption" color="text.secondary">PNG, JPG, PDF — max 5 MB</Typography>
+          {uploading && <LinearProgress sx={{ mt: 1.5, borderRadius: 4 }} />}
+          {error && <Typography variant="caption" color="error" display="block" sx={{ mt: 0.5, fontWeight: 600 }}>{error}</Typography>}
+        </Box>
+      )}
+    </Box>
+  );
+}
+
+// ── main component ─────────────────────────────────────────────────────────────
 export default function AddGuest() {
   const navigate = useNavigate();
 
-  // Form Fields State
-  const [residentValue, setResidentValue] = useState('');
-  const [name, setName] = useState('');
-  const [fromDate, setFromDate] = useState('');
-  const [dueDate, setDueDate] = useState('');
-  const [purpose, setPurpose] = useState('');
-  const [address, setAddress] = useState('');
-  
-  // File Upload State
-  const [uploadedFile, setUploadedFile] = useState<{ name: string; size: string } | null>(null);
+  // form fields
+  const [name, setName]               = useState('');
+  const [email, setEmail]             = useState('');
+  const [phone, setPhone]             = useState('');
+  const [password, setPassword]       = useState('');
+  const [showPwd, setShowPwd]         = useState(false);
+  const [flatId, setFlatId]           = useState('');
+  const [stayEndsAt, setStayEndsAt]   = useState(() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 7);
+    return d.toISOString().split('T')[0];
+  });
 
-  // Errors State
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  // document URLs (obtained after upload)
+  const [aadhaarUrl, setAadhaarUrl]   = useState('');
+  const [panUrl, setPanUrl]           = useState('');
 
-  // Dynamic host residents from Flats
-  const [residentsList, setResidentsList] = useState<any[]>([]);
+  // upload progress flags
+  const [uploadingAadhaar, setUploadingAadhaar] = useState(false);
+  const [uploadingPan, setUploadingPan]         = useState(false);
 
+  // flat picker
+  const [flats, setFlats]             = useState<any[]>([]);
+  const [flatSearch, setFlatSearch]   = useState('');
+
+  const [errors, setErrors]           = useState<Record<string, string>>({});
+  const [apiError, setApiError]       = useState('');
+  const [saving, setSaving]           = useState(false);
+
+  // ── load flats ─────────────────────────────────────────────────────────────
   useEffect(() => {
-    // Set default dates
-    const today = new Date();
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 2); // 2 days pass by default
-
-    const formatDateString = (date: Date) => {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
-    };
-
-    setFromDate(formatDateString(today));
-    setDueDate(formatDateString(tomorrow));
-
-    // Populate occupied host residents
-    try {
-      const flats = getFlats().filter(f => f.status === 'Occupied' && f.ownerName);
-      if (flats.length > 0) {
-        setResidentsList(flats.map(flat => ({
-          name: flat.ownerName,
-          apartment: `${flat.projectName} • ${flat.towerName} • Flat ${flat.number}`
-        })));
-      } else {
-        setResidentsList([
-          { name: 'John Doe', apartment: 'Marbella Club • Tower A • Flat 101' },
-          { name: 'Jane Smith', apartment: 'Marbella Club • Tower B • Flat 201' },
-          { name: 'Mike Johnson', apartment: 'Marbella Club • Tower B • Flat 202' }
-        ]);
-      }
-    } catch (e) {
-      setResidentsList([
-        { name: 'John Doe', apartment: 'Marbella Club • Tower A • Flat 101' },
-        { name: 'Jane Smith', apartment: 'Marbella Club • Tower B • Flat 201' },
-        { name: 'Mike Johnson', apartment: 'Marbella Club • Tower B • Flat 202' }
-      ]);
-    }
+    getAllFlatsApi({ limit: 100 })
+      .then((res) => setFlats(extractList(res)))
+      .catch(() => setFlats([]));
   }, []);
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setUploadedFile({
-        name: file.name,
-        size: `${(file.size / (1024 * 1024)).toFixed(1)} MB`
-      });
-      setErrors(prev => ({ ...prev, file: '' }));
+  // ── document upload handlers ───────────────────────────────────────────────
+  const handleAadhaarUpload = async (file: File) => {
+    setUploadingAadhaar(true);
+    setErrors(p => ({ ...p, aadhaar: '' }));
+    try {
+      const url = await uploadDocumentApi(file);
+      setAadhaarUrl(url);
+      toast.success('Aadhaar uploaded');
+    } catch (err: any) {
+      setErrors(p => ({ ...p, aadhaar: err?.message || 'Upload failed' }));
+      toast.error('Aadhaar upload failed');
+    } finally {
+      setUploadingAadhaar(false);
     }
   };
 
-  const simulateUpload = () => {
-    setUploadedFile({
-      name: 'aadhaar_card_scanned.pdf',
-      size: '1.4 MB'
-    });
-    setErrors(prev => ({ ...prev, file: '' }));
+  const handlePanUpload = async (file: File) => {
+    setUploadingPan(true);
+    setErrors(p => ({ ...p, pan: '' }));
+    try {
+      const url = await uploadDocumentApi(file);
+      setPanUrl(url);
+      toast.success('PAN uploaded');
+    } catch (err: any) {
+      setErrors(p => ({ ...p, pan: err?.message || 'Upload failed' }));
+      toast.error('PAN upload failed');
+    } finally {
+      setUploadingPan(false);
+    }
   };
 
-  const handleRemoveFile = () => {
-    setUploadedFile(null);
-  };
-
+  // ── validation ─────────────────────────────────────────────────────────────
   const validate = () => {
-    const newErrors: Record<string, string> = {};
-    if (!residentValue) newErrors.resident = 'Host resident is required';
-    if (!name.trim()) newErrors.name = 'Guest name is required';
-    if (!fromDate) newErrors.fromDate = 'From date is required';
-    if (!dueDate) newErrors.dueDate = 'Due date is required';
-    if (!purpose) newErrors.purpose = 'Visit purpose is required';
-    if (!address.trim()) newErrors.address = 'Guest address is required';
-    if (!uploadedFile) newErrors.file = 'Aadhaar card copy is required';
-
-    if (fromDate && dueDate && new Date(fromDate) > new Date(dueDate)) {
-      newErrors.dueDate = 'Due date cannot be earlier than from date';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    const e: Record<string, string> = {};
+    if (!name.trim())    e.name       = 'Guest name is required';
+    if (!email.trim())   e.email      = 'Email is required';
+    else if (!/\S+@\S+\.\S+/.test(email)) e.email = 'Enter a valid email';
+    if (!phone.trim())   e.phone      = 'Phone number is required';
+    if (!password)       e.password   = 'Password is required';
+    else if (password.length < 6) e.password = 'Minimum 6 characters';
+    if (!stayEndsAt)     e.stayEndsAt = 'Stay end date is required';
+    if (!aadhaarUrl && !panUrl) e.aadhaar = 'Upload Aadhaar or PAN document';
+    setErrors(e);
+    return Object.keys(e).length === 0;
   };
 
-  const handleSubmit = () => {
+  // ── submit ─────────────────────────────────────────────────────────────────
+  const handleSubmit = async () => {
     if (!validate()) return;
+    setSaving(true);
+    setApiError('');
+    try {
+      let normalizedPhone = phone.trim();
+      if (!normalizedPhone.startsWith('+')) {
+        normalizedPhone = '+91' + normalizedPhone.replace(/^0+/, '');
+      }
 
-    const [resName, aptName] = residentValue.split('|');
-    addGuest({
-      name,
-      resident: resName || 'John Doe',
-      apartment: aptName || 'Marbella Club • Tower A • Flat 101',
-      fromDate,
-      dueDate,
-      purpose,
-      address,
-      aadhaarFile: uploadedFile?.name,
-      aadhaarSize: uploadedFile?.size
-    });
+      const payload: any = {
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
+        phone: normalizedPhone,
+        password,
+        stayEndsAt: new Date(stayEndsAt).toISOString(),
+        // role: 'GUEST' injected by addGuestApi
+      };
+      if (flatId)      payload.flatId            = flatId;
+      if (aadhaarUrl)  payload.aadhaarDocumentUrl = aadhaarUrl;
+      if (panUrl)      payload.panDocumentUrl     = panUrl;
 
-    navigate('/guest');
+      console.log('[AddGuest] Sending payload:', payload);
+      await addGuestApi(payload);
+      toast.success('Guest account created successfully');
+      navigate('/guest');
+    } catch (err: any) {
+      console.error('[AddGuest] API error:', err?.data || err?.message);
+      const details: any[] = err?.data?.details || [];
+      if (details.length > 0) {
+        const msgs = details.map((d: any) => `${d.field ? d.field + ': ' : ''}${d.message}`).join('\n');
+        setApiError(msgs);
+        details.forEach((d: any) => toast.error(`${d.field ? d.field + ': ' : ''}${d.message}`, { duration: 6000 }));
+      } else {
+        const msg = err?.message || 'Failed to create guest';
+        setApiError(msg);
+        toast.error(msg);
+      }
+    } finally {
+      setSaving(false);
+    }
   };
 
+  const filteredFlats = flats.filter((f) =>
+    `${f.flatNumber} ${f.floorNumber}`.toLowerCase().includes(flatSearch.toLowerCase())
+  );
+
+  // ── render ─────────────────────────────────────────────────────────────────
   return (
-    <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: '#ffffff', minHeight: '100vh', borderRadius: 2 }}>
-      
-      {/* Header Section */}
+    <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: '#f8fafc', minHeight: '100vh' }}>
+
+      {/* Header */}
       <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Box>
-          <Typography variant="h4" fontWeight="bold" sx={{ color: '#002855', mb: 1 }}>
-            Add Guest Pass
-          </Typography>
+          <Typography variant="h4" fontWeight="bold" sx={{ color: '#002855', mb: 1 }}>Add Guest</Typography>
           <Breadcrumbs separator=">" aria-label="breadcrumb">
-            <Link underline="hover" color="inherit" onClick={() => navigate('/')} sx={{ cursor: 'pointer' }}>
-              Dashboard
-            </Link>
-            <Link underline="hover" color="inherit" onClick={() => navigate('/guest')} sx={{ cursor: 'pointer' }}>
-              Guests
-            </Link>
-            <Typography color="text.primary" fontWeight="600">Create Pass</Typography>
+            <Link underline="hover" color="inherit" onClick={() => navigate('/')} sx={{ cursor: 'pointer' }}>Dashboard</Link>
+            <Link underline="hover" color="inherit" onClick={() => navigate('/guest')} sx={{ cursor: 'pointer' }}>Guests</Link>
+            <Typography color="text.primary" fontWeight={600}>Add Guest</Typography>
           </Breadcrumbs>
         </Box>
         <BackButton to="/guest" label="Back to Guests" />
       </Box>
 
-      {/* Form Container */}
-      <Paper elevation={0} sx={{ border: '1px solid #f0f0f0', borderRadius: 4, p: { xs: 3, md: 5 } }}>
-        
-        <Grid container spacing={4}>
-          
-          {/* Guest Core details Form */}
+      <Paper elevation={0} sx={{ border: '1px solid #e2e8f0', borderRadius: '24px', p: { xs: 3, md: 5 } }}>
+
+        <Grid container spacing={3}>
+
+          {/* ── Left: account fields ── */}
           <Grid size={{ xs: 12, md: 7 }}>
-            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 3 }}>
-              
-              <FormControl fullWidth error={!!errors.resident} sx={{ gridColumn: 'span 2' }}>
-                <InputLabel id="resident-select-label" sx={{ fontWeight: 600 }}>Select Host Flat</InputLabel>
-                <Select
-                  labelId="resident-select-label"
-                  value={residentValue}
-                  label="Select Host Flat"
-                  onChange={(e) => {
-                    setResidentValue(e.target.value);
-                    setErrors(prev => ({ ...prev, resident: '' }));
-                  }}
-                  sx={{ borderRadius: '12px', fontWeight: 600 }}
-                >
-                  {residentsList.map((res, i) => (
-                    <MenuItem key={i} value={`${res.name}|${res.apartment}`} sx={{ fontWeight: 600 }}>
-                      {res.name} ({res.apartment.split('•').slice(-1)[0]?.trim() || res.apartment})
-                    </MenuItem>
+            <Typography variant="h6" fontWeight={800} color="#002855" sx={{ mb: 3 }}>Guest Login Details</Typography>
+
+            <Grid container spacing={3}>
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <TextField label="Full Name" fullWidth required value={name}
+                  onChange={(e) => { setName(e.target.value); setErrors(p => ({ ...p, name: '' })); }}
+                  error={!!errors.name} helperText={errors.name} placeholder="e.g. Alice Walker" sx={inputSx} />
+              </Grid>
+
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <TextField label="Phone Number" fullWidth required value={phone}
+                  onChange={(e) => { setPhone(e.target.value); setErrors(p => ({ ...p, phone: '' })); }}
+                  error={!!errors.phone} helperText={errors.phone} placeholder="+919999999998" sx={inputSx} />
+              </Grid>
+
+              <Grid size={{ xs: 12 }}>
+                <TextField label="Email Address" type="email" fullWidth required value={email}
+                  onChange={(e) => { setEmail(e.target.value); setErrors(p => ({ ...p, email: '' })); }}
+                  error={!!errors.email} helperText={errors.email} placeholder="guest@example.com" sx={inputSx} />
+              </Grid>
+
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <TextField label="Password" type={showPwd ? 'text' : 'password'} fullWidth required value={password}
+                  onChange={(e) => { setPassword(e.target.value); setErrors(p => ({ ...p, password: '' })); }}
+                  error={!!errors.password} helperText={errors.password} placeholder="Min. 6 characters" sx={inputSx}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <MuiIconButton onClick={() => setShowPwd(v => !v)} edge="end">
+                          {showPwd ? <VisibilityOffIcon fontSize="small" /> : <VisibilityIcon fontSize="small" />}
+                        </MuiIconButton>
+                      </InputAdornment>
+                    )
+                  }} />
+              </Grid>
+
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <TextField label="Stay End Date" type="date" fullWidth required
+                  InputLabelProps={{ shrink: true }} value={stayEndsAt}
+                  onChange={(e) => { setStayEndsAt(e.target.value); setErrors(p => ({ ...p, stayEndsAt: '' })); }}
+                  error={!!errors.stayEndsAt} helperText={errors.stayEndsAt || 'Date when guest stay expires'}
+                  inputProps={{ min: new Date().toISOString().split('T')[0] }} sx={inputSx} />
+              </Grid>
+
+              {/* Flat picker */}
+              <Grid size={{ xs: 12 }}>
+                <Typography variant="body2" fontWeight={700} color="text.secondary" sx={{ mb: 1 }}>
+                  Assign Flat <Typography component="span" variant="caption" color="text.disabled">(optional)</Typography>
+                </Typography>
+                <TextField label="Search flat by number…" fullWidth value={flatSearch}
+                  onChange={(e) => setFlatSearch(e.target.value)} sx={{ ...inputSx, mb: 1.5 }} />
+                <Box sx={{ maxHeight: 170, overflowY: 'auto', border: '1px solid #e2e8f0', borderRadius: '12px' }}>
+                  {filteredFlats.length === 0 ? (
+                    <Box sx={{ p: 2 }}>
+                      <Typography variant="body2" color="text.secondary" fontWeight={600}>
+                        {flats.length === 0 ? 'Loading flats…' : 'No flats match.'}
+                      </Typography>
+                    </Box>
+                  ) : filteredFlats.map((f) => (
+                    <Box key={f.id} onClick={() => setFlatId(flatId === f.id ? '' : f.id)}
+                      sx={{
+                        px: 2, py: 1.5, cursor: 'pointer',
+                        bgcolor: flatId === f.id ? '#eff6ff' : 'transparent',
+                        borderLeft: flatId === f.id ? '3px solid #002855' : '3px solid transparent',
+                        '&:hover': { bgcolor: '#f8fafc' },
+                        borderBottom: '1px solid #f1f5f9',
+                      }}>
+                      <Typography variant="body2" fontWeight={700} color={flatId === f.id ? '#002855' : 'text.primary'}>
+                        Flat {f.flatNumber}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        Floor {f.floorNumber} · {f.flatType} · {f.status}
+                      </Typography>
+                    </Box>
                   ))}
-                </Select>
-                {errors.resident && <FormHelperText>{errors.resident}</FormHelperText>}
-              </FormControl>
-
-              <TextField
-                fullWidth
-                label="Guest Name"
-                value={name}
-                onChange={(e) => {
-                  setName(e.target.value);
-                  setErrors(prev => ({ ...prev, name: '' }));
-                }}
-                error={!!errors.name}
-                helperText={errors.name}
-                placeholder="e.g. Alice Walker"
-                sx={{ gridColumn: 'span 2', '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
-              />
-
-              <TextField
-                fullWidth
-                label="From Date"
-                type="date"
-                InputLabelProps={{ shrink: true }}
-                value={fromDate}
-                onChange={(e) => {
-                  setFromDate(e.target.value);
-                  setErrors(prev => ({ ...prev, fromDate: '' }));
-                }}
-                error={!!errors.fromDate}
-                helperText={errors.fromDate}
-                sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
-              />
-
-              <TextField
-                fullWidth
-                label="Due Date (Pass End)"
-                type="date"
-                InputLabelProps={{ shrink: true }}
-                value={dueDate}
-                onChange={(e) => {
-                  setDueDate(e.target.value);
-                  setErrors(prev => ({ ...prev, dueDate: '' }));
-                }}
-                error={!!errors.dueDate}
-                helperText={errors.dueDate}
-                sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
-              />
-
-              <FormControl fullWidth error={!!errors.purpose}>
-                <InputLabel id="purpose-select-label" sx={{ fontWeight: 600 }}>Purpose of Visit</InputLabel>
-                <Select
-                  labelId="purpose-select-label"
-                  value={purpose}
-                  label="Purpose of Visit"
-                  onChange={(e) => {
-                    setPurpose(e.target.value);
-                    setErrors(prev => ({ ...prev, purpose: '' }));
-                  }}
-                  sx={{ borderRadius: '12px', fontWeight: 600 }}
-                >
-                  <MenuItem value="Family Visit">Family Visit</MenuItem>
-                  <MenuItem value="Friend Visit">Friend Visit</MenuItem>
-                  <MenuItem value="Maintenance">Maintenance</MenuItem>
-                  <MenuItem value="Delivery">Delivery</MenuItem>
-                  <MenuItem value="Business Discussion">Business Discussion</MenuItem>
-                  <MenuItem value="Other">Other</MenuItem>
-                </Select>
-                {errors.purpose && <FormHelperText>{errors.purpose}</FormHelperText>}
-              </FormControl>
-
-              <TextField
-                fullWidth
-                label="Guest Address"
-                value={address}
-                onChange={(e) => {
-                  setAddress(e.target.value);
-                  setErrors(prev => ({ ...prev, address: '' }));
-                }}
-                error={!!errors.address}
-                helperText={errors.address}
-                placeholder="e.g. 123 Beach Rd, Goa"
-                sx={{ gridColumn: 'span 2', '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
-              />
-
-            </Box>
+                </Box>
+                {flatId && <Typography variant="caption" color="primary" sx={{ mt: 0.5, display: 'block', fontWeight: 700 }}>✓ Flat selected</Typography>}
+              </Grid>
+            </Grid>
           </Grid>
 
-          {/* Aadhaar Upload side */}
+          {/* ── Right: document upload ── */}
           <Grid size={{ xs: 12, md: 5 }}>
-            <Typography variant="body2" fontWeight="700" color="text.secondary" sx={{ mb: 1 }}>
-              Government-Issued ID (Aadhaar Card) *
+            <Typography variant="h6" fontWeight={800} color="#002855" sx={{ mb: 1 }}>
+              Identity Documents
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+              At least one document is required (Aadhaar or PAN).
             </Typography>
 
-            {!uploadedFile ? (
-              <Box 
-                onClick={simulateUpload}
-                sx={{
-                  border: errors.file ? '2px dashed #ef4444' : '2px dashed #cbd5e1',
-                  borderRadius: '16px',
-                  bgcolor: '#f8fafc',
-                  p: 4,
-                  textAlign: 'center',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  '&:hover': {
-                    borderColor: '#0047b3',
-                    bgcolor: '#f1f5f9'
-                  }
-                }}
-              >
-                <input 
-                  type="file" 
-                  accept=".png,.jpg,.jpeg,.pdf" 
-                  style={{ display: 'none' }} 
-                  id="aadhaar-upload-input"
-                  onChange={handleFileUpload}
-                />
-                <CloudUploadOutlinedIcon sx={{ fontSize: 40, color: errors.file ? '#ef4444' : '#64748b', mb: 2 }} />
-                <Typography variant="body2" fontWeight="800" color="#002855">
-                  Click to upload Aadhaar card copy
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  Supports PNG, JPG, PDF up to 5MB
-                </Typography>
-                {errors.file && (
-                  <Typography variant="caption" color="error" sx={{ display: 'block', mt: 1, fontWeight: 600 }}>
-                    {errors.file}
-                  </Typography>
-                )}
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+              <UploadWidget
+                label="Aadhaar Card"
+                required={!panUrl}
+                url={aadhaarUrl}
+                uploading={uploadingAadhaar}
+                error={!panUrl ? errors.aadhaar : undefined}
+                onFileSelect={handleAadhaarUpload}
+                onRemove={() => setAadhaarUrl('')}
+              />
+
+              <UploadWidget
+                label="PAN Card"
+                url={panUrl}
+                uploading={uploadingPan}
+                error={errors.pan}
+                onFileSelect={handlePanUpload}
+                onRemove={() => setPanUrl('')}
+              />
+            </Box>
+
+            {(aadhaarUrl || panUrl) && (
+              <Box sx={{ mt: 2, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                {aadhaarUrl && <Chip label="Aadhaar ✓" size="small" sx={{ bgcolor: '#f0fdf4', color: '#047857', fontWeight: 700 }} />}
+                {panUrl && <Chip label="PAN ✓" size="small" sx={{ bgcolor: '#f0fdf4', color: '#047857', fontWeight: 700 }} />}
               </Box>
-            ) : (
-              <Paper 
-                elevation={0} 
-                sx={{ 
-                  border: '1px solid #cbd5e1', 
-                  borderRadius: '16px', 
-                  p: 3, 
-                  bgcolor: '#f0fdf4',
-                  borderColor: '#bbf7d0',
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'space-between' 
-                }}
-              >
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <CheckCircleIcon sx={{ color: '#22c55e' }} />
-                  <Box>
-                    <Typography variant="body2" fontWeight="800" color="#002855">
-                      {uploadedFile.name}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {uploadedFile.size} • Verified Compliance
-                    </Typography>
-                  </Box>
-                </Stack>
-                <IconButton size="small" onClick={handleRemoveFile} sx={{ color: '#ef4444' }}>
-                  <DeleteOutlineIcon fontSize="small" />
-                </IconButton>
-              </Paper>
             )}
 
-            <Box sx={{ mt: 3, p: 2, bgcolor: '#f8fafc', borderRadius: '12px', border: '1px solid #f1f5f9' }}>
-              <Typography variant="caption" color="text.secondary" fontWeight="700" sx={{ textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                Compliance Guidelines
+            <Box sx={{ mt: 3, p: 2, bgcolor: '#fffbeb', border: '1px solid #fde68a', borderRadius: '12px' }}>
+              <Typography variant="caption" fontWeight={700} color="#b45309" display="block" sx={{ mb: 0.5 }}>
+                Upload Process
               </Typography>
-              <Typography variant="caption" display="block" color="text.secondary" sx={{ mt: 1 }}>
-                All temporary visitors and long-term guest entrants must present a verified physical government identity document before passing automated RFID community gates.
+              <Typography variant="caption" color="#92400e" display="block">
+                1. Select file → auto-uploads to server<br />
+                2. URL stored temporarily<br />
+                3. Submitted with guest registration
               </Typography>
             </Box>
           </Grid>
 
         </Grid>
 
-        {/* Submit Buttons */}
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 5, pt: 3, borderTop: '1px solid #f0f0f0' }}>
-          <Button 
-            onClick={() => navigate('/guest')}
-            sx={{ borderRadius: '10px', textTransform: 'none', fontWeight: 600, px: 3, color: 'text.secondary' }}
-          >
+        {/* Inline API error */}
+        {apiError && (
+          <Box sx={{ mt: 3, p: 2, bgcolor: '#fef2f2', border: '1px solid #fecaca', borderRadius: '12px' }}>
+            <Typography variant="body2" fontWeight={700} color="#dc2626" sx={{ mb: 0.5 }}>Request Failed</Typography>
+            {apiError.split('\n').map((line, i) => (
+              <Typography key={i} variant="caption" color="#dc2626" display="block">{line}</Typography>
+            ))}
+          </Box>
+        )}
+
+        {/* Actions */}
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 4, pt: 3, borderTop: '1px solid #f1f5f9' }}>
+          <Button onClick={() => navigate('/guest')} sx={{ borderRadius: '10px', textTransform: 'none', fontWeight: 600, px: 3, color: 'text.secondary' }}>
             Cancel
           </Button>
-          <Button 
-            variant="contained" 
-            onClick={handleSubmit}
-            sx={{ borderRadius: '10px', textTransform: 'none', fontWeight: 600, px: 4, bgcolor: '#0047b3', '&:hover': { bgcolor: '#003380' } }}
-          >
-            Create Guest Pass
+          <Button variant="contained" onClick={handleSubmit} disabled={saving || uploadingAadhaar || uploadingPan}
+            sx={{ borderRadius: '10px', textTransform: 'none', fontWeight: 700, px: 4, bgcolor: '#002855', '&:hover': { bgcolor: '#001a3f' }, boxShadow: 'none' }}>
+            {saving ? 'Creating…' : 'Create Guest'}
           </Button>
         </Box>
-
       </Paper>
-
     </Box>
   );
 }

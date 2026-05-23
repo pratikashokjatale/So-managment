@@ -6,6 +6,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import BackButton from '@/components/BackButton';
 import { saveFacility } from '@/utils/facilityStore';
+import { createFacilityApi } from '@/apis/facility';
 
 // Icons for selection previews
 import { 
@@ -50,21 +51,86 @@ export default function AddFacility() {
     return Object.keys(tempErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
 
-    saveFacility({
-      name,
-      category,
-      price,
-      slots,
-      managerName,
-      managerContact,
-      description,
-      iconName,
-      status: 'Operational'
-    });
+    // Parse pricing
+    let pricingModel = 'CUSTOM';
+    let priceAmount = 0;
+    const cleanPrice = price.toLowerCase();
+    if (cleanPrice.includes('included')) {
+      pricingModel = 'INCLUDED';
+    } else if (cleanPrice.includes('free')) {
+      pricingModel = 'FREE';
+    } else {
+      if (cleanPrice.includes('hour') || cleanPrice.includes('hr')) {
+        pricingModel = 'HOURLY';
+      } else if (cleanPrice.includes('show')) {
+        pricingModel = 'SHOW';
+      } else if (cleanPrice.includes('session')) {
+        pricingModel = 'SESSION';
+      } else if (cleanPrice.includes('day')) {
+        pricingModel = 'DAY';
+      }
+      const matchNum = price.match(/\d+/);
+      priceAmount = matchNum ? parseInt(matchNum[0]) : 0;
+    }
+
+    // Parse slots
+    const matchSlots = slots.match(/(\d+)\/(\d+)/);
+    const bookedSlots = matchSlots ? parseInt(matchSlots[1]) : 0;
+    const totalSlots = matchSlots ? parseInt(matchSlots[2]) : 12;
+
+    const code = name.toUpperCase().replace(/\s+/g, '-');
+    const categoryUpper = category.toUpperCase();
+
+    try {
+      await createFacilityApi({
+        name,
+        code,
+        category: categoryUpper,
+        iconKey: iconName,
+        description,
+        location: 'Clubhouse',
+        floor: 'Ground Floor',
+        status: 'OPERATIONAL',
+        isActive: true,
+        pricingModel,
+        priceAmount,
+        priceCurrency: 'INR',
+        priceLabel: price,
+        bookingMode: 'SLOT',
+        totalSlots,
+        bookedSlots,
+        capacity: totalSlots,
+        openingTime: '06:00',
+        closingTime: '22:00',
+        availableDays: ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'],
+        advanceBookingDays: 7,
+        cancellationHours: 2,
+        requiresApproval: false,
+        managerName,
+        managerContact,
+        rules: 'Standard rules apply.',
+        images: [],
+        sortOrder: 1
+      });
+    } catch (err) {
+      console.warn("Failed to create facility via API, falling back:", err);
+      // Fallback local save
+      saveFacility({
+        name,
+        category,
+        price,
+        slots,
+        managerName,
+        managerContact,
+        description,
+        iconName,
+        status: 'Operational'
+      });
+    }
 
     navigate('/facility');
   };

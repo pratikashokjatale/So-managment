@@ -5,6 +5,7 @@ import {
 } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import BackButton from '@/components/BackButton';
+import { getFacilityDetailsApi, updateFacilityApi } from '@/apis/facility';
 import { getFacilityById, saveFacility } from '@/utils/facilityStore';
 
 // Icons for selection previews
@@ -40,20 +41,56 @@ export default function EditFacility() {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    if (id) {
-      const facility = getFacilityById(id);
-      if (facility) {
-        setName(facility.name);
-        setCategory(facility.category);
-        setPrice(facility.price);
-        setSlots(facility.slots);
-        setManagerName(facility.managerName);
-        setManagerContact(facility.managerContact);
-        setDescription(facility.description);
-        setIconName(facility.iconName || 'SportsTennis');
-        setStatus(facility.status);
+    const loadFacility = async () => {
+      if (id) {
+        try {
+          const res = await getFacilityDetailsApi(id);
+          const f = res?.data || res;
+          if (f) {
+            setName(f.name || '');
+            
+            let normCategory = f.category || 'Sports';
+            if (normCategory === 'SPORTS') normCategory = 'Sports';
+            else if (normCategory === 'FITNESS') normCategory = 'Fitness';
+            else if (normCategory === 'LEISURE') normCategory = 'Leisure';
+            else if (normCategory === 'WELLNESS') normCategory = 'Wellness';
+            else if (normCategory === 'OTHER') normCategory = 'Other';
+            setCategory(normCategory);
+
+            setPrice(f.priceLabel || f.price || (f.priceAmount ? `₹${f.priceAmount}/${f.pricingModel?.toLowerCase() === 'hourly' ? 'hr' : f.pricingModel?.toLowerCase()}` : 'Free'));
+            setSlots(`${f.bookedSlots || 0}/${f.totalSlots || 12} Booked`);
+            setManagerName(f.managerName || '');
+            setManagerContact(f.managerContact || '');
+            setDescription(f.description || '');
+            setIconName(f.iconKey || f.iconName || 'SportsTennis');
+            
+            let normStatus = f.status || 'Operational';
+            if (normStatus === 'OPERATIONAL') normStatus = 'Operational';
+            else if (normStatus === 'IN_USE') normStatus = 'In Use';
+            else if (normStatus === 'MAINTENANCE') normStatus = 'Maintenance';
+            else if (normStatus === 'CLOSED') normStatus = 'Inactive';
+            setStatus(normStatus);
+            return;
+          }
+        } catch (error) {
+          console.warn("Failed to load facility via API, falling back:", error);
+        }
+
+        const facility = getFacilityById(id);
+        if (facility) {
+          setName(facility.name);
+          setCategory(facility.category);
+          setPrice(facility.price);
+          setSlots(facility.slots);
+          setManagerName(facility.managerName);
+          setManagerContact(facility.managerContact);
+          setDescription(facility.description);
+          setIconName(facility.iconName || 'SportsTennis');
+          setStatus(facility.status);
+        }
       }
-    }
+    };
+    loadFacility();
   }, [id]);
 
   const validate = () => {
@@ -69,23 +106,76 @@ export default function EditFacility() {
     return Object.keys(tempErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
 
     if (id) {
-      saveFacility({
-        id,
-        name,
-        category,
-        price,
-        slots,
-        managerName,
-        managerContact,
-        description,
-        iconName,
-        status
-      });
+      // Parse pricing
+      let pricingModel = 'CUSTOM';
+      let priceAmount = 0;
+      const cleanPrice = price.toLowerCase();
+      if (cleanPrice.includes('included')) {
+        pricingModel = 'INCLUDED';
+      } else if (cleanPrice.includes('free')) {
+        pricingModel = 'FREE';
+      } else {
+        if (cleanPrice.includes('hour') || cleanPrice.includes('hr')) {
+          pricingModel = 'HOURLY';
+        } else if (cleanPrice.includes('show')) {
+          pricingModel = 'SHOW';
+        } else if (cleanPrice.includes('session')) {
+          pricingModel = 'SESSION';
+        } else if (cleanPrice.includes('day')) {
+          pricingModel = 'DAY';
+        }
+        const matchNum = price.match(/\d+/);
+        priceAmount = matchNum ? parseInt(matchNum[0]) : 0;
+      }
+
+      // Parse slots
+      const matchSlots = slots.match(/(\d+)\/(\d+)/);
+      const bookedSlots = matchSlots ? parseInt(matchSlots[1]) : 0;
+      const totalSlots = matchSlots ? parseInt(matchSlots[2]) : 12;
+
+      const categoryUpper = category.toUpperCase();
+
+      let apiStatus = 'OPERATIONAL';
+      if (status === 'In Use') apiStatus = 'IN_USE';
+      else if (status === 'Maintenance') apiStatus = 'MAINTENANCE';
+      else if (status === 'Inactive') apiStatus = 'CLOSED';
+
+      try {
+        await updateFacilityApi(id, {
+          name,
+          category: categoryUpper,
+          iconKey: iconName,
+          description,
+          pricingModel,
+          priceAmount,
+          priceLabel: price,
+          totalSlots,
+          bookedSlots,
+          capacity: totalSlots,
+          managerName,
+          managerContact,
+          status: apiStatus
+        });
+      } catch (err) {
+        console.warn("Failed to update facility via API, falling back:", err);
+        saveFacility({
+          id,
+          name,
+          category,
+          price,
+          slots,
+          managerName,
+          managerContact,
+          description,
+          iconName,
+          status
+        });
+      }
       navigate(`/facility/${id}`);
     }
   };

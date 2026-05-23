@@ -53,3 +53,18 @@ export const updateTowerApi = async (towerId: string, data: UpdateTowerPayload) 
     throw handleApiError(error);
   }
 };
+
+export interface ListTowersParams {
+  page?: number;
+  limit?: number;
+  projectId?: string;
+}
+
+export const getAllTowersApi = async (params?: ListTowersParams) => {
+  try {
+    const res = await api.get("towers", { params });
+    return res?.data;
+  } catch (error) {
+    throw handleApiError(error);
+  }
+};
