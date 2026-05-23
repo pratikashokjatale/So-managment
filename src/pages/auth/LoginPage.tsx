@@ -8,17 +8,13 @@ import {
   Paper,
   IconButton,
   InputAdornment,
- 
-  useTheme,
   Checkbox,
   FormControlLabel,
 } from "@mui/material";
 import {
   Visibility,
   VisibilityOff,
- 
   MailOutline as MailIcon,
-  LockOutlined as LockIcon,
   People as PeopleIcon,
   ShieldOutlined as ShieldIcon,
 } from "@mui/icons-material";
@@ -26,10 +22,9 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useTranslation } from "@/i18n/translations";
 import { useAuth } from "@/contexts/AuthContext";
-import bgImage from "@/assets/back.png";
+import bgImage from "@/assets/test.png";
 
 const LoginPage = () => {
-  const theme = useTheme();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { login, isLoginLoading, isLoggedIn, isInitialized } = useAuth();
@@ -72,7 +67,7 @@ const LoginPage = () => {
         width: "100vw",
         display: "flex",
         flexDirection: { xs: "column", md: "row" },
-        backgroundImage: `linear-gradient(rgba(0, 40, 85, 0.4), rgba(0, 40, 85, 0.45)), url(${bgImage})`,
+        backgroundImage: `  url(${bgImage})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundAttachment: "fixed",
@@ -101,9 +96,6 @@ const LoginPage = () => {
           }}
         >
           {/* Logo container */}
-          
-          
-          
         </Box>
       </Box>
 
@@ -114,10 +106,9 @@ const LoginPage = () => {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-           bgcolor: { xs: "rgba(0, 40, 85, 0.3)", md: "transparent" },
+          bgcolor: { xs: "rgba(0, 40, 85, 0.3)", md: "transparent" },
           p: { xs: 2, sm: 4, md: 6 },
           backdropFilter: { xs: "blur(8px)", md: "none" },
-         
         }}
       >
         <Paper
@@ -130,6 +121,7 @@ const LoginPage = () => {
             opacity: 0.9,
             background: { md: "#ffffffff" },
             display: "flex",
+
             flexDirection: "column",
             alignItems: "center",
           }}
@@ -225,7 +217,6 @@ const LoginPage = () => {
                 }
                 helperText={formik.touched.password && formik.errors.password}
                 InputProps={{
-                  
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton onClick={handleTogglePassword} edge="end">
@@ -238,8 +229,6 @@ const LoginPage = () => {
                   "& .MuiOutlinedInput-root": {
                     borderRadius: "16px",
                     bgcolor: "#f8fafc",
-                   
-                    
                   },
                 }}
               />
@@ -262,12 +251,14 @@ const LoginPage = () => {
                     />
                   }
                   label={
-                    <Typography variant="body2" sx={{ fontWeight: 600, color: "#475569" }}>
+                    <Typography
+                      variant="body2"
+                      sx={{ fontWeight: 600, color: "#475569" }}
+                    >
                       Remember me
                     </Typography>
                   }
                 />
-                
               </Box>
 
               <Button
@@ -295,7 +286,6 @@ const LoginPage = () => {
             </Box>
           </form>
 
-
           <Box
             sx={{
               mt: 4,
@@ -306,7 +296,10 @@ const LoginPage = () => {
             }}
           >
             <ShieldIcon sx={{ fontSize: 18 }} />
-            <Typography variant="caption" sx={{ fontWeight: 800, letterSpacing: "0.5px" }}>
+            <Typography
+              variant="caption"
+              sx={{ fontWeight: 800, letterSpacing: "0.5px" }}
+            >
               Secure. Simple. Smart.
             </Typography>
           </Box>
