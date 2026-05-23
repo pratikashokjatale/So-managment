@@ -64,3 +64,4 @@ export const deleteFamilyMemberApi = async (familyMemberId: string) => {
     throw handleApiError(error);
   }
 };
+

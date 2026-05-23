@@ -8,21 +8,25 @@ import {
   Paper,
   IconButton,
   InputAdornment,
-  Divider,
-  alpha,
+ 
   useTheme,
-  Container,
+  Checkbox,
+  FormControlLabel,
 } from "@mui/material";
 import {
   Visibility,
   VisibilityOff,
-  Google as GoogleIcon,
-  GitHub as GitHubIcon,
+ 
+  MailOutline as MailIcon,
+  LockOutlined as LockIcon,
+  People as PeopleIcon,
+  ShieldOutlined as ShieldIcon,
 } from "@mui/icons-material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useTranslation } from "@/i18n/translations";
 import { useAuth } from "@/contexts/AuthContext";
+import bgImage from "@/assets/back.png";
 
 const LoginPage = () => {
   const theme = useTheme();
@@ -30,6 +34,7 @@ const LoginPage = () => {
   const { t } = useTranslation();
   const { login, isLoginLoading, isLoggedIn, isInitialized } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
 
   useEffect(() => {
     if (isInitialized && isLoggedIn) {
@@ -52,7 +57,7 @@ const LoginPage = () => {
     }),
     onSubmit: async (values) => {
       try {
-        await login(values.email, values.password, true);
+        await login(values.email, values.password, rememberMe);
         navigate("/");
       } catch (error) {
         console.error("Login error:", error);
@@ -64,95 +69,116 @@ const LoginPage = () => {
     <Box
       sx={{
         minHeight: "100vh",
+        width: "100vw",
         display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        position: "relative",
-        overflow: "hidden",
-        bgcolor: "background.default",
-        // Premium background decoration
-        "&::before": {
-          content: '""',
-          position: "absolute",
-          width: "300px",
-          height: "300px",
-          borderRadius: "50%",
-          background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.4)}, ${alpha(theme.palette.primary.light, 0.1)})`,
-          top: "-100px",
-          right: "-100px",
-          filter: "blur(50px)",
-        },
-        "&::after": {
-          content: '""',
-          position: "absolute",
-          width: "400px",
-          height: "400px",
-          borderRadius: "50%",
-          background: `linear-gradient(135deg, ${alpha(theme.palette.secondary.main, 0.3)}, ${alpha(theme.palette.primary.main, 0.1)})`,
-          bottom: "-150px",
-          left: "-150px",
-          filter: "blur(60px)",
-        },
+        flexDirection: { xs: "column", md: "row" },
+        backgroundImage: `linear-gradient(rgba(0, 40, 85, 0.4), rgba(0, 40, 85, 0.45)), url(${bgImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+        overflowX: "hidden",
       }}
     >
-      <Container maxWidth="sm" sx={{ zIndex: 1 }}>
+      {/* Left side: branding info */}
+      <Box
+        sx={{
+          flex: 1.2,
+          display: { xs: "none", md: "flex" },
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "#ffffff",
+          textAlign: "center",
+          p: 6,
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            mb: 3,
+          }}
+        >
+          {/* Logo container */}
+          
+          
+          
+        </Box>
+      </Box>
+
+      {/* Right side: Login Form Card container */}
+      <Box
+        sx={{
+          flex: 0.8,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+           bgcolor: { xs: "rgba(0, 40, 85, 0.3)", md: "transparent" },
+          p: { xs: 2, sm: 4, md: 6 },
+          backdropFilter: { xs: "blur(8px)", md: "none" },
+         
+        }}
+      >
         <Paper
           elevation={0}
           sx={{
-            p: { xs: 4, md: 8 },
+            width: "100%",
+            maxWidth: "480px",
+            p: { xs: 4, sm: 5, md: 6 },
             borderRadius: "32px",
-            border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
-            background: alpha(theme.palette.background.paper, 0.8),
-            backdropFilter: "blur(20px)",
-            boxShadow: `0 24px 80px ${alpha(theme.palette.common.black, 0.1)}`,
-            textAlign: "center",
+            opacity: 0.9,
+            background: { md: "#ffffffff" },
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
           }}
         >
-          <Box sx={{ mb: 5 }}>
-            <Box
-              sx={{
-                width: 64,
-                height: 64,
-                bgcolor: "primary.main",
-                borderRadius: "16px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                mx: "auto",
-                mb: 3,
-                boxShadow: `0 8px 16px ${alpha(theme.palette.primary.main, 0.3)}`,
-              }}
-            >
-              <Typography
-                variant="h4"
-                sx={{ color: "white", fontWeight: 900, lineHeight: 1 }}
-              >
-               SM
-              </Typography>
-            </Box>
-            <Typography
-              variant="h3"
-              sx={{
-                fontWeight: 800,
-                letterSpacing: "-1.5px",
-                fontSize: { xs: "2rem", md: "2.5rem" },
-                mb: 1.5,
-              }}
-            >
-              {t("welcomeBack")}
-            </Typography>
-            {/* <Typography variant="body1" color="text.secondary">
-              {t("loginSubTitle")}
-            </Typography> */}
+          {/* Top user icon */}
+          <Box
+            sx={{
+              width: 70,
+              height: 70,
+              bgcolor: "#eff6ff",
+              borderRadius: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              mb: 3,
+            }}
+          >
+            <PeopleIcon sx={{ fontSize: 32, color: "#1d4ed8" }} />
           </Box>
 
-          <form onSubmit={formik.handleSubmit}>
+          <Typography
+            variant="h4"
+            sx={{
+              fontWeight: 800,
+              color: "#1e293b",
+              textAlign: "center",
+              mb: 1,
+            }}
+          >
+            {t("welcomeBack") || "Welcome Back!"}
+          </Typography>
+          <Typography
+            variant="body2"
+            sx={{
+              color: "#64748b",
+              textAlign: "center",
+              mb: 4,
+            }}
+          >
+            Login to your account
+          </Typography>
+
+          <form onSubmit={formik.handleSubmit} style={{ width: "100%" }}>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
               <TextField
                 fullWidth
                 id="email"
                 name="email"
-                label={t("email")}
+                label={t("email") || "Email Address"}
                 placeholder="hello@example.com"
                 value={formik.values.email}
                 onChange={formik.handleChange}
@@ -160,22 +186,35 @@ const LoginPage = () => {
                 error={formik.touched.email && Boolean(formik.errors.email)}
                 helperText={formik.touched.email && formik.errors.email}
                 variant="outlined"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <MailIcon sx={{ color: "#64748b" }} />
+                    </InputAdornment>
+                  ),
+                }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     borderRadius: "16px",
-                    bgcolor: alpha(theme.palette.action.hover, 0.04),
-                    transition: "all 0.2s ease",
-                    "&:hover": {
-                      bgcolor: alpha(theme.palette.action.hover, 0.08),
+                    bgcolor: "#f8fafc",
+                    "& fieldset": {
+                      borderColor: "#e2e8f0",
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "#cbd5e1",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#1d4ed8",
                     },
                   },
                 }}
               />
+
               <TextField
                 fullWidth
                 id="password"
                 name="password"
-                label={t("password")}
+                label={t("password") || "Password"}
                 placeholder="••••••••"
                 type={showPassword ? "text" : "password"}
                 value={formik.values.password}
@@ -185,40 +224,51 @@ const LoginPage = () => {
                   formik.touched.password && Boolean(formik.errors.password)
                 }
                 helperText={formik.touched.password && formik.errors.password}
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "16px",
-                    bgcolor: alpha(theme.palette.action.hover, 0.04),
-                    transition: "all 0.2s ease",
-                    "&:hover": {
-                      bgcolor: alpha(theme.palette.action.hover, 0.08),
-                    },
-                  },
-                }}
                 InputProps={{
+                  
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton onClick={handleTogglePassword} edge="end">
                         {showPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
                     </InputAdornment>
-                  ),  
+                  ),
+                }}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "16px",
+                    bgcolor: "#f8fafc",
+                   
+                    
+                  },
                 }}
               />
 
-              {/* <Box sx={{ mt: -1, display: "flex", justifyContent: "flex-end" }}>
-                <Typography
-                  variant="caption"
-                  sx={{
-                    color: "primary.main",
-                    fontWeight: 700,
-                    cursor: "pointer",
-                    "&:hover": { textDecoration: "underline" },
-                  }}
-                >
-                  {t("forgotPassword")}
-                </Typography>
-              </Box> */}
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  mt: -1,
+                }}
+              >
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={rememberMe}
+                      onChange={(e) => setRememberMe(e.target.checked)}
+                      color="primary"
+                      size="small"
+                    />
+                  }
+                  label={
+                    <Typography variant="body2" sx={{ fontWeight: 600, color: "#475569" }}>
+                      Remember me
+                    </Typography>
+                  }
+                />
+                
+              </Box>
 
               <Button
                 type="submit"
@@ -231,28 +281,37 @@ const LoginPage = () => {
                   borderRadius: "16px",
                   fontWeight: 800,
                   textTransform: "none",
-                  fontSize: "1.1rem",
-                  boxShadow: `0 12px 24px ${alpha(theme.palette.primary.main, 0.2)}`,
-                  transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                  fontSize: "1.05rem",
+                  bgcolor: "#1d4ed8",
+                  boxShadow: "0 4px 12px rgba(29, 78, 216, 0.2)",
                   "&:hover": {
-                    transform: "translateY(-2px)",
-                    boxShadow: `0 16px 32px ${alpha(theme.palette.primary.main, 0.3)}`,
-                  },
-                  "&:active": {
-                    transform: "translateY(0)",
+                    bgcolor: "#1e40af",
+                    boxShadow: "0 6px 16px rgba(29, 78, 216, 0.3)",
                   },
                 }}
               >
-                {isLoginLoading ? "Logging in..." : t("submit")}
+                {isLoginLoading ? "Logging in..." : "Login"}
               </Button>
             </Box>
           </form>
 
-         
 
-         
+          <Box
+            sx={{
+              mt: 4,
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              color: "#1d4ed8",
+            }}
+          >
+            <ShieldIcon sx={{ fontSize: 18 }} />
+            <Typography variant="caption" sx={{ fontWeight: 800, letterSpacing: "0.5px" }}>
+              Secure. Simple. Smart.
+            </Typography>
+          </Box>
         </Paper>
-      </Container>
+      </Box>
     </Box>
   );
 };

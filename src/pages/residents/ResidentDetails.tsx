@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { 
   Box, Typography, Avatar, 
   Button, IconButton, Stack, Tabs, Tab, Paper,
-  Grid, Chip, Divider, Tooltip, CircularProgress, Dialog, DialogTitle, DialogContent
+  Grid, Chip, Divider, Tooltip, CircularProgress, Dialog, DialogTitle, DialogContent,
+  DialogActions, TextField, MenuItem
 } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { 
@@ -17,12 +18,15 @@ import {
   Close as CloseIcon,
   CheckCircle as CheckIcon,
   HourglassEmpty as PendingIcon,
+  DeleteOutline as DeleteIcon,
 } from '@mui/icons-material';
 import ResidentWallets from './components/ResidentWallets';
 import ResidentAmenities from './components/ResidentAmenities';
 import bannerImg from '../../assets/marbella-banner.png';
 import BackButton from '@/components/BackButton';
 import { getUserDetailsApi } from '@/apis/user';
+import { deleteFamilyMemberApi, updateFamilyMemberApi } from '@/apis/family';
+import { toast } from 'react-hot-toast';
 
 const mockBookings = [
   { id: 101, activity: 'Squash Court', slots: '5:00 PM - 7:00 PM (2 Slots)', date: 'May 18, 2024', amount: '₹400.00', status: 'Confirmed' },
@@ -43,6 +47,17 @@ export default function ResidentDetails() {
   // Document Viewer Dialog State
   const [docOpen, setDocOpen] = useState(false);
   const [docToShow, setDocToShow] = useState({ title: '', url: '' });
+
+  // Edit Family Member Modal State
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedMember, setSelectedMember] = useState<any>(null);
+  const [editForm, setEditForm] = useState({
+    name: '',
+    relationship: 'SPOUSE',
+    status: 'ACTIVE',
+    accessLevel: 'FULL'
+  });
+  const [updatingMember, setUpdatingMember] = useState(false);
 
   const fetchDetails = async () => {
     setLoading(true);
@@ -79,6 +94,52 @@ export default function ResidentDetails() {
   }, [id]);
 
   const handleTabChange = (_: any, newValue: number) => setActiveTab(newValue);
+
+  const handleDeleteFamilyMember = async (memberId: string) => {
+    if (!window.confirm("Are you sure you want to delete this family member?")) return;
+    try {
+      await deleteFamilyMemberApi(memberId);
+      toast.success("Family member deleted successfully");
+      fetchDetails();
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to delete family member");
+    }
+  };
+
+  const handleOpenEditModal = (member: any) => {
+    setSelectedMember(member);
+    setEditForm({
+      name: member.name || '',
+      relationship: member.relationship || 'SPOUSE',
+      status: member.status || 'ACTIVE',
+      accessLevel: member.accessLevel || 'FULL'
+    });
+    setEditModalOpen(true);
+  };
+
+  const handleUpdateFamilyMember = async () => {
+    if (!selectedMember) return;
+    if (!editForm.name.trim()) {
+      toast.error("Name is required");
+      return;
+    }
+    setUpdatingMember(true);
+    try {
+      await updateFamilyMemberApi(selectedMember.id, {
+        name: editForm.name.trim(),
+        relationship: editForm.relationship,
+        status: editForm.status,
+        accessLevel: editForm.accessLevel
+      });
+      toast.success("Family member details updated successfully");
+      setEditModalOpen(false);
+      fetchDetails();
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to update family member details");
+    } finally {
+      setUpdatingMember(false);
+    }
+  };
 
   const handleOpenDoc = (title: string, url: string) => {
     setDocToShow({ title, url });
@@ -311,6 +372,23 @@ export default function ResidentDetails() {
                         </Typography>
                       </Box>
                       <Chip label="Blue Card" size="small" sx={{ bgcolor: '#eff6ff', color: '#1d4ed8', fontWeight: 900 }} />
+                      <IconButton 
+                        color="primary" 
+                        size="small" 
+                        onClick={() => handleOpenEditModal(m)}
+                        sx={{ ml: 1, bgcolor: '#f0f4f8', '&:hover': { bgcolor: '#e2e8f0' } }}
+                      >
+                        <EditIcon fontSize="small" />
+                      </IconButton>
+                      <IconButton 
+                        color="error" 
+                        size="small" 
+                        onClick={() => handleDeleteFamilyMember(m.id)}
+                        sx={{ ml: 1, bgcolor: '#fff5f5', '&:hover': { bgcolor: '#ffe3e3' } }}
+                      >
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
+                                              
                     </Stack>
                     <Divider sx={{ my: 3 }} />
                     <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, mb: 3 }}>
@@ -468,6 +546,91 @@ export default function ResidentDetails() {
             }} 
           />
         </DialogContent>
+      </Dialog>
+
+      {/* Edit Family Member Dialog */}
+      <Dialog 
+        open={editModalOpen} 
+        onClose={() => setEditModalOpen(false)} 
+        maxWidth="xs"
+        fullWidth
+        PaperProps={{ sx: { borderRadius: '20px', p: 1 } }}
+      >
+        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>
+          <Typography variant="h6" fontWeight="900" color="#002855">
+            Edit Family Member
+          </Typography>
+          <IconButton onClick={() => setEditModalOpen(false)}>
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          <Stack spacing={3} sx={{ mt: 1 }}>
+            <TextField
+              label="Full Name"
+              value={editForm.name}
+              onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+              fullWidth
+              variant="outlined"
+            />
+            <TextField
+              select
+              label="Relationship"
+              value={editForm.relationship}
+              onChange={(e) => setEditForm({ ...editForm, relationship: e.target.value })}
+              fullWidth
+              variant="outlined"
+            >
+              <MenuItem value="SPOUSE">Spouse</MenuItem>
+              <MenuItem value="CHILD">Child</MenuItem>
+              <MenuItem value="PARENT">Parent</MenuItem>
+              <MenuItem value="SIBLING">Sibling</MenuItem>
+              <MenuItem value="GRANDPARENT">Grandparent</MenuItem>
+              <MenuItem value="IN_LAW">In Law</MenuItem>
+              <MenuItem value="OTHER">Other</MenuItem>
+            </TextField>
+            <TextField
+              select
+              label="Access Level"
+              value={editForm.accessLevel}
+              onChange={(e) => setEditForm({ ...editForm, accessLevel: e.target.value })}
+              fullWidth
+              variant="outlined"
+            >
+              <MenuItem value="FULL">Full Access</MenuItem>
+              <MenuItem value="LIMITED">Limited Access</MenuItem>
+              <MenuItem value="NONE">No Access</MenuItem>
+            </TextField>
+            <TextField
+              select
+              label="Status"
+              value={editForm.status}
+              onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
+              fullWidth
+              variant="outlined"
+            >
+              <MenuItem value="ACTIVE">Active</MenuItem>
+              <MenuItem value="INACTIVE">Inactive</MenuItem>
+            </TextField>
+          </Stack>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button 
+            onClick={() => setEditModalOpen(false)} 
+            variant="outlined"
+            sx={{ borderRadius: '10px', textTransform: 'none', fontWeight: 800, color: 'text.secondary', borderColor: '#e2e8f0' }}
+          >
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleUpdateFamilyMember} 
+            variant="contained"
+            disabled={updatingMember}
+            sx={{ bgcolor: '#002855', borderRadius: '10px', textTransform: 'none', fontWeight: 800 }}
+          >
+            {updatingMember ? 'Saving...' : 'Save Changes'}
+          </Button>
+        </DialogActions>
       </Dialog>
 
     </Box>

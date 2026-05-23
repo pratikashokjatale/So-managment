@@ -163,11 +163,11 @@ export default function AddGuest() {
             <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 3 }}>
               
               <FormControl fullWidth error={!!errors.resident} sx={{ gridColumn: 'span 2' }}>
-                <InputLabel id="resident-select-label" sx={{ fontWeight: 600 }}>Select Host Resident</InputLabel>
+                <InputLabel id="resident-select-label" sx={{ fontWeight: 600 }}>Select Host Flat</InputLabel>
                 <Select
                   labelId="resident-select-label"
                   value={residentValue}
-                  label="Select Host Resident"
+                  label="Select Host Flat"
                   onChange={(e) => {
                     setResidentValue(e.target.value);
                     setErrors(prev => ({ ...prev, resident: '' }));
