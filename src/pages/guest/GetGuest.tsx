@@ -109,6 +109,27 @@ export default function GetGuest() {
   const [searchQuery, setSearchQuery] = useState('');
   const [totalResults, setTotalResults] = useState(0);
 
+  const [activeCount, setActiveCount] = useState(0);
+  const [pendingCount, setPendingCount] = useState(0);
+
+  useEffect(() => {
+    const fetchCounts = async () => {
+      try {
+        const [activeRes, pendingRes] = await Promise.all([
+          getGuestsApi({ page: 1, limit: 1, status: "ACTIVE" }),
+          getGuestsApi({ page: 1, limit: 1, status: "PENDING" })
+        ]);
+        
+        const getCount = (res: any) => res?.data?.pagination?.total || res?.pagination?.total || 0;
+        setActiveCount(getCount(activeRes));
+        setPendingCount(getCount(pendingRes));
+      } catch (err) {
+        console.warn("Failed to fetch guest counts:", err);
+      }
+    };
+    fetchCounts();
+  }, [activeTab]);
+
   // detail drawer
   const [drawerGuest, setDrawerGuest] = useState<any | null>(null);
 
@@ -187,8 +208,22 @@ export default function GetGuest() {
       <Box sx={{ bgcolor: 'white', borderRadius: '16px 16px 0 0', border: '1px solid #e2e8f0', borderBottom: 'none', px: 2 }}>
         <Tabs value={activeTab} onChange={(_e, v) => setActiveTab(v)}
           sx={{ '& .MuiTab-root': { textTransform: 'none', fontWeight: 700, fontSize: '0.95rem' }, '& .MuiTabs-indicator': { bgcolor: '#002855' } }}>
-          <Tab label="Active Guests" />
-          <Tab label="Guest Requests" />
+          <Tab
+            label={
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                Active Guests
+                {activeCount > 0 && <Chip label={activeCount} size="small" sx={{ height: 18, fontSize: '0.7rem', fontWeight: 800, bgcolor: '#e0f2fe', color: '#0369a1' }} />}
+              </Box>
+            }
+          />
+          <Tab
+            label={
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                Guest Requests
+                {pendingCount > 0 && <Chip label={pendingCount} size="small" color="warning" sx={{ height: 18, fontSize: '0.7rem', fontWeight: 800 }} />}
+              </Box>
+            }
+          />
         </Tabs>
       </Box>
 
