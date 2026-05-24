@@ -19,7 +19,7 @@ import {
   Tabs,
   Tab,
   CircularProgress,
-  Chip,
+  Chip
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import DownloadIcon from "@mui/icons-material/Download";
@@ -30,6 +30,7 @@ import MoreVertOutlinedIcon from "@mui/icons-material/MoreVertOutlined";
 import Search from "../../components/Search";
 import Pagination from "../../components/Pagination";
 import ResidentRequests from "./components/ResidentRequests";
+import RejectedRequests from "./components/RejectedRequests";
 import { getUsersApi, updateUserApi } from "@/apis/user";
 import { getTowers, getFlats } from "@/utils/setupStore";
 import { toast } from "react-hot-toast";
@@ -55,10 +56,30 @@ export default function GetResident() {
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  // Rejected residents state
-  const [rejectedResidents, setRejectedResidents] = useState<any[]>([]);
-  const [rejectedTotal, setRejectedTotal] = useState(0);
-  const [rejectedLoading, setRejectedLoading] = useState(false);
+  const [activeCount, setActiveCount] = useState(0);
+  const [pendingCount, setPendingCount] = useState(0);
+  const [rejectedCount, setRejectedCount] = useState(0);
+
+  useEffect(() => {
+    const fetchCounts = async () => {
+      try {
+        const [activeRes, pendingRes, rejectedRes] = await Promise.all([
+          getUsersApi({ page: 1, limit: 1, role: "RESIDENT", status: "ACTIVE" }),
+          getUsersApi({ page: 1, limit: 1, role: "RESIDENT", status: "PENDING" }),
+          getUsersApi({ page: 1, limit: 1, role: "RESIDENT", status: "SUSPENDED" })
+        ]);
+        
+        const getCount = (res: any) => res?.data?.pagination?.total || res?.pagination?.total || 0;
+        setActiveCount(getCount(activeRes));
+        setPendingCount(getCount(pendingRes));
+        setRejectedCount(getCount(rejectedRes));
+      } catch (err) {
+        console.warn("Failed to fetch resident counts:", err);
+      }
+    };
+    fetchCounts();
+  }, [tabValue]); // Refresh counts on tab change or actions
+
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -123,52 +144,10 @@ export default function GetResident() {
   };
 
   useEffect(() => {
-    fetchRejectedResidents();
-  }, []);
-
-  useEffect(() => {
     if (tabValue === 0) {
       fetchResidents();
-    } else if (tabValue === 2) {
-      fetchRejectedResidents();
     }
   }, [page, rowsPerPage, searchQuery, tabValue, statusFilter, roleFilter]);
-
-  const fetchRejectedResidents = async () => {
-    setRejectedLoading(true);
-    try {
-      const res = await getUsersApi({
-        page,
-        limit: rowsPerPage,
-        search: searchQuery || undefined,
-        role: "RESIDENT",
-        status: "SUSPENDED",
-      });
-      let list: any[] = [];
-      if (res?.data?.items && Array.isArray(res.data.items)) list = res.data.items;
-      else if (res?.data?.data && Array.isArray(res.data.data)) list = res.data.data;
-      else if (res?.data?.users && Array.isArray(res.data.users)) list = res.data.users;
-      else if (Array.isArray(res?.data)) list = res.data;
-      const pagination = res?.data?.pagination || res?.pagination;
-      setRejectedResidents(list);
-      setRejectedTotal(pagination?.total || list.length);
-    } catch (error) {
-      console.warn("Failed to fetch rejected residents:", error);
-      setRejectedResidents([]);
-    } finally {
-      setRejectedLoading(false);
-    }
-  };
-
-  const handleRestore = async (id: string, name: string) => {
-    try {
-      await updateUserApi(id, { status: "PENDING" });
-      toast.success(`${name} restored to pending`);
-      fetchRejectedResidents();
-    } catch (error: any) {
-      toast.error(error?.message || "Failed to restore resident");
-    }
-  };
 
   const handleStatusToggle = async (id: string, currentStatus: string) => {
     // Only proceed if it is a real DB user (non-mock)
@@ -243,15 +222,27 @@ export default function GetResident() {
           "& .MuiTabs-indicator": { backgroundColor: "#0047b3", height: 3 },
         }}
       >
-        <Tab label="Active Residents" />
-        <Tab label="Enrollment Requests" />
+        <Tab
+          label={
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              Active Residents
+              {activeCount > 0 && <Chip label={activeCount} size="small" sx={{ height: 18, fontSize: '0.7rem', fontWeight: 800, bgcolor: '#e0f2fe', color: '#0369a1' }} />}
+            </Box>
+          }
+        />
+        <Tab
+          label={
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              Enrollment Requests
+              {pendingCount > 0 && <Chip label={pendingCount} size="small" color="warning" sx={{ height: 18, fontSize: '0.7rem', fontWeight: 800 }} />}
+            </Box>
+          }
+        />
         <Tab
           label={
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               Rejected Requests
-              {rejectedTotal > 0 && (
-                <Chip label={rejectedTotal} size="small" color="error" sx={{ height: 18, fontSize: '0.7rem', fontWeight: 800 }} />
-              )}
+              {rejectedCount > 0 && <Chip label={rejectedCount} size="small" color="error" sx={{ height: 18, fontSize: '0.7rem', fontWeight: 800 }} />}
             </Box>
           }
         />
@@ -598,119 +589,7 @@ export default function GetResident() {
 
       {tabValue === 1 && <ResidentRequests />}
 
-      {tabValue === 2 && (
-        <Box sx={{ mt: 2 }}>
-          <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Box>
-              <Typography variant="h5" fontWeight="900" color="#002855">Rejected Requests</Typography>
-              <Typography variant="body2" color="text.secondary">Residents whose enrollment was rejected or suspended.</Typography>
-            </Box>
-            <Chip label={`${rejectedTotal} Records`} color="error" sx={{ fontWeight: 800, borderRadius: '8px' }} />
-          </Box>
-
-          <Box sx={{ mb: 3 }}>
-            <Search
-              placeholder="Search rejected residents..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              sx={{ width: { xs: '100%', md: 350 }, '& fieldset': { borderRadius: '8px' } }}
-            />
-          </Box>
-
-          {rejectedLoading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}><CircularProgress /></Box>
-          ) : (
-            <TableContainer sx={{ overflowX: 'auto', border: '1px solid #f1f5f9', borderRadius: '12px' }}>
-              <Table sx={{ minWidth: 700 }}>
-                <TableHead sx={{ bgcolor: '#fef2f2' }}>
-                  <TableRow>
-                    <TableCell sx={{ color: '#64748b', fontWeight: 700 }}>Resident</TableCell>
-                    <TableCell sx={{ color: '#64748b', fontWeight: 700 }}>Flat</TableCell>
-                    <TableCell sx={{ color: '#64748b', fontWeight: 700 }}>Submitted</TableCell>
-                    <TableCell sx={{ color: '#64748b', fontWeight: 700 }}>Status</TableCell>
-                    <TableCell sx={{ color: '#64748b', fontWeight: 700, textAlign: 'right' }}>Actions</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {rejectedResidents.map((row) => {
-                    const flat = row.flat;
-                    return (
-                      <TableRow key={row.id} hover sx={{ '&:last-child td': { border: 0 } }}>
-                        <TableCell>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                            <Avatar
-                              src={`https://i.pravatar.cc/150?u=${row.id}`}
-                              sx={{ width: 36, height: 36, bgcolor: '#fee2e2', color: '#ef4444', fontWeight: 900 }}
-                            >
-                              {row.name?.[0]}
-                            </Avatar>
-                            <Box>
-                              <Typography variant="body2" fontWeight="700">{row.name}</Typography>
-                              <Typography variant="caption" color="text.secondary">{row.email || row.phone}</Typography>
-                            </Box>
-                          </Box>
-                        </TableCell>
-                        <TableCell>
-                          <Typography variant="body2" fontWeight="600" color="text.secondary">
-                            {flat ? `Flat ${flat.flatNumber} • Floor ${flat.floorNumber}` : (row.flatId || 'N/A')}
-                          </Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Typography variant="caption" color="text.secondary">
-                            {row.createdAt ? new Date(row.createdAt).toLocaleDateString() : 'N/A'}
-                          </Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Chip
-                            label="SUSPENDED"
-                            size="small"
-                            sx={{ bgcolor: '#fee2e2', color: '#ef4444', fontWeight: 800, borderRadius: '6px' }}
-                          />
-                        </TableCell>
-                        <TableCell align="right">
-                          <Button
-                            size="small"
-                            variant="outlined"
-                            color="success"
-                            onClick={() => handleRestore(row.id, row.name)}
-                            sx={{ textTransform: 'none', fontWeight: 700, borderRadius: '8px', mr: 1 }}
-                          >
-                            Restore
-                          </Button>
-                          <IconButton
-                            size="small"
-                            sx={{ color: 'primary.main', bgcolor: '#eff6ff' }}
-                            onClick={() => navigate(`/residents/${row.id}`)}
-                          >
-                            <VisibilityOutlinedIcon fontSize="small" />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                  {rejectedResidents.length === 0 && (
-                    <TableRow>
-                      <TableCell colSpan={5} align="center" sx={{ py: 6 }}>
-                        <Typography variant="body2" color="text.secondary">No rejected residents found.</Typography>
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          )}
-
-          <Box sx={{ mt: 2 }}>
-            <Pagination
-              page={page}
-              totalResults={rejectedTotal}
-              rowsPerPage={rowsPerPage}
-              onPageChange={handlePageChange}
-              onRowsPerPageChange={handleRowsPerPageChange}
-            />
-          </Box>
-        </Box>
-      )}
+      {tabValue === 2 && <RejectedRequests />}
     </Box>
   );
 }

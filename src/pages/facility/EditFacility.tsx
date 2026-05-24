@@ -235,7 +235,7 @@ export default function EditFacility() {
           </Breadcrumbs>
           <Typography variant="h3" fontWeight="900" color="#002855">Edit Facility</Typography>
         </Box>
-        <BackButton to={`/facility/${id}`} />
+        <BackButton to="/facility" />
       </Stack>
 
       {/* Main Card Form */}
@@ -647,7 +647,7 @@ export default function EditFacility() {
               <Stack direction="row" spacing={2} justifyContent="flex-end">
                 <Button 
                   variant="outlined" 
-                  onClick={() => navigate(`/facility/${id}`)}
+                  onClick={() => navigate('/facility')}
                   sx={{ borderRadius: '16px', px: 4, py: 1.5, fontWeight: 900, borderColor: '#e2e8f0', color: '#64748b' }}
                 >
                   Cancel

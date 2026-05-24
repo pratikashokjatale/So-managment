@@ -264,7 +264,7 @@ export default function EditStaff() {
         <Button 
           variant="outlined" 
           startIcon={<ArrowBackIcon />} 
-          onClick={() => navigate(isAddMode ? '/staff' : `/staff/${id}`)}
+          onClick={() => navigate('/staff')}
           sx={{ borderRadius: '16px', textTransform: 'none', fontWeight: 900, borderColor: '#e2e8f0', color: '#002855' }}
         >
           Cancel
@@ -450,7 +450,7 @@ export default function EditStaff() {
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 2 }}>
               <Button 
                 variant="outlined" 
-                onClick={() => navigate(isAddMode ? '/staff' : `/staff/${id}`)}
+                onClick={() => navigate('/staff')}
                 sx={{ borderRadius: '16px', textTransform: 'none', px: 4, py: 1.5, fontWeight: 900, borderColor: '#e2e8f0', color: '#64748b' }}
               >
                 Cancel
