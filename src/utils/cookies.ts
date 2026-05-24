@@ -7,8 +7,10 @@ interface CookieOptions {
   path: string;
 }
 
+const isHttps = typeof window !== 'undefined' && window.location.protocol === 'https:';
+
 const defaultOptions: CookieOptions = {
-  secure: true,
+  secure: isHttps,
   sameSite: "strict",
   path: "/",
   expires: 20,
