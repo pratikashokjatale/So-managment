@@ -2,7 +2,8 @@ import { api, handleApiError } from "@/utils/axios";
 
 export interface GetTowersParams {
   page?: number;
-  limit?: number;
+  limit?: number; 
+  search?: string;
 }
 
 export interface CreateTowerPayload {
@@ -56,8 +57,9 @@ export const updateTowerApi = async (towerId: string, data: UpdateTowerPayload) 
 
 export interface ListTowersParams {
   page?: number;
-  limit?: number;
+  limit?: number; 
   projectId?: string;
+  search?: string;
 }
 
 export const getAllTowersApi = async (params?: ListTowersParams) => {

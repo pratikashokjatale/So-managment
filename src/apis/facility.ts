@@ -5,9 +5,9 @@ export interface GetFacilitiesParams {
   status?: string;
   isActive?: boolean;
   pricingModel?: string;
-  search?: string;
+  
   page?: number;
-  limit?: number;
+  limit?: number; 
 }
 
 export interface CreateFacilityPayload {

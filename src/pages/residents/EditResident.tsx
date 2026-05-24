@@ -107,7 +107,11 @@ export default function EditResident() {
         avatar: user.avatar || `https://i.pravatar.cc/150?u=${user.id}`,
       });
 
-      if (user.flatId) {
+      if (user.flat) {
+        setProjectId(user.flat.projectId);
+        setTowerId(user.flat.towerId);
+        setFlatId(user.flat.id || user.flatId);
+      } else if (user.flatId) {
         setFlatId(user.flatId);
         // Find flat details to pre-populate project and tower selection cascading
         try {
@@ -334,13 +338,26 @@ export default function EditResident() {
           />
           <TextField
             fullWidth
+            disabled
             label="Email Address"
             value={formData.email}
             onChange={(e) =>
               setFormData({ ...formData, email: e.target.value })
             }
             variant="outlined"
-            sx={{ "& fieldset": { borderRadius: "12px" } }}
+            helperText="Email address cannot be changed"
+            sx={{ 
+              "& fieldset": { borderRadius: "12px" },
+              "& .MuiInputBase-root.Mui-disabled": {
+                bgcolor: "#f1f5f9",
+              },
+              "& .MuiInputBase-input.Mui-disabled": {
+                WebkitTextFillColor: "#0f172a",
+                color: "#0f172a",
+                opacity: 1,
+                fontWeight: 600
+              }
+            }}
           />
           <TextField
             fullWidth

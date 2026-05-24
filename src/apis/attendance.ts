@@ -8,7 +8,8 @@ export interface GetAttendanceParams {
   dateFrom?: string;
   dateTo?: string;
   page?: number;
-  limit?: number;
+  limit?: number; 
+  search?: string;
 }
 
 export interface RecordAttendancePayload {

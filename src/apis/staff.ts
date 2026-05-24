@@ -5,9 +5,9 @@ export interface GetStaffParams {
   status?: string;
   facilityId?: string;
   employmentType?: string;
-  search?: string;
+  
   page?: number;
-  limit?: number;
+  limit?: number; 
 }
 
 export interface CreateStaffPayload {

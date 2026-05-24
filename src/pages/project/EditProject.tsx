@@ -182,13 +182,25 @@ export default function EditProject() {
             />
             <TextField 
               fullWidth 
+              disabled
               label="Project Code *" 
               variant="outlined" 
               value={formData.code}
               onChange={(e) => setFormData({ ...formData, code: e.target.value })}
               error={!!errors.code}
-              helperText={errors.code}
-              sx={{ '& fieldset': { borderRadius: '8px' } }}
+              helperText={errors.code || "Project code cannot be changed"}
+              sx={{ 
+                '& fieldset': { borderRadius: '8px' },
+                '& .MuiInputBase-root.Mui-disabled': {
+                  bgcolor: '#f1f5f9',
+                },
+                '& .MuiInputBase-input.Mui-disabled': {
+                  WebkitTextFillColor: '#0f172a',
+                  color: '#0f172a',
+                  opacity: 1,
+                  fontWeight: 600
+                }
+              }}
             />
             <TextField 
               fullWidth 

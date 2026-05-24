@@ -2,7 +2,7 @@ import { api, handleApiError } from "@/utils/axios";
 
 export interface ListUsersParams {
   page?: number;
-  limit?: number;
+  limit?: number; 
   search?: string;
   status?: string;
   role?: string;

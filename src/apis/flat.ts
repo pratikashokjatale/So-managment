@@ -2,8 +2,9 @@ import { api, handleApiError } from "@/utils/axios";
 
 export interface GetFlatsParams {
   page?: number;
-  limit?: number;
+  limit?: number; 
   status?: string;
+  search?: string;
 }
 
 
@@ -61,7 +62,7 @@ export const updateFlatApi = async (flatId: string, data: UpdateFlatPayload) => 
 
 export interface ListFlatsParams {
   page?: number;
-  limit?: number;
+  limit?: number; 
   projectId?: string;
   towerId?: string;
   status?: string;

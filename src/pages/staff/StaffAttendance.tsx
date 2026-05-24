@@ -34,18 +34,6 @@ interface AttendanceRecord {
   rawLog?: any;
 }
 
-const INITIAL_ATTENDANCE: AttendanceRecord[] = [
-  { id: 1, name: 'Rahul Sharma', role: 'Security Guard', shift: 'Day Shift (8 AM - 8 PM)', checkIn: '08:02 AM', checkOut: '-', status: 'Present', avatar: 'https://i.pravatar.cc/150?u=rahul' },
-  { id: 2, name: 'Priya Verma', role: 'Housekeeping', shift: 'General (9 AM - 6 PM)', checkIn: '09:15 AM', checkOut: '-', status: 'Late', avatar: 'https://i.pravatar.cc/150?u=priya' },
-  { id: 3, name: 'Amit Singh', role: 'Plumber', shift: 'General (9 AM - 6 PM)', checkIn: '-', checkOut: '-', status: 'Absent', avatar: 'https://i.pravatar.cc/150?u=amit' },
-  { id: 4, name: 'Sanjay Dutt', role: 'Electrician', shift: 'Night Shift (8 PM - 8 AM)', checkIn: '08:00 PM', checkOut: '08:00 AM', status: 'Present', avatar: 'https://i.pravatar.cc/150?u=sanjay' },
-  { id: 5, name: 'Vikram Seth', role: 'Gardener', shift: 'General (9 AM - 6 PM)', checkIn: '08:55 AM', checkOut: '-', status: 'Present', avatar: 'https://i.pravatar.cc/150?u=vikram' },
-  { id: 6, name: 'Neha Kakkar', role: 'Receptionist', shift: 'General (9 AM - 6 PM)', checkIn: '09:05 AM', checkOut: '-', status: 'Late', avatar: 'https://i.pravatar.cc/150?u=neha' },
-  { id: 7, name: 'Rajiv Mehra', role: 'Security Guard', shift: 'Night Shift (8 PM - 8 AM)', checkIn: '-', checkOut: '-', status: 'Absent', avatar: 'https://i.pravatar.cc/150?u=rajiv' },
-  { id: 8, name: 'Anjali Gupta', role: 'Accountant', shift: 'General (9 AM - 6 PM)', checkIn: '08:50 AM', checkOut: '-', status: 'Present', avatar: 'https://i.pravatar.cc/150?u=anjali' },
-  { id: 9, name: 'Suresh Raina', role: 'Electrician', shift: 'General (9 AM - 6 PM)', checkIn: '09:30 AM', checkOut: '-', status: 'Late', avatar: 'https://i.pravatar.cc/150?u=suresh' },
-  { id: 10, name: 'Kunal Kapoor', role: 'Plumber', shift: 'General (9 AM - 6 PM)', checkIn: '09:00 AM', checkOut: '-', status: 'Present', avatar: 'https://i.pravatar.cc/150?u=kunal' },
-];
 
 interface LogEntry {
   checkInTime: string;
@@ -141,28 +129,32 @@ export default function StaffAttendance() {
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [attendance, setAttendance] = useState<AttendanceRecord[]>([]);
+  const [totalResults, setTotalResults] = useState(0);
   // Dialog State (View-Only Log Timeline)
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<AttendanceRecord | null>(null);
 
   const fetchAttendance = async () => {
     try {
-      const res = await getAttendanceListApi({ limit: 100 });
+      const res = await getAttendanceListApi({ limit: rowsPerPage, page, search: searchTerm });
       const list = res?.data?.attendance || res?.data?.items || res?.attendance || (Array.isArray(res?.data) ? res.data : null);
       if (Array.isArray(list)) {
         setAttendance(list.map(mapBackendAttendanceToFrontend));
       } else {
-        setAttendance(INITIAL_ATTENDANCE);
+        setAttendance([]);
       }
+      const pagination = res?.data?.pagination || res?.pagination;
+      setTotalResults(pagination?.total || (Array.isArray(list) ? list.length : 0));
     } catch (err) {
-      console.warn("Failed to fetch attendance logs via API, falling back:", err);
-      setAttendance(INITIAL_ATTENDANCE);
+      console.warn("Failed to fetch attendance logs via API:", err);
+      setAttendance([]);
+      setTotalResults(0);
     }
   };
 
   useEffect(() => {
     fetchAttendance();
-  }, []);
+  }, [page, rowsPerPage, searchTerm]);
 
   const handleOpenDialog = (record: AttendanceRecord) => {
     setSelectedRecord(record);
@@ -174,10 +166,8 @@ export default function StaffAttendance() {
     setSelectedRecord(null);
   };
 
-  const filteredAttendance = attendance.filter(a => 
-    a.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    a.role.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredAttendance = attendance;
+  const paginatedAttendance = attendance;
 
   const handlePageChange = (_: any, newPage: number) => setPage(newPage);
   
@@ -292,9 +282,7 @@ export default function StaffAttendance() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredAttendance
-                .slice((page - 1) * rowsPerPage, page * rowsPerPage)
-                .map((row) => (
+              {paginatedAttendance.map((row) => (
                 <TableRow key={row.id} hover>
                   <TableCell sx={{ py: 2.5, pl: 4 }}>
                     <Stack direction="row" spacing={2} alignItems="center">
@@ -357,12 +345,13 @@ export default function StaffAttendance() {
         </TableContainer>
         
         <Box sx={{ px: 4, py: 1.5, borderTop: '1px solid #e2e8f0' }}>
-          <Pagination 
-            page={page} 
-            totalResults={filteredAttendance.length} 
-            rowsPerPage={rowsPerPage} 
-            onPageChange={handlePageChange} 
-            onRowsPerPageChange={handleRowsPerPageChange} 
+          <Pagination
+            page={page}
+            totalResults={totalResults}
+            rowsPerPage={rowsPerPage}
+            onPageChange={handlePageChange}
+            onRowsPerPageChange={handleRowsPerPageChange}
+            rowsPerPageOptions={[10, 25, 50]}
           />
         </Box>
       </Paper>

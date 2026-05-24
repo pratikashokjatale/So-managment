@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
   Box, Typography, Button, Paper, Breadcrumbs, Link, TextField, MenuItem, Avatar, Grid
@@ -6,7 +6,8 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import SaveIcon from '@mui/icons-material/Save';
 import EditIcon from '@mui/icons-material/Edit';
-import { getStaffById, saveStaff } from '@/utils/staffStore';
+import toast from 'react-hot-toast';
+import { getStaffById } from '@/utils/staffStore';
 import { getFacilities } from '@/utils/facilityStore';
 import { getFacilitiesApi } from '@/apis/facility';
 import { getStaffDetailsApi, createStaffApi, updateStaffApi } from '@/apis/staff';
@@ -44,6 +45,19 @@ export default function EditStaff() {
   const [idProofNumber, setIdProofNumber] = useState('');
   const [notes, setNotes] = useState('');
 
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatar(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   // Load facilities and staff details if in edit mode
   useEffect(() => {
     const loadData = async () => {
@@ -51,8 +65,14 @@ export default function EditStaff() {
       let apiSucceeded = false;
       try {
         const res = await getFacilitiesApi({ limit: 100 });
-        const list = res?.data?.facilities || res?.facilities || res?.data || [];
-        if (Array.isArray(list)) {
+        const d = res?.data || res;
+        let list: any[] = [];
+        if (Array.isArray(d)) list = d;
+        else if (d?.items && Array.isArray(d.items)) list = d.items;
+        else if (d?.facilities && Array.isArray(d.facilities)) list = d.facilities;
+        else if (d?.data && Array.isArray(d.data)) list = d.data;
+
+        if (list.length > 0) {
           activeFacilities = list;
           apiSucceeded = true;
         }
@@ -143,9 +163,9 @@ export default function EditStaff() {
     e.preventDefault();
     if (!validate()) return;
 
-    // Generate random avatar seed if adding new
-    const finalAvatar = isAddMode 
-      ? `https://i.pravatar.cc/150?u=${encodeURIComponent(name)}` 
+    // Generate random avatar seed if adding new and avatar is unmodified
+    const finalAvatar = isAddMode && avatar === 'https://i.pravatar.cc/150?u=staff'
+      ? `https://i.pravatar.cc/150?u=${encodeURIComponent(name || 'staff')}` 
       : avatar;
 
     let apiDept = 'SECURITY';
@@ -157,9 +177,19 @@ export default function EditStaff() {
     else if (department === 'Wellness & Spa') apiDept = 'FACILITY';
     else if (department === 'Park & Gardens') apiDept = 'FACILITY';
 
+    let normalizedPhone = phone.trim();
+    if (normalizedPhone && !normalizedPhone.startsWith('+')) {
+      normalizedPhone = `+91${normalizedPhone.replace(/^0+/, '')}`;
+    }
+
+    let normalizedEmergencyPhone = emergencyContact.trim();
+    if (normalizedEmergencyPhone && !normalizedEmergencyPhone.startsWith('+')) {
+      normalizedEmergencyPhone = `+91${normalizedEmergencyPhone.replace(/^0+/, '')}`;
+    }
+
     const payload: any = {
       name,
-      phone,
+      phone: normalizedPhone,
       department: apiDept,
       joiningDate,
       status: status === 'Active' ? 'ACTIVE' : 'INACTIVE',
@@ -176,9 +206,9 @@ export default function EditStaff() {
     if (email) payload.email = email;
     if (facilityId && !facilityId.startsWith('fac-')) payload.facilityId = facilityId;
     if (department) payload.designation = department;
-    if (emergencyContact) {
+    if (normalizedEmergencyPhone) {
       payload.emergencyContactName = 'Emergency Contact';
-      payload.emergencyContactPhone = emergencyContact;
+      payload.emergencyContactPhone = normalizedEmergencyPhone;
     }
     if (address) payload.address = address;
     if (idProofType) payload.idProofType = idProofType;
@@ -191,32 +221,16 @@ export default function EditStaff() {
       if (isAddMode) {
         const res = await createStaffApi(payload);
         savedId = res?.data?.id || res?.id || `staff-${Date.now()}`;
+        toast.success("Staff member created successfully!");
       } else if (id) {
         await updateStaffApi(id, payload);
+        toast.success("Staff member updated successfully!");
       }
-    } catch (err) {
+      navigate(`/staff/${savedId}`);
+    } catch (err: any) {
       console.warn("Failed to save staff via API, falling back:", err);
-      const saved = saveStaff({
-        id: isAddMode ? 'add' : id,
-        name,
-        department,
-        phone,
-        email,
-        joiningDate,
-        address,
-        emergencyContact,
-        facilityId,
-        status,
-        avatar: finalAvatar,
-        facilityName: '',
-        idProofType,
-        idProofNumber,
-        notes
-      } as any);
-      savedId = saved.id;
+      toast.error(err?.response?.data?.message || err?.message || "Failed to save staff member");
     }
-
-    navigate(`/staff/${savedId}`);
   };
 
   const textFieldSx = {
@@ -263,33 +277,39 @@ export default function EditStaff() {
             
             {/* Avatar Section */}
             <Box sx={{ textAlign: 'center' }}>
+              <input 
+                type="file" 
+                accept="image/*" 
+                ref={fileInputRef} 
+                style={{ display: 'none' }} 
+                onChange={handleImageChange} 
+              />
               <Box sx={{ position: 'relative', display: 'inline-block' }}>
                 <Avatar 
-                  src={isAddMode ? 'https://img.icons8.com/color/150/user-male-circle.png' : avatar} 
+                  src={avatar === 'https://i.pravatar.cc/150?u=staff' && isAddMode ? 'https://img.icons8.com/color/150/user-male-circle.png' : avatar} 
                   sx={{ width: 120, height: 120, border: '5px solid #f1f5f9', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }} 
                 />
-                {!isAddMode && (
-                  <Button 
-                    variant="contained" 
-                    size="small" 
-                    sx={{ 
-                      position: 'absolute', 
-                      bottom: 0, 
-                      right: 0, 
-                      borderRadius: '50%', 
-                      minWidth: 40, 
-                      height: 40, 
-                      p: 0,
-                      bgcolor: '#002855',
-                      '&:hover': { bgcolor: '#001a35' }
-                    }}
-                  >
-                    <EditIcon fontSize="small" />
-                  </Button>
-                )}
+                <Button 
+                  onClick={() => fileInputRef.current?.click()}
+                  variant="contained" 
+                  size="small" 
+                  sx={{ 
+                    position: 'absolute', 
+                    bottom: 0, 
+                    right: 0, 
+                    borderRadius: '50%', 
+                    minWidth: 40, 
+                    height: 40, 
+                    p: 0,
+                    bgcolor: '#002855',
+                    '&:hover': { bgcolor: '#001a35' }
+                  }}
+                >
+                  <EditIcon fontSize="small" />
+                </Button>
               </Box>
               <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5, fontWeight: 700 }}>
-                {isAddMode ? 'Avatar automatically generated upon profile creation' : 'Staff Profile Identity'}
+                {isAddMode ? 'Upload a photo or an avatar will be generated' : 'Staff Profile Identity'}
               </Typography>
             </Box>
 

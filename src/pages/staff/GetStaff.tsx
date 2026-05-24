@@ -2,15 +2,16 @@ import { useState, useEffect } from 'react';
 import { 
   Box, Typography, Button, Table, TableBody, TableCell, 
   TableContainer, TableHead, TableRow, IconButton, 
-  Select, MenuItem, Avatar, Stack, Switch, Paper, Chip
+  Select, MenuItem, Avatar, Stack, Switch, Paper, Chip, CircularProgress
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import Pagination from '../../components/Pagination';
 import Search from '@/components/Search';
-import { getStaffList, toggleStaffStatus, deleteStaff } from '@/utils/staffStore';
+
 import type { Staff } from '@/utils/staffStore';
 import { getStaffListApi, updateStaffApi, deleteStaffApi } from '@/apis/staff';
 
@@ -49,28 +50,42 @@ export default function GetStaff() {
   const [staffList, setStaffList] = useState<Staff[]>([]);
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [totalResults, setTotalResults] = useState(0);
 
   const [deptFilter, setDeptFilter] = useState('All Departments');
   const [statusFilter, setStatusFilter] = useState('All Status');
+  const [loading, setLoading] = useState(true);
+
   const fetchStaff = async () => {
+    setLoading(true);
     try {
-      const res = await getStaffListApi({ limit: 100 });
+      const params: any = { limit: rowsPerPage, page };
+      if (searchQuery) params.search = searchQuery;
+      if (deptFilter !== 'All Departments') params.department = deptFilter;
+      if (statusFilter !== 'All Status') params.status = statusFilter === 'Active' ? 'ACTIVE' : 'INACTIVE';
+      
+      const res = await getStaffListApi(params);
       const list = res?.data?.staff || res?.data?.items || res?.staff || (Array.isArray(res?.data) ? res.data : null);
       if (Array.isArray(list)) {
         setStaffList(list.map(mapBackendStaffToFrontend));
       } else {
-        setStaffList(getStaffList());
+        setStaffList([]);
       }
+      const pagination = res?.data?.pagination || res?.pagination;
+      setTotalResults(pagination?.total || (Array.isArray(list) ? list.length : 0));
     } catch (err) {
-      console.warn("Failed to fetch staff list via API, falling back:", err);
-      setStaffList(getStaffList());
+      console.warn("Failed to fetch staff list via API:", err);
+      setStaffList([]);
+      setTotalResults(0);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchStaff();
-  }, []);
+  }, [page, rowsPerPage, searchQuery, deptFilter, statusFilter]);
 
   const handlePageChange = (_event: any, value: number) => {
     setPage(value);
@@ -90,10 +105,10 @@ export default function GetStaff() {
     try {
       await updateStaffApi(id, { status: newStatus });
       fetchStaff();
-    } catch (err) {
+      toast.success(`Staff status changed to ${newStatus}`);
+    } catch (err: any) {
       console.warn("Failed to toggle staff status via API, falling back:", err);
-      const updated = toggleStaffStatus(id);
-      setStaffList(prev => prev.map(s => s.id === id ? updated : s));
+      toast.error(err?.response?.data?.message || "Failed to update staff status");
     }
   };
 
@@ -101,34 +116,19 @@ export default function GetStaff() {
     try {
       await deleteStaffApi(id);
       fetchStaff();
-    } catch (err) {
+      toast.success("Staff member deleted successfully!");
+    } catch (err: any) {
       console.warn("Failed to delete staff member via API, falling back:", err);
-      deleteStaff(id);
-      const updated = getStaffList();
-      setStaffList(updated);
+      toast.error(err?.response?.data?.message || "Failed to delete staff member");
     }
     
-    const totalPages = Math.ceil(staffList.length / rowsPerPage);
+    const totalPages = Math.ceil(totalResults / rowsPerPage);
     if (page > totalPages && totalPages > 0) {
       setPage(totalPages);
     }
   };
 
-  // Filter and Search Logic
-  const filteredStaff = staffList.filter(staff => {
-    const matchesSearch = staff.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          staff.phone.includes(searchQuery) ||
-                          staff.cardNo.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesDept = deptFilter === 'All Departments' || staff.department === deptFilter;
-    const matchesStatus = statusFilter === 'All Status' || staff.status === statusFilter;
-
-    return matchesSearch && matchesDept && matchesStatus;
-  });
-
-  // Pagination bounds
-  const totalResults = filteredStaff.length;
-  const paginatedStaff = filteredStaff.slice((page - 1) * rowsPerPage, page * rowsPerPage);
+  const paginatedStaff = staffList;
 
   const filterSelectSx = {
     height: 44,
@@ -212,9 +212,24 @@ export default function GetStaff() {
               </TableRow>
             </TableHead>
             <TableBody sx={{ bgcolor: 'white' }}>
-              {paginatedStaff.map((row) => (
-                <TableRow key={row.id} hover>
-                  <TableCell sx={{ py: 2.5, pl: 4 }}>
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={7} align="center" sx={{ py: 6 }}>
+                    <CircularProgress size={30} />
+                  </TableCell>
+                </TableRow>
+              ) : paginatedStaff.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} align="center" sx={{ py: 6 }}>
+                    <Typography variant="body2" color="text.secondary">
+                      No staff members found matching the criteria.
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                paginatedStaff.map((row) => (
+                  <TableRow key={row.id} hover>
+                    <TableCell sx={{ py: 2.5, pl: 4 }}>
                     <Stack direction="row" spacing={2} alignItems="center" onClick={() => navigate(`/staff/${row.id}`)} sx={{ cursor: 'pointer' }}>
                       <Avatar src={row.avatar} sx={{ width: 44, height: 44, border: '2px solid #f1f5f9' }} />
                       <Typography variant="body1" fontWeight="800" color="#002855" sx={{ '&:hover': { color: '#1d4ed8' } }}>
@@ -262,15 +277,7 @@ export default function GetStaff() {
                     </Stack>
                   </TableCell>
                 </TableRow>
-              ))}
-
-              {paginatedStaff.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={7} align="center" sx={{ py: 8 }}>
-                    <Typography variant="body1" color="text.secondary" fontWeight="700">No staff members found matching the active criteria.</Typography>
-                  </TableCell>
-                </TableRow>
-              )}
+              )))}
             </TableBody>
           </Table>
         </TableContainer>

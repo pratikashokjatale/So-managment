@@ -107,6 +107,7 @@ export default function GetGuest() {
   const [page, setPage]               = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchQuery, setSearchQuery] = useState('');
+  const [totalResults, setTotalResults] = useState(0);
 
   // detail drawer
   const [drawerGuest, setDrawerGuest] = useState<any | null>(null);
@@ -121,17 +122,25 @@ export default function GetGuest() {
     setLoading(true);
     try {
       const status = tab === 0 ? 'ACTIVE' : 'PENDING';
-      const res = await getGuestsApi({ limit: 100, status });
-      setGuests(extractList(res).map(mapGuest));
+      const params: any = { limit: rowsPerPage, page, status };
+      if (searchQuery) params.search = searchQuery;
+      
+      const res = await getGuestsApi(params);
+      const list = extractList(res);
+      setGuests(list.map(mapGuest));
+      
+      const pagination = res?.data?.pagination || res?.pagination;
+      setTotalResults(pagination?.total || list.length);
     } catch (err) {
       console.warn('Failed to fetch guests:', err);
       setGuests([]);
+      setTotalResults(0);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => { setPage(1); fetchGuests(activeTab); }, [activeTab]);
+  useEffect(() => { fetchGuests(activeTab); }, [activeTab, page, rowsPerPage, searchQuery]);
 
   // ── actions ────────────────────────────────────────────────────────────────
   const handleApprove = async (id: string) => {
@@ -159,13 +168,7 @@ export default function GetGuest() {
   };
 
   // ── filter ─────────────────────────────────────────────────────────────────
-  const filtered = guests.filter((g) =>
-    g.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    g.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    g.phone.includes(searchQuery) ||
-    g.apartment.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-  const paginated = filtered.slice((page - 1) * rowsPerPage, page * rowsPerPage);
+  const paginated = guests;
 
   // ── render ─────────────────────────────────────────────────────────────────
   return (
@@ -323,13 +326,19 @@ export default function GetGuest() {
       </Box>
 
       {/* Pagination */}
-      {filtered.length > 0 && (
+      {totalResults > 0 && (
         <Box sx={{ mt: 2 }}>
-          <Pagination page={page} totalResults={filtered.length} rowsPerPage={rowsPerPage}
-            onPageChange={(_e: any, v: number) => setPage(v)}
-            onRowsPerPageChange={(e: any) => { setRowsPerPage(parseInt(e.target.value, 10)); setPage(1); }}
-            rowsPerPageOptions={[5, 10, 25]} />
-        </Box>
+            <Pagination
+              page={page}
+              totalResults={totalResults}
+              rowsPerPage={rowsPerPage}
+              onPageChange={(_, p) => setPage(p)}
+              onRowsPerPageChange={(e: any) => {
+                setRowsPerPage(Number(e.target.value));
+                setPage(1);
+              }}
+              rowsPerPageOptions={[10, 25, 50]}
+            /></Box>
       )}
 
       {/* ── Guest Detail Drawer ── */}

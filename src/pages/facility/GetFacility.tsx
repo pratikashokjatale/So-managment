@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { 
   Box, Typography, Paper, Grid, Stack, Chip, Button, IconButton, Switch,
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Avatar
+  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Avatar,
+  CircularProgress
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { 
   SportsTennis as TennisIcon, 
   FitnessCenter as GymIcon,
@@ -19,7 +21,7 @@ import {
   VisibilityOutlined as VisibilityIcon
 } from '@mui/icons-material';
 import Pagination from '../../components/Pagination';
-import { getFacilities, toggleFacilityStatus, deleteFacility } from '@/utils/facilityStore';
+
 import { getFacilitiesApi, getFacilityStatsApi, updateFacilityApi, deleteFacilityApi } from '@/apis/facility';
 
 // Dynamic category icons helper
@@ -91,20 +93,35 @@ export default function GetFacility() {
 
   // Pagination states
   const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [totalResults, setTotalResults] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   const fetchFacilities = async () => {
+    setLoading(true);
     try {
-      const res = await getFacilitiesApi({ limit: 100 });
-      const list = res?.data?.facilities || res?.facilities || res?.data || [];
-      if (Array.isArray(list)) {
-        setFacilities(list.map(mapBackendFacilityToFrontend));
-      } else {
-        setFacilities(getFacilities());
+      const res = await getFacilitiesApi({ limit: rowsPerPage, page });
+      let list: any[] = [];
+      const d = res?.data || res;
+      if (Array.isArray(d)) {
+        list = d;
+      } else if (d?.items && Array.isArray(d.items)) {
+        list = d.items;
+      } else if (d?.facilities && Array.isArray(d.facilities)) {
+        list = d.facilities;
+      } else if (d?.data && Array.isArray(d.data)) {
+        list = d.data;
       }
+
+      setFacilities(list.map(mapBackendFacilityToFrontend));
+      const pagination = d?.pagination || res?.pagination;
+      setTotalResults(pagination?.total || list.length);
     } catch (error) {
-      console.warn("Failed to fetch facilities via API, falling back:", error);
-      setFacilities(getFacilities());
+      console.warn("Failed to fetch facilities via API:", error);
+      setFacilities([]);
+      setTotalResults(0);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -122,6 +139,9 @@ export default function GetFacility() {
 
   useEffect(() => {
     fetchFacilities();
+  }, [page, rowsPerPage]);
+
+  useEffect(() => {
     fetchStats();
   }, []);
 
@@ -134,10 +154,10 @@ export default function GetFacility() {
       await updateFacilityApi(id, { status: newStatus, isActive: newIsActive });
       fetchFacilities();
       fetchStats();
-    } catch (err) {
+      toast.success(`Facility status changed to ${newStatus}`);
+    } catch (err: any) {
       console.warn("Failed to toggle facility status via API, falling back:", err);
-      const updated = toggleFacilityStatus(id, newIsActive);
-      setFacilities(prev => prev.map(f => f.id === id ? updated : f));
+      toast.error(err?.response?.data?.message || "Failed to update status");
     }
   };
 
@@ -146,14 +166,13 @@ export default function GetFacility() {
       await deleteFacilityApi(id);
       fetchFacilities();
       fetchStats();
-    } catch (err) {
+      toast.success("Facility deleted successfully!");
+    } catch (err: any) {
       console.warn("Failed to delete facility via API, falling back:", err);
-      deleteFacility(id);
-      const updated = getFacilities();
-      setFacilities(updated);
+      toast.error(err?.response?.data?.message || "Failed to delete facility");
     }
 
-    const totalPages = Math.ceil(facilities.length / rowsPerPage);
+    const totalPages = Math.ceil(totalResults / rowsPerPage);
     if (page > totalPages && totalPages > 0) {
       setPage(totalPages);
     }
@@ -165,9 +184,7 @@ export default function GetFacility() {
   const activeOccupancy = stats?.activeBookings !== undefined ? stats.activeBookings : (facilities.filter((f: any) => f.status === 'In Use').length * 12 + 24);
   const maintenanceCount = stats?.maintenance !== undefined ? stats.maintenance : facilities.filter((f: any) => f.status === 'Maintenance').length;
 
-  // Pagination calculations
-  const totalResults = facilities.length;
-  const paginatedFacilities = facilities.slice((page - 1) * rowsPerPage, page * rowsPerPage);
+  const paginatedFacilities = facilities;
 
   const getStatusChipStyles = (status: string) => {
     switch (status) {
@@ -243,12 +260,27 @@ export default function GetFacility() {
                   </TableRow>
                 </TableHead>
                 <TableBody sx={{ bgcolor: 'white' }}>
-                  {paginatedFacilities.map((facility) => {
-                    const chipColors = getStatusChipStyles(facility.status);
-                    return (
-                      <TableRow key={facility.id} hover>
-                        {/* Identity */}
-                        <TableCell sx={{ py: 2.5, pl: 4 }}>
+                  {loading ? (
+                    <TableRow>
+                      <TableCell colSpan={7} align="center" sx={{ py: 6 }}>
+                        <CircularProgress size={30} />
+                      </TableCell>
+                    </TableRow>
+                  ) : paginatedFacilities.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={7} align="center" sx={{ py: 6 }}>
+                        <Typography variant="body2" color="text.secondary">
+                          No facilities found matching the criteria.
+                        </Typography>
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    paginatedFacilities.map((facility) => {
+                      const chipColors = getStatusChipStyles(facility.status);
+                      return (
+                        <TableRow key={facility.id} hover>
+                          {/* Identity */}
+                          <TableCell sx={{ py: 2.5, pl: 4 }}>
                           <Stack 
                             direction="row" 
                             spacing={2} 
@@ -332,7 +364,7 @@ export default function GetFacility() {
                         </TableCell>
                       </TableRow>
                     );
-                  })}
+                  }))}
                 </TableBody>
               </Table>
             </TableContainer>

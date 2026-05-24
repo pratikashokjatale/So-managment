@@ -119,20 +119,24 @@ export default function GetFlat() {
       let currentTowerId = towerFilter;
       let mergedFlats: any[] = [];
 
+      let paginationObj: any = null;
+
       // Query flats
       if (currentTowerId && currentTowerId !== "All Towers") {
-        const res = await getFlatsApi(currentTowerId, { page: 1, limit: 100 });
+        const res = await getFlatsApi(currentTowerId, { page, limit: rowsPerPage, search: searchQuery });
         const _ff1 = res?.data;
         mergedFlats = (Array.isArray(_ff1?.data?.data) ? _ff1.data.data : null) || (Array.isArray(_ff1?.data) ? _ff1.data : null) || _ff1?.flats || [];
+        paginationObj = res?.data?.pagination || res?.pagination;
       } else {
         // Fetch all flats across all projects or filtered by projectId
-        const params: any = { page: 1, limit: 100 };
+        const params: any = { page, limit: rowsPerPage, search: searchQuery };
         if (currentProjectId && currentProjectId !== "All Projects") {
           params.projectId = currentProjectId;
         }
         const res = await getAllFlatsApi(params);
         const _ff2 = res?.data;
         mergedFlats = (Array.isArray(_ff2?.data?.data) ? _ff2.data.data : null) || (Array.isArray(_ff2?.data) ? _ff2.data : null) || _ff2?.flats || [];
+        paginationObj = res?.data?.pagination || res?.pagination;
       }
 
       // Map project and tower names
@@ -167,7 +171,7 @@ export default function GetFlat() {
       });
 
       setFlats(uiFlats);
-      setTotalCount(uiFlats.length);
+      setTotalCount(paginationObj?.total || uiFlats.length);
       setIsApiMode(true);
     } catch (error) {
       console.warn(
@@ -186,7 +190,7 @@ export default function GetFlat() {
   // Load data
   useEffect(() => {
     fetchFlats();
-  }, [projectFilter, towerFilter]);
+  }, [projectFilter, towerFilter, page, rowsPerPage, searchQuery]);
 
   // Reset page to 1 on filter changes
   useEffect(() => {
@@ -227,7 +231,7 @@ export default function GetFlat() {
     }
   };
 
-  const filteredFlats = flats.filter((f) => {
+  const filteredFlats = isApiMode ? flats : flats.filter((f) => {
     const matchesSearch =
       (f.number || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
       (f.projectName || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -265,7 +269,7 @@ export default function GetFlat() {
     return 0;
   });
 
-  const paginatedFlats = sortedFlats.slice(
+  const paginatedFlats = isApiMode ? sortedFlats : sortedFlats.slice(
     (page - 1) * rowsPerPage,
     page * rowsPerPage,
   );
@@ -799,11 +803,11 @@ export default function GetFlat() {
       <Box sx={{ mt: 3 }}>
         <Pagination
           page={page}
-          totalResults={filteredFlats.length}
+          totalResults={isApiMode ? totalCount : filteredFlats.length}
           rowsPerPage={rowsPerPage}
           onPageChange={handlePageChange}
           onRowsPerPageChange={handleRowsPerPageChange}
-          rowsPerPageOptions={[10, 20, 50, 100]}
+          rowsPerPageOptions={[5, 10, 25]}
         />
       </Box>
 

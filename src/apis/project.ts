@@ -2,7 +2,7 @@ import { api, handleApiError } from "@/utils/axios";
 
 export interface GetProjectsParams {
   page?: number;
-  limit?: number;
+  limit?: number; 
   status?: string;
 }
 
@@ -50,6 +50,15 @@ export const createProjectApi = async (data: CreateProjectPayload) => {
 export const updateProjectApi = async (projectId: string, data: UpdateProjectPayload) => {
   try {
     const res = await api.patch(`projects/${projectId}`, data);
+    return res?.data;
+  } catch (error) {
+    throw handleApiError(error);
+  }
+};
+
+export const deleteProjectApi = async (projectId: string) => {
+  try {
+    const res = await api.delete(`projects/${projectId}`);
     return res?.data;
   } catch (error) {
     throw handleApiError(error);

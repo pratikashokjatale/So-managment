@@ -93,18 +93,22 @@ export default function GetTower() {
         setProjects(projectList);
       }
 
+      let paginationObj: any = null;
+
       if (projectFilter !== "All Projects") {
-        const res = await getTowersApi(projectFilter, { page: 1, limit: 100 });
+        const res = await getTowersApi(projectFilter, { page, limit: rowsPerPage, search: searchQuery });
         const list = Array.isArray(res?.data?.data)
           ? res.data.data
           : res?.data?.towers || res?.towers || res?.data || [];
         mergedTowers = list;
+        paginationObj = res?.data?.pagination || res?.pagination;
       } else {
-        const res = await getAllTowersApi({ page: 1, limit: 100 });
+        const res = await getAllTowersApi({ page, limit: rowsPerPage, search: searchQuery });
         const list = Array.isArray(res?.data?.data)
           ? res.data.data
           : res?.data?.towers || res?.towers || res?.data || [];
         mergedTowers = list;
+        paginationObj = res?.data?.pagination || res?.pagination;
       }
 
       mergedTowers = mergedTowers.map((t) => {
@@ -116,7 +120,7 @@ export default function GetTower() {
       });
 
       setTowers(mergedTowers);
-      setTotalCount(mergedTowers.length);
+      setTotalCount(paginationObj?.total || mergedTowers.length);
       setIsApiMode(true);
     } catch (error) {
       console.warn(
@@ -135,7 +139,7 @@ export default function GetTower() {
   // Load data
   useEffect(() => {
     fetchTowers();
-  }, [projectFilter]);
+  }, [projectFilter, page, rowsPerPage, searchQuery]);
 
   // Reset page to 1 on filter changes
   useEffect(() => {
@@ -168,7 +172,7 @@ export default function GetTower() {
     }
   };
 
-  const filteredTowers = towers.filter((t) => {
+  const filteredTowers = isApiMode ? towers : towers.filter((t) => {
     const matchesSearch =
       (t.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
       (t.projectName || "").toLowerCase().includes(searchQuery.toLowerCase());
@@ -199,12 +203,12 @@ export default function GetTower() {
     return 0;
   });
 
-  const paginatedTowers = sortedTowers.slice(
+  const paginatedTowers = isApiMode ? sortedTowers : sortedTowers.slice(
     (page - 1) * rowsPerPage,
     page * rowsPerPage,
   );
 
-  const totalResults = filteredTowers.length;
+  const totalResults = isApiMode ? totalCount : filteredTowers.length;
 
   const filterSelectSx = {
     height: 38,

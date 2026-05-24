@@ -168,8 +168,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       if (refreshToken) {
         await logoutApi(refreshToken);
       }
-    } catch (error) {
+      toast.success("Successfully logged out");
+    } catch (error: any) {
       console.error("Logout API error:", error);
+      toast.error(error?.message || "Failed to properly logout");
     } finally {
       clearCookies();
       clearSession();

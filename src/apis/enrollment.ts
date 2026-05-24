@@ -2,7 +2,7 @@ import { api, handleApiError } from "@/utils/axios";
 
 export interface PendingEnrollmentsParams {
   page?: number;
-  limit?: number;
+  limit?: number; 
   search?: string;
 }
 

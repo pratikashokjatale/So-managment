@@ -1,7 +1,8 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { 
-  Box, Typography, Button, Paper, Avatar, Breadcrumbs, Link, Divider, Stack, Chip, Grid
+  Box, Typography, Grid, Paper, Avatar, Breadcrumbs, Link, 
+  Button, Stack, Divider, Chip, CircularProgress 
 } from '@mui/material';
 import { QRCodeSVG } from 'qrcode.react';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -15,16 +16,18 @@ import PlaceIcon from '@mui/icons-material/Place';
 import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
 import ContactPhoneOutlinedIcon from '@mui/icons-material/ContactPhoneOutlined';
 import { getStaffById } from '@/utils/staffStore';
-import type { Staff } from '@/utils/staffStore';
+// import type { Staff } from '@/utils/staffStore';
 import { getStaffDetailsApi } from '@/apis/staff';
 
 export default function StaffDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [staff, setStaff] = useState<Staff | null>(null);
+  const [staff, setStaff] = useState<any | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadStaff = async () => {
+      setLoading(true);
       if (id) {
         try {
           const res = await getStaffDetailsApi(id);
@@ -45,7 +48,7 @@ export default function StaffDetails() {
             setStaff({
               id: s.id,
               name: s.name,
-              avatar: s.profilePhotoUrl || s.avatar || `https://i.pravatar.cc/150?u=${s.id}`,
+              avatar: s.profilePhotoUrl || s.avatar,
               department: dept,
               phone: s.phone || '',
               email: s.email || '',
@@ -55,8 +58,19 @@ export default function StaffDetails() {
               address: s.address || '',
               emergencyContact: s.emergencyContactPhone || s.emergencyContact || '',
               facilityId: s.facilityId || '',
-              facilityName: s.facility ? s.facility.name : (s.facilityName || 'General Duty')
-            });
+              facilityName: s.facility ? s.facility.name : (s.facilityName || 'General Duty'),
+              
+              designation: s.designation || '',
+              shiftStart: s.shiftStart || '',
+              shiftEnd: s.shiftEnd || '',
+              workDays: s.workDays || [],
+              accessLevel: s.accessLevel || '',
+              attendanceMode: s.attendanceMode || '',
+              idProofType: s.idProofType || '',
+              idProofNumber: s.idProofNumber || '',
+              employmentType: s.employmentType || ''
+            } as any);
+            setLoading(false);
             return;
           }
         } catch (err) {
@@ -68,9 +82,18 @@ export default function StaffDetails() {
           setStaff(found);
         }
       }
+      setLoading(false);
     };
     loadStaff();
   }, [id]);
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', bgcolor: '#f8fafc' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   if (!staff) {
     return (
@@ -336,6 +359,55 @@ export default function StaffDetails() {
                   <Stack spacing={1}>
                     <Typography variant="subtitle2" color="text.secondary" fontWeight="700">Permanent Home Address</Typography>
                     <Typography variant="body1" fontWeight="700" color="#1e293b" sx={{ lineHeight: 1.7 }}>{staff.address}</Typography>
+                  </Stack>
+                </Grid>
+              </Grid>
+            </Paper>
+
+            {/* Work Schedule & Access Details */}
+            <Paper elevation={0} sx={{ p: 4, border: '1px solid #e2e8f0', borderRadius: '32px', bgcolor: 'white' }}>
+              <Typography variant="h5" fontWeight="900" sx={{ mb: 4, color: '#002855' }}>Schedule & Access Details</Typography>
+              
+              <Grid container spacing={4}>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Stack spacing={1}>
+                    <Typography variant="subtitle2" color="text.secondary" fontWeight="700">Designation / Role</Typography>
+                    <Typography variant="body1" fontWeight="800" color="#1e293b">{staff.designation || staff.department}</Typography>
+                  </Stack>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Stack spacing={1}>
+                    <Typography variant="subtitle2" color="text.secondary" fontWeight="700">Employment Type</Typography>
+                    <Typography variant="body1" fontWeight="800" color="#1e293b">{(staff.employmentType || 'FULL_TIME').replace('_', ' ')}</Typography>
+                  </Stack>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Stack spacing={1}>
+                    <Typography variant="subtitle2" color="text.secondary" fontWeight="700">Shift Timing</Typography>
+                    <Typography variant="body1" fontWeight="800" color="#1e293b">{staff.shiftStart} to {staff.shiftEnd}</Typography>
+                  </Stack>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Stack spacing={1}>
+                    <Typography variant="subtitle2" color="text.secondary" fontWeight="700">Work Days</Typography>
+                    <Typography variant="body1" fontWeight="800" color="#1e293b">{staff.workDays?.join(', ') || 'Mon-Sat'}</Typography>
+                  </Stack>
+                </Grid>
+                
+                <Grid size={12}>
+                  <Divider sx={{ my: 1 }} />
+                </Grid>
+
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Stack spacing={1}>
+                    <Typography variant="subtitle2" color="text.secondary" fontWeight="700">Access Level</Typography>
+                    <Typography variant="body1" fontWeight="800" color="#1e293b">{(staff.accessLevel || 'FACILITY_ONLY').replace('_', ' ')}</Typography>
+                  </Stack>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Stack spacing={1}>
+                    <Typography variant="subtitle2" color="text.secondary" fontWeight="700">ID Proof Provided</Typography>
+                    <Typography variant="body1" fontWeight="800" color="#1e293b">{staff.idProofType} {staff.idProofNumber ? `(${staff.idProofNumber})` : ''}</Typography>
                   </Stack>
                 </Grid>
               </Grid>

@@ -21,7 +21,8 @@ import Search from '@/components/Search';
 import Pagination from '@/components/Pagination';
 import { getProjects, deleteProject } from '@/utils/setupStore';
 import type { Project } from '@/utils/setupStore';
-import { getProjectsApi } from '@/apis/project';
+import { getProjectsApi, deleteProjectApi } from '@/apis/project';
+import toast from 'react-hot-toast';
 
 export default function GetProject() {
   const navigate = useNavigate();
@@ -98,13 +99,20 @@ export default function GetProject() {
     setDeleteId(id);
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (deleteId) {
-      deleteProject(deleteId);
-      if (isApiMode) {
-        fetchProjects();
-      } else {
-        setProjects(getProjects()); // Refresh
+      try {
+        await deleteProjectApi(deleteId);
+        toast.success("Project deleted successfully!");
+        if (isApiMode) {
+          fetchProjects();
+        } else {
+          deleteProject(deleteId);
+          setProjects(getProjects()); // Refresh
+        }
+      } catch (err: any) {
+        console.warn("Failed to delete project:", err);
+        toast.error(err?.response?.data?.message || "Failed to delete project");
       }
       setDeleteId(null);
     }

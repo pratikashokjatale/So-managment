@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { 
-  Box, Typography, Button, Breadcrumbs, Link, Paper, Grid, Stack, Chip, Switch, Divider, Avatar
+  Box, Typography, Button, Breadcrumbs, Link, Paper, Grid, Stack, Chip, Switch, Divider, Avatar, CircularProgress
 } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
@@ -10,7 +10,7 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import BackButton from '@/components/BackButton';
 import { getFacilityDetailsApi, updateFacilityApi } from '@/apis/facility';
-import { getFacilityById, toggleFacilityStatus } from '@/utils/facilityStore';
+import { toggleFacilityStatus } from '@/utils/facilityStore';
 
 // Dynamic category icons helper
 import { 
@@ -49,8 +49,10 @@ export default function FacilityDetails() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [facility, setFacility] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   const loadFacility = async () => {
+    setLoading(true);
     if (id) {
       try {
         const res = await getFacilityDetailsApi(id);
@@ -92,24 +94,39 @@ export default function FacilityDetails() {
             managerContact: f.managerContact || '',
             iconName: f.iconKey || f.iconName || 'SportsTennis',
             createdAt: f.createdAt ? f.createdAt.split('T')[0] : new Date().toISOString().split('T')[0],
-            staffMembers: f.staffMembers || []
+            staffMembers: f.staffMembers || [],
+            location: f.location || 'Clubhouse',
+            floor: f.floor || 'Ground Floor',
+            openingTime: f.openingTime || '00:00',
+            closingTime: f.closingTime || '23:59',
+            availableDays: f.availableDays || [],
+            advanceBookingDays: f.advanceBookingDays || 7,
+            cancellationHours: f.cancellationHours || 2,
+            rules: f.rules || '',
+            images: f.images || []
           });
+          setLoading(false);
           return;
         }
       } catch (error) {
-        console.warn("Failed to load facility via API, falling back:", error);
-      }
-
-      const found = getFacilityById(id);
-      if (found) {
-        setFacility(found);
+        console.warn("Failed to load facility via API:", error);
+        setFacility(null);
       }
     }
+    setLoading(false);
   };
 
   useEffect(() => {
     loadFacility();
   }, [id]);
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', bgcolor: '#f8fafc' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   if (!facility) {
     return (
@@ -133,21 +150,6 @@ export default function FacilityDetails() {
       setFacility(updated);
     }
   };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Operational':
-        return { bg: '#f0fdf4', text: '#10b981', dot: '#10b981' };
-      case 'In Use':
-        return { bg: '#eff6ff', text: '#1d4ed8', dot: '#1d4ed8' };
-      case 'Maintenance':
-        return { bg: '#fff7ed', text: '#ea580c', dot: '#ea580c' };
-      default:
-        return { bg: '#f1f5f9', text: '#64748b', dot: '#64748b' };
-    }
-  };
-
-  const currentStatusColors = getStatusColor(facility.status);
 
   // Mock booking slots for high-fidelity representation
   const mockBookings = [
@@ -192,45 +194,67 @@ export default function FacilityDetails() {
         </Stack>
       </Stack>
 
+      {/* Massive Hero Banner */}
+      <Box sx={{ mb: 5, position: 'relative', height: { xs: '300px', md: '400px' }, borderRadius: '32px', overflow: 'hidden', border: '1px solid #e2e8f0', boxShadow: '0 10px 40px rgba(0,40,85,0.08)' }}>
+        <Box 
+          component="img"
+          src={(facility.images && facility.images[0]) || 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop'}
+          onError={(e: any) => { e.target.src = 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop'; }}
+          sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
+        />
+        <Box sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '80%', background: 'linear-gradient(to top, rgba(0,20,45,0.95), transparent)' }} />
+        
+        <Box sx={{ position: 'absolute', bottom: 0, left: 0, width: '100%', p: { xs: 3, md: 5 } }}>
+          <Stack direction="row" spacing={3} alignItems="flex-end">
+            <Avatar sx={{ 
+              bgcolor: facility.color, 
+              color: 'white', 
+              width: { xs: 80, md: 100 }, 
+              height: { xs: 80, md: 100 }, 
+              borderRadius: '28px', 
+              border: '4px solid rgba(255,255,255,0.2)',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+              backdropFilter: 'blur(10px)'
+            }}>
+              {getFacilityIcon(facility.iconName)}
+            </Avatar>
+            <Box>
+              <Typography variant="h2" fontWeight="900" color="white" sx={{ mb: 1.5, textShadow: '0 2px 10px rgba(0,0,0,0.3)' }}>
+                {facility.name}
+              </Typography>
+              <Stack direction="row" spacing={1.5} alignItems="center">
+                <Chip label={facility.category} size="small" sx={{ fontWeight: 800, borderRadius: '8px', bgcolor: 'rgba(255,255,255,0.2)', color: 'white', backdropFilter: 'blur(10px)' }} />
+                <Chip 
+                  label={facility.status} 
+                  size="small" 
+                  sx={{ 
+                    fontWeight: 800, 
+                    borderRadius: '8px',
+                    bgcolor: facility.status !== 'Inactive' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)',
+                    color: facility.status !== 'Inactive' ? '#34d399' : '#f87171',
+                    border: `1px solid ${facility.status !== 'Inactive' ? 'rgba(16, 185, 129, 0.4)' : 'rgba(239, 68, 68, 0.4)'}`,
+                    backdropFilter: 'blur(10px)'
+                  }} 
+                />
+              </Stack>
+            </Box>
+          </Stack>
+        </Box>
+      </Box>
+
       <Grid container spacing={4}>
         
         {/* Left Side: General Info & Command */}
         <Grid size={{ xs: 12, md: 7 }}>
           <Stack spacing={4}>
             
-            {/* Identity Card */}
+            {/* Overview & Pricing Card */}
             <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
-              <Stack direction="row" spacing={3} alignItems="flex-start" sx={{ mb: 3 }}>
-                <Avatar sx={{ bgcolor: facility.color, color: 'white', width: 64, height: 64, borderRadius: '18px' }}>
-                  {getFacilityIcon(facility.iconName)}
-                </Avatar>
-                <Box>
-                  <Typography variant="h4" fontWeight="900" color="#002855" sx={{ mb: 1 }}>
-                    {facility.name}
-                  </Typography>
-                  <Stack direction="row" spacing={1.5} alignItems="center">
-                    <Chip label={facility.category} size="small" sx={{ fontWeight: 900, borderRadius: '8px', bgcolor: '#f1f5f9' }} />
-                    <Chip 
-                      label={facility.status} 
-                      size="small" 
-                      sx={{ 
-                        fontWeight: 900, 
-                        borderRadius: '8px',
-                        bgcolor: currentStatusColors.bg,
-                        color: currentStatusColors.text,
-                      }} 
-                    />
-                  </Stack>
-                </Box>
-              </Stack>
-              
-              <Divider sx={{ my: 3 }} />
-
               <Typography variant="h6" fontWeight="900" color="#002855" sx={{ mb: 1 }}>
                 Facility Description
               </Typography>
               <Typography variant="body1" color="text.secondary" sx={{ mb: 4, lineHeight: 1.7, fontWeight: 500 }}>
-                {facility.description}
+                {facility.description || 'No description provided.'}
               </Typography>
 
               <Grid container spacing={3}>
@@ -251,6 +275,44 @@ export default function FacilityDetails() {
                   </Typography>
                 </Grid>
               </Grid>
+            </Paper>
+
+            {/* Logistics & Rules */}
+            <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
+              <Typography variant="h5" fontWeight="900" color="#002855" sx={{ mb: 3 }}>
+                Logistics & Schedule
+              </Typography>
+              
+              <Grid container spacing={3} sx={{ mb: 3 }}>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Typography variant="caption" color="text.secondary" fontWeight="800" display="block">LOCATION</Typography>
+                  <Typography variant="body1" fontWeight="800" color="#1e293b">{facility.location} • {facility.floor}</Typography>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Typography variant="caption" color="text.secondary" fontWeight="800" display="block">OPERATIONAL HOURS</Typography>
+                  <Typography variant="body1" fontWeight="800" color="#1e293b">{facility.openingTime} to {facility.closingTime}</Typography>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Typography variant="caption" color="text.secondary" fontWeight="800" display="block">ACTIVE DAYS</Typography>
+                  <Typography variant="body1" fontWeight="800" color="#1e293b">{facility.availableDays?.join(', ')}</Typography>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Typography variant="caption" color="text.secondary" fontWeight="800" display="block">BOOKING CONSTRAINTS</Typography>
+                  <Typography variant="body1" fontWeight="800" color="#1e293b">Max {facility.advanceBookingDays} Days Adv. • {facility.cancellationHours}H Cancel</Typography>
+                </Grid>
+              </Grid>
+
+              {facility.rules && (
+                <>
+                  <Divider sx={{ my: 3 }} />
+                  <Typography variant="subtitle2" color="text.secondary" fontWeight="800" sx={{ mb: 1 }}>
+                    Rules & Regulations
+                  </Typography>
+                  <Typography variant="body2" color="#002855" fontWeight="600" sx={{ p: 2, bgcolor: '#f8fafc', borderRadius: '12px' }}>
+                    {facility.rules}
+                  </Typography>
+                </>
+              )}
             </Paper>
 
             {/* Operations Command Status Toggle */}

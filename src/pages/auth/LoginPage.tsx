@@ -22,6 +22,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useTranslation } from "@/i18n/translations";
 import { useAuth } from "@/contexts/AuthContext";
+import toast from "react-hot-toast";
 import bgImage from "@/assets/test.png";
 
 const LoginPage = () => {
@@ -53,9 +54,12 @@ const LoginPage = () => {
     onSubmit: async (values) => {
       try {
         await login(values.email, values.password, rememberMe);
+        toast.success("Login successful! Welcome back.");
         navigate("/");
-      } catch (error) {
+      } catch (error: any) {
         console.error("Login error:", error);
+        const errorMsg = error?.response?.data?.message || error?.message || "Invalid credentials. Please try again.";
+        toast.error(errorMsg);
       }
     },
   });
