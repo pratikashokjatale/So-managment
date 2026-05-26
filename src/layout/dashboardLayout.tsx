@@ -32,8 +32,8 @@ import PageNotFound from "@/pages/PageNotFound";
 const MarbellaLogo = ({ collapsed }: { collapsed?: boolean }) => (
   <Box
     sx={{
-      width: collapsed ? 50 : 160,
-      height: collapsed ? 20 : 60,
+      width: collapsed ? 50 : 180,
+      height: collapsed ? 32 : 120,
       overflow: "hidden",
       display: "flex",
       alignItems: "center",
@@ -154,7 +154,7 @@ export default function DashboardLayout() {
             <Typography
               variant="h5"
               sx={{ 
-                color: "#dfb76c", 
+                color: "#f0f0efff", 
                 fontWeight: 900, 
                 letterSpacing: "4px", 
                 fontFamily: "'Georgia', serif",
@@ -163,22 +163,9 @@ export default function DashboardLayout() {
                 lineHeight: 1.2
               }}
             >
-              Marbella
+             - Marbella -
             </Typography>
-            <Typography
-              variant="caption"
-              sx={{ 
-                color: "white", 
-                fontWeight: 800, 
-                letterSpacing: "1.5px", 
-                textTransform: "uppercase",
-                fontSize: "0.7rem",
-                opacity: 0.9,
-                display: "block"
-              }}
-            >
-              Club Marbella
-            </Typography>
+          
             <Box 
               sx={{ 
                 border: "1px solid #dfb76c", 
