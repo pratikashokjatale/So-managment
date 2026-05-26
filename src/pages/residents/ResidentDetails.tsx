@@ -29,6 +29,11 @@ import { deleteFamilyMemberApi, updateFamilyMemberApi, createFamilyMemberApi } f
 import { toast } from 'react-hot-toast';
 import { getFileUrl } from '@/utils/file';
 
+const isPdfFile = (urlOrName: string) => {
+  if (!urlOrName) return false;
+  return urlOrName.toLowerCase().endsWith('.pdf');
+};
+
 const mockBookings = [
   { id: 101, activity: 'Squash Court', slots: '5:00 PM - 7:00 PM (2 Slots)', date: 'May 18, 2024', amount: '₹400.00', status: 'Confirmed' },
   { id: 102, activity: 'Table Tennis', slots: '10:00 AM - 11:00 AM (1 Slot)', date: 'May 17, 2024', amount: '₹150.00', status: 'Completed' },
@@ -187,8 +192,12 @@ export default function ResidentDetails() {
   };
 
   const handleOpenDoc = (title: string, url: string) => {
-    setDocToShow({ title, url });
-    setDocOpen(true);
+    if (isPdfFile(url)) {
+      window.open(getFileUrl(url), '_blank');
+    } else {
+      setDocToShow({ title, url });
+      setDocOpen(true);
+    }
   };
 
   if (loading) {
@@ -497,9 +506,9 @@ export default function ResidentDetails() {
                 {allDocs.map((doc) => (
                   <Grid size={{ xs: 12, md: 4 }} key={doc.id || doc.title}>
                     <Paper elevation={0} sx={{ p: 4, borderRadius: '24px', border: '1px solid #e2e8f0', textAlign: 'center', bgcolor: 'white' }}>
-                      <Box sx={{ p: doc.photoUrl ? 0 : 4, bgcolor: '#f8fafc', borderRadius: '20px', mb: 2, display: 'flex', justifyContent: 'center', height: 120, alignItems: 'center', overflow: 'hidden' }}>
-                        {doc.photoUrl ? (
-                          <Box component="img" src={doc.photoUrl} sx={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <Box sx={{ p: (doc.photoUrl && !isPdfFile(doc.photoUrl)) ? 0 : 4, bgcolor: '#f8fafc', borderRadius: '20px', mb: 2, display: 'flex', justifyContent: 'center', height: 120, alignItems: 'center', overflow: 'hidden' }}>
+                        {doc.photoUrl && !isPdfFile(doc.photoUrl) ? (
+                          <Box component="img" src={getFileUrl(doc.photoUrl)} sx={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         ) : (
                           <FileIcon sx={{ fontSize: 44, color: '#002855' }} />
                         )}
@@ -554,9 +563,9 @@ export default function ResidentDetails() {
                 {familyDocs.map((doc, idx) => (
                   <Grid size={{ xs: 12, md: 4 }} key={idx}>
                     <Paper elevation={0} sx={{ p: 4, borderRadius: '24px', border: '1px solid #e2e8f0', textAlign: 'center', bgcolor: 'white' }}>
-                      <Box sx={{ p: doc.photoUrl ? 0 : 4, bgcolor: '#f8fafc', borderRadius: '20px', mb: 2, display: 'flex', justifyContent: 'center', height: 120, alignItems: 'center', overflow: 'hidden' }}>
-                        {doc.photoUrl ? (
-                          <Box component="img" src={doc.photoUrl} sx={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <Box sx={{ p: (doc.photoUrl && !isPdfFile(doc.photoUrl)) ? 0 : 4, bgcolor: '#f8fafc', borderRadius: '20px', mb: 2, display: 'flex', justifyContent: 'center', height: 120, alignItems: 'center', overflow: 'hidden' }}>
+                        {doc.photoUrl && !isPdfFile(doc.photoUrl) ? (
+                          <Box component="img" src={getFileUrl(doc.photoUrl)} sx={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         ) : (
                           <FileIcon sx={{ fontSize: 44, color: '#0047b3' }} />
                         )}
@@ -604,7 +613,7 @@ export default function ResidentDetails() {
         <DialogContent sx={{ p: 0, bgcolor: '#f8fafc', display: 'flex', justifyContent: 'center' }}>
           <Box 
             component="img" 
-            src={docToShow.url} 
+            src={getFileUrl(docToShow.url)} 
             sx={{ 
               maxWidth: '100%', 
               height: 'auto', 
