@@ -1,17 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
-  Box,
-  Typography,
-  Button,
-  TextField,
-  MenuItem,
-  Avatar,
-  Grid,
+  Box, Typography, Button, TextField, MenuItem, Avatar, Grid,
+  InputAdornment, ToggleButton, ToggleButtonGroup
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import FormCard from "@/components/FormCard";
 import EditIcon from "@mui/icons-material/Edit";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import toast from "react-hot-toast";
 import { getStaffById } from "@/utils/staffStore";
 import { getFacilities } from "@/utils/facilityStore";
@@ -53,20 +49,35 @@ export default function EditStaff() {
   const [facilityId, setFacilityId] = useState("");
   const [status, setStatus] = useState<"Active" | "Inactive">("Active");
   const [avatar, setAvatar] = useState("https://i.pravatar.cc/150?u=staff");
+  const [avatarPreview, setAvatarPreview] = useState("");
   const [idProofType, setIdProofType] = useState("AADHAAR");
   const [idProofNumber, setIdProofNumber] = useState("");
   const [notes, setNotes] = useState("");
+  
+  // New Fields
+  const [employmentType, setEmploymentType] = useState("FULL_TIME");
+  const [shiftStart, setShiftStart] = useState("09:00");
+  const [shiftEnd, setShiftEnd] = useState("18:00");
+  const [workDays, setWorkDays] = useState<string[]>(["MON", "TUE", "WED", "THU", "FRI", "SAT"]);
+  const [allowedZones, setAllowedZones] = useState<string[]>(["CLUBHOUSE"]);
+  const [accessLevel, setAccessLevel] = useState("FACILITY_ONLY");
+  const [attendanceMode, setAttendanceMode] = useState("RFID");
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Generate UI Preview
       const reader = new FileReader();
       reader.onloadend = () => {
-        setAvatar(reader.result as string);
+        setAvatarPreview(reader.result as string);
       };
       reader.readAsDataURL(file);
+
+      // Generate API Payload Mock URL
+      const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_").toLowerCase();
+      setAvatar(`http://72.62.227.125:3002/upload/${safeName}`);
     }
   };
 
@@ -154,10 +165,19 @@ export default function EditStaff() {
           setEmergencyContact(staff.emergencyContact);
           setFacilityId(staff.facilityId);
           setStatus(staff.status);
-          setAvatar(staff.avatar);
+          setAvatar((staff as any).profilePhotoUrl || staff.avatar || "https://i.pravatar.cc/150?u=staff");
+          setAvatarPreview((staff as any).profilePhotoUrl || staff.avatar || "https://i.pravatar.cc/150?u=staff");
           setIdProofType((staff as any).idProofType || "AADHAAR");
           setIdProofNumber((staff as any).idProofNumber || "");
           setNotes((staff as any).notes || "");
+
+          if ((staff as any).employmentType) setEmploymentType((staff as any).employmentType);
+          if ((staff as any).shiftStart) setShiftStart((staff as any).shiftStart);
+          if ((staff as any).shiftEnd) setShiftEnd((staff as any).shiftEnd);
+          if ((staff as any).workDays) setWorkDays((staff as any).workDays);
+          if ((staff as any).allowedZones) setAllowedZones((staff as any).allowedZones);
+          if ((staff as any).accessLevel) setAccessLevel((staff as any).accessLevel);
+          if ((staff as any).attendanceMode) setAttendanceMode((staff as any).attendanceMode);
         }
       }
     };
@@ -215,13 +235,13 @@ export default function EditStaff() {
       department: apiDept,
       joiningDate,
       status: status === "Active" ? "ACTIVE" : "INACTIVE",
-      employmentType: "FULL_TIME",
-      shiftStart: "09:00",
-      shiftEnd: "18:00",
-      workDays: ["MON", "TUE", "WED", "THU", "FRI", "SAT"],
-      allowedZones: ["CLUBHOUSE"],
-      accessLevel: "FACILITY_ONLY",
-      attendanceMode: "RFID",
+      employmentType,
+      shiftStart,
+      shiftEnd,
+      workDays,
+      allowedZones,
+      accessLevel,
+      attendanceMode,
       profilePhotoUrl: finalAvatar,
     };
 
@@ -291,9 +311,10 @@ export default function EditStaff() {
             <Box sx={{ position: "relative", display: "inline-block" }}>
               <Avatar
                 src={
-                  avatar === "https://i.pravatar.cc/150?u=staff" && isAddMode
+                  avatarPreview || 
+                  (avatar === "https://i.pravatar.cc/150?u=staff" && isAddMode
                     ? "https://img.icons8.com/color/150/user-male-circle.png"
-                    : avatar
+                    : avatar)
                 }
                 sx={{
                   width: 120,
@@ -467,6 +488,145 @@ export default function EditStaff() {
                 placeholder="Street, City, State, ZIP..."
               />
             </Grid>
+
+            {/* New Fields */}
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                select
+                label="Employment Type"
+                fullWidth
+                value={employmentType}
+                onChange={(e) => setEmploymentType(e.target.value)}
+                sx={textFieldSx}
+              >
+                <MenuItem value="FULL_TIME">Full Time</MenuItem>
+                <MenuItem value="PART_TIME">Part Time</MenuItem>
+                <MenuItem value="CONTRACT">Contract</MenuItem>
+                <MenuItem value="TEMPORARY">Temporary</MenuItem>
+              </TextField>
+            </Grid>
+
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                select
+                label="Attendance Mode"
+                fullWidth
+                value={attendanceMode}
+                onChange={(e) => setAttendanceMode(e.target.value)}
+                sx={textFieldSx}
+              >
+                <MenuItem value="RFID">RFID Card</MenuItem>
+                <MenuItem value="BIOMETRIC">Biometric</MenuItem>
+                <MenuItem value="MANUAL">Manual</MenuItem>
+              </TextField>
+            </Grid>
+
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                label="Shift Start Time"
+                fullWidth
+                value={shiftStart}
+                onChange={(e) => setShiftStart(e.target.value)}
+                sx={textFieldSx}
+                InputProps={{
+                  endAdornment: <InputAdornment position="end"><AccessTimeIcon /></InputAdornment>,
+                }}
+                placeholder="HH:mm"
+              />
+            </Grid>
+
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                label="Shift End Time"
+                fullWidth
+                value={shiftEnd}
+                onChange={(e) => setShiftEnd(e.target.value)}
+                sx={textFieldSx}
+                InputProps={{
+                  endAdornment: <InputAdornment position="end"><AccessTimeIcon /></InputAdornment>,
+                }}
+                placeholder="HH:mm"
+              />
+            </Grid>
+
+            <Grid size={12}>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 1, fontWeight: 700 }}>
+                Work Days
+              </Typography>
+              <ToggleButtonGroup
+                value={workDays}
+                onChange={(_, newDays) => { if (newDays.length) setWorkDays(newDays); }}
+                aria-label="work days"
+                sx={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  gap: 1,
+                  '& .MuiToggleButtonGroup-grouped': {
+                    border: '1px solid #cbd5e1 !important',
+                    borderRadius: '8px !important',
+                    m: 0,
+                    px: 2,
+                    py: 1,
+                    bgcolor: 'white',
+                    color: '#64748b',
+                    '&.Mui-selected': {
+                      bgcolor: '#3b82f6',
+                      color: 'white',
+                      '&:hover': {
+                        bgcolor: '#2563eb',
+                      }
+                    }
+                  }
+                }}
+              >
+                <ToggleButton value="MON" aria-label="monday">Mo</ToggleButton>
+                <ToggleButton value="TUE" aria-label="tuesday">Tu</ToggleButton>
+                <ToggleButton value="WED" aria-label="wednesday">We</ToggleButton>
+                <ToggleButton value="THU" aria-label="thursday">Th</ToggleButton>
+                <ToggleButton value="FRI" aria-label="friday">Fr</ToggleButton>
+                <ToggleButton value="SAT" aria-label="saturday">Sa</ToggleButton>
+                <ToggleButton value="SUN" aria-label="sunday">Su</ToggleButton>
+              </ToggleButtonGroup>
+            </Grid>
+
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                select
+                label="Access Level"
+                fullWidth
+                value={accessLevel}
+                onChange={(e) => setAccessLevel(e.target.value)}
+                sx={textFieldSx}
+              >
+                <MenuItem value="FACILITY_ONLY">Facility Only</MenuItem>
+                <MenuItem value="ALL_AREAS">All Areas</MenuItem>
+                <MenuItem value="RESTRICTED">Restricted</MenuItem>
+              </TextField>
+            </Grid>
+
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                select
+                label="Allowed Zones"
+                fullWidth
+                SelectProps={{
+                  multiple: true,
+                }}
+                value={allowedZones}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setAllowedZones(typeof val === 'string' ? val.split(',') : (val as string[]));
+                }}
+                sx={textFieldSx}
+              >
+                <MenuItem value="CLUBHOUSE">Clubhouse</MenuItem>
+                <MenuItem value="TOWER_A">Tower A</MenuItem>
+                <MenuItem value="TOWER_B">Tower B</MenuItem>
+                <MenuItem value="PARKING">Parking</MenuItem>
+                <MenuItem value="GARDEN">Garden</MenuItem>
+              </TextField>
+            </Grid>
+
           </Grid>
 
           {/* Action Buttons */}
