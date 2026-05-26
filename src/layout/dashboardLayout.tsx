@@ -15,7 +15,6 @@ import {
   Collapse,
   IconButton,
   Button,
-  Stack,
 } from "@mui/material";
 import { 
   ExpandLess as ExpandLessIcon, 
@@ -27,18 +26,32 @@ import { useConfig } from "@/contexts/ConfigContext";
 import { menuItems } from "./menuItems";
 import TopBar from "./TopBar";
 import Loader from "@/components/Loader";
+import logoImg from "@/assets/logo.png";
 import PageNotFound from "@/pages/PageNotFound";
 
-const MarbellaLogo = () => (
-  <svg width="46" height="46" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M50 15 L64 35 L85 30 L74 58 L50 48 L26 58 L15 30 L36 35 Z" fill="#dfb76c" />
-    <path d="M50 48 L50 85 L74 58 Z" fill="#b89047" />
-    <path d="M50 48 L50 85 L26 58 Z" fill="#dfb76c" />
-    <circle cx="50" cy="12" r="4.5" fill="#dfb76c" />
-    <circle cx="88" cy="28" r="4" fill="#dfb76c" />
-    <circle cx="12" cy="28" r="4" fill="#dfb76c" />
-    <path d="M50 25 L55 35 L45 35 Z" fill="#ffffff" opacity="0.8" />
-  </svg>
+const MarbellaLogo = ({ collapsed }: { collapsed?: boolean }) => (
+  <Box
+    sx={{
+      width: collapsed ? 50 : 160,
+      height: collapsed ? 20 : 60,
+      overflow: "hidden",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      transition: "all 0.2s ease-in-out"
+    }}
+  >
+    <Box
+      component="img"
+      src={logoImg}
+      alt="Marbella Logo"
+      sx={{
+        width: "100%",
+        height: "100%",
+        objectFit: "contain"
+      }}
+    />
+  </Box>
 );
 
 export default function DashboardLayout() {
@@ -122,7 +135,8 @@ export default function DashboardLayout() {
       <Box
         sx={{ 
           px: desktopOpen || isMobile ? 3 : 2, 
-          py: 4, 
+          pt: 3,
+          pb: 2.5,
           display: "flex", 
           flexDirection: "column",
           alignItems: "center", 
@@ -133,10 +147,10 @@ export default function DashboardLayout() {
         }}
       >
         <Box sx={{ display: "flex", justifyContent: "center" }}>
-          <MarbellaLogo />
+          <MarbellaLogo collapsed={!(desktopOpen || isMobile)} />
         </Box>
         {(desktopOpen || isMobile) && (
-          <Stack spacing={0.25} alignItems="center">
+          <Box sx={{ textAlign: "center", mt: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 0.5 }}>
             <Typography
               variant="h5"
               sx={{ 
@@ -159,7 +173,8 @@ export default function DashboardLayout() {
                 letterSpacing: "1.5px", 
                 textTransform: "uppercase",
                 fontSize: "0.7rem",
-                opacity: 0.9
+                opacity: 0.9,
+                display: "block"
               }}
             >
               Club Marbella
@@ -170,7 +185,8 @@ export default function DashboardLayout() {
                 px: 1.5, 
                 py: 0.25, 
                 borderRadius: "4px",
-                mt: 0.75
+                mt: 0.75,
+                display: "inline-block"
               }}
             >
               <Typography
@@ -187,7 +203,7 @@ export default function DashboardLayout() {
                 Admin Panel
               </Typography>
             </Box>
-          </Stack>
+          </Box>
         )}
       </Box>
 
