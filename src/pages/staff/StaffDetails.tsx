@@ -18,6 +18,7 @@ import ContactPhoneOutlinedIcon from '@mui/icons-material/ContactPhoneOutlined';
 import { getStaffById } from '@/utils/staffStore';
 // import type { Staff } from '@/utils/staffStore';
 import { getStaffDetailsApi } from '@/apis/staff';
+import { getFileUrl } from '@/utils/file';
 
 export default function StaffDetails() {
   const { id } = useParams<{ id: string }>();
@@ -48,7 +49,7 @@ export default function StaffDetails() {
             setStaff({
               id: s.id,
               name: s.name,
-              avatar: s.profilePhotoUrl || s.avatar,
+              avatar: s.photoUrl || s.profilePhotoUrl || s.avatar || "",
               department: dept,
               phone: s.phone || '',
               email: s.email || '',
@@ -189,7 +190,7 @@ export default function StaffDetails() {
               {/* Styled Avatar with Gold Ring Accent */}
               <Box sx={{ display: 'inline-block', position: 'relative', mb: 3 }}>
                 <Avatar 
-                  src={staff.avatar} 
+                  src={getFileUrl(staff.avatar)} 
                   sx={{ 
                     width: 150, 
                     height: 150, 

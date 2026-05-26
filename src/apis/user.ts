@@ -36,6 +36,7 @@ export interface UpdateUserPayload {
   role?: string;
   status?: string;
   flatId?: string | null;
+  profilePhotoUrl?: string | null;
 }
 
 export const getUsersApi = async (params?: ListUsersParams) => {

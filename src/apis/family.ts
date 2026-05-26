@@ -16,8 +16,13 @@ export interface CreateFamilyMemberPayload {
 export interface UpdateFamilyMemberPayload {
   name?: string;
   relationship?: string;
+  email?: string;
+  phone?: string;
+  idType?: string;
+  idNumber?: string;
   status?: string;
   accessLevel?: string;
+  dateOfBirth?: string;
 }
 
 export const getFamilyMembersApi = async (userId: string, params?: { includeInactive?: boolean }) => {

@@ -21,6 +21,7 @@ import DataTable from "@/components/DataTable";
 
 import type { Staff } from "@/utils/staffStore";
 import { getStaffListApi, updateStaffApi, deleteStaffApi } from "@/apis/staff";
+import { getFileUrl } from "@/utils/file";
 
 const mapBackendStaffToFrontend = (s: any) => {
   let dept = s.department || "Other";
@@ -39,7 +40,7 @@ const mapBackendStaffToFrontend = (s: any) => {
     id: s.id,
     name: s.name,
     avatar:
-      s.profilePhotoUrl || s.avatar || `https://i.pravatar.cc/150?u=${s.id}`,
+      s.photoUrl || s.profilePhotoUrl || s.avatar || "",
     department: dept,
     phone: s.phone || "",
     email: s.email || "",
@@ -244,7 +245,7 @@ export default function GetStaff() {
                 sx={{ cursor: "pointer" }}
               >
                 <Avatar
-                  src={row.avatar}
+                  src={getFileUrl(row.avatar)}
                   sx={{ width: 44, height: 44, border: "2px solid #f1f5f9" }}
                 />
                 <Typography

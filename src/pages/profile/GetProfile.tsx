@@ -13,8 +13,17 @@ import {
   Stack,
   alpha,
   useTheme,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  IconButton
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import CloseIcon from "@mui/icons-material/Close";
+import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import {
   Email as EmailIcon,
   Phone as PhoneIcon,
@@ -27,13 +36,77 @@ import {
 } from "@mui/icons-material";
 import { useAuth } from "@/contexts/AuthContext";
 import { getCachedMe } from "@/utils/apiCache";
+import { updateUserApi } from "@/apis/user";
+import { uploadDocumentApi } from "@/apis/document";
+import { toast } from "react-hot-toast";
+import { getFileUrl } from "@/utils/file";
 
 export default function GetProfile() {
   const navigate = useNavigate();
   const theme = useTheme();
-  const { user: contextUser } = useAuth();
+  const { user: contextUser, refreshUser } = useAuth();
   const [user, setUser] = useState<any>(contextUser);
   const [loading, setLoading] = useState(true);
+  const [editOpen, setEditOpen] = useState(false);
+  const [editForm, setEditForm] = useState({
+    name: "",
+    phone: "",
+    avatar: "",
+  });
+  const [updating, setUpdating] = useState(false);
+
+  const handleOpenEditModal = () => {
+    setEditForm({
+      name: user?.name || "",
+      phone: user?.phone || "",
+      avatar: user?.photoUrl || user?.profilePhotoUrl || user?.avatar || "",
+    });
+    setEditOpen(true);
+  };
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      try {
+        const url = await uploadDocumentApi(file);
+        setEditForm((prev) => ({ ...prev, avatar: url }));
+        toast.success("Profile photo uploaded");
+      } catch (err: any) {
+        toast.error(err?.message || "Failed to upload photo");
+      }
+    }
+  };
+
+  const handleSaveProfile = async () => {
+    if (!editForm.name.trim()) {
+      toast.error("Name is required");
+      return;
+    }
+    setUpdating(true);
+    try {
+      await updateUserApi(user?.id, {
+        name: editForm.name.trim(),
+        phone: editForm.phone.trim(),
+        profilePhotoUrl: editForm.avatar || null,
+      });
+      toast.success("Profile updated successfully");
+      setEditOpen(false);
+      
+      if (refreshUser) {
+        await refreshUser();
+      }
+      
+      const res = await getCachedMe();
+      const freshUser = res?.data?.user || res?.user || res?.data || res;
+      if (freshUser) {
+        setUser(freshUser);
+      }
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to update profile");
+    } finally {
+      setUpdating(false);
+    }
+  };
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -124,6 +197,7 @@ export default function GetProfile() {
             }}
           >
             <Avatar
+              src={getFileUrl(user?.photoUrl || user?.profilePhotoUrl || user?.avatar)}
               sx={{
                 width: 120,
                 height: 120,
@@ -185,9 +259,25 @@ export default function GetProfile() {
               boxShadow: "0 10px 30px rgba(0,0,0,0.02)",
             }}
           >
-            <Typography variant="h5" fontWeight="900" color="#002855" sx={{ mb: 4 }}>
-              Account Information
-            </Typography>
+            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 4 }}>
+              <Typography variant="h5" fontWeight="900" color="#002855">
+                Account Information
+              </Typography>
+              <Button
+                variant="outlined"
+                onClick={handleOpenEditModal}
+                sx={{
+                  borderRadius: "12px",
+                  textTransform: "none",
+                  fontWeight: 800,
+                  borderColor: theme.palette.divider,
+                  color: "#002855",
+                  px: 3
+                }}
+              >
+                Edit Profile
+              </Button>
+            </Stack>
 
             <Grid container spacing={3}>
               <Grid size={{ xs: 12, sm: 6 }}>
@@ -312,6 +402,94 @@ export default function GetProfile() {
           </Paper>
         </Grid>
       </Grid>
+
+      {/* Edit Profile Dialog */}
+      <Dialog 
+        open={editOpen} 
+        onClose={() => setEditOpen(false)} 
+        maxWidth="xs"
+        fullWidth
+        PaperProps={{ sx: { borderRadius: '24px', p: 1 } }}
+      >
+        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>
+          <Typography variant="h6" fontWeight="900" color="#002855">
+            Edit Profile
+          </Typography>
+          <IconButton onClick={() => setEditOpen(false)}>
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent dividers sx={{ border: "none" }}>
+          <Stack spacing={3} sx={{ mt: 1, alignItems: "center" }}>
+            <Box sx={{ position: "relative", mb: 2 }}>
+              <Avatar
+                src={getFileUrl(editForm.avatar)}
+                sx={{
+                  width: 100,
+                  height: 100,
+                  bgcolor: "#f5f7fa",
+                  color: "#bdbdbd",
+                  border: `4px solid ${alpha(theme.palette.primary.main, 0.05)}`,
+                }}
+              />
+              <IconButton
+                component="label"
+                sx={{
+                  position: "absolute",
+                  bottom: 0,
+                  right: -10,
+                  bgcolor: "primary.main",
+                  color: "white",
+                  "&:hover": { bgcolor: "primary.dark" },
+                  boxShadow: 2,
+                }}
+                size="small"
+              >
+                <PhotoCameraIcon fontSize="small" />
+                <input
+                  type="file"
+                  hidden
+                  accept="image/*"
+                  onChange={handlePhotoUpload}
+                />
+              </IconButton>
+            </Box>
+            <TextField
+              label="Full Name"
+              value={editForm.name}
+              onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+              fullWidth
+              variant="outlined"
+              sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+            />
+            <TextField
+              label="Phone Number"
+              value={editForm.phone}
+              onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+              fullWidth
+              variant="outlined"
+              sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
+            />
+          </Stack>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button 
+            onClick={() => setEditOpen(false)} 
+            variant="outlined"
+            sx={{ borderRadius: '10px', textTransform: 'none', fontWeight: 800, color: 'text.secondary', borderColor: '#e2e8f0' }}
+          >
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleSaveProfile} 
+            variant="contained"
+            disabled={updating}
+            sx={{ bgcolor: '#002855', borderRadius: '10px', textTransform: 'none', fontWeight: 800 }}
+          >
+            {updating ? 'Saving...' : 'Save Changes'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

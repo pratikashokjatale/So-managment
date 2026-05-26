@@ -27,6 +27,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import BackButton from "@/components/BackButton";
 import { getFacilityDetailsApi, updateFacilityApi } from "@/apis/facility";
+import { uploadDocumentApi } from "@/apis/document";
+import { getFileUrl } from "@/utils/file";
 
 // Icons for selection previews
 import {
@@ -77,22 +79,24 @@ export default function EditFacility() {
   const [cancellationHours, setCancellationHours] = useState("2");
   const [imageUrl, setImageUrl] = useState("");
   const [imagePreview, setImagePreview] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
+
+  const [code, setCode] = useState("");
+  const [bookingMode, setBookingMode] = useState("SLOT");
+  const [isActive, setIsActive] = useState(true);
+  const [requiresApproval, setRequiresApproval] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Generate UI Preview
+      setImageFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
       };
       reader.readAsDataURL(file);
-
-      // Generate API Payload Mock URL
-      const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_").toLowerCase();
-      setImageUrl(`http://localhost:4000/upload/${safeName}`);
     }
   };
 
@@ -143,6 +147,11 @@ export default function EditFacility() {
             setCancellationHours(f.cancellationHours?.toString() || "2");
             setImageUrl(f.images?.[0] || "");
             setImagePreview(f.images?.[0] || "");
+
+            setCode(f.code || "");
+            setBookingMode(f.bookingMode || "SLOT");
+            setIsActive(f.isActive !== undefined ? f.isActive : true);
+            setRequiresApproval(!!f.requiresApproval);
 
             let normStatus = f.status || "Operational";
             if (normStatus === "OPERATIONAL") normStatus = "Operational";
@@ -209,10 +218,23 @@ export default function EditFacility() {
 
       const categoryUpper = category.toUpperCase();
 
+      let finalImages = imageUrl ? [imageUrl] : [];
+      if (imageFile) {
+        try {
+          const uploadedUrl = await uploadDocumentApi(imageFile);
+          finalImages = [uploadedUrl];
+        } catch (err: any) {
+          toast.error("Failed to upload facility cover image");
+          return;
+        }
+      }
+
       let apiStatus = "OPERATIONAL";
-      if (status === "In Use") apiStatus = "IN_USE";
-      else if (status === "Maintenance") apiStatus = "MAINTENANCE";
-      else if (status === "Inactive") apiStatus = "CLOSED";
+      const statusUpper = status ? status.toUpperCase() : "";
+      if (statusUpper === "IN USE" || statusUpper === "IN_USE") apiStatus = "IN_USE";
+      else if (statusUpper === "MAINTENANCE") apiStatus = "MAINTENANCE";
+      else if (statusUpper === "INACTIVE" || statusUpper === "CLOSED") apiStatus = "CLOSED";
+      else apiStatus = "OPERATIONAL";
 
       let normalizedPhone = managerContact.trim();
       if (normalizedPhone && !normalizedPhone.startsWith("+")) {
@@ -222,18 +244,22 @@ export default function EditFacility() {
       try {
         await updateFacilityApi(id, {
           name,
+          code,
           category: categoryUpper,
           iconKey: iconName,
           description,
           pricingModel,
           priceAmount,
           priceLabel: price,
+          bookingMode,
           totalSlots,
           bookedSlots,
           capacity: totalSlots,
           managerName,
           managerContact: normalizedPhone,
           status: apiStatus,
+          isActive,
+          requiresApproval,
           location,
           floor,
           openingTime: allDay ? "00:00" : openingTime,
@@ -242,7 +268,7 @@ export default function EditFacility() {
           advanceBookingDays: parseInt(advanceBookingDays, 10) || 7,
           cancellationHours: parseInt(cancellationHours, 10) || 2,
           rules,
-          images: imageUrl ? [imageUrl] : [],
+          images: finalImages,
         });
         toast.success("Facility updated successfully!");
         navigate(`/facility/${id}`);
@@ -320,7 +346,7 @@ export default function EditFacility() {
                 <Box
                   component="img"
                   src={
-                    imagePreview ||
+                    getFileUrl(imagePreview) ||
                     "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop"
                   }
                   sx={{
@@ -373,6 +399,20 @@ export default function EditFacility() {
                   variant="outlined"
                   placeholder="e.g. Grand Gym, Yoga Studio"
                   InputProps={{ sx: { borderRadius: "16px" } }}
+                />
+              </Grid>
+
+              {/* Facility Code */}
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  fullWidth
+                  label="Facility Code"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  variant="outlined"
+                  placeholder="e.g. GYM-001"
+                  InputProps={{ sx: { borderRadius: "16px" } }}
+                  helperText="Unique identifier for the facility"
                 />
               </Grid>
 
@@ -564,6 +604,78 @@ export default function EditFacility() {
                   variant="outlined"
                   value={floor}
                   onChange={(e) => setFloor(e.target.value)}
+                />
+              </Grid>
+
+              {/* Booking Mode */}
+              <Grid size={{ xs: 12, md: 6 }}>
+                <FormControl fullWidth variant="outlined">
+                  <InputLabel id="booking-mode-label">Booking Mode</InputLabel>
+                  <Select
+                    labelId="booking-mode-label"
+                    id="booking-mode"
+                    value={bookingMode}
+                    label="Booking Mode"
+                    onChange={(e) => setBookingMode(e.target.value)}
+                    sx={{ borderRadius: "16px" }}
+                  >
+                    <MenuItem value="SLOT">Slot-based Booking</MenuItem>
+                    <MenuItem value="EVENT">Event/Day-based Booking</MenuItem>
+                    <MenuItem value="FREE">Free Entry (No booking)</MenuItem>
+                  </Select>
+                  <FormHelperText>
+                    Select how members reserve this facility
+                  </FormHelperText>
+                </FormControl>
+              </Grid>
+
+              {/* Facility Status */}
+              <Grid size={{ xs: 12, md: 6 }}>
+                <FormControl fullWidth variant="outlined">
+                  <InputLabel id="status-label">Facility Status</InputLabel>
+                  <Select
+                    labelId="status-label"
+                    id="status-select"
+                    value={status}
+                    label="Facility Status"
+                    onChange={(e) => setStatus(e.target.value)}
+                    sx={{ borderRadius: "16px" }}
+                  >
+                    <MenuItem value="OPERATIONAL">Operational</MenuItem>
+                    <MenuItem value="IN_USE">In Use</MenuItem>
+                    <MenuItem value="MAINTENANCE">Maintenance</MenuItem>
+                    <MenuItem value="CLOSED">Closed / Inactive</MenuItem>
+                  </Select>
+                  <FormHelperText>
+                    Current operational state of the facility
+                  </FormHelperText>
+                </FormControl>
+              </Grid>
+
+              {/* requiresApproval & isActive */}
+              <Grid size={{ xs: 12, md: 6 }}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={requiresApproval}
+                      onChange={(e) => setRequiresApproval(e.target.checked)}
+                    />
+                  }
+                  label="Requires Manager Approval for Bookings"
+                  sx={{ color: "#475569" }}
+                />
+              </Grid>
+
+              <Grid size={{ xs: 12, md: 6 }}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={isActive}
+                      onChange={(e) => setIsActive(e.target.checked)}
+                    />
+                  }
+                  label="Active / Visible to Resident portal"
+                  sx={{ color: "#475569" }}
                 />
               </Grid>
 

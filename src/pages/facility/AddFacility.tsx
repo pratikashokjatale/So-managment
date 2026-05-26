@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   Box,
   Typography,
@@ -21,11 +21,13 @@ import {
   Divider,
   InputAdornment,
 } from "@mui/material";
-import { AccessTime } from "@mui/icons-material";
+import { AccessTime, Edit as EditIcon } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import BackButton from "@/components/BackButton";
 import { createFacilityApi } from "@/apis/facility";
+import { uploadDocumentApi } from "@/apis/document";
+import { getFileUrl } from "@/utils/file";
 
 // Icons for selection previews
 import {
@@ -68,6 +70,28 @@ export default function AddFacility() {
     "SAT",
     "SUN",
   ]);
+
+  const [code, setCode] = useState("");
+  const [bookingMode, setBookingMode] = useState("SLOT");
+  const [status, setStatus] = useState("OPERATIONAL");
+  const [isActive, setIsActive] = useState(true);
+  const [requiresApproval, setRequiresApproval] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState("");
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const [rules, setRules] = useState("");
   const [advanceBookingDays, setAdvanceBookingDays] = useState("7");
@@ -122,7 +146,18 @@ export default function AddFacility() {
     const bookedSlots = matchSlots ? parseInt(matchSlots[1]) : 0;
     const totalSlots = matchSlots ? parseInt(matchSlots[2]) : 12;
 
-    const code = name.toUpperCase().replace(/\s+/g, "-");
+    let finalImages: string[] = [];
+    if (imageFile) {
+      try {
+        const uploadedUrl = await uploadDocumentApi(imageFile);
+        finalImages = [uploadedUrl];
+      } catch (err: any) {
+        toast.error("Failed to upload facility cover image");
+        return;
+      }
+    }
+
+    const finalCode = code.trim() || name.toUpperCase().replace(/\s+/g, "-");
     const categoryUpper = category.toUpperCase();
 
     let normalizedPhone = managerContact.trim();
@@ -133,19 +168,19 @@ export default function AddFacility() {
     try {
       await createFacilityApi({
         name,
-        code,
+        code: finalCode,
         category: categoryUpper,
         iconKey: iconName,
         description,
         location,
         floor,
-        status: "OPERATIONAL",
-        isActive: true,
+        status,
+        isActive,
         pricingModel,
         priceAmount,
         priceCurrency: "INR",
         priceLabel: price,
-        bookingMode: "SLOT",
+        bookingMode,
         totalSlots,
         bookedSlots,
         capacity: totalSlots,
@@ -154,11 +189,11 @@ export default function AddFacility() {
         availableDays,
         advanceBookingDays: parseInt(advanceBookingDays, 10) || 7,
         cancellationHours: parseInt(cancellationHours, 10) || 2,
-        requiresApproval: false,
+        requiresApproval,
         managerName,
         managerContact: normalizedPhone,
         rules,
-        images: [],
+        images: finalImages,
         sortOrder: 1,
       });
       toast.success("Facility created successfully!");
@@ -222,45 +257,113 @@ export default function AddFacility() {
         }}
       >
         <form onSubmit={handleSubmit}>
-          <Grid container spacing={3}>
-            {/* Facility Name */}
-            <Grid size={{ xs: 12, md: 6 }}>
-              <TextField
-                fullWidth
-                label="Facility Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                error={!!errors.name}
-                helperText={errors.name}
-                variant="outlined"
-                placeholder="e.g. Grand Gym, Yoga Studio"
-                InputProps={{ sx: { borderRadius: "16px" } }}
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            {/* Image Section */}
+            <Box sx={{ textAlign: "center" }}>
+              <input
+                type="file"
+                accept="image/*"
+                ref={fileInputRef}
+                style={{ display: "none" }}
+                onChange={handleImageChange}
               />
-            </Grid>
-
-            {/* Category */}
-            <Grid size={{ xs: 12, md: 6 }}>
-              <FormControl fullWidth variant="outlined">
-                <InputLabel id="category-select-label">Category</InputLabel>
-                <Select
-                  labelId="category-select-label"
-                  id="category-select"
-                  value={category}
-                  label="Category"
-                  onChange={(e) => setCategory(e.target.value)}
-                  sx={{ borderRadius: "16px" }}
+              <Box sx={{ position: "relative", display: "inline-block" }}>
+                <Box
+                  component="img"
+                  src={
+                    getFileUrl(imagePreview) ||
+                    "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop"
+                  }
+                  sx={{
+                    width: 200,
+                    height: 140,
+                    borderRadius: "16px",
+                    objectFit: "cover",
+                    border: "4px solid #f1f5f9",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+                  }}
+                />
+                <Button
+                  onClick={() => fileInputRef.current?.click()}
+                  variant="contained"
+                  size="small"
+                  sx={{
+                    position: "absolute",
+                    bottom: -10,
+                    right: -10,
+                    borderRadius: "50%",
+                    minWidth: 40,
+                    height: 40,
+                    p: 0,
+                    bgcolor: "#002855",
+                    "&:hover": { bgcolor: "#001a35" },
+                  }}
                 >
-                  {CATEGORIES.map((cat) => (
-                    <MenuItem key={cat} value={cat}>
-                      {cat}
-                    </MenuItem>
-                  ))}
-                </Select>
-                <FormHelperText>
-                  Choose the corresponding activity unit category
-                </FormHelperText>
-              </FormControl>
-            </Grid>
+                  <EditIcon fontSize="small" />
+                </Button>
+              </Box>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ mt: 2, fontWeight: 700 }}
+              >
+                Upload Facility Cover Image
+              </Typography>
+            </Box>
+
+            <Grid container spacing={3}>
+              {/* Facility Name */}
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  fullWidth
+                  label="Facility Name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  error={!!errors.name}
+                  helperText={errors.name}
+                  variant="outlined"
+                  placeholder="e.g. Grand Gym, Yoga Studio"
+                  InputProps={{ sx: { borderRadius: "16px" } }}
+                />
+              </Grid>
+
+              {/* Facility Code */}
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  fullWidth
+                  label="Facility Code (Optional)"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  variant="outlined"
+                  placeholder="e.g. GYM-001"
+                  InputProps={{ sx: { borderRadius: "16px" } }}
+                  helperText="Leave empty to auto-generate from name"
+                />
+              </Grid>
+
+              {/* Category */}
+              <Grid size={{ xs: 12, md: 6 }}>
+                <FormControl fullWidth variant="outlined">
+                  <InputLabel id="category-select-label">Category</InputLabel>
+                  <Select
+                    labelId="category-select-label"
+                    id="category-select"
+                    value={category}
+                    label="Category"
+                    onChange={(e) => setCategory(e.target.value)}
+                    sx={{ borderRadius: "16px" }}
+                  >
+                    {CATEGORIES.map((cat) => (
+                      <MenuItem key={cat} value={cat}>
+                        {cat}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  <FormHelperText>
+                    Choose the corresponding activity unit category
+                  </FormHelperText>
+                </FormControl>
+              </Grid>
 
             {/* Facility Icon Selection */}
             <Grid size={{ xs: 12, md: 6 }}>
@@ -422,6 +525,78 @@ export default function AddFacility() {
                 variant="outlined"
                 value={floor}
                 onChange={(e) => setFloor(e.target.value)}
+              />
+            </Grid>
+
+            {/* Booking Mode */}
+            <Grid size={{ xs: 12, md: 6 }}>
+              <FormControl fullWidth variant="outlined">
+                <InputLabel id="booking-mode-label">Booking Mode</InputLabel>
+                <Select
+                  labelId="booking-mode-label"
+                  id="booking-mode"
+                  value={bookingMode}
+                  label="Booking Mode"
+                  onChange={(e) => setBookingMode(e.target.value)}
+                  sx={{ borderRadius: "16px" }}
+                >
+                  <MenuItem value="SLOT">Slot-based Booking</MenuItem>
+                  <MenuItem value="EVENT">Event/Day-based Booking</MenuItem>
+                  <MenuItem value="FREE">Free Entry (No booking)</MenuItem>
+                </Select>
+                <FormHelperText>
+                  Select how members reserve this facility
+                </FormHelperText>
+              </FormControl>
+            </Grid>
+
+            {/* Facility Status */}
+            <Grid size={{ xs: 12, md: 6 }}>
+              <FormControl fullWidth variant="outlined">
+                <InputLabel id="status-label">Facility Status</InputLabel>
+                <Select
+                  labelId="status-label"
+                  id="status-select"
+                  value={status}
+                  label="Facility Status"
+                  onChange={(e) => setStatus(e.target.value)}
+                  sx={{ borderRadius: "16px" }}
+                >
+                  <MenuItem value="OPERATIONAL">Operational</MenuItem>
+                  <MenuItem value="IN_USE">In Use</MenuItem>
+                  <MenuItem value="MAINTENANCE">Maintenance</MenuItem>
+                  <MenuItem value="CLOSED">Closed / Inactive</MenuItem>
+                </Select>
+                <FormHelperText>
+                  Current operational state of the facility
+                </FormHelperText>
+              </FormControl>
+            </Grid>
+
+            {/* requiresApproval & isActive */}
+            <Grid size={{ xs: 12, md: 6 }}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={requiresApproval}
+                    onChange={(e) => setRequiresApproval(e.target.checked)}
+                  />
+                }
+                label="Requires Manager Approval for Bookings"
+                sx={{ color: "#475569" }}
+              />
+            </Grid>
+
+            <Grid size={{ xs: 12, md: 6 }}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={isActive}
+                    onChange={(e) => setIsActive(e.target.checked)}
+                  />
+                }
+                label="Active / Visible to Resident portal"
+                sx={{ color: "#475569" }}
               />
             </Grid>
 
@@ -669,7 +844,8 @@ export default function AddFacility() {
                 </Button>
               </Stack>
             </Grid>
-          </Grid>
+            </Grid>
+          </Box>
         </form>
       </Paper>
     </Box>

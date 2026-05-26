@@ -11,6 +11,7 @@ import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import BackButton from '@/components/BackButton';
 import { getFacilityDetailsApi, updateFacilityApi } from '@/apis/facility';
 import { toggleFacilityStatus } from '@/utils/facilityStore';
+import { getFileUrl } from '@/utils/file';
 
 // Dynamic category icons helper
 import { 
@@ -84,6 +85,10 @@ export default function FacilityDetails() {
           setFacility({
             id: f.id,
             name: f.name,
+            code: f.code || '',
+            bookingMode: f.bookingMode || 'SLOT',
+            isActive: f.isActive !== undefined ? f.isActive : true,
+            requiresApproval: !!f.requiresApproval,
             category: normCategory,
             status: normStatus,
             price,
@@ -198,7 +203,7 @@ export default function FacilityDetails() {
       <Box sx={{ mb: 5, position: 'relative', height: { xs: '300px', md: '400px' }, borderRadius: '32px', overflow: 'hidden', border: '1px solid #e2e8f0', boxShadow: '0 10px 40px rgba(0,40,85,0.08)' }}>
         <Box 
           component="img"
-          src={(facility.images && facility.images[0]) || 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop'}
+          src={getFileUrl((facility.images && facility.images[0]) || 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop')}
           onError={(e: any) => { e.target.src = 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop'; }}
           sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
         />
@@ -224,6 +229,9 @@ export default function FacilityDetails() {
               </Typography>
               <Stack direction="row" spacing={1.5} alignItems="center">
                 <Chip label={facility.category} size="small" sx={{ fontWeight: 800, borderRadius: '8px', bgcolor: 'rgba(255,255,255,0.2)', color: 'white', backdropFilter: 'blur(10px)' }} />
+                {facility.code && (
+                  <Chip label={`Code: ${facility.code}`} size="small" sx={{ fontWeight: 800, borderRadius: '8px', bgcolor: 'rgba(255,255,255,0.2)', color: 'white', backdropFilter: 'blur(10px)' }} />
+                )}
                 <Chip 
                   label={facility.status} 
                   size="small" 
@@ -299,6 +307,14 @@ export default function FacilityDetails() {
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <Typography variant="caption" color="text.secondary" fontWeight="800" display="block">BOOKING CONSTRAINTS</Typography>
                   <Typography variant="body1" fontWeight="800" color="#1e293b">Max {facility.advanceBookingDays} Days Adv. • {facility.cancellationHours}H Cancel</Typography>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Typography variant="caption" color="text.secondary" fontWeight="800" display="block">BOOKING MODE</Typography>
+                  <Typography variant="body1" fontWeight="800" color="#1e293b">{facility.bookingMode === 'SLOT' ? 'Slot-based Booking' : facility.bookingMode === 'EVENT' ? 'Event/Day-based Booking' : 'Free Entry'}</Typography>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Typography variant="caption" color="text.secondary" fontWeight="800" display="block">MANAGER APPROVAL</Typography>
+                  <Typography variant="body1" fontWeight="800" color="#1e293b">{facility.requiresApproval ? 'Yes, required' : 'No, auto-approved'}</Typography>
                 </Grid>
               </Grid>
 

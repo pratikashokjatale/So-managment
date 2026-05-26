@@ -21,6 +21,7 @@ import {
 import Pagination from '../../components/Pagination';
 
 import { getAttendanceListApi } from '@/apis/attendance';
+import { getFileUrl } from '@/utils/file';
 
 interface AttendanceRecord {
   id: any;
@@ -119,7 +120,7 @@ const mapBackendAttendanceToFrontend = (a: any) => {
     checkIn,
     checkOut,
     status,
-    avatar: a.staff?.profilePhotoUrl || `https://i.pravatar.cc/150?u=${a.id}`,
+    avatar: a.staff?.photoUrl || a.staff?.profilePhotoUrl || a.staff?.avatar || "",
     rawLog: a
   };
 };
@@ -286,7 +287,7 @@ export default function StaffAttendance() {
                 <TableRow key={row.id} hover>
                   <TableCell sx={{ py: 2.5, pl: 4 }}>
                     <Stack direction="row" spacing={2} alignItems="center">
-                      <Avatar src={row.avatar} sx={{ width: 44, height: 44, border: '2px solid #f1f5f9' }} />
+                      <Avatar src={getFileUrl(row.avatar)} sx={{ width: 44, height: 44, border: '2px solid #f1f5f9' }} />
                       <Box>
                         <Typography variant="body1" fontWeight="800" color="#002855">{row.name}</Typography>
                         <Typography variant="caption" color="#64748b" fontWeight="800">Emp ID: #CM-{row.id}00</Typography>
@@ -380,7 +381,7 @@ export default function StaffAttendance() {
             {/* Header Profile Badge */}
             {selectedRecord && (
               <Paper elevation={0} sx={{ p: 2.5, bgcolor: '#f8fafc', borderRadius: '20px', border: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Avatar src={selectedRecord.avatar} sx={{ width: 56, height: 56, border: '2px solid white', boxShadow: '0 8px 16px rgba(0,0,0,0.06)' }} />
+                <Avatar src={getFileUrl(selectedRecord.avatar)} sx={{ width: 56, height: 56, border: '2px solid white', boxShadow: '0 8px 16px rgba(0,0,0,0.06)' }} />
                 <Box>
                   <Typography variant="h5" fontWeight="900" color="#002855">{selectedRecord.name}</Typography>
                   <Typography variant="body2" fontWeight="700" color="#64748b">{selectedRecord.role}</Typography>

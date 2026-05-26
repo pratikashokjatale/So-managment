@@ -28,6 +28,7 @@ import {
 import PageHeader from "@/components/PageHeader";
 import PageToolbar from "@/components/PageToolbar";
 import DataTable from "@/components/DataTable";
+import { getFileUrl } from "@/utils/file";
 
 import {
   getFacilitiesApi,
@@ -95,6 +96,8 @@ const mapBackendFacilityToFrontend = (f: any) => {
     price,
     slots,
     color,
+    code: f.code || "",
+    images: f.images || [],
     description: f.description || "",
     managerName: f.managerName || "",
     managerContact: f.managerContact || "",
@@ -340,6 +343,7 @@ export default function GetFacility() {
                     sx={{ cursor: "pointer" }}
                   >
                     <Avatar
+                      src={getFileUrl(facility.images?.[0])}
                       sx={{
                         bgcolor: facility.color,
                         color: "white",
@@ -350,14 +354,21 @@ export default function GetFacility() {
                     >
                       {getFacilityIcon(facility.iconName)}
                     </Avatar>
-                    <Typography
-                      variant="body1"
-                      fontWeight="800"
-                      color="#002855"
-                      sx={{ "&:hover": { color: "#1d4ed8" } }}
-                    >
-                      {facility.name}
-                    </Typography>
+                    <Box>
+                      <Typography
+                        variant="body1"
+                        fontWeight="800"
+                        color="#002855"
+                        sx={{ "&:hover": { color: "#1d4ed8" } }}
+                      >
+                        {facility.name}
+                      </Typography>
+                      {facility.code && (
+                        <Typography variant="caption" color="text.secondary" fontWeight="700" display="block">
+                          {facility.code}
+                        </Typography>
+                      )}
+                    </Box>
                   </Stack>
                 ),
               },

@@ -26,6 +26,7 @@ import {
 import { useConfig, type PresetColor } from "@/contexts/ConfigContext";
 import { menuItems } from "./menuItems";
 import { useAuth } from "@/contexts/AuthContext";
+import { getFileUrl } from "@/utils/file";
 
 interface TopBarProps {
   handleDrawerToggle: () => void;
@@ -279,6 +280,7 @@ export default function TopBar({
             sx={{ p: 0.5, ml: 0.5 }}
           >
             <Avatar
+              src={getFileUrl(user?.photoUrl || user?.profilePhotoUrl || user?.avatar)}
               sx={{
                 width: 38,
                 height: 38,

@@ -17,6 +17,8 @@ import {
   createStaffApi,
   updateStaffApi,
 } from "@/apis/staff";
+import { getFileUrl } from "@/utils/file";
+import { uploadDocumentApi } from "@/apis/document";
 
 const DEPARTMENTS = [
   "Security",
@@ -48,8 +50,9 @@ export default function EditStaff() {
   const [emergencyContact, setEmergencyContact] = useState("");
   const [facilityId, setFacilityId] = useState("");
   const [status, setStatus] = useState<"Active" | "Inactive">("Active");
-  const [avatar, setAvatar] = useState("https://i.pravatar.cc/150?u=staff");
+  const [avatar, setAvatar] = useState("");
   const [avatarPreview, setAvatarPreview] = useState("");
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [idProofType, setIdProofType] = useState("AADHAAR");
   const [idProofNumber, setIdProofNumber] = useState("");
   const [notes, setNotes] = useState("");
@@ -68,16 +71,12 @@ export default function EditStaff() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Generate UI Preview
+      setAvatarFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setAvatarPreview(reader.result as string);
       };
       reader.readAsDataURL(file);
-
-      // Generate API Payload Mock URL
-      const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_").toLowerCase();
-      setAvatar(`http://72.62.227.125:3002/upload/${safeName}`);
     }
   };
 
@@ -141,7 +140,7 @@ export default function EditStaff() {
             );
             setFacilityId(staff.facilityId || "");
             setStatus(staff.status === "ACTIVE" ? "Active" : "Inactive");
-            setAvatar(staff.profilePhotoUrl || staff.avatar || "");
+            setAvatar(staff.photoUrl || staff.profilePhotoUrl || staff.avatar || "");
             setIdProofType(staff.idProofType || "AADHAAR");
             setIdProofNumber(staff.idProofNumber || "");
             setNotes(staff.notes || "");
@@ -165,8 +164,8 @@ export default function EditStaff() {
           setEmergencyContact(staff.emergencyContact);
           setFacilityId(staff.facilityId);
           setStatus(staff.status);
-          setAvatar((staff as any).profilePhotoUrl || staff.avatar || "https://i.pravatar.cc/150?u=staff");
-          setAvatarPreview((staff as any).profilePhotoUrl || staff.avatar || "https://i.pravatar.cc/150?u=staff");
+          setAvatar((staff as any).photoUrl || (staff as any).profilePhotoUrl || staff.avatar || "");
+          setAvatarPreview((staff as any).photoUrl || (staff as any).profilePhotoUrl || staff.avatar || "");
           setIdProofType((staff as any).idProofType || "AADHAAR");
           setIdProofNumber((staff as any).idProofNumber || "");
           setNotes((staff as any).notes || "");
@@ -204,11 +203,15 @@ export default function EditStaff() {
     e.preventDefault();
     if (!validate()) return;
 
-    // Generate random avatar seed if adding new and avatar is unmodified
-    const finalAvatar =
-      isAddMode && avatar === "https://i.pravatar.cc/150?u=staff"
-        ? `https://i.pravatar.cc/150?u=${encodeURIComponent(name || "staff")}`
-        : avatar;
+    let finalAvatar = avatar;
+    if (avatarFile) {
+      try {
+        finalAvatar = await uploadDocumentApi(avatarFile);
+      } catch (err: any) {
+        toast.error("Failed to upload profile photo");
+        return;
+      }
+    }
 
     let apiDept = "SECURITY";
     if (department === "Housekeeping") apiDept = "HOUSEKEEPING";
@@ -310,12 +313,7 @@ export default function EditStaff() {
             />
             <Box sx={{ position: "relative", display: "inline-block" }}>
               <Avatar
-                src={
-                  avatarPreview || 
-                  (avatar === "https://i.pravatar.cc/150?u=staff" && isAddMode
-                    ? "https://img.icons8.com/color/150/user-male-circle.png"
-                    : avatar)
-                }
+                src={getFileUrl(avatarPreview || avatar)}
                 sx={{
                   width: 120,
                   height: 120,

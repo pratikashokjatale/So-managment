@@ -23,6 +23,7 @@ import { getUsersApi, updateUserApi } from "@/apis/user";
 import { getTowers, getFlats } from "@/utils/setupStore";
 import { toast } from "react-hot-toast";
 import AddResident from "./AddResident";
+import { getFileUrl } from "@/utils/file";
 
 
 
@@ -245,7 +246,7 @@ export default function GetResident() {
                 label: 'Resident',
                 render: (row) => (
                   <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                    <Avatar src={row.profilePhotoUrl || row.avatar || `https://i.pravatar.cc/150?u=${row.id}`} sx={{ width: 32, height: 32 }} />
+                    <Avatar src={getFileUrl(row.photoUrl || row.profilePhotoUrl || row.avatar)} sx={{ width: 32, height: 32 }} />
                     <Box>
                       <Typography variant="body2" fontWeight="700">{row.name}</Typography>
                       <Typography variant="caption" color="text.secondary">{row.phone || row.email}</Typography>

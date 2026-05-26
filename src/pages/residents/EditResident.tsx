@@ -17,7 +17,9 @@ import { getProjects, getTowers, getFlats } from "@/utils/setupStore";
 import type { Project, Tower, Flat } from "@/utils/setupStore";
 import { getCachedProjects, getCachedTowers, getCachedFlats } from "@/utils/apiCache";
 import { getUserDetailsApi, updateUserApi } from "@/apis/user";
+import { uploadDocumentApi } from "@/apis/document";
 import { toast } from "react-hot-toast";
+import { getFileUrl } from "@/utils/file";
 
 export default function EditResident() {
   const navigate = useNavigate();
@@ -101,7 +103,7 @@ export default function EditResident() {
         membership: "Active",
         cardNo: user.cardNo || `CMR-${user.id?.substring(0, 6).toUpperCase()}`,
         status: user.status || "ACTIVE",
-        avatar: user.avatar || `https://i.pravatar.cc/150?u=${user.id}`,
+        avatar: user.photoUrl || user.profilePhotoUrl || user.avatar || "",
       });
 
       if (user.flat) {
@@ -135,10 +137,23 @@ export default function EditResident() {
         membership: "Active",
         cardNo: "CMR10101",
         status: "ACTIVE",
-        avatar: "https://i.pravatar.cc/150?u=1",
+        avatar: "",
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      try {
+        const url = await uploadDocumentApi(file);
+        setFormData(prev => ({ ...prev, avatar: url }));
+        toast.success("Profile photo uploaded successfully");
+      } catch (err: any) {
+        toast.error(err?.message || "Failed to upload photo");
+      }
     }
   };
 
@@ -188,6 +203,7 @@ export default function EditResident() {
         phone: formData.phone.trim(),
         flatId: flatId || undefined,
         status: formData.status,
+        profilePhotoUrl: formData.avatar || undefined,
       });
       toast.success("Resident details updated successfully");
       navigate("/residents");
@@ -230,7 +246,7 @@ export default function EditResident() {
         >
           <Box sx={{ position: "relative" }}>
             <Avatar
-              src={formData.avatar}
+              src={getFileUrl(formData.avatar)}
               sx={{
                 width: 100,
                 height: 100,
@@ -239,6 +255,7 @@ export default function EditResident() {
               }}
             />
             <IconButton
+              component="label"
               sx={{
                 position: "absolute",
                 bottom: 0,
@@ -251,6 +268,12 @@ export default function EditResident() {
               size="small"
             >
               <PhotoCameraIcon fontSize="small" />
+              <input
+                type="file"
+                hidden
+                accept="image/*"
+                onChange={handlePhotoUpload}
+              />
             </IconButton>
           </Box>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>

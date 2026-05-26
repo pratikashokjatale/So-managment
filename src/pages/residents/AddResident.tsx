@@ -60,6 +60,7 @@ interface FamilyMember {
   vcard?: string;
   documentFile?: File | null;
   documentType?: string;
+  dateOfBirth?: string;
 }
 
 const AADHAAR_URL = "";
@@ -103,7 +104,8 @@ export default function AddResident({
     pan: "",
     vcard: "",
     documentFile: null as File | null,
-    documentType: "AADHAAR_CARD",
+    documentType: "AADHAAR",
+    dateOfBirth: "",
   });
 
   const [isFamilyDialogOpen, setIsFamilyDialogOpen] = useState(false);
@@ -240,7 +242,8 @@ export default function AddResident({
         pan: "",
         vcard: "",
         documentFile: null,
-        documentType: "AADHAAR_CARD",
+        documentType: "AADHAAR",
+        dateOfBirth: "",
       });
       setIsFamilyDialogOpen(false);
     } else {
@@ -360,7 +363,11 @@ export default function AddResident({
               name: member.name,
               relationship: relationshipUpper,
               phone: member.mobile || undefined,
+              email: member.email || undefined,
+              idType: member.documentType || (member.aadhaar ? "AADHAAR" : member.pan ? "PAN" : undefined),
+              idNumber: member.aadhaar || member.pan || undefined,
               accessLevel: "FULL",
+              dateOfBirth: member.dateOfBirth || undefined,
             });
             const famId = famRes?.data?.id || famRes?.id;
             
@@ -368,9 +375,9 @@ export default function AddResident({
               try {
                 const docUrl = await uploadDocumentApi(member.documentFile);
                 await uploadFamilyDocumentApi(userId, famId, {
-                  documentType: member.documentType || "AADHAAR_CARD",
+                  documentType: member.documentType || "AADHAAR",
                   documentCategory: "IDENTITY_PROOF",
-                  title: member.documentType === "PAN_CARD" ? "PAN Card" : member.documentType === "PASSPORT" ? "Passport" : member.documentType === "DRIVING_LICENSE" ? "Driving License" : "Aadhaar Card",
+                  title: member.documentType === "PAN" ? "PAN Card" : member.documentType === "PASSPORT" ? "Passport" : member.documentType === "DRIVING_LICENSE" ? "Driving License" : "Aadhaar Card",
                   photoUrl: docUrl,
                   photoFileName: member.documentFile.name,
                   photoSize: member.documentFile.size,
@@ -1335,6 +1342,17 @@ export default function AddResident({
             />
             <TextField
               fullWidth
+              type="date"
+              label="Date of Birth (Optional)"
+              InputLabelProps={{ shrink: true }}
+              value={newMember.dateOfBirth}
+              onChange={(e) =>
+                setNewMember({ ...newMember, dateOfBirth: e.target.value })
+              }
+              sx={{ "& fieldset": { borderRadius: "10px" } }}
+            />
+            <TextField
+              fullWidth
               select
               label="Gender (Optional)"
               value={newMember.gender}
@@ -1389,8 +1407,8 @@ export default function AddResident({
                   onChange={(e) => setNewMember({ ...newMember, documentType: e.target.value })}
                   sx={{ width: 200, "& fieldset": { borderRadius: "10px" } }}
                 >
-                  <MenuItem value="AADHAAR_CARD">Aadhaar Card</MenuItem>
-                  <MenuItem value="PAN_CARD">PAN Card</MenuItem>
+                  <MenuItem value="AADHAAR">Aadhaar Card</MenuItem>
+                  <MenuItem value="PAN">PAN Card</MenuItem>
                   <MenuItem value="PASSPORT">Passport</MenuItem>
                   <MenuItem value="DRIVING_LICENSE">Driving License</MenuItem>
                 </TextField>

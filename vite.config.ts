@@ -10,4 +10,12 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  server: {
+    proxy: {
+      '/upload': {
+        target: 'http://72.62.227.125:3002',
+        changeOrigin: true,
+      },
+    },
+  },
 })

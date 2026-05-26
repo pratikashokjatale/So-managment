@@ -25,8 +25,9 @@ import ResidentAmenities from './components/ResidentAmenities';
 import bannerImg from '../../assets/marbella-banner.png';
 import BackButton from '@/components/BackButton';
 import { getUserDetailsApi } from '@/apis/user';
-import { deleteFamilyMemberApi, updateFamilyMemberApi } from '@/apis/family';
+import { deleteFamilyMemberApi, updateFamilyMemberApi, createFamilyMemberApi } from '@/apis/family';
 import { toast } from 'react-hot-toast';
+import { getFileUrl } from '@/utils/file';
 
 const mockBookings = [
   { id: 101, activity: 'Squash Court', slots: '5:00 PM - 7:00 PM (2 Slots)', date: 'May 18, 2024', amount: '₹400.00', status: 'Confirmed' },
@@ -54,8 +55,13 @@ export default function ResidentDetails() {
   const [editForm, setEditForm] = useState({
     name: '',
     relationship: 'SPOUSE',
+    phone: '',
+    email: '',
+    idType: '',
+    idNumber: '',
     status: 'ACTIVE',
-    accessLevel: 'FULL'
+    accessLevel: 'FULL',
+    dateOfBirth: ''
   });
   const [updatingMember, setUpdatingMember] = useState(false);
 
@@ -111,27 +117,66 @@ export default function ResidentDetails() {
     setEditForm({
       name: member.name || '',
       relationship: member.relationship || 'SPOUSE',
+      phone: member.phone || '',
+      email: member.email || '',
+      idType: member.idType || '',
+      idNumber: member.idNumber || '',
       status: member.status || 'ACTIVE',
-      accessLevel: member.accessLevel || 'FULL'
+      accessLevel: member.accessLevel || 'FULL',
+      dateOfBirth: member.dateOfBirth ? member.dateOfBirth.split('T')[0] : ''
     });
     setEditModalOpen(true);
   };
 
-  const handleUpdateFamilyMember = async () => {
-    if (!selectedMember) return;
+  const handleOpenAddModal = () => {
+    setSelectedMember(null);
+    setEditForm({
+      name: '',
+      relationship: 'SPOUSE',
+      phone: '',
+      email: '',
+      idType: '',
+      idNumber: '',
+      status: 'ACTIVE',
+      accessLevel: 'FULL',
+      dateOfBirth: ''
+    });
+    setEditModalOpen(true);
+  };
+
+  const handleSaveFamilyMember = async () => {
     if (!editForm.name.trim()) {
       toast.error("Name is required");
       return;
     }
     setUpdatingMember(true);
     try {
-      await updateFamilyMemberApi(selectedMember.id, {
-        name: editForm.name.trim(),
-        relationship: editForm.relationship,
-        status: editForm.status,
-        accessLevel: editForm.accessLevel
-      });
-      toast.success("Family member details updated successfully");
+      if (selectedMember) {
+        await updateFamilyMemberApi(selectedMember.id, {
+          name: editForm.name.trim(),
+          relationship: editForm.relationship,
+          phone: editForm.phone.trim() || undefined,
+          email: editForm.email.trim() || undefined,
+          idType: editForm.idType || undefined,
+          idNumber: editForm.idNumber.trim() || undefined,
+          status: editForm.status,
+          accessLevel: editForm.accessLevel,
+          dateOfBirth: editForm.dateOfBirth || undefined
+        });
+        toast.success("Family member details updated successfully");
+      } else {
+        await createFamilyMemberApi(resident.id, {
+          name: editForm.name.trim(),
+          relationship: editForm.relationship,
+          phone: editForm.phone.trim() || undefined,
+          email: editForm.email.trim() || undefined,
+          idType: editForm.idType || undefined,
+          idNumber: editForm.idNumber.trim() || undefined,
+          accessLevel: editForm.accessLevel,
+          dateOfBirth: editForm.dateOfBirth || undefined
+        });
+        toast.success("Family member enrolled successfully");
+      }
       setEditModalOpen(false);
       fetchDetails();
     } catch (error: any) {
@@ -202,7 +247,7 @@ export default function ResidentDetails() {
         <Box sx={{ px: { xs: 2, md: 6 }, mt: -6, position: 'relative', zIndex: 3 }}>
           <Stack direction="row" alignItems="flex-end" spacing={4}>
             <Avatar 
-              src={resident.profilePhotoUrl || resident.avatar || `https://i.pravatar.cc/150?u=${resident.id}`} 
+              src={getFileUrl(resident.photoUrl || resident.profilePhotoUrl || resident.avatar)} 
               sx={{ 
                 width: 140, height: 140, 
                 border: '6px solid #f8fafc', 
@@ -350,7 +395,7 @@ export default function ResidentDetails() {
               <Button 
                 variant="contained" 
                 startIcon={<AddIcon />} 
-                onClick={() => navigate(`/residents/edit/${resident.id}`)}
+                onClick={handleOpenAddModal}
                 sx={{ bgcolor: '#002855', borderRadius: '12px', fontWeight: 800, textTransform: 'none' }}
               >
                 Enroll Member
@@ -397,12 +442,28 @@ export default function ResidentDetails() {
                         <Typography variant="body2" fontWeight="700" color="text.primary">{m.phone || m.mobile || 'N/A'}</Typography>
                       </Box>
                       <Box>
+                        <Typography variant="caption" color="#94a3b8" fontWeight="800" sx={{ display: 'block' }}>EMAIL</Typography>
+                        <Typography variant="body2" fontWeight="700" color="text.primary">{m.email || 'N/A'}</Typography>
+                      </Box>
+                      <Box>
+                        <Typography variant="caption" color="#94a3b8" fontWeight="800" sx={{ display: 'block' }}>ID PROOF TYPE</Typography>
+                        <Typography variant="body2" fontWeight="700" color="text.primary">{m.idType ? m.idType.replace('_', ' ') : 'N/A'}</Typography>
+                      </Box>
+                      <Box>
+                        <Typography variant="caption" color="#94a3b8" fontWeight="800" sx={{ display: 'block' }}>ID NUMBER</Typography>
+                        <Typography variant="body2" fontWeight="700" color="text.primary">{m.idNumber || 'N/A'}</Typography>
+                      </Box>
+                      <Box>
                         <Typography variant="caption" color="#94a3b8" fontWeight="800" sx={{ display: 'block' }}>ACCESS CARD / VCARD</Typography>
                         <Typography variant="body2" fontWeight="700" color="text.primary">{m.vcard !== 'N/A' && m.vcard ? m.vcard : 'Not Assigned'}</Typography>
                       </Box>
                       <Box>
                         <Typography variant="caption" color="#94a3b8" fontWeight="800" sx={{ display: 'block' }}>ACCESS LEVEL</Typography>
                         <Typography variant="body2" fontWeight="700" color="text.primary">{m.accessLevel || 'FULL'}</Typography>
+                      </Box>
+                      <Box>
+                        <Typography variant="caption" color="#94a3b8" fontWeight="800" sx={{ display: 'block' }}>DATE OF BIRTH</Typography>
+                        <Typography variant="body2" fontWeight="700" color="text.primary">{m.dateOfBirth ? m.dateOfBirth.split('T')[0] : 'N/A'}</Typography>
                       </Box>
                       <Box>
                         <Typography variant="caption" color="#94a3b8" fontWeight="800" sx={{ display: 'block' }}>STATUS</Typography>
@@ -566,7 +627,7 @@ export default function ResidentDetails() {
       >
         <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>
           <Typography variant="h6" fontWeight="900" color="#002855">
-            Edit Family Member
+            {selectedMember ? "Edit Family Member" : "Enroll Family Member"}
           </Typography>
           <IconButton onClick={() => setEditModalOpen(false)}>
             <CloseIcon />
@@ -597,6 +658,50 @@ export default function ResidentDetails() {
               <MenuItem value="IN_LAW">In Law</MenuItem>
               <MenuItem value="OTHER">Other</MenuItem>
             </TextField>
+            <TextField
+              label="Mobile Phone"
+              value={editForm.phone}
+              onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+              fullWidth
+              variant="outlined"
+            />
+            <TextField
+              label="Email Address"
+              value={editForm.email}
+              onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+              fullWidth
+              variant="outlined"
+            />
+            <TextField
+              type="date"
+              label="Date of Birth"
+              value={editForm.dateOfBirth}
+              onChange={(e) => setEditForm({ ...editForm, dateOfBirth: e.target.value })}
+              fullWidth
+              variant="outlined"
+              InputLabelProps={{ shrink: true }}
+            />
+            <TextField
+              select
+              label="ID Proof Type"
+              value={editForm.idType}
+              onChange={(e) => setEditForm({ ...editForm, idType: e.target.value })}
+              fullWidth
+              variant="outlined"
+            >
+              <MenuItem value="">None</MenuItem>
+              <MenuItem value="AADHAAR">Aadhaar Card</MenuItem>
+              <MenuItem value="PAN">PAN Card</MenuItem>
+              <MenuItem value="PASSPORT">Passport</MenuItem>
+              <MenuItem value="DRIVING_LICENSE">Driving License</MenuItem>
+            </TextField>
+            <TextField
+              label="ID Number"
+              value={editForm.idNumber}
+              onChange={(e) => setEditForm({ ...editForm, idNumber: e.target.value })}
+              fullWidth
+              variant="outlined"
+            />
             <TextField
               select
               label="Access Level"
@@ -631,7 +736,7 @@ export default function ResidentDetails() {
             Cancel
           </Button>
           <Button 
-            onClick={handleUpdateFamilyMember} 
+            onClick={handleSaveFamilyMember} 
             variant="contained"
             disabled={updatingMember}
             sx={{ bgcolor: '#002855', borderRadius: '10px', textTransform: 'none', fontWeight: 800 }}
