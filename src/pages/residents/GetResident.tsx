@@ -2,38 +2,27 @@ import { useState, useEffect } from "react";
 import {
   Box,
   Typography,
-  Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Avatar,
   IconButton,
   Select,
   MenuItem,
-  Breadcrumbs,
-  Link,
   Switch,
-  Tabs,
-  Tab,
-  CircularProgress,
   Chip
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import DownloadIcon from "@mui/icons-material/Download";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import MoreVertOutlinedIcon from "@mui/icons-material/MoreVertOutlined";
 
-import Search from "../../components/Search";
-import Pagination from "../../components/Pagination";
+import PageHeader from "@/components/PageHeader";
+import PageToolbar from "@/components/PageToolbar";
+import DataTable from "@/components/DataTable";
 import ResidentRequests from "./components/ResidentRequests";
 import RejectedRequests from "./components/RejectedRequests";
 import { getUsersApi, updateUserApi } from "@/apis/user";
 import { getTowers, getFlats } from "@/utils/setupStore";
 import { toast } from "react-hot-toast";
+import AddResident from "./AddResident";
 
 
 
@@ -44,12 +33,12 @@ export default function GetResident() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const [statusFilter, setStatusFilter] = useState("Active");
   const [roleFilter, setRoleFilter] = useState("ALL");
   const [aptFilter, setAptFilter] = useState("All Apartments");
   const [membershipFilter, setMembershipFilter] = useState("All Memberships");
   const [cardFilter, setCardFilter] = useState("All Cards");
   const [tabValue, setTabValue] = useState(0);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   // API Integration States
   const [residents, setResidents] = useState<any[]>([]);
@@ -98,16 +87,12 @@ export default function GetResident() {
   const fetchResidents = async () => {
     setLoading(true);
     try {
-      let statusParam: string | undefined = undefined;
-      if (statusFilter === "Active") statusParam = "ACTIVE";
-      else if (statusFilter === "Inactive") statusParam = "INACTIVE";
-
       const res = await getUsersApi({
         page,
         limit: rowsPerPage,
         search: searchQuery || undefined,
-        role: roleFilter === "ALL" ? undefined : roleFilter,
-        status: statusParam,
+        role: "RESIDENT",
+        status: "ACTIVE",
       });
 
       let list: any[] = [];
@@ -147,7 +132,7 @@ export default function GetResident() {
     if (tabValue === 0) {
       fetchResidents();
     }
-  }, [page, rowsPerPage, searchQuery, tabValue, statusFilter, roleFilter]);
+  }, [page, rowsPerPage, searchQuery, tabValue]);
 
   const handleStatusToggle = async (id: string, currentStatus: string) => {
     // Only proceed if it is a real DB user (non-mock)
@@ -183,413 +168,186 @@ export default function GetResident() {
         borderRadius: "12px",
       }}
     >
-      <Box sx={{ mb: 4 }}>
-        <Typography
-          variant="h4"
-          fontWeight="bold"
-          sx={{ mb: 1, color: "#002855" }}
-        >
-          Residents
-        </Typography>
-        <Breadcrumbs separator=">" aria-label="breadcrumb">
-          <Link
-            underline="hover"
-            color="inherit"
-            onClick={() => navigate("/")}
-            sx={{ cursor: "pointer" }}
-          >
-            Dashboard
-          </Link>
-          <Typography color="text.primary" fontWeight="600">
-            Residents
-          </Typography>
-        </Breadcrumbs>
-      </Box>
-
-      <Tabs
-        value={tabValue}
-        onChange={handleTabChange}
-        sx={{
-          mb: 4,
-          borderBottom: "1px solid #f1f5f9",
-          "& .MuiTab-root": {
-            textTransform: "none",
-            fontWeight: 800,
-            fontSize: "0.95rem",
-            minWidth: 120,
+      <PageHeader
+        title="Residents"
+        breadcrumbs={[{ label: 'Dashboard', link: '/' }, { label: 'Residents' }]}
+        currentTab={tabValue}
+        onTabChange={handleTabChange}
+        tabs={[
+          {
+            label: (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                Active Residents
+                {activeCount > 0 && <Chip label={activeCount} size="small" sx={{ height: 18, fontSize: '0.7rem', fontWeight: 800, bgcolor: '#e0f2fe', color: '#0369a1' }} />}
+              </Box>
+            ),
+            value: 0
           },
-          "& .Mui-selected": { color: "#0047b3 !important" },
-          "& .MuiTabs-indicator": { backgroundColor: "#0047b3", height: 3 },
-        }}
-      >
-        <Tab
-          label={
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              Active Residents
-              {activeCount > 0 && <Chip label={activeCount} size="small" sx={{ height: 18, fontSize: '0.7rem', fontWeight: 800, bgcolor: '#e0f2fe', color: '#0369a1' }} />}
-            </Box>
+          {
+            label: (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                Enrollment Requests
+                {pendingCount > 0 && <Chip label={pendingCount} size="small" color="warning" sx={{ height: 18, fontSize: '0.7rem', fontWeight: 800 }} />}
+              </Box>
+            ),
+            value: 1
+          },
+          {
+            label: (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                Rejected Requests
+                {rejectedCount > 0 && <Chip label={rejectedCount} size="small" color="error" sx={{ height: 18, fontSize: '0.7rem', fontWeight: 800 }} />}
+              </Box>
+            ),
+            value: 2
           }
-        />
-        <Tab
-          label={
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              Enrollment Requests
-              {pendingCount > 0 && <Chip label={pendingCount} size="small" color="warning" sx={{ height: 18, fontSize: '0.7rem', fontWeight: 800 }} />}
-            </Box>
-          }
-        />
-        <Tab
-          label={
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              Rejected Requests
-              {rejectedCount > 0 && <Chip label={rejectedCount} size="small" color="error" sx={{ height: 18, fontSize: '0.7rem', fontWeight: 800 }} />}
-            </Box>
-          }
-        />
-      </Tabs>
+        ]}
+      />
 
       {tabValue === 0 && (
         <>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              mb: 3,
-              flexWrap: "wrap",
-              gap: 2,
-            }}
-          >
-            <Search
-              placeholder="Search by name, phone, email..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              sx={{
-                width: { xs: "100%", md: 350 },
-                "& fieldset": { borderRadius: "8px" },
-              }}
-            />
+          <PageToolbar
+            searchPlaceholder="Search by name, phone, email..."
+            searchValue={searchQuery}
+            onSearchChange={setSearchQuery}
+            onAddClick={() => setIsAddModalOpen(true)}
+            addButtonLabel="Add Resident"
+            showExport={true}
+            filters={
+              <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", p: 1, bgcolor: "#f8fafc", borderRadius: "12px", width: "100%" }}>
+                <Select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value as string)} sx={filterSelectSx}>
+                  <MenuItem value="ALL">All Roles</MenuItem>
+                  <MenuItem value="RESIDENT">Resident</MenuItem>
+                  <MenuItem value="GUEST">Guest</MenuItem>
+                  <MenuItem value="STAFF">Staff</MenuItem>
+                  <MenuItem value="SECURITY">Security</MenuItem>
+                  <MenuItem value="MANAGER">Manager</MenuItem>
+                  <MenuItem value="ADMIN">Admin</MenuItem>
+                  <MenuItem value="SUPER_ADMIN">Super Admin</MenuItem>
+                </Select>
+                <Select value={aptFilter} onChange={(e) => setAptFilter(e.target.value as string)} sx={filterSelectSx}>
+                  <MenuItem value="All Apartments">All Apartments</MenuItem>
+                </Select>
+                <Select value={membershipFilter} onChange={(e) => setMembershipFilter(e.target.value as string)} sx={filterSelectSx}>
+                  <MenuItem value="All Memberships">All Memberships</MenuItem>
+                </Select>
+                <Select value={cardFilter} onChange={(e) => setCardFilter(e.target.value as string)} sx={filterSelectSx}>
+                  <MenuItem value="All Cards">All Cards</MenuItem>
+                </Select>
+              </Box>
+            }
+          />
 
-            <Box sx={{ display: "flex", gap: 2 }}>
-              <Button
-                variant="text"
-                startIcon={<DownloadIcon />}
-                sx={{
-                  color: "text.primary",
-                  fontWeight: 600,
-                  textTransform: "none",
-                }}
-              >
-                Export
-              </Button>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => navigate("/residents/add")}
-                sx={{
-                  borderRadius: "8px",
-                  textTransform: "none",
-                  px: 3,
-                  fontWeight: 600,
-                  boxShadow: "none",
-                }}
-              >
-                Add Resident
-              </Button>
-            </Box>
-          </Box>
-
-          <Box
-            sx={{
-              display: "flex",
-              gap: 2,
-              mb: 3,
-              flexWrap: "wrap",
-              p: 1,
-              bgcolor: "#f8fafc",
-              borderRadius: "12px",
-            }}
-          >
-            <Select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value as string)}
-              sx={filterSelectSx}
-            >
-              <MenuItem value="All Status">All Status</MenuItem>
-              <MenuItem value="Active">Active</MenuItem>
-              <MenuItem value="Inactive">Inactive</MenuItem>
-            </Select>
-            <Select
-              value={roleFilter}
-              onChange={(e) => setRoleFilter(e.target.value as string)}
-              sx={filterSelectSx}
-            >
-              <MenuItem value="ALL">All Roles</MenuItem>
-              <MenuItem value="RESIDENT">Resident</MenuItem>
-              <MenuItem value="GUEST">Guest</MenuItem>
-              <MenuItem value="STAFF">Staff</MenuItem>
-              <MenuItem value="SECURITY">Security</MenuItem>
-              <MenuItem value="MANAGER">Manager</MenuItem>
-              <MenuItem value="ADMIN">Admin</MenuItem>
-              <MenuItem value="SUPER_ADMIN">Super Admin</MenuItem>
-            </Select>
-            <Select
-              value={aptFilter}
-              onChange={(e) => setAptFilter(e.target.value as string)}
-              sx={filterSelectSx}
-            >
-              <MenuItem value="All Apartments">All Apartments</MenuItem>
-            </Select>
-            <Select
-              value={membershipFilter}
-              onChange={(e) => setMembershipFilter(e.target.value as string)}
-              sx={filterSelectSx}
-            >
-              <MenuItem value="All Memberships">All Memberships</MenuItem>
-            </Select>
-            <Select
-              value={cardFilter}
-              onChange={(e) => setCardFilter(e.target.value as string)}
-              sx={filterSelectSx}
-            >
-              <MenuItem value="All Cards">All Cards</MenuItem>
-            </Select>
-          </Box>
-
-          {loading ? (
-            <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
-              <CircularProgress />
-            </Box>
-          ) : (
-            <TableContainer
-              sx={{
-                overflowX: "auto",
-                border: "1px solid #f1f5f9",
-                borderRadius: "12px",
-              }}
-            >
-              <Table sx={{ minWidth: 800 }} aria-label="residents table">
-                <TableHead sx={{ bgcolor: "#f8fafc" }}>
-                  <TableRow>
-                    <TableCell
-                      sx={{ color: "text.secondary", fontWeight: 700 }}
-                    >
-                      Resident
-                    </TableCell>
-                    <TableCell
-                      sx={{ color: "text.secondary", fontWeight: 700 }}
-                    >
-                      Tower
-                    </TableCell>
-                    <TableCell
-                      sx={{ color: "text.secondary", fontWeight: 700 }}
-                    >
-                      Apartment / Flat
-                    </TableCell>
-                    <TableCell
-                      sx={{ color: "text.secondary", fontWeight: 700 }}
-                    >
-                      Role
-                    </TableCell>
-                    <TableCell
-                      sx={{ color: "text.secondary", fontWeight: 700 }}
-                    >
-                      Card Type
-                    </TableCell>
-                    <TableCell
-                      sx={{ color: "text.secondary", fontWeight: 700 }}
-                    >
-                      Status
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        color: "text.secondary",
-                        fontWeight: 700,
-                        textAlign: "right",
-                      }}
-                    >
-                      Actions
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {residents.map((row) => {
-                    const flat = row.flat || getFlats().find((f) => f.id === row.flatId);
-                    const tower = getTowers().find((t) => t.id === flat?.towerId);
-                    const towerName = row.towerName || flat?.tower?.name || flat?.towerName || tower?.name || (flat?.towerId ? "Tower " + flat.towerId.slice(0, 4).toUpperCase() : "N/A");
-                    const flatNumber =
-                      flat?.flatNumber || flat?.number || row.flatNumber || "N/A";
-                    const isMock = row.id.startsWith("mock-");
-
-                    return (
-                      <TableRow
-                        key={row.id}
-                        hover
-                        sx={{
-                          "&:last-child td, &:last-child th": { border: 0 },
-                        }}
-                      >
-                        <TableCell
-                          component="th"
-                          scope="row"
-                          sx={{ borderBottomColor: "#f0f0f0" }}
-                        >
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 2,
-                            }}
-                          >
-                            <Avatar
-                              src={
-                                row.avatar ||
-                                `https://i.pravatar.cc/150?u=${row.id}`
-                              }
-                              sx={{ width: 32, height: 32 }}
-                            />
-                            <Box>
-                              <Typography variant="body2" fontWeight="700">
-                                {row.name}
-                              </Typography>
-                              <Typography
-                                variant="caption"
-                                color="text.secondary"
-                              >
-                                {row.phone || row.email}
-                              </Typography>
-                            </Box>
-                          </Box>
-                        </TableCell>
-                        <TableCell sx={{ borderBottomColor: "#f0f0f0" }}>
-                          <Typography
-                            variant="body2"
-                            fontWeight="600"
-                            color="#002855"
-                          >
-                            {isMock ? row.tower : towerName}
-                          </Typography>
-                        </TableCell>
-                        <TableCell sx={{ borderBottomColor: "#f0f0f0" }}>
-                          <Typography variant="body2" fontWeight="600">
-                            {isMock ? row.apartment : `Flat ${flatNumber}`}
-                          </Typography>
-                        </TableCell>
-                        <TableCell sx={{ borderBottomColor: "#f0f0f0" }}>
-                          <Typography
-                            variant="body2"
-                            fontWeight="600"
-                            color="text.secondary"
-                          >
-                            {row.role}
-                          </Typography>
-                        </TableCell>
-                        <TableCell sx={{ borderBottomColor: "#f0f0f0" }}>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 1,
-                            }}
-                          >
-                            <Box
-                              sx={{
-                                width: 12,
-                                height: 12,
-                                borderRadius: "50%",
-                                bgcolor: "#1d4ed8",
-                                border: "1px solid #cbd5e1",
-                              }}
-                            />
-                            <Typography variant="body2" fontWeight="600">
-                              Blue Card
-                            </Typography>
-                          </Box>
-                        </TableCell>
-                        <TableCell sx={{ borderBottomColor: "#f0f0f0" }}>
-                          <Switch
-                            checked={
-                              row.status?.toUpperCase() === "ACTIVE" ||
-                              row.status?.toLowerCase() === "active"
-                            }
-                            onChange={() =>
-                              handleStatusToggle(row.id, row.status)
-                            }
-                            disabled={isMock}
-                            size="small"
-                            color="success"
-                            sx={{
-                              "& .MuiSwitch-switchBase.Mui-checked": {
-                                color: "#4caf50",
-                              },
-                              "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track":
-                                { backgroundColor: "#4caf50" },
-                            }}
-                          />
-                        </TableCell>
-                        <TableCell
-                          align="right"
-                          sx={{ borderBottomColor: "#f0f0f0" }}
-                        >
-                          <IconButton
-                            size="small"
-                            sx={{
-                              color: "primary.main",
-                              bgcolor: "#eff6ff",
-                              mr: 1,
-                            }}
-                            onClick={() => navigate(`/residents/${row.id}`)}
-                          >
-                            <VisibilityOutlinedIcon fontSize="small" />
-                          </IconButton>
-                          <IconButton
-                            size="small"
-                            sx={{ color: "text.secondary" }}
-                            onClick={() =>
-                              navigate(`/residents/edit/${row.id}`)
-                            }
-                          >
-                            <EditOutlinedIcon fontSize="small" />
-                          </IconButton>
-                          <IconButton
-                            size="small"
-                            sx={{ color: "text.secondary" }}
-                          >
-                            <MoreVertOutlinedIcon fontSize="small" />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                  {residents.length === 0 && (
-                    <TableRow>
-                      <TableCell colSpan={7} align="center" sx={{ py: 6 }}>
-                        <Typography variant="body2" color="text.secondary">
-                          No residents found.
-                        </Typography>
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          )}
-
-          <Box sx={{ mt: 2 }}>
-            <Pagination
-              page={page}
-              totalResults={totalCount}
-              rowsPerPage={rowsPerPage}
-              onPageChange={handlePageChange}
-              onRowsPerPageChange={handleRowsPerPageChange}
-            />
-          </Box>
+          <DataTable
+            columns={[
+              {
+                id: 'resident',
+                label: 'Resident',
+                render: (row) => (
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                    <Avatar src={row.profilePhotoUrl || row.avatar || `https://i.pravatar.cc/150?u=${row.id}`} sx={{ width: 32, height: 32 }} />
+                    <Box>
+                      <Typography variant="body2" fontWeight="700">{row.name}</Typography>
+                      <Typography variant="caption" color="text.secondary">{row.phone || row.email}</Typography>
+                    </Box>
+                  </Box>
+                )
+              },
+              {
+                id: 'tower',
+                label: 'Tower',
+                render: (row) => {
+                  const flat = row.flat || getFlats().find((f) => f.id === row.flatId);
+                  const tower = getTowers().find((t) => t.id === flat?.towerId);
+                  const towerName = row.towerName || flat?.tower?.name || flat?.towerName || tower?.name || (flat?.towerId ? "Tower " + flat.towerId.slice(0, 4).toUpperCase() : "N/A");
+                  return <Typography variant="body2" fontWeight="600" color="#002855">{row.id.startsWith("mock-") ? row.tower : towerName}</Typography>;
+                }
+              },
+              {
+                id: 'apartment',
+                label: 'Apartment / Flat',
+                render: (row) => {
+                  const flat = row.flat || getFlats().find((f) => f.id === row.flatId);
+                  const flatNumber = flat?.flatNumber || flat?.number || row.flatNumber || "N/A";
+                  return <Typography variant="body2" fontWeight="600">{row.id.startsWith("mock-") ? row.apartment : `Flat ${flatNumber}`}</Typography>;
+                }
+              },
+              {
+                id: 'role',
+                label: 'Role',
+                render: (row) => <Typography variant="body2" fontWeight="600" color="text.secondary">{row.role}</Typography>
+              },
+              {
+                id: 'cardType',
+                label: 'Card Type',
+                render: () => (
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <Box sx={{ width: 12, height: 12, borderRadius: "50%", bgcolor: "#1d4ed8", border: "1px solid #cbd5e1" }} />
+                    <Typography variant="body2" fontWeight="600">Blue Card</Typography>
+                  </Box>
+                )
+              },
+              {
+                id: 'status',
+                label: 'Status',
+                render: (row) => (
+                  <Switch
+                    checked={row.status?.toUpperCase() === "ACTIVE" || row.status?.toLowerCase() === "active"}
+                    onChange={() => handleStatusToggle(row.id, row.status)}
+                    disabled={row.id.startsWith("mock-")}
+                    size="small"
+                    color="success"
+                    sx={{
+                      "& .MuiSwitch-switchBase.Mui-checked": { color: "#4caf50" },
+                      "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": { backgroundColor: "#4caf50" },
+                    }}
+                  />
+                )
+              },
+              {
+                id: 'actions',
+                label: 'Actions',
+                align: 'right',
+                render: (row) => (
+                  <>
+                    <IconButton size="small" sx={{ color: "primary.main", bgcolor: "#eff6ff", mr: 1 }} onClick={() => navigate(`/residents/${row.id}`)}>
+                      <VisibilityOutlinedIcon fontSize="small" />
+                    </IconButton>
+                    <IconButton size="small" sx={{ color: "text.secondary" }} onClick={() => navigate(`/residents/edit/${row.id}`)}>
+                      <EditOutlinedIcon fontSize="small" />
+                    </IconButton>
+                    <IconButton size="small" sx={{ color: "text.secondary" }}>
+                      <MoreVertOutlinedIcon fontSize="small" />
+                    </IconButton>
+                  </>
+                )
+              }
+            ]}
+            data={residents}
+            loading={loading}
+            totalCount={totalCount}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            onPageChange={handlePageChange}
+            onRowsPerPageChange={handleRowsPerPageChange}
+            emptyMessage="No residents found."
+          />
         </>
       )}
 
       {tabValue === 1 && <ResidentRequests />}
 
       {tabValue === 2 && <RejectedRequests />}
+
+      {isAddModalOpen && (
+        <AddResident 
+          open={isAddModalOpen} 
+          onClose={() => {
+            setIsAddModalOpen(false);
+            fetchResidents();
+          }} 
+        />
+      )}
     </Box>
   );
 }

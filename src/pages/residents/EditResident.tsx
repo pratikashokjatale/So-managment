@@ -4,18 +4,15 @@ import {
   Typography,
   Button,
   TextField,
-  Breadcrumbs,
-  Link,
-  Paper,
-  Avatar,
-  IconButton,
-  Divider,
   MenuItem,
   CircularProgress,
+  Divider,
+  Avatar,
+  IconButton
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
-import BackButton from "@/components/BackButton";
+import FormCard from "@/components/FormCard";
 import { getProjects, getTowers, getFlats } from "@/utils/setupStore";
 import type { Project, Tower, Flat } from "@/utils/setupStore";
 import { getCachedProjects, getCachedTowers, getCachedFlats } from "@/utils/apiCache";
@@ -217,65 +214,11 @@ export default function EditResident() {
   }
 
   return (
-    <Box
-      sx={{
-        p: { xs: 2, md: 4 },
-        bgcolor: "#ffffff",
-        minHeight: "100vh",
-        borderRadius: 2,
-      }}
+    <FormCard
+      title="Edit Resident"
+      subtitle={formData.name ? `Editing details for ${formData.name}` : "Update resident information"}
+      onBack={() => navigate("/residents")}
     >
-      {/* Header Section */}
-      <Box
-        sx={{
-          mb: 4,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <Box>
-          <Typography
-            variant="h4"
-            fontWeight="bold"
-            sx={{ color: "#002855", mb: 1 }}
-          >
-            Edit Resident
-          </Typography>
-          <Breadcrumbs separator=">" aria-label="breadcrumb">
-            <Link
-              underline="hover"
-              color="inherit"
-              onClick={() => navigate("/")}
-              sx={{ cursor: "pointer" }}
-            >
-              Dashboard
-            </Link>
-            <Link
-              underline="hover"
-              color="inherit"
-              onClick={() => navigate("/residents")}
-              sx={{ cursor: "pointer" }}
-            >
-              Residents
-            </Link>
-            <Typography color="text.primary" fontWeight="600">
-              {formData.name}
-            </Typography>
-          </Breadcrumbs>
-        </Box>
-        <BackButton to="/residents" label="Back to Residents" />
-      </Box>
-
-      {/* Form Container */}
-      <Paper
-        elevation={0}
-        sx={{
-          border: "1px solid #f0f0f0",
-          borderRadius: 4,
-          p: { xs: 3, md: 5 },
-        }}
-      >
         {/* Profile Picture Upload */}
         <Box
           sx={{
@@ -503,7 +446,6 @@ export default function EditResident() {
             )}
           </Button>
         </Box>
-      </Paper>
-    </Box>
+    </FormCard>
   );
 }

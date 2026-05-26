@@ -14,7 +14,18 @@ export interface CreateUserPayload {
   email: string;
   phone: string;
   password?: string;
-  role: string;
+  projectId?: string;
+  towerId?: string;
+  floorNumber?: string;
+  flatNumber?: string;
+  flatType?: string;
+  stayEndsAt?: string;
+  profilePhotoUrl?: string;
+  aadhaarNumber?: string;
+  aadhaarDocumentUrl?: string;
+  aadhaarDocumentFileName?: string;
+  aadhaarDocumentSize?: number;
+  role?: string;
   flatId?: string | null;
 }
 

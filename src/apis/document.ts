@@ -1,5 +1,20 @@
 import { api, handleApiError } from "@/utils/axios";
 
+export const uploadDocumentApi = async (file: File): Promise<string> => {
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+    const res = await api.post("enrollment/documents/upload", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    const url = res?.data?.data?.url || res?.data?.url || res?.data;
+    if (!url) throw new Error("Upload succeeded but no URL returned");
+    return url as string;
+  } catch (error) {
+    throw handleApiError(error);
+  }
+};
+
 export interface UploadDocumentPayload {
   documentType: string;
   documentCategory: string;

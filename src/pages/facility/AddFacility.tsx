@@ -164,7 +164,10 @@ export default function AddFacility() {
       toast.success("Facility created successfully!");
       navigate("/facility");
     } catch (err: any) {
-      const errorMsg = err?.response?.data?.message || err?.message || "Failed to create facility";
+      const errorMsg =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Failed to create facility";
       toast.error(errorMsg);
     }
   };

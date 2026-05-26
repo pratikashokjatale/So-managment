@@ -1,16 +1,14 @@
 import { useState, useEffect } from 'react';
 import {
-  Box, Typography, Button, Table, TableBody, TableCell,
-  TableContainer, TableHead, TableRow, IconButton,
-  Breadcrumbs, Link, Tabs, Tab, Avatar, Stack,
+  Box, Typography, Button, IconButton,
+  Avatar, Stack,
   Dialog, DialogTitle, DialogContent, DialogActions, TextField,
-  Chip, Tooltip, CircularProgress, Drawer, Divider, Grid
+  Chip, Tooltip, Drawer, Divider, Grid
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
-import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import CloseIcon from '@mui/icons-material/Close';
 import BadgeOutlinedIcon from '@mui/icons-material/BadgeOutlined';
 import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
@@ -19,8 +17,9 @@ import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import VerifiedOutlinedIcon from '@mui/icons-material/VerifiedOutlined';
 
-import Pagination from '../../components/Pagination';
-import Search from '@/components/Search';
+import PageHeader from '@/components/PageHeader';
+import PageToolbar from '@/components/PageToolbar';
+import DataTable from '@/components/DataTable';
 import { getGuestsApi, approveGuestApi, rejectGuestApi } from '@/apis/guest';
 import { toast } from 'react-hot-toast';
 
@@ -193,188 +192,152 @@ export default function GetGuest() {
 
   // ── render ─────────────────────────────────────────────────────────────────
   return (
-    <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: '#f8fafc', minHeight: '100vh' }}>
+    <Box sx={{ mt: 2, p: { xs: 2, md: 4 }, bgcolor: '#ffffff', minHeight: '100vh', borderRadius: '12px' }}>
 
       {/* Header */}
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" fontWeight="bold" sx={{ mb: 1, color: '#002855' }}>Guest Management</Typography>
-        <Breadcrumbs separator=">" aria-label="breadcrumb">
-          <Link underline="hover" color="inherit" onClick={() => navigate('/')} sx={{ cursor: 'pointer' }}>Dashboard</Link>
-          <Typography color="text.primary">Guests</Typography>
-        </Breadcrumbs>
-      </Box>
-
-      {/* Tabs */}
-      <Box sx={{ bgcolor: 'white', borderRadius: '16px 16px 0 0', border: '1px solid #e2e8f0', borderBottom: 'none', px: 2 }}>
-        <Tabs value={activeTab} onChange={(_e, v) => setActiveTab(v)}
-          sx={{ '& .MuiTab-root': { textTransform: 'none', fontWeight: 700, fontSize: '0.95rem' }, '& .MuiTabs-indicator': { bgcolor: '#002855' } }}>
-          <Tab
-            label={
+      <PageHeader
+        title="Guest Management"
+        breadcrumbs={[
+          { label: 'Dashboard', link: '/' },
+          { label: 'Guests' }
+        ]}
+        currentTab={activeTab}
+        onTabChange={(_e, v) => setActiveTab(v)}
+        tabs={[
+          {
+            label: (
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 Active Guests
                 {activeCount > 0 && <Chip label={activeCount} size="small" sx={{ height: 18, fontSize: '0.7rem', fontWeight: 800, bgcolor: '#e0f2fe', color: '#0369a1' }} />}
               </Box>
-            }
-          />
-          <Tab
-            label={
+            ),
+            value: 0
+          },
+          {
+            label: (
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 Guest Requests
                 {pendingCount > 0 && <Chip label={pendingCount} size="small" color="warning" sx={{ height: 18, fontSize: '0.7rem', fontWeight: 800 }} />}
               </Box>
-            }
-          />
-        </Tabs>
-      </Box>
+            ),
+            value: 1
+          }
+        ]}
+      />
 
       {/* Toolbar */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0, px: 3, py: 2, bgcolor: 'white', border: '1px solid #e2e8f0', borderTop: 'none', flexWrap: 'wrap', gap: 2 }}>
-        <Search
-          placeholder={activeTab === 0 ? 'Search active guests…' : 'Search requests…'}
-          value={searchQuery}
-          onChange={(e) => { setSearchQuery(e.target.value); setPage(1); }}
-          sx={{ width: { xs: '100%', md: 320 }, '& fieldset': { borderRadius: '10px' } }}
-        />
-        {activeTab === 0 && (
-          <Button variant="contained" startIcon={<PersonAddAltIcon />} onClick={() => navigate('/guest/add')}
-            sx={{ borderRadius: '10px', textTransform: 'none', px: 3, fontWeight: 700, bgcolor: '#002855', '&:hover': { bgcolor: '#001a3f' }, boxShadow: 'none' }}>
-            Add Guest
-          </Button>
-        )}
-      </Box>
+      <PageToolbar
+        searchPlaceholder={activeTab === 0 ? 'Search active guests…' : 'Search requests…'}
+        searchValue={searchQuery}
+        onSearchChange={(v) => { setSearchQuery(v); setPage(1); }}
+        onAddClick={activeTab === 0 ? () => navigate('/guest/add') : undefined}
+        addButtonLabel="Add Guest"
+      />
 
       {/* Table */}
-      <Box sx={{ bgcolor: 'white', borderRadius: '0 0 16px 16px', border: '1px solid #e2e8f0', borderTop: 'none', overflow: 'hidden' }}>
-        {loading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', py: 10 }}>
-            <CircularProgress size={36} sx={{ color: '#002855' }} />
-          </Box>
-        ) : (
-          <TableContainer>
-            <Table sx={{ minWidth: 820 }}>
-              <TableHead sx={{ bgcolor: '#f8fafc' }}>
-                <TableRow>
-                  <TableCell sx={{ fontWeight: 700, color: '#64748b', py: 2, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Guest</TableCell>
-                  <TableCell sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Phone</TableCell>
-                  <TableCell sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Flat</TableCell>
-                  <TableCell sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Stay Until</TableCell>
-                  <TableCell sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                    {activeTab === 0 ? 'Last Login' : 'Requested On'}
-                  </TableCell>
-                  <TableCell sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Status</TableCell>
-                  <TableCell sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px', textAlign: 'right' }}>Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {paginated.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={7} align="center" sx={{ py: 8 }}>
-                      <Typography variant="body1" color="text.secondary" fontWeight={600}>
-                        {activeTab === 0 ? 'No active guests found.' : 'No pending guest requests.'}
-                      </Typography>
-                    </TableCell>
-                  </TableRow>
-                ) : paginated.map((row) => (
-                  <TableRow key={row.id} hover sx={{ '&:last-child td': { border: 0 }, cursor: 'default' }}>
-                    {/* Guest */}
-                    <TableCell sx={{ borderBottomColor: '#f1f5f9', py: 1.5 }}>
-                      <Stack direction="row" spacing={1.5} alignItems="center">
-                        <Avatar src={row.avatar} sx={{ width: 40, height: 40, borderRadius: '12px', bgcolor: '#e0e7ff', fontSize: '0.85rem', fontWeight: 800, color: '#3730a3' }} />
-                        <Box>
-                          <Typography variant="body2" fontWeight={800} color="#002855">{row.name}</Typography>
-                          <Typography variant="caption" color="text.secondary">{row.email}</Typography>
-                        </Box>
-                      </Stack>
-                    </TableCell>
-
-                    {/* Phone */}
-                    <TableCell sx={{ borderBottomColor: '#f1f5f9' }}>
-                      <Typography variant="body2" fontWeight={600} color="text.primary">{row.phone}</Typography>
-                    </TableCell>
-
-                    {/* Flat */}
-                    <TableCell sx={{ borderBottomColor: '#f1f5f9' }}>
-                      <Chip label={row.apartment} size="small"
-                        sx={{ borderRadius: '6px', fontWeight: 700, bgcolor: '#eff6ff', color: '#1d4ed8', fontSize: '0.72rem' }} />
-                    </TableCell>
-
-                    {/* Stay Until */}
-                    <TableCell sx={{ borderBottomColor: '#f1f5f9' }}>
-                      <Box>
-                        <Typography variant="body2" fontWeight={700} color={row.isExpired ? '#ef4444' : '#002855'}>
-                          {row.stayEndsAt}
-                        </Typography>
-                        {row.isExpired && (
-                          <Typography variant="caption" color="#ef4444" fontWeight={700}>Expired</Typography>
-                        )}
-                      </Box>
-                    </TableCell>
-
-                    {/* Date */}
-                    <TableCell sx={{ borderBottomColor: '#f1f5f9' }}>
-                      <Typography variant="body2" color="text.secondary" fontWeight={600}>
-                        {activeTab === 0 ? row.lastLogin : row.createdAt}
-                      </Typography>
-                    </TableCell>
-
-                    {/* Status */}
-                    <TableCell sx={{ borderBottomColor: '#f1f5f9' }}>
-                      <StatusChip status={row.status} />
-                    </TableCell>
-
-                    {/* Actions */}
-                    <TableCell align="right" sx={{ borderBottomColor: '#f1f5f9' }}>
-                      <Stack direction="row" spacing={0.5} justifyContent="flex-end">
-                        <Tooltip title="View Details">
-                          <IconButton size="small"
-                            sx={{ color: '#002855', bgcolor: '#eff6ff', borderRadius: '8px', '&:hover': { bgcolor: '#dbeafe' } }}
-                            onClick={() => setDrawerGuest(row)}>
-                            <VisibilityOutlinedIcon fontSize="small" />
-                          </IconButton>
-                        </Tooltip>
-                        {activeTab === 1 && (
-                          <>
-                            <Tooltip title="Approve">
-                              <IconButton size="small"
-                                sx={{ color: '#047857', bgcolor: '#ecfdf5', borderRadius: '8px', '&:hover': { bgcolor: '#d1fae5' } }}
-                                onClick={() => handleApprove(row.id)}>
-                                <CheckCircleOutlineIcon fontSize="small" />
-                              </IconButton>
-                            </Tooltip>
-                            <Tooltip title="Reject">
-                              <IconButton size="small"
-                                sx={{ color: '#dc2626', bgcolor: '#fef2f2', borderRadius: '8px', '&:hover': { bgcolor: '#fee2e2' } }}
-                                onClick={() => { setSelectedGuest(row); setOpenRejectDialog(true); }}>
-                                <HighlightOffIcon fontSize="small" />
-                              </IconButton>
-                            </Tooltip>
-                          </>
-                        )}
-                      </Stack>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        )}
-      </Box>
-
-      {/* Pagination */}
-      {totalResults > 0 && (
-        <Box sx={{ mt: 2 }}>
-            <Pagination
-              page={page}
-              totalResults={totalResults}
-              rowsPerPage={rowsPerPage}
-              onPageChange={(_, p) => setPage(p)}
-              onRowsPerPageChange={(e: any) => {
-                setRowsPerPage(Number(e.target.value));
-                setPage(1);
-              }}
-              rowsPerPageOptions={[10, 25, 50]}
-            /></Box>
-      )}
+      <DataTable
+        columns={[
+          {
+            id: 'guest',
+            label: 'Guest',
+            render: (row) => (
+              <Stack direction="row" spacing={1.5} alignItems="center">
+                <Avatar src={row.avatar} sx={{ width: 40, height: 40, borderRadius: '12px', bgcolor: '#e0e7ff', fontSize: '0.85rem', fontWeight: 800, color: '#3730a3' }} />
+                <Box>
+                  <Typography variant="body2" fontWeight={800} color="#002855">{row.name}</Typography>
+                  <Typography variant="caption" color="text.secondary">{row.email}</Typography>
+                </Box>
+              </Stack>
+            )
+          },
+          {
+            id: 'phone',
+            label: 'Phone',
+            render: (row) => <Typography variant="body2" fontWeight={600} color="text.primary">{row.phone}</Typography>
+          },
+          {
+            id: 'flat',
+            label: 'Flat',
+            render: (row) => (
+              <Chip label={row.apartment} size="small"
+                sx={{ borderRadius: '6px', fontWeight: 700, bgcolor: '#eff6ff', color: '#1d4ed8', fontSize: '0.72rem' }} />
+            )
+          },
+          {
+            id: 'stayUntil',
+            label: 'Stay Until',
+            render: (row) => (
+              <Box>
+                <Typography variant="body2" fontWeight={700} color={row.isExpired ? '#ef4444' : '#002855'}>
+                  {row.stayEndsAt}
+                </Typography>
+                {row.isExpired && (
+                  <Typography variant="caption" color="#ef4444" fontWeight={700}>Expired</Typography>
+                )}
+              </Box>
+            )
+          },
+          {
+            id: 'date',
+            label: activeTab === 0 ? 'Last Login' : 'Requested On',
+            render: (row) => (
+              <Typography variant="body2" color="text.secondary" fontWeight={600}>
+                {activeTab === 0 ? row.lastLogin : row.createdAt}
+              </Typography>
+            )
+          },
+          {
+            id: 'status',
+            label: 'Status',
+            render: (row) => <StatusChip status={row.status} />
+          },
+          {
+            id: 'actions',
+            label: 'Actions',
+            align: 'right',
+            render: (row) => (
+              <Stack direction="row" spacing={0.5} justifyContent="flex-end">
+                <Tooltip title="View Details">
+                  <IconButton size="small"
+                    sx={{ color: '#002855', bgcolor: '#eff6ff', borderRadius: '8px', '&:hover': { bgcolor: '#dbeafe' } }}
+                    onClick={() => setDrawerGuest(row)}>
+                    <VisibilityOutlinedIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+                {activeTab === 1 && (
+                  <>
+                    <Tooltip title="Approve">
+                      <IconButton size="small"
+                        sx={{ color: '#047857', bgcolor: '#ecfdf5', borderRadius: '8px', '&:hover': { bgcolor: '#d1fae5' } }}
+                        onClick={() => handleApprove(row.id)}>
+                        <CheckCircleOutlineIcon fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Reject">
+                      <IconButton size="small"
+                        sx={{ color: '#dc2626', bgcolor: '#fef2f2', borderRadius: '8px', '&:hover': { bgcolor: '#fee2e2' } }}
+                        onClick={() => { setSelectedGuest(row); setOpenRejectDialog(true); }}>
+                        <HighlightOffIcon fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                  </>
+                )}
+              </Stack>
+            )
+          }
+        ]}
+        data={paginated}
+        loading={loading}
+        totalCount={totalResults}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        onPageChange={(_, p) => setPage(p)}
+        onRowsPerPageChange={(e: any) => {
+          setRowsPerPage(Number(e.target.value));
+          setPage(1);
+        }}
+        emptyMessage={activeTab === 0 ? 'No active guests found.' : 'No pending guest requests.'}
+      />
 
       {/* ── Guest Detail Drawer ── */}
       <Drawer anchor="right" open={!!drawerGuest} onClose={() => setDrawerGuest(null)}

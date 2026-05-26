@@ -17,6 +17,10 @@ import {
   Chip,
   Grid,
   CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import BackButton from "@/components/BackButton";
@@ -30,10 +34,15 @@ import {
   NavigateBefore as BeforeIcon,
   CheckCircle as SuccessIcon,
   CloudUpload as UploadIcon,
+  Close as CloseIcon,
 } from "@mui/icons-material";
-import { getCachedProjects, getCachedTowers, getCachedFlats } from "@/utils/apiCache";
+import {
+  getCachedProjects,
+  getCachedTowers,
+  getCachedFlats,
+} from "@/utils/apiCache";
 import { createUserApi } from "@/apis/user";
-import { uploadUserDocumentApi } from "@/apis/document";
+import { uploadUserDocumentApi, uploadDocumentApi, uploadFamilyDocumentApi } from "@/apis/document";
 import { createFamilyMemberApi } from "@/apis/family";
 import { toast } from "react-hot-toast";
 
@@ -44,18 +53,22 @@ interface FamilyMember {
   name: string;
   relationship: string;
   mobile: string;
+  email?: string;
   gender?: string;
   aadhaar?: string;
   pan?: string;
   vcard?: string;
+  documentFile?: File | null;
+  documentType?: string;
 }
 
-const AADHAAR_URL =
-  "/Users/pratikjatale/.gemini/antigravity/brain/c6057e1c-898f-46a0-bb20-ae0c5e641faa/aadhaar_mockup_1778944455202.png";
-const PAN_URL =
-  "/Users/pratikjatale/.gemini/antigravity/brain/c6057e1c-898f-46a0-bb20-ae0c5e641faa/pan_mockup_1778944477858.png";
+const AADHAAR_URL = "";
+const PAN_URL = "";
 
-export default function AddResident() {
+export default function AddResident({
+  open,
+  onClose,
+}: { open?: boolean; onClose?: () => void } = {}) {
   const navigate = useNavigate();
   const [activeStep, setActiveStep] = useState(0);
 
@@ -74,16 +87,26 @@ export default function AddResident() {
     role: "RESIDENT",
   });
 
+  const [aadhaarFile, setAadhaarFile] = useState<File | null>(null);
+  const [panFile, setPanFile] = useState<File | null>(null);
+  const [profilePhotoFile, setProfilePhotoFile] = useState<File | null>(null);
+  const [profilePhotoPreview, setProfilePhotoPreview] = useState<string>("");
+
   const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
   const [newMember, setNewMember] = useState({
     name: "",
     relationship: "",
     mobile: "",
+    email: "",
     gender: "",
     aadhaar: "",
     pan: "",
     vcard: "",
+    documentFile: null as File | null,
+    documentType: "AADHAAR_CARD",
   });
+
+  const [isFamilyDialogOpen, setIsFamilyDialogOpen] = useState(false);
 
   // Flat Selection Cascading States
   const [projectId, setProjectId] = useState("");
@@ -211,11 +234,15 @@ export default function AddResident() {
         name: "",
         relationship: "",
         mobile: "",
+        email: "",
         gender: "",
         aadhaar: "",
         pan: "",
         vcard: "",
+        documentFile: null,
+        documentType: "AADHAAR_CARD",
       });
+      setIsFamilyDialogOpen(false);
     } else {
       toast.error("Name and Relationship are required for family members");
     }
@@ -228,6 +255,31 @@ export default function AddResident() {
   const handleSubmit = async () => {
     setSubmitting(true);
     try {
+      const selectedFlat = flats.find((f) => f.id === flatId) as any;
+      const stayEndsAtDate = new Date();
+      stayEndsAtDate.setFullYear(stayEndsAtDate.getFullYear() + 1);
+
+      let uploadedProfileUrl = residentData.photo || undefined;
+      if (profilePhotoFile) {
+        uploadedProfileUrl = await uploadDocumentApi(profilePhotoFile);
+      }
+
+      let uploadedAadhaarUrl = AADHAAR_URL;
+      let aadhaarFileName = "aadhar.png";
+      let aadhaarFileSize = 245111;
+      if (aadhaarFile) {
+        uploadedAadhaarUrl = await uploadDocumentApi(aadhaarFile);
+        aadhaarFileName = aadhaarFile.name;
+        aadhaarFileSize = aadhaarFile.size;
+      }
+
+      let uploadedPanUrl = PAN_URL;
+      let panFileName = "pan.png";
+      if (panFile) {
+        uploadedPanUrl = await uploadDocumentApi(panFile);
+        panFileName = panFile.name;
+      }
+
       // 1. Create resident user
       const userRes = await createUserApi({
         name: residentData.fullName.trim(),
@@ -236,6 +288,27 @@ export default function AddResident() {
         password: residentData.password,
         role: residentData.role || "RESIDENT",
         flatId: flatId,
+        projectId: projectId,
+        towerId: towerId,
+        floorNumber: String(
+          selectedFlat?.floorNumber || selectedFlat?.floor || "1",
+        ),
+        flatNumber: String(
+          selectedFlat?.flatNumber || selectedFlat?.number || "101",
+        ),
+        flatType: selectedFlat?.type || selectedFlat?.flatType || "2BHK",
+        stayEndsAt: stayEndsAtDate.toISOString().split("T")[0],
+        profilePhotoUrl: uploadedProfileUrl,
+        aadhaarNumber: residentData.aadhaar.trim() || undefined,
+        aadhaarDocumentUrl: residentData.aadhaar.trim()
+          ? uploadedAadhaarUrl
+          : undefined,
+        aadhaarDocumentFileName: residentData.aadhaar.trim()
+          ? aadhaarFileName
+          : undefined,
+        aadhaarDocumentSize: residentData.aadhaar.trim()
+          ? aadhaarFileSize
+          : undefined,
       });
       const createdUser = userRes?.data?.user || userRes?.data || userRes;
       const userId = createdUser?.id;
@@ -248,8 +321,8 @@ export default function AddResident() {
               documentType: "AADHAR_CARD",
               documentCategory: "IDENTITY_PROOF",
               title: "Aadhar Card",
-              photoUrl: AADHAAR_URL,
-              photoFileName: "aadhar.png",
+              photoUrl: uploadedAadhaarUrl,
+              photoFileName: aadhaarFileName,
             });
           } catch (docErr) {
             console.error("Failed to upload Aadhaar document:", docErr);
@@ -263,8 +336,8 @@ export default function AddResident() {
               documentType: "PAN_CARD",
               documentCategory: "IDENTITY_PROOF",
               title: "PAN Card",
-              photoUrl: PAN_URL,
-              photoFileName: "pan.png",
+              photoUrl: uploadedPanUrl,
+              photoFileName: panFileName,
             });
           } catch (docErr) {
             console.error("Failed to upload PAN document:", docErr);
@@ -283,12 +356,29 @@ export default function AddResident() {
               relationshipUpper = "SIBLING";
             else relationshipUpper = "OTHER";
 
-            await createFamilyMemberApi(userId, {
+            const famRes = await createFamilyMemberApi(userId, {
               name: member.name,
               relationship: relationshipUpper,
               phone: member.mobile || undefined,
               accessLevel: "FULL",
             });
+            const famId = famRes?.data?.id || famRes?.id;
+            
+            if (famId && member.documentFile) {
+              try {
+                const docUrl = await uploadDocumentApi(member.documentFile);
+                await uploadFamilyDocumentApi(userId, famId, {
+                  documentType: member.documentType || "AADHAAR_CARD",
+                  documentCategory: "IDENTITY_PROOF",
+                  title: member.documentType === "PAN_CARD" ? "PAN Card" : member.documentType === "PASSPORT" ? "Passport" : member.documentType === "DRIVING_LICENSE" ? "Driving License" : "Aadhaar Card",
+                  photoUrl: docUrl,
+                  photoFileName: member.documentFile.name,
+                  photoSize: member.documentFile.size,
+                });
+              } catch (docErr) {
+                console.error("Failed to upload document for family member:", docErr);
+              }
+            }
           } catch (famErr) {
             console.error("Failed to create family member:", famErr);
           }
@@ -296,7 +386,11 @@ export default function AddResident() {
       }
 
       toast.success("Resident enrolled successfully");
-      navigate("/residents");
+      if (onClose) {
+        onClose();
+      } else {
+        navigate("/residents");
+      }
     } catch (error: any) {
       toast.error(error?.message || "Failed to enroll resident");
     } finally {
@@ -313,21 +407,39 @@ export default function AddResident() {
               <Box sx={{ position: "relative", display: "inline-block" }}>
                 <Avatar
                   sx={{ width: 100, height: 100, bgcolor: "#f0f4f8" }}
-                  src={residentData.photo || ""}
+                  src={profilePhotoPreview || residentData.photo || ""}
                 />
                 <IconButton
-                  color="primary"
+                  color={profilePhotoFile ? "success" : "primary"}
                   component="label"
                   sx={{
                     position: "absolute",
                     bottom: 0,
                     right: -10,
-                    bgcolor: "white",
+                    bgcolor: profilePhotoFile ? "#dcfce7" : "white",
                     border: "1px solid #e0e0e0",
+                    "&:hover": {
+                      bgcolor: profilePhotoFile ? "#bbf7d0" : "#f1f5f9",
+                    },
                   }}
                 >
-                  <input hidden accept="image/*" type="file" />
-                  <PhotoCameraIcon fontSize="small" />
+                  <input
+                    hidden
+                    accept="image/*"
+                    type="file"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        const file = e.target.files[0];
+                        setProfilePhotoFile(file);
+                        setProfilePhotoPreview(URL.createObjectURL(file));
+                      }
+                    }}
+                  />
+                  {profilePhotoFile ? (
+                    <SuccessIcon fontSize="small" />
+                  ) : (
+                    <PhotoCameraIcon fontSize="small" />
+                  )}
                 </IconButton>
               </Box>
               <Typography
@@ -442,19 +554,6 @@ export default function AddResident() {
               <TextField
                 fullWidth
                 select
-                label="Account Role *"
-                value={residentData.role || "RESIDENT"}
-                onChange={(e) =>
-                  setResidentData({ ...residentData, role: e.target.value })
-                }
-                sx={{ "& fieldset": { borderRadius: "12px" } }}
-              >
-                <MenuItem value="RESIDENT">Resident</MenuItem>
-                <MenuItem value="GUEST">Guest</MenuItem>
-              </TextField>
-              <TextField
-                fullWidth
-                select
                 label="User Category"
                 value={residentData.category}
                 onChange={(e) =>
@@ -465,85 +564,91 @@ export default function AddResident() {
                 <MenuItem value="Owner">Owner</MenuItem>
                 <MenuItem value="Tenant">Tenant</MenuItem>
               </TextField>
-              <Box>
-                <TextField
-                  fullWidth
-                  label="Aadhaar Card Number"
-                  placeholder="XXXX XXXX XXXX"
-                  variant="outlined"
-                  value={residentData.aadhaar}
-                  onChange={(e) =>
-                    setResidentData({
-                      ...residentData,
-                      aadhaar: e.target.value,
-                    })
-                  }
-                  sx={{ "& fieldset": { borderRadius: "12px" } }}
-                />
-                <Button
-                  variant="outlined"
-                  component="label"
-                  startIcon={<UploadIcon />}
-                  sx={{
-                    mt: 1.5,
-                    width: "100%",
-                    py: 1.5,
-                    borderRadius: "12px",
-                    textTransform: "none",
-                    fontWeight: 600,
-                    borderColor: "#e2e8f0",
-                    color: "text.secondary",
-                    bgcolor: "#f8fafc",
-                    "&:hover": {
-                      borderColor: "#0047b3",
-                      bgcolor: "#eff6ff",
-                      color: "#0047b3",
-                    },
-                    transition: "all 0.2s ease-in-out",
-                  }}
-                >
-                  Upload Aadhaar Copy
-                  <input type="file" hidden />
-                </Button>
-              </Box>
-              <Box>
-                <TextField
-                  fullWidth
-                  label="PAN Card Number"
-                  placeholder="ABCDE1234F"
-                  variant="outlined"
-                  value={residentData.pan}
-                  onChange={(e) =>
-                    setResidentData({ ...residentData, pan: e.target.value })
-                  }
-                  sx={{ "& fieldset": { borderRadius: "12px" } }}
-                />
-                <Button
-                  variant="outlined"
-                  component="label"
-                  startIcon={<UploadIcon />}
-                  sx={{
-                    mt: 1.5,
-                    width: "100%",
-                    py: 1.5,
-                    borderRadius: "12px",
-                    textTransform: "none",
-                    fontWeight: 600,
-                    borderColor: "#e2e8f0",
-                    color: "text.secondary",
-                    bgcolor: "#f8fafc",
-                    "&:hover": {
-                      borderColor: "#0047b3",
-                      bgcolor: "#eff6ff",
-                      color: "#0047b3",
-                    },
-                    transition: "all 0.2s ease-in-out",
-                  }}
-                >
-                  Upload PAN Copy
-                  <input type="file" hidden />
-                </Button>
-              </Box>
+
+              <TextField
+                fullWidth
+                label="Aadhaar Card Number"
+                placeholder="XXXX XXXX XXXX"
+                variant="outlined"
+                value={residentData.aadhaar}
+                onChange={(e) =>
+                  setResidentData({
+                    ...residentData,
+                    aadhaar: e.target.value,
+                  })
+                }
+                sx={{ "& fieldset": { borderRadius: "12px" } }}
+                InputProps={{
+                  endAdornment: (
+                    <IconButton
+                      color={aadhaarFile ? "success" : "primary"}
+                      component="label"
+                      size="small"
+                      sx={{
+                        bgcolor: aadhaarFile ? "#dcfce7" : "#f1f5f9",
+                        borderRadius: "8px",
+                        mr: -0.5,
+                      }}
+                    >
+                      {aadhaarFile ? (
+                        <SuccessIcon fontSize="small" />
+                      ) : (
+                        <UploadIcon fontSize="small" />
+                      )}
+                      <input
+                        type="file"
+                        hidden
+                        onChange={(e) => {
+                          if (e.target.files && e.target.files[0]) {
+                            setAadhaarFile(e.target.files[0]);
+                          }
+                        }}
+                      />
+                    </IconButton>
+                  ),
+                }}
+              />
+
+              <TextField
+                fullWidth
+                label="PAN Card Number"
+                placeholder="ABCDE1234F"
+                variant="outlined"
+                value={residentData.pan}
+                onChange={(e) =>
+                  setResidentData({ ...residentData, pan: e.target.value })
+                }
+                sx={{ "& fieldset": { borderRadius: "12px" } }}
+                InputProps={{
+                  endAdornment: (
+                    <IconButton
+                      color={panFile ? "success" : "primary"}
+                      component="label"
+                      size="small"
+                      sx={{
+                        bgcolor: panFile ? "#dcfce7" : "#f1f5f9",
+                        borderRadius: "8px",
+                        mr: -0.5,
+                      }}
+                    >
+                      {panFile ? (
+                        <SuccessIcon fontSize="small" />
+                      ) : (
+                        <UploadIcon fontSize="small" />
+                      )}
+                      <input
+                        type="file"
+                        hidden
+                        onChange={(e) => {
+                          if (e.target.files && e.target.files[0]) {
+                            setPanFile(e.target.files[0]);
+                          }
+                        }}
+                      />
+                    </IconButton>
+                  ),
+                }}
+              />
             </Box>
           </Box>
         );
@@ -562,150 +667,24 @@ export default function AddResident() {
               Add details for family members living in the same apartment.
             </Typography>
 
-            <Paper
-              elevation={0}
-              sx={{
-                p: 4,
-                border: "1px solid #f1f5f9",
-                borderRadius: "20px",
-                bgcolor: "#f8fafc",
-                mb: 4,
-              }}
-            >
-              <Typography
-                variant="subtitle2"
-                fontWeight="700"
-                color="#002855"
-                sx={{ mb: 2 }}
-              >
-                Add New Member Details
-              </Typography>
-              <Box
+            <Box sx={{ mb: 4, display: "flex", justifyContent: "flex-end" }}>
+              <Button
+                variant="contained"
+                startIcon={<AddIcon />}
+                onClick={() => setIsFamilyDialogOpen(true)}
                 sx={{
-                  display: "grid",
-                  gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
-                  gap: 3,
-                  mb: 3,
+                  borderRadius: "10px",
+                  textTransform: "none",
+                  px: 3,
+                  py: 1,
+                  fontWeight: 700,
+                  bgcolor: "#0047b3",
+                  "&:hover": { bgcolor: "#003380" },
                 }}
               >
-                <TextField
-                  fullWidth
-                  label="Name *"
-                  value={newMember.name}
-                  onChange={(e) =>
-                    setNewMember({ ...newMember, name: e.target.value })
-                  }
-                  sx={{
-                    bgcolor: "white",
-                    "& fieldset": { borderRadius: "10px" },
-                  }}
-                />
-                <TextField
-                  fullWidth
-                  select
-                  label="Relationship *"
-                  value={newMember.relationship}
-                  onChange={(e) =>
-                    setNewMember({ ...newMember, relationship: e.target.value })
-                  }
-                  sx={{
-                    bgcolor: "white",
-                    "& fieldset": { borderRadius: "10px" },
-                  }}
-                >
-                  <MenuItem value="Spouse">Spouse</MenuItem>
-                  <MenuItem value="Child">Child</MenuItem>
-                  <MenuItem value="Parent">Parent</MenuItem>
-                  <MenuItem value="Sibling">Sibling</MenuItem>
-                </TextField>
-                <TextField
-                  fullWidth
-                  label="Mobile"
-                  value={newMember.mobile}
-                  onChange={(e) =>
-                    setNewMember({ ...newMember, mobile: e.target.value })
-                  }
-                  sx={{
-                    bgcolor: "white",
-                    "& fieldset": { borderRadius: "10px" },
-                  }}
-                />
-                <TextField
-                  fullWidth
-                  select
-                  label="Gender (Optional)"
-                  value={newMember.gender}
-                  onChange={(e) =>
-                    setNewMember({ ...newMember, gender: e.target.value })
-                  }
-                  sx={{
-                    bgcolor: "white",
-                    "& fieldset": { borderRadius: "10px" },
-                  }}
-                >
-                  <MenuItem value="Male">Male</MenuItem>
-                  <MenuItem value="Female">Female</MenuItem>
-                  <MenuItem value="Other">Other</MenuItem>
-                </TextField>
-                <TextField
-                  fullWidth
-                  label="Aadhaar Card (Optional)"
-                  placeholder="XXXX XXXX XXXX"
-                  value={newMember.aadhaar}
-                  onChange={(e) =>
-                    setNewMember({ ...newMember, aadhaar: e.target.value })
-                  }
-                  sx={{
-                    bgcolor: "white",
-                    "& fieldset": { borderRadius: "10px" },
-                  }}
-                />
-                <TextField
-                  fullWidth
-                  label="PAN Card (Optional)"
-                  placeholder="ABCDE1234F"
-                  value={newMember.pan}
-                  onChange={(e) =>
-                    setNewMember({ ...newMember, pan: e.target.value })
-                  }
-                  sx={{
-                    bgcolor: "white",
-                    "& fieldset": { borderRadius: "10px" },
-                  }}
-                />
-                <TextField
-                  fullWidth
-                  label="Access Card / VCard (Optional)"
-                  placeholder="CMR-V100"
-                  value={newMember.vcard}
-                  onChange={(e) =>
-                    setNewMember({ ...newMember, vcard: e.target.value })
-                  }
-                  sx={{
-                    bgcolor: "white",
-                    "& fieldset": { borderRadius: "10px" },
-                  }}
-                />
-              </Box>
-              <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-                <Button
-                  variant="contained"
-                  startIcon={<AddIcon />}
-                  onClick={addFamilyMember}
-                  sx={{
-                    borderRadius: "10px",
-                    textTransform: "none",
-                    px: 4,
-                    py: 1,
-                    fontWeight: 700,
-                    bgcolor: "#0047b3",
-                    "&:hover": { bgcolor: "#003380" },
-                  }}
-                >
-                  Add Family Member
-                </Button>
-              </Box>
-            </Paper>
+                Add Family Member
+              </Button>
+            </Box>
 
             <Stack spacing={2}>
               {familyMembers.map((member) => (
@@ -1126,56 +1105,51 @@ export default function AddResident() {
     }
   };
 
-  return (
-    <Box
-      sx={{
-        p: { xs: 2, md: 4 },
-        bgcolor: "#ffffff",
-        minHeight: "100vh",
-        borderRadius: 2,
-      }}
-    >
-      <Box
-        sx={{
-          mb: 5,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <Box>
-          <Typography
-            variant="h4"
-            fontWeight="900"
-            color="#002855"
-            sx={{ mb: 1 }}
-          >
-            Resident Enrollment
-          </Typography>
-          <Breadcrumbs separator=">" aria-label="breadcrumb">
-            <Link
-              underline="hover"
-              color="inherit"
-              onClick={() => navigate("/")}
-              sx={{ cursor: "pointer" }}
+  const formContent = (
+    <Box sx={{ maxWidth: 800, mx: "auto", pt: open ? 2 : 0 }}>
+      {!open && (
+        <Box
+          sx={{
+            mb: 5,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Box>
+            <Typography
+              variant="h4"
+              fontWeight="900"
+              color="#002855"
+              sx={{ mb: 1 }}
             >
-              Dashboard
-            </Link>
-            <Link
-              underline="hover"
-              color="inherit"
-              onClick={() => navigate("/residents")}
-              sx={{ cursor: "pointer" }}
-            >
-              Residents
-            </Link>
-            <Typography color="text.primary" fontWeight="600">
-              Enrollment Form
+              Resident Enrollment
             </Typography>
-          </Breadcrumbs>
+            <Breadcrumbs separator=">" aria-label="breadcrumb">
+              <Link
+                underline="hover"
+                color="inherit"
+                onClick={() => navigate("/")}
+                sx={{ cursor: "pointer" }}
+              >
+                Dashboard
+              </Link>
+              <Link
+                underline="hover"
+                color="inherit"
+                onClick={() => navigate("/residents")}
+                sx={{ cursor: "pointer" }}
+              >
+                Residents
+              </Link>
+              <Typography color="text.primary" fontWeight="600">
+                Enrollment Form
+              </Typography>
+            </Breadcrumbs>
+          </Box>
+          <BackButton to="/residents" label="Back to Residents" />
         </Box>
-        <BackButton to="/residents" label="Back to Residents" />
-      </Box>
+      )}
 
       <Box sx={{ maxWidth: 800, mx: "auto" }}>
         <Stepper activeStep={activeStep} sx={{ mb: 6 }}>
@@ -1195,14 +1169,17 @@ export default function AddResident() {
           ))}
         </Stepper>
 
-        <Paper
-          elevation={0}
-          sx={{
-            border: "1px solid #f1f5f9",
-            borderRadius: "24px",
-            p: { xs: 3, md: 5 },
-            bgcolor: "white",
-          }}
+        <Box
+          sx={
+            open
+              ? { p: { xs: 1, md: 2 } }
+              : {
+                  border: "1px solid #f1f5f9",
+                  borderRadius: "24px",
+                  p: { xs: 3, md: 5 },
+                  bgcolor: "white",
+                }
+          }
         >
           {renderStepContent(activeStep)}
 
@@ -1259,8 +1236,219 @@ export default function AddResident() {
               </Button>
             )}
           </Box>
-        </Paper>
+        </Box>
       </Box>
     </Box>
+  );
+
+  return (
+    <>
+      {open ? (
+        <Dialog
+          open={open}
+          onClose={onClose}
+          maxWidth="md"
+          fullWidth
+          PaperProps={{ sx: { borderRadius: "24px", p: 2 } }}
+        >
+          <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 2, borderBottom: '1px solid #f1f5f9', mb: 2 }}>
+            <Typography variant="h5" fontWeight="900" color="#002855">Resident Enrollment</Typography>
+            <IconButton onClick={onClose} size="small" edge="end">
+              <CloseIcon />
+            </IconButton>
+          </DialogTitle>
+          <DialogContent sx={{ p: 0 }}>{formContent}</DialogContent>
+        </Dialog>
+      ) : (
+        <Box
+          sx={{
+            p: { xs: 2, md: 4 },
+            bgcolor: "#ffffff",
+            minHeight: "100vh",
+            borderRadius: 2,
+          }}
+        >
+          {formContent}
+        </Box>
+      )}
+
+      <Dialog
+        open={isFamilyDialogOpen}
+        onClose={() => setIsFamilyDialogOpen(false)}
+        maxWidth="md"
+        fullWidth
+        PaperProps={{ sx: { borderRadius: "16px", p: 1 } }}
+      >
+        <DialogTitle sx={{ fontWeight: 800, color: "#002855" }}>
+          Add New Member Details
+        </DialogTitle>
+        <DialogContent dividers sx={{ border: "none" }}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+              gap: 3,
+              mt: 1,
+            }}
+          >
+            <TextField
+              fullWidth
+              label="Name *"
+              value={newMember.name}
+              onChange={(e) =>
+                setNewMember({ ...newMember, name: e.target.value })
+              }
+              sx={{ "& fieldset": { borderRadius: "10px" } }}
+            />
+            <TextField
+              fullWidth
+              select
+              label="Relationship *"
+              value={newMember.relationship}
+              onChange={(e) =>
+                setNewMember({ ...newMember, relationship: e.target.value })
+              }
+              sx={{ "& fieldset": { borderRadius: "10px" } }}
+            >
+              <MenuItem value="Spouse">Spouse</MenuItem>
+              <MenuItem value="Child">Child</MenuItem>
+              <MenuItem value="Parent">Parent</MenuItem>
+              <MenuItem value="Sibling">Sibling</MenuItem>
+            </TextField>
+            <TextField
+              fullWidth
+              label="Mobile"
+              value={newMember.mobile}
+              onChange={(e) =>
+                setNewMember({ ...newMember, mobile: e.target.value })
+              }
+              sx={{ "& fieldset": { borderRadius: "10px" } }}
+            />
+            <TextField
+              fullWidth
+              label="Email"
+              value={newMember.email}
+              onChange={(e) =>
+                setNewMember({ ...newMember, email: e.target.value })
+              }
+              sx={{ "& fieldset": { borderRadius: "10px" } }}
+            />
+            <TextField
+              fullWidth
+              select
+              label="Gender (Optional)"
+              value={newMember.gender}
+              onChange={(e) =>
+                setNewMember({ ...newMember, gender: e.target.value })
+              }
+              sx={{ "& fieldset": { borderRadius: "10px" } }}
+            >
+              <MenuItem value="Male">Male</MenuItem>
+              <MenuItem value="Female">Female</MenuItem>
+              <MenuItem value="Other">Other</MenuItem>
+            </TextField>
+            <TextField
+              fullWidth
+              label="Aadhaar Card (Optional)"
+              placeholder="XXXX XXXX XXXX"
+              value={newMember.aadhaar}
+              onChange={(e) =>
+                setNewMember({ ...newMember, aadhaar: e.target.value })
+              }
+              sx={{ "& fieldset": { borderRadius: "10px" } }}
+            />
+            <TextField
+              fullWidth
+              label="PAN Card (Optional)"
+              placeholder="ABCDE1234F"
+              value={newMember.pan}
+              onChange={(e) =>
+                setNewMember({ ...newMember, pan: e.target.value })
+              }
+              sx={{ "& fieldset": { borderRadius: "10px" } }}
+            />
+            <TextField
+              fullWidth
+              label="Access Card / VCard (Optional)"
+              placeholder="CMR-V100"
+              value={newMember.vcard}
+              onChange={(e) =>
+                setNewMember({ ...newMember, vcard: e.target.value })
+              }
+              sx={{ "& fieldset": { borderRadius: "10px" } }}
+            />
+            <Box sx={{ gridColumn: "1 / -1", mt: 1 }}>
+              <Typography variant="caption" fontWeight="800" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
+                UPLOAD KYC DOCUMENT (Optional)
+              </Typography>
+              <Stack direction="row" spacing={2} alignItems="center">
+                <TextField
+                  select
+                  size="small"
+                  value={newMember.documentType}
+                  onChange={(e) => setNewMember({ ...newMember, documentType: e.target.value })}
+                  sx={{ width: 200, "& fieldset": { borderRadius: "10px" } }}
+                >
+                  <MenuItem value="AADHAAR_CARD">Aadhaar Card</MenuItem>
+                  <MenuItem value="PAN_CARD">PAN Card</MenuItem>
+                  <MenuItem value="PASSPORT">Passport</MenuItem>
+                  <MenuItem value="DRIVING_LICENSE">Driving License</MenuItem>
+                </TextField>
+                
+                <Button
+                  component="label"
+                  variant="outlined"
+                  startIcon={<UploadIcon />}
+                  sx={{ borderRadius: "10px", textTransform: "none", fontWeight: 700, borderColor: '#e2e8f0', color: 'text.primary' }}
+                >
+                  {newMember.documentFile ? newMember.documentFile.name : "Choose File"}
+                  <input
+                    type="file"
+                    hidden
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setNewMember({ ...newMember, documentFile: e.target.files[0] });
+                      }
+                    }}
+                  />
+                </Button>
+                {newMember.documentFile && (
+                  <IconButton color="error" size="small" onClick={() => setNewMember({ ...newMember, documentFile: null })}>
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                )}
+              </Stack>
+            </Box>
+          </Box>
+        </DialogContent>
+        <DialogActions sx={{ p: 3, pt: 1 }}>
+          <Button
+            onClick={() => setIsFamilyDialogOpen(false)}
+            sx={{
+              color: "text.secondary",
+              fontWeight: 700,
+              textTransform: "none",
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={addFamilyMember}
+            sx={{
+              borderRadius: "10px",
+              textTransform: "none",
+              px: 3,
+              fontWeight: 700,
+              bgcolor: "#0047b3",
+              "&:hover": { bgcolor: "#003380" },
+            }}
+          >
+            Add Member
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 }

@@ -202,7 +202,7 @@ export default function ResidentDetails() {
         <Box sx={{ px: { xs: 2, md: 6 }, mt: -6, position: 'relative', zIndex: 3 }}>
           <Stack direction="row" alignItems="flex-end" spacing={4}>
             <Avatar 
-              src={resident.avatar || `https://i.pravatar.cc/150?u=${resident.id}`} 
+              src={resident.profilePhotoUrl || resident.avatar || `https://i.pravatar.cc/150?u=${resident.id}`} 
               sx={{ 
                 width: 140, height: 140, 
                 border: '6px solid #f8fafc', 
@@ -292,13 +292,13 @@ export default function ResidentDetails() {
                   <Grid size={{ xs: 6 }}>
                     <Typography variant="caption" color="#94a3b8" fontWeight="800">AADHAAR CARD</Typography>
                     <Typography variant="body1" fontWeight="700">
-                      {resident.kyc?.aadhaar || 'Verified Online'}
+                      {identityProofs.find((d: any) => d.documentType === 'AADHAR_CARD')?.isVerified ? 'Verified' : (identityProofs.some((d: any) => d.documentType === 'AADHAR_CARD') ? 'Pending Verification' : 'Not Uploaded')}
                     </Typography>
                   </Grid>
                   <Grid size={{ xs: 6 }}>
                     <Typography variant="caption" color="#94a3b8" fontWeight="800">PAN CARD</Typography>
                     <Typography variant="body1" fontWeight="700">
-                      {resident.kyc?.pan || 'Verified Online'}
+                      {identityProofs.find((d: any) => d.documentType === 'PAN_CARD')?.isVerified ? 'Verified' : (identityProofs.some((d: any) => d.documentType === 'PAN_CARD') ? 'Pending Verification' : 'Not Uploaded')}
                     </Typography>
                   </Grid>
                   <Grid size={{ xs: 6 }}>
@@ -436,10 +436,14 @@ export default function ResidentDetails() {
                 {allDocs.map((doc) => (
                   <Grid size={{ xs: 12, md: 4 }} key={doc.id || doc.title}>
                     <Paper elevation={0} sx={{ p: 4, borderRadius: '24px', border: '1px solid #e2e8f0', textAlign: 'center', bgcolor: 'white' }}>
-                      <Box sx={{ p: 4, bgcolor: '#f8fafc', borderRadius: '20px', mb: 2, display: 'flex', justifyContent: 'center' }}>
-                        <FileIcon sx={{ fontSize: 44, color: '#002855' }} />
+                      <Box sx={{ p: doc.photoUrl ? 0 : 4, bgcolor: '#f8fafc', borderRadius: '20px', mb: 2, display: 'flex', justifyContent: 'center', height: 120, alignItems: 'center', overflow: 'hidden' }}>
+                        {doc.photoUrl ? (
+                          <Box component="img" src={doc.photoUrl} sx={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ) : (
+                          <FileIcon sx={{ fontSize: 44, color: '#002855' }} />
+                        )}
                       </Box>
-                      <Typography variant="body1" fontWeight="900" color="#002855">{doc.title || doc.documentType}</Typography>
+                      <Typography variant="body1" fontWeight="900" color="#002855" sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{doc.title || doc.documentType}</Typography>
                       <Chip
                         icon={doc.isVerified ? <CheckIcon sx={{ fontSize: '14px !important' }} /> : <PendingIcon sx={{ fontSize: '14px !important' }} />}
                         label={doc.isVerified ? 'Verified' : (doc.status || 'PENDING')}
@@ -451,7 +455,7 @@ export default function ResidentDetails() {
                           fontWeight: 800, borderRadius: '8px'
                         }}
                       />
-                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
+                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                         {doc.photoFileName || doc.pdfFileName || 'kyc_document.png'}
                         {(doc.photoSize || doc.pdfSize) ? ` (${Math.round((doc.photoSize || doc.pdfSize) / 1024)} KB)` : ''}
                       </Typography>
@@ -489,12 +493,16 @@ export default function ResidentDetails() {
                 {familyDocs.map((doc, idx) => (
                   <Grid size={{ xs: 12, md: 4 }} key={idx}>
                     <Paper elevation={0} sx={{ p: 4, borderRadius: '24px', border: '1px solid #e2e8f0', textAlign: 'center', bgcolor: 'white' }}>
-                      <Box sx={{ p: 4, bgcolor: '#f8fafc', borderRadius: '20px', mb: 2, display: 'flex', justifyContent: 'center' }}>
-                        <FileIcon sx={{ fontSize: 44, color: '#0047b3' }} />
+                      <Box sx={{ p: doc.photoUrl ? 0 : 4, bgcolor: '#f8fafc', borderRadius: '20px', mb: 2, display: 'flex', justifyContent: 'center', height: 120, alignItems: 'center', overflow: 'hidden' }}>
+                        {doc.photoUrl ? (
+                          <Box component="img" src={doc.photoUrl} sx={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ) : (
+                          <FileIcon sx={{ fontSize: 44, color: '#0047b3' }} />
+                        )}
                       </Box>
                       <Typography variant="caption" color="primary" fontWeight="800" sx={{ display: 'block', mb: 0.5 }}>{doc.member}</Typography>
-                      <Typography variant="body1" fontWeight="900" color="#002855">{doc.title || doc.documentType}</Typography>
-                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
+                      <Typography variant="body1" fontWeight="900" color="#002855" sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{doc.title || doc.documentType}</Typography>
+                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                         {doc.photoFileName || doc.pdfFileName || 'kyc_document.png'}
                       </Typography>
                       <Typography variant="caption" color="#10b981" fontWeight="800" sx={{ mb: 3, display: 'block' }}>✓ VERIFIED BY ADMIN</Typography>
