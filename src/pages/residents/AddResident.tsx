@@ -665,7 +665,7 @@ export default function AddResident({
             <Typography
               variant="h6"
               fontWeight="800"
-              color="#002855"
+              color="#091542"
               sx={{ mb: 1 }}
             >
               Family Members
@@ -717,7 +717,7 @@ export default function AddResident({
                       <Typography
                         variant="body1"
                         fontWeight="800"
-                        color="#002855"
+                        color="#091542"
                       >
                         {member.name}
                       </Typography>
@@ -809,7 +809,7 @@ export default function AddResident({
           <Box sx={{ py: 2 }}>
             <Box sx={{ textAlign: "center", mb: 5 }}>
               <SuccessIcon color="success" sx={{ fontSize: 64, mb: 1.5 }} />
-              <Typography variant="h5" fontWeight="900" color="#002855">
+              <Typography variant="h5" fontWeight="900" color="#091542">
                 Review Enrollment Details
               </Typography>
               <Typography
@@ -836,7 +836,7 @@ export default function AddResident({
               <Typography
                 variant="subtitle1"
                 fontWeight="800"
-                color="#002855"
+                color="#091542"
                 sx={{ mb: 3 }}
               >
                 1. Master Resident Information
@@ -853,7 +853,7 @@ export default function AddResident({
                   <Typography
                     variant="body2"
                     fontWeight="800"
-                    color="#002855"
+                    color="#091542"
                     sx={{ mt: 0.5 }}
                   >
                     {residentData.fullName || "Not Provided"}
@@ -870,7 +870,7 @@ export default function AddResident({
                   <Typography
                     variant="body2"
                     fontWeight="800"
-                    color="#002855"
+                    color="#091542"
                     sx={{ mt: 0.5 }}
                   >
                     {residentData.mobile || "Not Provided"}
@@ -887,7 +887,7 @@ export default function AddResident({
                   <Typography
                     variant="body2"
                     fontWeight="800"
-                    color="#002855"
+                    color="#091542"
                     sx={{ mt: 0.5 }}
                   >
                     {residentData.email || "Not Provided"}
@@ -904,7 +904,7 @@ export default function AddResident({
                   <Typography
                     variant="body2"
                     fontWeight="800"
-                    color="#002855"
+                    color="#091542"
                     sx={{ mt: 0.5 }}
                   >
                     {residentData.category}
@@ -921,7 +921,7 @@ export default function AddResident({
                   <Typography
                     variant="body2"
                     fontWeight="800"
-                    color="#002855"
+                    color="#091542"
                     sx={{ mt: 0.5 }}
                   >
                     {projectId
@@ -940,7 +940,7 @@ export default function AddResident({
                   <Typography
                     variant="body2"
                     fontWeight="800"
-                    color="#002855"
+                    color="#091542"
                     sx={{ mt: 0.5 }}
                   >
                     {residentData.aadhaar || "Not Provided"}
@@ -957,7 +957,7 @@ export default function AddResident({
                   <Typography
                     variant="body2"
                     fontWeight="800"
-                    color="#002855"
+                    color="#091542"
                     sx={{ mt: 0.5 }}
                   >
                     {residentData.pan || "Not Provided"}
@@ -980,7 +980,7 @@ export default function AddResident({
               <Typography
                 variant="subtitle1"
                 fontWeight="800"
-                color="#002855"
+                color="#091542"
                 sx={{ mb: 3 }}
               >
                 2. KYC Documents Checklist
@@ -1022,7 +1022,7 @@ export default function AddResident({
               <Typography
                 variant="subtitle1"
                 fontWeight="800"
-                color="#002855"
+                color="#091542"
                 sx={{ mb: 3 }}
               >
                 3. Family Members Directory ({familyMembers.length})
@@ -1047,7 +1047,7 @@ export default function AddResident({
                       <Typography
                         variant="body1"
                         fontWeight="800"
-                        color="#002855"
+                        color="#091542"
                       >
                         {member.name}
                       </Typography>
@@ -1127,7 +1127,7 @@ export default function AddResident({
             <Typography
               variant="h4"
               fontWeight="900"
-              color="#002855"
+              color="#091542"
               sx={{ mb: 1 }}
             >
               Resident Enrollment
@@ -1259,7 +1259,7 @@ export default function AddResident({
           PaperProps={{ sx: { borderRadius: "24px", p: 2 } }}
         >
           <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 2, borderBottom: '1px solid #f1f5f9', mb: 2 }}>
-            <Typography variant="h5" fontWeight="900" color="#002855">Resident Enrollment</Typography>
+            <Typography variant="h5" fontWeight="900" color="#091542">Resident Enrollment</Typography>
             <IconButton onClick={onClose} size="small" edge="end">
               <CloseIcon />
             </IconButton>
@@ -1286,7 +1286,7 @@ export default function AddResident({
         fullWidth
         PaperProps={{ sx: { borderRadius: "16px", p: 1 } }}
       >
-        <DialogTitle sx={{ fontWeight: 800, color: "#002855" }}>
+        <DialogTitle sx={{ fontWeight: 800, color: "#091542" }}>
           Add New Member Details
         </DialogTitle>
         <DialogContent dividers sx={{ border: "none" }}>

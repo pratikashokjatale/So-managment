@@ -33,7 +33,7 @@ export default function BackButton({ to, label = 'Back', sx, ...props }: BackBut
         borderRadius: '8px',
         '&:hover': {
           bgcolor: '#f1f5f9',
-          color: '#002855'
+          color: '#091542'
         },
         transition: 'all 0.2s ease',
         ...sx 

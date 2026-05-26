@@ -42,7 +42,7 @@ export default function GetPayment() {
     <Paper elevation={0} sx={{ p: 3, border: '1px solid #f0f0f0', borderRadius: 4 }}>
       <Typography variant="body2" color="text.secondary" fontWeight="500" gutterBottom>{title}</Typography>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Typography variant="h4" fontWeight="bold" sx={{ color: '#002855' }}>{amount}</Typography>
+        <Typography variant="h4" fontWeight="bold" sx={{ color: '#091542' }}>{amount}</Typography>
         <Box sx={{ display: 'flex', alignItems: 'center', color: color }}>
           <TrendingUpIcon fontSize="small" sx={{ mr: 0.5 }} />
           <Typography variant="body2" fontWeight="600">{percentage}</Typography>
@@ -66,7 +66,7 @@ export default function GetPayment() {
       
       {/* Header Section */}
       <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" fontWeight="bold" sx={{ mb: 1, color: '#002855' }}>
+        <Typography variant="h4" fontWeight="bold" sx={{ mb: 1, color: '#091542' }}>
           Payments
         </Typography>
         <Breadcrumbs separator=">" aria-label="breadcrumb">
@@ -137,19 +137,19 @@ export default function GetPayment() {
             {mockPayments.map((row) => (
               <TableRow key={row.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                 <TableCell sx={{ borderBottomColor: '#f0f0f0', py: 2.5 }}>
-                  <Typography variant="body2" sx={{ color: '#002855', fontWeight: 500 }}>{row.date}</Typography>
+                  <Typography variant="body2" sx={{ color: '#091542', fontWeight: 500 }}>{row.date}</Typography>
                 </TableCell>
                 <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Typography variant="body2" sx={{ color: '#002855', fontWeight: 600 }}>{row.user}</Typography>
+                  <Typography variant="body2" sx={{ color: '#091542', fontWeight: 600 }}>{row.user}</Typography>
                 </TableCell>
                 <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
                   <Typography variant="body2" sx={{ color: 'text.secondary' }}>{row.type}</Typography>
                 </TableCell>
                 <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Typography variant="body2" sx={{ color: '#002855' }}>{row.method}</Typography>
+                  <Typography variant="body2" sx={{ color: '#091542' }}>{row.method}</Typography>
                 </TableCell>
                 <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Typography variant="body2" sx={{ color: '#002855', fontWeight: 700 }}>{row.amount}</Typography>
+                  <Typography variant="body2" sx={{ color: '#091542', fontWeight: 700 }}>{row.amount}</Typography>
                 </TableCell>
                 <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
                   <StatusBadge status={row.status} variantType="text" />

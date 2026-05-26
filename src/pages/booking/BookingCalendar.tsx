@@ -24,7 +24,7 @@ const calendarStyles = {
       border: 'none',
       fontSize: '1.2rem',
       fontWeight: 600,
-      color: '#002855',
+      color: '#091542',
       cursor: 'pointer',
       padding: '8px',
       borderRadius: '8px',
@@ -132,7 +132,7 @@ export default function BookingCalendar() {
       {/* Header Section */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 4, flexWrap: 'wrap', gap: 2 }}>
         <Box>
-          <Typography variant="h4" fontWeight="bold" sx={{ mb: 1, color: '#002855' }}>
+          <Typography variant="h4" fontWeight="bold" sx={{ mb: 1, color: '#091542' }}>
             Bookings Calendar
           </Typography>
           <Breadcrumbs separator=">" aria-label="breadcrumb">
@@ -205,7 +205,7 @@ export default function BookingCalendar() {
           <Box>
             <Paper elevation={0} sx={{ p: 4, border: '1px solid #f0f0f0', borderRadius: 8, minHeight: 400, bgcolor: '#fcfdfe' }}>
               <Box sx={{ mb: 5 }}>
-                <Typography variant="h5" fontWeight="bold" sx={{ color: '#002855', mb: 1 }}>
+                <Typography variant="h5" fontWeight="bold" sx={{ color: '#091542', mb: 1 }}>
                   {value instanceof Date ? value.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Selected Date'}
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
@@ -221,7 +221,7 @@ export default function BookingCalendar() {
                       <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase' }}>
                         {event.time}
                       </Typography>
-                      <Typography variant="h6" sx={{ fontWeight: 700, color: '#002855', mt: 0.2 }}>
+                      <Typography variant="h6" sx={{ fontWeight: 700, color: '#091542', mt: 0.2 }}>
                         {event.facility}
                       </Typography>
                       <Box sx={{ mt: 1 }}>

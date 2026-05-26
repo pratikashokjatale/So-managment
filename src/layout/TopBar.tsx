@@ -352,7 +352,7 @@ export default function TopBar({
               }}
             >
               <ProfileIcon fontSize="small" sx={{ color: "text.secondary" }} />
-              <Typography variant="body2" sx={{ fontWeight: 800, color: "#002855" }}>
+              <Typography variant="body2" sx={{ fontWeight: 800, color: "#091542" }}>
                 Profile
               </Typography>
             </MenuItem>
@@ -371,7 +371,7 @@ export default function TopBar({
               }}
             >
               <SettingsIcon fontSize="small" sx={{ color: "text.secondary" }} />
-              <Typography variant="body2" sx={{ fontWeight: 800, color: "#002855" }}>
+              <Typography variant="body2" sx={{ fontWeight: 800, color: "#091542" }}>
                 Settings
               </Typography>
             </MenuItem>
@@ -389,7 +389,7 @@ export default function TopBar({
               }}
             >
               <SupportIcon fontSize="small" sx={{ color: "text.secondary" }} />
-              <Typography variant="body2" sx={{ fontWeight: 800, color: "#002855" }}>
+              <Typography variant="body2" sx={{ fontWeight: 800, color: "#091542" }}>
                 Support
               </Typography>
             </MenuItem>

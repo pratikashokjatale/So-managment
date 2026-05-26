@@ -54,7 +54,7 @@ export default function GetAnnouncement() {
       
       {/* Header Section */}
       <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" fontWeight="bold" sx={{ mb: 1, color: '#002855' }}>
+        <Typography variant="h4" fontWeight="bold" sx={{ mb: 1, color: '#091542' }}>
           Announcements
         </Typography>
         <Breadcrumbs separator=">" aria-label="breadcrumb">
@@ -114,16 +114,16 @@ export default function GetAnnouncement() {
             {mockAnnouncements.map((row) => (
               <TableRow key={row.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                 <TableCell sx={{ borderBottomColor: '#f0f0f0', py: 2.5 }}>
-                  <Typography variant="body2" sx={{ color: '#002855', fontWeight: 600 }}>{row.title}</Typography>
+                  <Typography variant="body2" sx={{ color: '#091542', fontWeight: 600 }}>{row.title}</Typography>
                 </TableCell>
                 <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
                   <Typography variant="body2" sx={{ color: 'text.secondary' }}>{row.type}</Typography>
                 </TableCell>
                 <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Typography variant="body2" sx={{ color: '#002855', fontWeight: 500 }}>{row.postedOn}</Typography>
+                  <Typography variant="body2" sx={{ color: '#091542', fontWeight: 500 }}>{row.postedOn}</Typography>
                 </TableCell>
                 <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Typography variant="body2" sx={{ color: '#002855', fontWeight: 500 }}>{row.expiryDate}</Typography>
+                  <Typography variant="body2" sx={{ color: '#091542', fontWeight: 500 }}>{row.expiryDate}</Typography>
                 </TableCell>
                 <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
                   <StatusBadge status={row.status} variantType="text" />

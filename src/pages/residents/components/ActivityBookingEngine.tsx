@@ -76,7 +76,7 @@ export default function ActivityBookingEngine() {
                 {act.icon}
               </Box>
               <Box>
-                <Typography variant="body2" fontWeight="800" color={selectedActivity.id === act.id ? '#1d4ed8' : '#002855'}>
+                <Typography variant="body2" fontWeight="800" color={selectedActivity.id === act.id ? '#1d4ed8' : '#091542'}>
                   {act.name}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">₹{act.price} / Slot</Typography>
@@ -134,7 +134,7 @@ export default function ActivityBookingEngine() {
               variant="contained" 
               startIcon={<CartIcon />}
               disabled={selectedSlots.length === 0}
-              sx={{ borderRadius: '12px', px: 4, height: 48, fontWeight: 800, textTransform: 'none', bgcolor: '#002855' }}
+              sx={{ borderRadius: '12px', px: 4, height: 48, fontWeight: 800, textTransform: 'none', bgcolor: '#091542' }}
             >
               Add to Cart
             </Button>

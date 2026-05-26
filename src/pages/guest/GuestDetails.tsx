@@ -70,7 +70,7 @@ export default function GuestDetails() {
       {/* Header Section */}
       <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 2 }}>
         <Box>
-          <Typography variant="h4" fontWeight="bold" sx={{ color: '#002855', mb: 1 }}>
+          <Typography variant="h4" fontWeight="bold" sx={{ color: '#091542', mb: 1 }}>
             Guest Pass Details
           </Typography>
           <Breadcrumbs separator=">" aria-label="breadcrumb">
@@ -94,8 +94,8 @@ export default function GuestDetails() {
               textTransform: 'none', 
               fontWeight: 600, 
               borderColor: '#e2e8f0', 
-              color: '#002855',
-              '&:hover': { borderColor: '#002855', bgcolor: '#f8fafc' }
+              color: '#091542',
+              '&:hover': { borderColor: '#091542', bgcolor: '#f8fafc' }
             }}
           >
             Edit Pass
@@ -117,7 +117,7 @@ export default function GuestDetails() {
                 sx={{ width: 72, height: 72, borderRadius: '20px', bgcolor: '#f1f5f9', border: '1px solid #e2e8f0' }} 
               />
               <Box>
-                <Typography variant="h5" fontWeight="bold" color="#002855">{guest.name}</Typography>
+                <Typography variant="h5" fontWeight="bold" color="#091542">{guest.name}</Typography>
                 <Typography variant="body2" color="text.secondary" fontWeight="600" sx={{ mt: 0.5 }}>
                   Pass ID: {guest.id.toUpperCase()}
                 </Typography>
@@ -133,7 +133,7 @@ export default function GuestDetails() {
                 <Typography variant="caption" color="text.secondary" fontWeight="700" sx={{ textTransform: 'uppercase' }}>
                   Host Resident Name
                 </Typography>
-                <Typography variant="body1" fontWeight="800" color="#002855" sx={{ mt: 0.5 }}>
+                <Typography variant="body1" fontWeight="800" color="#091542" sx={{ mt: 0.5 }}>
                   {guest.resident}
                 </Typography>
               </Box>
@@ -142,7 +142,7 @@ export default function GuestDetails() {
                 <Typography variant="caption" color="text.secondary" fontWeight="700" sx={{ textTransform: 'uppercase' }}>
                   Apartment / Designation
                 </Typography>
-                <Typography variant="body1" fontWeight="800" color="#002855" sx={{ mt: 0.5 }}>
+                <Typography variant="body1" fontWeight="800" color="#091542" sx={{ mt: 0.5 }}>
                   {guest.apartment}
                 </Typography>
               </Box>
@@ -151,7 +151,7 @@ export default function GuestDetails() {
                 <Typography variant="caption" color="text.secondary" fontWeight="700" sx={{ textTransform: 'uppercase' }}>
                   Purpose of Visit
                 </Typography>
-                <Typography variant="body1" fontWeight="800" color="#002855" sx={{ mt: 0.5 }}>
+                <Typography variant="body1" fontWeight="800" color="#091542" sx={{ mt: 0.5 }}>
                   {guest.purpose}
                 </Typography>
               </Box>
@@ -160,7 +160,7 @@ export default function GuestDetails() {
                 <Typography variant="caption" color="text.secondary" fontWeight="700" sx={{ textTransform: 'uppercase' }}>
                   Pass Duration / Dates
                 </Typography>
-                <Typography variant="body1" fontWeight="800" color="#002855" sx={{ mt: 0.5 }}>
+                <Typography variant="body1" fontWeight="800" color="#091542" sx={{ mt: 0.5 }}>
                   {new Date(guest.fromDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })} to {new Date(guest.dueDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
                 </Typography>
               </Box>
@@ -169,7 +169,7 @@ export default function GuestDetails() {
                 <Typography variant="caption" color="text.secondary" fontWeight="700" sx={{ textTransform: 'uppercase' }}>
                   Origin Address
                 </Typography>
-                <Typography variant="body1" fontWeight="800" color="#002855" sx={{ mt: 0.5 }}>
+                <Typography variant="body1" fontWeight="800" color="#091542" sx={{ mt: 0.5 }}>
                   {guest.address}
                 </Typography>
               </Box>
@@ -180,7 +180,7 @@ export default function GuestDetails() {
 
           {/* Uploaded Documents card */}
           <Paper elevation={0} sx={{ border: '1px solid #f0f0f0', borderRadius: 4, p: 4 }}>
-            <Typography variant="h6" fontWeight="bold" color="#002855" sx={{ mb: 3 }}>
+            <Typography variant="h6" fontWeight="bold" color="#091542" sx={{ mb: 3 }}>
               Government ID Verification (KYC)
             </Typography>
 
@@ -202,7 +202,7 @@ export default function GuestDetails() {
                   <ArticleOutlinedIcon />
                 </Avatar>
                 <Box>
-                  <Typography variant="body2" fontWeight="800" color="#002855">
+                  <Typography variant="body2" fontWeight="800" color="#091542">
                     {guest.aadhaarFile || 'aadhaar_card_scanned.pdf'}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
@@ -223,7 +223,7 @@ export default function GuestDetails() {
         {/* Right compliance, validation status panel */}
         <Grid size={{ xs: 12, md: 4 }}>
           <Paper elevation={0} sx={{ border: '1px solid #f0f0f0', borderRadius: 4, p: 4, mb: 4 }}>
-            <Typography variant="h6" fontWeight="bold" color="#002855" sx={{ mb: 3 }}>
+            <Typography variant="h6" fontWeight="bold" color="#091542" sx={{ mb: 3 }}>
               Verification Status
             </Typography>
 
@@ -264,7 +264,7 @@ export default function GuestDetails() {
                 <Typography variant="caption" color="text.secondary" fontWeight="700" sx={{ textTransform: 'uppercase', display: 'block', mb: 1 }}>
                   Date Requested
                 </Typography>
-                <Typography variant="body2" fontWeight="800" color="#002855">
+                <Typography variant="body2" fontWeight="800" color="#091542">
                   {guest.date}
                 </Typography>
               </Box>
@@ -316,7 +316,7 @@ export default function GuestDetails() {
 
       {/* Rejection Reason Modal */}
       <Dialog open={openRejectDialog} onClose={() => setOpenRejectDialog(false)} fullWidth maxWidth="sm" sx={{ '& .MuiPaper-root': { borderRadius: '16px', p: 1 } }}>
-        <DialogTitle sx={{ fontWeight: 700, color: '#002855' }}>Reject Guest Request</DialogTitle>
+        <DialogTitle sx={{ fontWeight: 700, color: '#091542' }}>Reject Guest Request</DialogTitle>
         <DialogContent>
           <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
             Please provide a reason to reject this request for <strong>{guest.name}</strong>.

@@ -328,7 +328,7 @@ export default function GetFlat() {
           <Typography
             variant="h4"
             fontWeight="bold"
-            sx={{ mb: 1, color: "#002855" }}
+            sx={{ mb: 1, color: "#091542" }}
           >
             Flats
           </Typography>
@@ -619,7 +619,7 @@ export default function GetFlat() {
         <Table sx={{ minWidth: 800 }} aria-label="flats table">
           <TableHead sx={{ bgcolor: "#f8fafc" }}>
             <TableRow>
-              <TableCell sx={{ color: "#002855", fontWeight: 700, py: 2 }}>
+              <TableCell sx={{ color: "#091542", fontWeight: 700, py: 2 }}>
                 <TableSortLabel
                   active={sortBy === "number"}
                   direction={sortBy === "number" ? sortOrder : "asc"}
@@ -628,7 +628,7 @@ export default function GetFlat() {
                   Flat Number
                 </TableSortLabel>
               </TableCell>
-              <TableCell sx={{ color: "#002855", fontWeight: 700, py: 2 }}>
+              <TableCell sx={{ color: "#091542", fontWeight: 700, py: 2 }}>
                 <TableSortLabel
                   active={sortBy === "towerName"}
                   direction={sortBy === "towerName" ? sortOrder : "asc"}
@@ -637,7 +637,7 @@ export default function GetFlat() {
                   Tower & Project
                 </TableSortLabel>
               </TableCell>
-              <TableCell sx={{ color: "#002855", fontWeight: 700, py: 2 }}>
+              <TableCell sx={{ color: "#091542", fontWeight: 700, py: 2 }}>
                 <TableSortLabel
                   active={sortBy === "floor"}
                   direction={sortBy === "floor" ? sortOrder : "asc"}
@@ -646,7 +646,7 @@ export default function GetFlat() {
                   Floor
                 </TableSortLabel>
               </TableCell>
-              <TableCell sx={{ color: "#002855", fontWeight: 700, py: 2 }}>
+              <TableCell sx={{ color: "#091542", fontWeight: 700, py: 2 }}>
                 <TableSortLabel
                   active={sortBy === "type"}
                   direction={sortBy === "type" ? sortOrder : "asc"}
@@ -655,7 +655,7 @@ export default function GetFlat() {
                   Flat Type
                 </TableSortLabel>
               </TableCell>
-              <TableCell sx={{ color: "#002855", fontWeight: 700, py: 2 }}>
+              <TableCell sx={{ color: "#091542", fontWeight: 700, py: 2 }}>
                 <TableSortLabel
                   active={sortBy === "status"}
                   direction={sortBy === "status" ? sortOrder : "asc"}
@@ -666,7 +666,7 @@ export default function GetFlat() {
               </TableCell>
               <TableCell
                 sx={{
-                  color: "#002855",
+                  color: "#091542",
                   fontWeight: 700,
                   py: 2,
                   textAlign: "right",
@@ -716,7 +716,7 @@ export default function GetFlat() {
                       <Typography
                         variant="body2"
                         fontWeight="700"
-                        color="#002855"
+                        color="#091542"
                       >
                         {row.towerName}
                       </Typography>
@@ -813,7 +813,7 @@ export default function GetFlat() {
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={!!deleteId} onClose={() => setDeleteId(null)}>
-        <DialogTitle sx={{ fontWeight: "bold", color: "#002855" }}>
+        <DialogTitle sx={{ fontWeight: "bold", color: "#091542" }}>
           Delete Flat?
         </DialogTitle>
         <DialogContent>

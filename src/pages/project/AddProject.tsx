@@ -104,7 +104,7 @@ export default function AddProject() {
           <Typography
             variant="h4"
             fontWeight="bold"
-            sx={{ color: "#002855", mb: 1 }}
+            sx={{ color: "#091542", mb: 1 }}
           >
             Add New Project
           </Typography>
@@ -145,7 +145,7 @@ export default function AddProject() {
         <Typography
           variant="h6"
           fontWeight="bold"
-          color="#002855"
+          color="#091542"
           sx={{ mb: 3 }}
         >
           Project Details

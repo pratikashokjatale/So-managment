@@ -12,10 +12,10 @@ import {
   Typography,
   useTheme,
   useMediaQuery,
-  Avatar,
   Collapse,
   IconButton,
   Button,
+  Stack,
 } from "@mui/material";
 import { 
   ExpandLess as ExpandLessIcon, 
@@ -25,10 +25,21 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { useConfig } from "@/contexts/ConfigContext";
 import { menuItems } from "./menuItems";
-import { alpha } from "@mui/material/styles";
 import TopBar from "./TopBar";
 import Loader from "@/components/Loader";
 import PageNotFound from "@/pages/PageNotFound";
+
+const MarbellaLogo = () => (
+  <svg width="46" height="46" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M50 15 L64 35 L85 30 L74 58 L50 48 L26 58 L15 30 L36 35 Z" fill="#dfb76c" />
+    <path d="M50 48 L50 85 L74 58 Z" fill="#b89047" />
+    <path d="M50 48 L50 85 L26 58 Z" fill="#dfb76c" />
+    <circle cx="50" cy="12" r="4.5" fill="#dfb76c" />
+    <circle cx="88" cy="28" r="4" fill="#dfb76c" />
+    <circle cx="12" cy="28" r="4" fill="#dfb76c" />
+    <path d="M50 25 L55 35 L45 35 Z" fill="#ffffff" opacity="0.8" />
+  </svg>
+);
 
 export default function DashboardLayout() {
   const theme = useTheme();
@@ -99,8 +110,8 @@ export default function DashboardLayout() {
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        bgcolor: "primary.main",
-        color: "primary.contrastText",
+        background: "#091542ff",
+        color: "rgba(255, 255, 255, 0.9)",
         overflowX: "hidden",
         transition: theme.transitions.create("width", {
           easing: theme.transitions.easing.sharp,
@@ -110,34 +121,73 @@ export default function DashboardLayout() {
     >
       <Box
         sx={{ 
-          px: desktopOpen || isMobile ? 3 : 2.5, 
+          px: desktopOpen || isMobile ? 3 : 2, 
           py: 4, 
           display: "flex", 
+          flexDirection: "column",
           alignItems: "center", 
           gap: 1.5,
-          justifyContent: desktopOpen || isMobile ? "flex-start" : "center"
+          borderBottom: "1px solid rgba(255, 255, 255, 0.06)",
+          mb: 2,
+          justifyContent: "center"
         }}
       >
-        <Avatar
-          sx={{
-            bgcolor: "white",
-            color: "primary.main",
-            width: 40,
-            height: 40,
-            boxShadow: `0 4px 20px ${alpha(theme.palette.common.black, 0.2)}`,
-            fontWeight: 900,
-            flexShrink: 0
-          }}
-        >
-          SM
-        </Avatar>
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <MarbellaLogo />
+        </Box>
         {(desktopOpen || isMobile) && (
-          <Typography
-            variant="h6"
-            sx={{ color: "white", fontWeight: 700, letterSpacing: "-0.5px", whiteSpace: "nowrap" }}
-          >
-            Society Management
-          </Typography>
+          <Stack spacing={0.25} alignItems="center">
+            <Typography
+              variant="h5"
+              sx={{ 
+                color: "#dfb76c", 
+                fontWeight: 900, 
+                letterSpacing: "4px", 
+                fontFamily: "'Georgia', serif",
+                textTransform: "uppercase",
+                fontSize: "1.1rem",
+                lineHeight: 1.2
+              }}
+            >
+              Marbella
+            </Typography>
+            <Typography
+              variant="caption"
+              sx={{ 
+                color: "white", 
+                fontWeight: 800, 
+                letterSpacing: "1.5px", 
+                textTransform: "uppercase",
+                fontSize: "0.7rem",
+                opacity: 0.9
+              }}
+            >
+              Club Marbella
+            </Typography>
+            <Box 
+              sx={{ 
+                border: "1px solid #dfb76c", 
+                px: 1.5, 
+                py: 0.25, 
+                borderRadius: "4px",
+                mt: 0.75
+              }}
+            >
+              <Typography
+                variant="caption"
+                sx={{ 
+                  color: "#dfb76c", 
+                  fontWeight: 900, 
+                  letterSpacing: "2px", 
+                  textTransform: "uppercase",
+                  fontSize: "0.6rem",
+                  display: "block"
+                }}
+              >
+                Admin Panel
+              </Typography>
+            </Box>
+          </Stack>
         )}
       </Box>
 
@@ -166,16 +216,21 @@ export default function DashboardLayout() {
                     px: desktopOpen || isMobile ? 2 : 1.5,
                     justifyContent: desktopOpen || isMobile ? "initial" : "center",
                     transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-                    color: alpha(theme.palette.common.white, active ? 1 : 0.7),
+                    color: active ? "#ffffff" : "#94a3b8",
+                    borderLeft: active && (desktopOpen || isMobile) ? "4px solid #dfb76c" : "4px solid transparent",
+                    pl: active && (desktopOpen || isMobile) ? "12px" : (desktopOpen || isMobile ? "16px" : "12px"),
+                    bgcolor: active ? "rgba(255, 255, 255, 0.08)" : "transparent",
                     "&.Mui-selected": {
-                      bgcolor: alpha(theme.palette.common.white, 0.15),
+                      bgcolor: "rgba(255, 255, 255, 0.08)",
                       color: "white",
-                      "& .MuiListItemIcon-root": { color: "white" },
-                      "&:hover": { bgcolor: alpha(theme.palette.common.white, 0.2) },
+                      "& .MuiListItemIcon-root": { color: "#dfb76c" },
+                      "&:hover": { bgcolor: "rgba(255, 255, 255, 0.12)" },
                     },
                     "&:hover": {
-                      bgcolor: alpha(theme.palette.common.white, 0.1),
-                      transform: (desktopOpen || isMobile) && !hasChildren ? "translateX(6px)" : "none",
+                      bgcolor: "rgba(255, 255, 255, 0.04)",
+                      color: "white",
+                      "& .MuiListItemIcon-root": { color: "#dfb76c" },
+                      transform: (desktopOpen || isMobile) && !hasChildren ? "translateX(4px)" : "none",
                     },
                   }}
                 >
@@ -184,7 +239,7 @@ export default function DashboardLayout() {
                       minWidth: desktopOpen || isMobile ? 42 : 0,
                       mr: desktopOpen || isMobile ? 1 : 0,
                       justifyContent: "center",
-                      color: alpha(theme.palette.common.white, active ? 1 : 0.7),
+                      color: active ? "#dfb76c" : "#94a3b8",
                     }}
                   >
                     {item.icon}
@@ -218,13 +273,13 @@ export default function DashboardLayout() {
                             borderRadius: "10px",
                             py: 1,
                             mb: 0.5,
-                            color: alpha(theme.palette.common.white, childActive ? 1 : 0.6),
+                            color: childActive ? "#ffffff" : "#94a3b8",
                             "&.Mui-selected": {
-                              bgcolor: alpha(theme.palette.common.white, 0.1),
+                              bgcolor: "rgba(255, 255, 255, 0.08)",
                               color: "white",
-                              "&:hover": { bgcolor: alpha(theme.palette.common.white, 0.15) },
+                              "&:hover": { bgcolor: "rgba(255, 255, 255, 0.12)" },
                             },
-                            "&:hover": { bgcolor: alpha(theme.palette.common.white, 0.05) },
+                            "&:hover": { bgcolor: "rgba(255, 255, 255, 0.04)", color: "white" },
                           }}
                         >
                           {child.icon && (
@@ -233,7 +288,7 @@ export default function DashboardLayout() {
                                 minWidth: 32,
                                 mr: 0.5,
                                 justifyContent: "center",
-                                color: "inherit",
+                                color: childActive ? "#dfb76c" : "inherit",
                               }}
                             >
                               {child.icon}
@@ -254,18 +309,18 @@ export default function DashboardLayout() {
         })}
       </List>
 
-      {/* Logout Action Area */}
-      <Box sx={{ p: 2, borderTop: `1px solid ${alpha(theme.palette.common.white, 0.1)}` }}>
+      <Box sx={{ p: 2, borderTop: "1px solid rgba(255, 255, 255, 0.06)" }}>
         {(desktopOpen || isMobile) ? (
           <ListItemButton
             onClick={logout}
             sx={{
               borderRadius: "16px",
-             
               color: "#ef4444",
               px: 2.5,
               py: 1.5,
-             
+              "&:hover": {
+                bgcolor: "rgba(239, 68, 68, 0.08)",
+              }
             }}
           >
             <ListItemIcon sx={{ color: "#ef4444", minWidth: 40 }}>
@@ -319,7 +374,7 @@ export default function DashboardLayout() {
               width: 280,
               backgroundImage: "none",
               border: "none",
-              bgcolor: "primary.main",
+              background: "#091542ff",
               borderRadius: 0,
             },
           }}
@@ -335,7 +390,7 @@ export default function DashboardLayout() {
               width: currentDrawerWidth,
               borderRight: "none",
               backgroundImage: "none",
-              bgcolor: "primary.main",
+              background: "#091542ff",
               borderRadius: 0,
               transition: theme.transitions.create("width", { easing: theme.transitions.easing.sharp, duration: theme.transitions.duration.enteringScreen }),
               overflowX: "hidden"

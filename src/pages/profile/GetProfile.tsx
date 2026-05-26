@@ -152,7 +152,7 @@ export default function GetProfile() {
           bgcolor: "#f8fafc",
         }}
       >
-        <CircularProgress size={60} thickness={4} sx={{ color: "#002855" }} />
+        <CircularProgress size={60} thickness={4} sx={{ color: "#091542" }} />
       </Box>
     );
   }
@@ -161,7 +161,7 @@ export default function GetProfile() {
     <Box sx={{ p: { xs: 2, md: 5 }, bgcolor: "#f8fafc", minHeight: "100vh" }}>
       {/* Page Header */}
       <Box sx={{ mb: 6 }}>
-        <Typography variant="h3" fontWeight="900" color="#002855" sx={{ mb: 1 }}>
+        <Typography variant="h3" fontWeight="900" color="#091542" sx={{ mb: 1 }}>
           Profile
         </Typography>
         <Breadcrumbs separator=">" sx={{ fontWeight: 600 }}>
@@ -212,7 +212,7 @@ export default function GetProfile() {
               {userInitials}
             </Avatar>
 
-            <Typography variant="h5" fontWeight="900" color="#002855" sx={{ mb: 1 }}>
+            <Typography variant="h5" fontWeight="900" color="#091542" sx={{ mb: 1 }}>
               {userName}
             </Typography>
 
@@ -260,7 +260,7 @@ export default function GetProfile() {
             }}
           >
             <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 4 }}>
-              <Typography variant="h5" fontWeight="900" color="#002855">
+              <Typography variant="h5" fontWeight="900" color="#091542">
                 Account Information
               </Typography>
               <Button
@@ -271,7 +271,7 @@ export default function GetProfile() {
                   textTransform: "none",
                   fontWeight: 800,
                   borderColor: theme.palette.divider,
-                  color: "#002855",
+                  color: "#091542",
                   px: 3
                 }}
               >
@@ -286,7 +286,7 @@ export default function GetProfile() {
                     Full Name
                   </Typography>
                   <Stack direction="row" spacing={1.5} alignItems="center">
-                    <Typography variant="body1" fontWeight="700" color="#002855">
+                    <Typography variant="body1" fontWeight="700" color="#091542">
                       {userName}
                     </Typography>
                   </Stack>
@@ -300,7 +300,7 @@ export default function GetProfile() {
                   </Typography>
                   <Stack direction="row" spacing={1.5} alignItems="center">
                     <EmailIcon sx={{ color: "text.secondary", fontSize: 18 }} />
-                    <Typography variant="body1" fontWeight="700" color="#002855">
+                    <Typography variant="body1" fontWeight="700" color="#091542">
                       {user?.email || "N/A"}
                     </Typography>
                   </Stack>
@@ -314,7 +314,7 @@ export default function GetProfile() {
                   </Typography>
                   <Stack direction="row" spacing={1.5} alignItems="center">
                     <PhoneIcon sx={{ color: "text.secondary", fontSize: 18 }} />
-                    <Typography variant="body1" fontWeight="700" color="#002855">
+                    <Typography variant="body1" fontWeight="700" color="#091542">
                       {user?.phone || "N/A"}
                     </Typography>
                   </Stack>
@@ -328,7 +328,7 @@ export default function GetProfile() {
                   </Typography>
                   <Stack direction="row" spacing={1.5} alignItems="center">
                     <FlatIcon sx={{ color: "text.secondary", fontSize: 18 }} />
-                    <Typography variant="body1" fontWeight="700" color="#002855">
+                    <Typography variant="body1" fontWeight="700" color="#091542">
                       {user?.flatId || "No Flat Assigned"}
                     </Typography>
                   </Stack>
@@ -338,7 +338,7 @@ export default function GetProfile() {
 
             <Divider sx={{ my: 4 }} />
 
-            <Typography variant="h6" fontWeight="900" color="#002855" sx={{ mb: 3 }}>
+            <Typography variant="h6" fontWeight="900" color="#091542" sx={{ mb: 3 }}>
               Audit & Verification
             </Typography>
 
@@ -350,7 +350,7 @@ export default function GetProfile() {
                   </Typography>
                   <Stack direction="row" spacing={1.5} alignItems="center">
                     <LoginIcon sx={{ color: "text.secondary", fontSize: 18 }} />
-                    <Typography variant="body2" fontWeight="700" color="#002855">
+                    <Typography variant="body2" fontWeight="700" color="#091542">
                       {formatDate(user?.lastLoginAt)}
                     </Typography>
                   </Stack>
@@ -364,7 +364,7 @@ export default function GetProfile() {
                   </Typography>
                   <Stack direction="row" spacing={1.5} alignItems="center">
                     <VerifiedIcon sx={{ color: "text.secondary", fontSize: 18 }} />
-                    <Typography variant="body2" fontWeight="700" color="#002855">
+                    <Typography variant="body2" fontWeight="700" color="#091542">
                       {formatDate(user?.emailVerifiedAt)}
                     </Typography>
                   </Stack>
@@ -378,7 +378,7 @@ export default function GetProfile() {
                   </Typography>
                   <Stack direction="row" spacing={1.5} alignItems="center">
                     <DateIcon sx={{ color: "text.secondary", fontSize: 18 }} />
-                    <Typography variant="body2" fontWeight="700" color="#002855">
+                    <Typography variant="body2" fontWeight="700" color="#091542">
                       {formatDate(user?.createdAt)}
                     </Typography>
                   </Stack>
@@ -392,7 +392,7 @@ export default function GetProfile() {
                   </Typography>
                   <Stack direction="row" spacing={1.5} alignItems="center">
                     <DateIcon sx={{ color: "text.secondary", fontSize: 18 }} />
-                    <Typography variant="body2" fontWeight="700" color="#002855">
+                    <Typography variant="body2" fontWeight="700" color="#091542">
                       {formatDate(user?.updatedAt)}
                     </Typography>
                   </Stack>
@@ -412,7 +412,7 @@ export default function GetProfile() {
         PaperProps={{ sx: { borderRadius: '24px', p: 1 } }}
       >
         <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>
-          <Typography variant="h6" fontWeight="900" color="#002855">
+          <Typography variant="h6" fontWeight="900" color="#091542">
             Edit Profile
           </Typography>
           <IconButton onClick={() => setEditOpen(false)}>
@@ -484,7 +484,7 @@ export default function GetProfile() {
             onClick={handleSaveProfile} 
             variant="contained"
             disabled={updating}
-            sx={{ bgcolor: '#002855', borderRadius: '10px', textTransform: 'none', fontWeight: 800 }}
+            sx={{ bgcolor: '#091542', borderRadius: '10px', textTransform: 'none', fontWeight: 800 }}
           >
             {updating ? 'Saving...' : 'Save Changes'}
           </Button>

@@ -142,7 +142,7 @@ export default function EditGuest() {
       {/* Header Section */}
       <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Box>
-          <Typography variant="h4" fontWeight="bold" sx={{ color: '#002855', mb: 1 }}>
+          <Typography variant="h4" fontWeight="bold" sx={{ color: '#091542', mb: 1 }}>
             Edit Guest Pass
           </Typography>
           <Breadcrumbs separator=">" aria-label="breadcrumb">
@@ -303,7 +303,7 @@ export default function EditGuest() {
                   onChange={handleFileUpload}
                 />
                 <CloudUploadOutlinedIcon sx={{ fontSize: 40, color: errors.file ? '#ef4444' : '#64748b', mb: 2 }} />
-                <Typography variant="body2" fontWeight="800" color="#002855">
+                <Typography variant="body2" fontWeight="800" color="#091542">
                   Click to upload Aadhaar card copy
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
@@ -332,7 +332,7 @@ export default function EditGuest() {
                 <Stack direction="row" spacing={2} alignItems="center">
                   <CheckCircleIcon sx={{ color: '#22c55e' }} />
                   <Box>
-                    <Typography variant="body2" fontWeight="800" color="#002855">
+                    <Typography variant="body2" fontWeight="800" color="#091542">
                       {uploadedFile.name}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">

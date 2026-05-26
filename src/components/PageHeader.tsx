@@ -40,7 +40,7 @@ export default function PageHeader({
     <Box sx={{ mb: tabs ? 3 : 4 }}>
       {/* Title & Breadcrumbs Row */}
       <Box sx={{ mb: 3 }}>
-        <Typography variant="h4" fontWeight="bold" sx={{ mb: 1, color: '#002855' }}>
+        <Typography variant="h4" fontWeight="bold" sx={{ mb: 1, color: '#091542' }}>
           {title}
         </Typography>
         <Breadcrumbs separator=">" aria-label="breadcrumb">

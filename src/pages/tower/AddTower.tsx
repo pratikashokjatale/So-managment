@@ -104,7 +104,7 @@ export default function AddTower() {
       {/* Header */}
       <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Box>
-          <Typography variant="h4" fontWeight="bold" sx={{ color: '#002855', mb: 1 }}>
+          <Typography variant="h4" fontWeight="bold" sx={{ color: '#091542', mb: 1 }}>
             Add New Tower
           </Typography>
           <Breadcrumbs separator=">" aria-label="breadcrumb">
@@ -125,7 +125,7 @@ export default function AddTower() {
 
       {/* Form Container */}
       <Paper elevation={0} sx={{ border: '1px solid #f0f0f0', borderRadius: '16px', p: { xs: 3, md: 5 } }}>
-        <Typography variant="h6" fontWeight="bold" color="#002855" sx={{ mb: 3 }}>
+        <Typography variant="h6" fontWeight="bold" color="#091542" sx={{ mb: 3 }}>
           Tower Details
         </Typography>
         

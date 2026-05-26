@@ -261,7 +261,7 @@ export default function GetResident() {
                   const flat = row.flat || getFlats().find((f) => f.id === row.flatId);
                   const tower = getTowers().find((t) => t.id === flat?.towerId);
                   const towerName = row.towerName || flat?.tower?.name || flat?.towerName || tower?.name || (flat?.towerId ? "Tower " + flat.towerId.slice(0, 4).toUpperCase() : "N/A");
-                  return <Typography variant="body2" fontWeight="600" color="#002855">{row.id.startsWith("mock-") ? row.tower : towerName}</Typography>;
+                  return <Typography variant="body2" fontWeight="600" color="#091542">{row.id.startsWith("mock-") ? row.tower : towerName}</Typography>;
                 }
               },
               {

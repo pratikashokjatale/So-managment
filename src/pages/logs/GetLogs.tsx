@@ -30,7 +30,7 @@ export default function GetLogs() {
       {/* Page Header */}
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 6 }}>
         <Box>
-          <Typography variant="h3" fontWeight="900" color="#002855">System Log Auditor</Typography>
+          <Typography variant="h3" fontWeight="900" color="#091542">System Log Auditor</Typography>
           <Typography variant="subtitle1" color="text.secondary" fontWeight="700">Comprehensive audit trails for every biometric and financial event</Typography>
         </Box>
         <Stack direction="row" spacing={2}>
@@ -59,14 +59,14 @@ export default function GetLogs() {
       <Grid container spacing={3} sx={{ mb: 6 }}>
         <Grid size={{ xs: 12, md: 3 }}>
           <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
-            <Typography variant="h6" fontWeight="900" color="#002855" sx={{ mb: 1 }}>Total Events</Typography>
+            <Typography variant="h6" fontWeight="900" color="#091542" sx={{ mb: 1 }}>Total Events</Typography>
             <Typography variant="h3" fontWeight="900" color="#1d4ed8">2,450</Typography>
             <Typography variant="caption" color="#64748b" fontWeight="800">LAST 24 HOURS</Typography>
           </Paper>
         </Grid>
         <Grid size={{ xs: 12, md: 3 }}>
           <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
-            <Typography variant="h6" fontWeight="900" color="#002855" sx={{ mb: 1 }}>Auth Failures</Typography>
+            <Typography variant="h6" fontWeight="900" color="#091542" sx={{ mb: 1 }}>Auth Failures</Typography>
             <Typography variant="h3" fontWeight="900" color="#ef4444">12</Typography>
             <Typography variant="caption" color="#64748b" fontWeight="800">CRITICAL ALERTS</Typography>
           </Paper>
@@ -95,7 +95,7 @@ export default function GetLogs() {
                       <Box sx={{ width: 40, height: 40, borderRadius: '12px', bgcolor: log.bgcolor, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         {log.icon}
                       </Box>
-                      <Typography variant="body2" fontWeight="800" color="#002855">{log.type}</Typography>
+                      <Typography variant="body2" fontWeight="800" color="#091542">{log.type}</Typography>
                     </Stack>
                   </TableCell>
                   <TableCell>
@@ -105,7 +105,7 @@ export default function GetLogs() {
                     <Typography variant="body2" fontWeight="800" color="#475569">{log.action}</Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography variant="body2" fontWeight="800" color="#002855">{log.time}</Typography>
+                    <Typography variant="body2" fontWeight="800" color="#091542">{log.time}</Typography>
                   </TableCell>
                   <TableCell>
                     <Typography variant="caption" fontWeight="700" color="#64748b">{log.detail}</Typography>

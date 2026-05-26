@@ -261,7 +261,7 @@ export default function GetFacility() {
             <Typography
               variant="h6"
               fontWeight="900"
-              color="#002855"
+              color="#091542"
               sx={{ mb: 1 }}
             >
               Total Units
@@ -287,7 +287,7 @@ export default function GetFacility() {
             <Typography
               variant="h6"
               fontWeight="900"
-              color="#002855"
+              color="#091542"
               sx={{ mb: 1 }}
             >
               Active Bookings
@@ -313,7 +313,7 @@ export default function GetFacility() {
             <Typography
               variant="h6"
               fontWeight="900"
-              color="#002855"
+              color="#091542"
               sx={{ mb: 1 }}
             >
               Maintenance
@@ -358,7 +358,7 @@ export default function GetFacility() {
                       <Typography
                         variant="body1"
                         fontWeight="800"
-                        color="#002855"
+                        color="#091542"
                         sx={{ "&:hover": { color: "#1d4ed8" } }}
                       >
                         {facility.name}
@@ -454,7 +454,7 @@ export default function GetFacility() {
                     <IconButton
                       size="small"
                       onClick={() => navigate(`/facility/edit/${facility.id}`)}
-                      sx={{ color: "#002855" }}
+                      sx={{ color: "#091542" }}
                     >
                       <EditIcon fontSize="small" />
                     </IconButton>

@@ -24,13 +24,13 @@ export default function GetReport() {
       {/* Page Header */}
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 6 }}>
         <Box>
-          <Typography variant="h3" fontWeight="900" color="#002855">AI Operational Insights</Typography>
+          <Typography variant="h3" fontWeight="900" color="#091542">AI Operational Insights</Typography>
           <Typography variant="subtitle1" color="text.secondary" fontWeight="700">Predictive usage patterns and financial health auditing</Typography>
         </Box>
         <Button 
           variant="contained" 
           startIcon={<ExportIcon />} 
-          sx={{ borderRadius: '16px', px: 4, py: 1.5, fontWeight: 900, bgcolor: '#002855' }}
+          sx={{ borderRadius: '16px', px: 4, py: 1.5, fontWeight: 900, bgcolor: '#091542' }}
         >
           Export Executive Summary
         </Button>
@@ -44,7 +44,7 @@ export default function GetReport() {
               <Box sx={{ p: 1, bgcolor: '#eff6ff', borderRadius: '12px', color: '#1d4ed8' }}><RevenueIcon /></Box>
               <Typography variant="caption" fontWeight="900" color="#64748b">MONTHLY REVENUE</Typography>
             </Stack>
-            <Typography variant="h4" fontWeight="900" color="#002855">₹8,45,200</Typography>
+            <Typography variant="h4" fontWeight="900" color="#091542">₹8,45,200</Typography>
             <Typography variant="caption" sx={{ color: '#10b981', fontWeight: 800 }}>+18.4% VS LAST MONTH</Typography>
           </Paper>
         </Grid>
@@ -54,7 +54,7 @@ export default function GetReport() {
               <Box sx={{ p: 1, bgcolor: '#f0fdf4', borderRadius: '12px', color: '#10b981' }}><TrafficIcon /></Box>
               <Typography variant="caption" fontWeight="900" color="#64748b">CLUB TRAFFIC</Typography>
             </Stack>
-            <Typography variant="h4" fontWeight="900" color="#002855">1,240</Typography>
+            <Typography variant="h4" fontWeight="900" color="#091542">1,240</Typography>
             <Typography variant="caption" sx={{ color: '#10b981', fontWeight: 800 }}>85% ACTIVE RESIDENTS</Typography>
           </Paper>
         </Grid>
@@ -64,12 +64,12 @@ export default function GetReport() {
               <Box sx={{ p: 1, bgcolor: '#fef2f2', borderRadius: '12px', color: '#ef4444' }}><PeakIcon /></Box>
               <Typography variant="caption" fontWeight="900" color="#64748b">PEAK LOAD TIME</Typography>
             </Stack>
-            <Typography variant="h4" fontWeight="900" color="#002855">07:45 PM</Typography>
+            <Typography variant="h4" fontWeight="900" color="#091542">07:45 PM</Typography>
             <Typography variant="caption" sx={{ color: '#ef4444', fontWeight: 800 }}>HIGH CONGESTION ALERT</Typography>
           </Paper>
         </Grid>
         <Grid size={{ xs: 12, md: 3 }}>
-          <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #002855', bgcolor: '#002855', color: 'white' }}>
+          <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #091542', bgcolor: '#091542', color: 'white' }}>
             <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
               <Box sx={{ p: 1, bgcolor: 'rgba(255,255,255,0.1)', borderRadius: '12px', color: 'white' }}><AIIcon /></Box>
               <Typography variant="caption" fontWeight="900" color="rgba(255,255,255,0.7)">AI RECOMMENDATION</Typography>
@@ -83,7 +83,7 @@ export default function GetReport() {
         <Grid size={{ xs: 12, md: 8 }}>
           <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: 'white', minHeight: 400 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-              <Typography variant="h6" fontWeight="900" color="#002855">Hourly Usage Heatmap</Typography>
+              <Typography variant="h6" fontWeight="900" color="#091542">Hourly Usage Heatmap</Typography>
               <Chip label="Real-time" size="small" sx={{ fontWeight: 900, bgcolor: '#f0fdf4', color: '#10b981' }} />
             </Box>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -105,14 +105,14 @@ export default function GetReport() {
         {/* Facility performance ledger */}
         <Grid size={{ xs: 12, md: 4 }}>
           <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
-            <Typography variant="h6" fontWeight="900" color="#002855" sx={{ mb: 4 }}>Facility Efficiency</Typography>
+            <Typography variant="h6" fontWeight="900" color="#091542" sx={{ mb: 4 }}>Facility Efficiency</Typography>
             <Stack spacing={3}>
               {facilityStats.map((fac) => (
                 <Box key={fac.id}>
                   <Stack direction="row" justifyContent="space-between" alignItems="center">
                     <Stack direction="row" spacing={2} alignItems="center">
                       <Avatar sx={{ width: 8, height: 8, bgcolor: fac.color }}> </Avatar>
-                      <Typography variant="body2" fontWeight="800" color="#002855">{fac.name}</Typography>
+                      <Typography variant="body2" fontWeight="800" color="#091542">{fac.name}</Typography>
                     </Stack>
                     <Typography variant="body2" fontWeight="900" color="#1d4ed8">{fac.usage}</Typography>
                   </Stack>
@@ -120,7 +120,7 @@ export default function GetReport() {
                 </Box>
               ))}
             </Stack>
-            <Button fullWidth sx={{ mt: 4, borderRadius: '12px', textTransform: 'none', fontWeight: 800, color: '#002855' }} endIcon={<ChevronIcon />}>
+            <Button fullWidth sx={{ mt: 4, borderRadius: '12px', textTransform: 'none', fontWeight: 800, color: '#091542' }} endIcon={<ChevronIcon />}>
               View Detailed Analytics
             </Button>
           </Paper>

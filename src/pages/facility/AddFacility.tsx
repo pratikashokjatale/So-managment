@@ -238,7 +238,7 @@ export default function AddFacility() {
               Add Facility
             </Typography>
           </Breadcrumbs>
-          <Typography variant="h3" fontWeight="900" color="#002855">
+          <Typography variant="h3" fontWeight="900" color="#091542">
             Add Facility
           </Typography>
         </Box>
@@ -295,7 +295,7 @@ export default function AddFacility() {
                     minWidth: 40,
                     height: 40,
                     p: 0,
-                    bgcolor: "#002855",
+                    bgcolor: "#091542",
                     "&:hover": { bgcolor: "#001a35" },
                   }}
                 >
@@ -837,7 +837,7 @@ export default function AddFacility() {
                     px: 4,
                     py: 1.5,
                     fontWeight: 900,
-                    bgcolor: "#002855",
+                    bgcolor: "#091542",
                   }}
                 >
                   Create Facility

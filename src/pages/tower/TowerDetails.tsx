@@ -153,7 +153,7 @@ export default function TowerDetails() {
       {/* Header */}
       <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 2 }}>
         <Box>
-          <Typography variant="h4" fontWeight="bold" sx={{ color: '#002855', mb: 1 }}>
+          <Typography variant="h4" fontWeight="bold" sx={{ color: '#091542', mb: 1 }}>
             {tower.name}
           </Typography>
           <Breadcrumbs separator=">" aria-label="breadcrumb">
@@ -193,14 +193,14 @@ export default function TowerDetails() {
         {/* Tower Info Card */}
         <Grid size={{ xs: 12, md: 6 }}>
           <Paper elevation={0} sx={{ p: 4, border: '1px solid #f0f0f0', borderRadius: '16px', height: '100%' }}>
-            <Typography variant="h6" fontWeight="bold" color="#002855" sx={{ mb: 2 }}>
+            <Typography variant="h6" fontWeight="bold" color="#091542" sx={{ mb: 2 }}>
               Tower Information
             </Typography>
             
             <Grid container spacing={3}>
               <Grid size={{ xs: 6 }}>
                 <Typography variant="caption" color="text.secondary" fontWeight="600" display="block">TOWER NAME</Typography>
-                <Typography variant="body1" fontWeight="700" color="#002855">{tower.name}</Typography>
+                <Typography variant="body1" fontWeight="700" color="#091542">{tower.name}</Typography>
               </Grid>
               <Grid size={{ xs: 6 }}>
                 <Typography variant="caption" color="text.secondary" fontWeight="600" display="block">PROJECT NAME</Typography>
@@ -244,7 +244,7 @@ export default function TowerDetails() {
         {/* Dynamic Occupancy Stats */}
         <Grid size={{ xs: 12, md: 6 }}>
           <Paper elevation={0} sx={{ p: 4, border: '1px solid #f0f0f0', borderRadius: '16px', height: '100%' }}>
-            <Typography variant="h6" fontWeight="bold" color="#002855" sx={{ mb: 2 }}>
+            <Typography variant="h6" fontWeight="bold" color="#091542" sx={{ mb: 2 }}>
               Occupancy Statistics
             </Typography>
             
@@ -282,7 +282,7 @@ export default function TowerDetails() {
 
       {/* Flats List Inside Tower */}
       <Box sx={{ mt: 6 }}>
-        <Typography variant="h5" fontWeight="bold" color="#002855" sx={{ mb: 3 }}>
+        <Typography variant="h5" fontWeight="bold" color="#091542" sx={{ mb: 3 }}>
           Flats in {tower.name}
         </Typography>
 
@@ -290,11 +290,11 @@ export default function TowerDetails() {
           <Table sx={{ minWidth: 800 }}>
             <TableHead sx={{ bgcolor: '#f8fafc' }}>
               <TableRow>
-                <TableCell sx={{ color: '#002855', fontWeight: 700, py: 2 }}>Flat Number</TableCell>
-                <TableCell sx={{ color: '#002855', fontWeight: 700, py: 2 }}>Floor</TableCell>
-                <TableCell sx={{ color: '#002855', fontWeight: 700, py: 2 }}>Flat Type</TableCell>
-                <TableCell sx={{ color: '#002855', fontWeight: 700, py: 2 }}>Occupancy Status</TableCell>
-                <TableCell sx={{ color: '#002855', fontWeight: 700, py: 2, textAlign: 'right' }}>Actions</TableCell>
+                <TableCell sx={{ color: '#091542', fontWeight: 700, py: 2 }}>Flat Number</TableCell>
+                <TableCell sx={{ color: '#091542', fontWeight: 700, py: 2 }}>Floor</TableCell>
+                <TableCell sx={{ color: '#091542', fontWeight: 700, py: 2 }}>Flat Type</TableCell>
+                <TableCell sx={{ color: '#091542', fontWeight: 700, py: 2 }}>Occupancy Status</TableCell>
+                <TableCell sx={{ color: '#091542', fontWeight: 700, py: 2, textAlign: 'right' }}>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -389,7 +389,7 @@ export default function TowerDetails() {
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={!!deleteFlatId} onClose={() => setDeleteFlatId(null)}>
-        <DialogTitle sx={{ fontWeight: 'bold', color: '#002855' }}>Delete Flat?</DialogTitle>
+        <DialogTitle sx={{ fontWeight: 'bold', color: '#091542' }}>Delete Flat?</DialogTitle>
         <DialogContent>
           <DialogContentText>
             Are you sure you want to permanently delete this flat? This action cannot be undone and will clear all occupant records.

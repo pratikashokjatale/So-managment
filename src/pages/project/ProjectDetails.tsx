@@ -127,7 +127,7 @@ export default function ProjectDetails() {
       {/* Header */}
       <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 2 }}>
         <Box>
-          <Typography variant="h4" fontWeight="bold" sx={{ color: '#002855', mb: 1 }}>
+          <Typography variant="h4" fontWeight="bold" sx={{ color: '#091542', mb: 1 }}>
             {project.name}
           </Typography>
           <Breadcrumbs separator=">" aria-label="breadcrumb">
@@ -167,14 +167,14 @@ export default function ProjectDetails() {
         {/* Project Metadata */}
         <Grid size={{ xs: 12, md: 8 }}>
           <Paper elevation={0} sx={{ p: 4, border: '1px solid #f0f0f0', borderRadius: '16px', height: '100%' }}>
-            <Typography variant="h6" fontWeight="bold" color="#002855" sx={{ mb: 2 }}>
+            <Typography variant="h6" fontWeight="bold" color="#091542" sx={{ mb: 2 }}>
               Project Information
             </Typography>
             
             <Grid container spacing={3}>
               <Grid size={{ xs: 12, sm: 6 }}>
                 <Typography variant="caption" color="text.secondary" fontWeight="600" display="block">PROJECT NAME</Typography>
-                <Typography variant="body1" fontWeight="700" color="#002855">{project.name}</Typography>
+                <Typography variant="body1" fontWeight="700" color="#091542">{project.name}</Typography>
               </Grid>
               <Grid size={{ xs: 12, sm: 6 }}>
                 <Typography variant="caption" color="text.secondary" fontWeight="600" display="block">PROJECT CODE</Typography>
@@ -254,7 +254,7 @@ export default function ProjectDetails() {
 
       {/* Nested Towers List */}
       <Box sx={{ mt: 6 }}>
-        <Typography variant="h5" fontWeight="bold" color="#002855" sx={{ mb: 3 }}>
+        <Typography variant="h5" fontWeight="bold" color="#091542" sx={{ mb: 3 }}>
           Towers in {project.name}
         </Typography>
 
@@ -262,11 +262,11 @@ export default function ProjectDetails() {
           <Table sx={{ minWidth: 800 }}>
             <TableHead sx={{ bgcolor: '#f8fafc' }}>
               <TableRow>
-                <TableCell sx={{ color: '#002855', fontWeight: 700, py: 2 }}>Tower Name</TableCell>
-                <TableCell sx={{ color: '#002855', fontWeight: 700, py: 2 }}>Total Floors</TableCell>
-                <TableCell sx={{ color: '#002855', fontWeight: 700, py: 2 }}>Flats Count</TableCell>
-                <TableCell sx={{ color: '#002855', fontWeight: 700, py: 2 }}>Status</TableCell>
-                <TableCell sx={{ color: '#002855', fontWeight: 700, py: 2, textAlign: 'right' }}>Actions</TableCell>
+                <TableCell sx={{ color: '#091542', fontWeight: 700, py: 2 }}>Tower Name</TableCell>
+                <TableCell sx={{ color: '#091542', fontWeight: 700, py: 2 }}>Total Floors</TableCell>
+                <TableCell sx={{ color: '#091542', fontWeight: 700, py: 2 }}>Flats Count</TableCell>
+                <TableCell sx={{ color: '#091542', fontWeight: 700, py: 2 }}>Status</TableCell>
+                <TableCell sx={{ color: '#091542', fontWeight: 700, py: 2, textAlign: 'right' }}>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -275,7 +275,7 @@ export default function ProjectDetails() {
 
                 return (
                   <TableRow key={tower.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                    <TableCell sx={{ py: 2, fontWeight: 700, color: '#002855', borderBottomColor: '#f0f0f0' }}>
+                    <TableCell sx={{ py: 2, fontWeight: 700, color: '#091542', borderBottomColor: '#f0f0f0' }}>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                         <TowerIcon sx={{ color: 'text.secondary' }} />
                         <Box>
@@ -370,7 +370,7 @@ export default function ProjectDetails() {
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={!!deleteTowerId} onClose={() => setDeleteTowerId(null)}>
-        <DialogTitle sx={{ fontWeight: 'bold', color: '#002855' }}>Delete Tower?</DialogTitle>
+        <DialogTitle sx={{ fontWeight: 'bold', color: '#091542' }}>Delete Tower?</DialogTitle>
         <DialogContent>
           <DialogContentText>
             Are you sure you want to delete this tower? Deleting this tower will **permanently delete all Flats** inside it. This action cannot be undone.

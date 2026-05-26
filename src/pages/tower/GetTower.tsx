@@ -250,7 +250,7 @@ export default function GetTower() {
           <Typography
             variant="h4"
             fontWeight="bold"
-            sx={{ mb: 1, color: "#002855" }}
+            sx={{ mb: 1, color: "#091542" }}
           >
             Towers
           </Typography>
@@ -401,7 +401,7 @@ export default function GetTower() {
                 <Typography
                   variant="h5"
                   fontWeight="800"
-                  sx={{ color: "#002855" }}
+                  sx={{ color: "#091542" }}
                 >
                   {totalFloors}
                 </Typography>
@@ -469,7 +469,7 @@ export default function GetTower() {
         <Table sx={{ minWidth: 800 }} aria-label="towers table">
           <TableHead sx={{ bgcolor: "#f8fafc" }}>
             <TableRow>
-              <TableCell sx={{ color: "#002855", fontWeight: 700, py: 2 }}>
+              <TableCell sx={{ color: "#091542", fontWeight: 700, py: 2 }}>
                 <TableSortLabel
                   active={sortBy === "name"}
                   direction={sortBy === "name" ? sortOrder : "asc"}
@@ -478,7 +478,7 @@ export default function GetTower() {
                   Tower Name
                 </TableSortLabel>
               </TableCell>
-              <TableCell sx={{ color: "#002855", fontWeight: 700, py: 2 }}>
+              <TableCell sx={{ color: "#091542", fontWeight: 700, py: 2 }}>
                 <TableSortLabel
                   active={sortBy === "projectName"}
                   direction={sortBy === "projectName" ? sortOrder : "asc"}
@@ -487,7 +487,7 @@ export default function GetTower() {
                   Project Name
                 </TableSortLabel>
               </TableCell>
-              <TableCell sx={{ color: "#002855", fontWeight: 700, py: 2 }}>
+              <TableCell sx={{ color: "#091542", fontWeight: 700, py: 2 }}>
                 <TableSortLabel
                   active={sortBy === "totalFloors"}
                   direction={sortBy === "totalFloors" ? sortOrder : "asc"}
@@ -496,7 +496,7 @@ export default function GetTower() {
                   Total Floors
                 </TableSortLabel>
               </TableCell>
-              <TableCell sx={{ color: "#002855", fontWeight: 700, py: 2 }}>
+              <TableCell sx={{ color: "#091542", fontWeight: 700, py: 2 }}>
                 <TableSortLabel
                   active={sortBy === "status"}
                   direction={sortBy === "status" ? sortOrder : "asc"}
@@ -507,7 +507,7 @@ export default function GetTower() {
               </TableCell>
               <TableCell
                 sx={{
-                  color: "#002855",
+                  color: "#091542",
                   fontWeight: 700,
                   py: 2,
                   textAlign: "right",
@@ -538,7 +538,7 @@ export default function GetTower() {
                       sx={{
                         py: 2,
                         fontWeight: 700,
-                        color: "#002855",
+                        color: "#091542",
                         borderBottomColor: "#f0f0f0",
                       }}
                     >
@@ -668,7 +668,7 @@ export default function GetTower() {
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={!!deleteId} onClose={() => setDeleteId(null)}>
-        <DialogTitle sx={{ fontWeight: "bold", color: "#002855" }}>
+        <DialogTitle sx={{ fontWeight: "bold", color: "#091542" }}>
           Delete Tower?
         </DialogTitle>
         <DialogContent>

@@ -122,14 +122,14 @@ export default function StaffDetails() {
             </Link>
             <Typography color="text.primary" sx={{ fontWeight: 900 }}>{staff.name}</Typography>
           </Breadcrumbs>
-          <Typography variant="h3" fontWeight="900" color="#002855">Staff Details</Typography>
+          <Typography variant="h3" fontWeight="900" color="#091542">Staff Details</Typography>
         </Box>
         <Stack direction="row" spacing={2}>
           <Button 
             variant="outlined" 
             startIcon={<ArrowBackIcon />} 
             onClick={() => navigate('/staff')}
-            sx={{ borderRadius: '16px', px: 3, py: 1.25, fontWeight: 900, borderColor: '#e2e8f0', color: '#002855', bgcolor: 'white', '&:hover': { bgcolor: '#f1f5f9' } }}
+            sx={{ borderRadius: '16px', px: 3, py: 1.25, fontWeight: 900, borderColor: '#e2e8f0', color: '#091542', bgcolor: 'white', '&:hover': { bgcolor: '#f1f5f9' } }}
           >
             Back to List
           </Button>
@@ -137,7 +137,7 @@ export default function StaffDetails() {
             variant="contained" 
             startIcon={<EditIcon />} 
             onClick={() => navigate(`/staff/edit/${staff.id}`)}
-            sx={{ borderRadius: '16px', px: 3, py: 1.25, fontWeight: 900, bgcolor: '#002855', boxShadow: 'none', '&:hover': { bgcolor: '#001a35' } }}
+            sx={{ borderRadius: '16px', px: 3, py: 1.25, fontWeight: 900, bgcolor: '#091542', boxShadow: 'none', '&:hover': { bgcolor: '#001a35' } }}
           >
             Edit Profile
           </Button>
@@ -164,7 +164,7 @@ export default function StaffDetails() {
             <Box sx={{ height: '6px', background: 'linear-gradient(90deg, #3b82f6 0%, #10b981 50%, #7c3aed 100%)' }} />
 
             {/* ID Card Header */}
-            <Box sx={{ bgcolor: '#002855', p: 4, color: 'white', textAlign: 'center', position: 'relative' }}>
+            <Box sx={{ bgcolor: '#091542', p: 4, color: 'white', textAlign: 'center', position: 'relative' }}>
               <Typography variant="h5" fontWeight="900" sx={{ letterSpacing: 2, mb: 0.5 }}>MARBELLA CLUB</Typography>
               <Typography variant="caption" sx={{ opacity: 0.8, fontWeight: 900, letterSpacing: 1.5, display: 'block' }}>OFFICIAL CREW IDENTITY CARD</Typography>
               
@@ -200,7 +200,7 @@ export default function StaffDetails() {
                 />
               </Box>
 
-              <Typography variant="h4" fontWeight="900" color="#002855" sx={{ mb: 0.5 }}>{staff.name}</Typography>
+              <Typography variant="h4" fontWeight="900" color="#091542" sx={{ mb: 0.5 }}>{staff.name}</Typography>
               <Typography variant="subtitle1" fontWeight="800" color="#1d4ed8" sx={{ mb: 2 }}>{staff.department}</Typography>
               
               {/* Dynamic Assigned Duty Location Badge */}
@@ -226,11 +226,11 @@ export default function StaffDetails() {
               <Stack spacing={2} sx={{ mb: 4, bgcolor: '#f8fafc', p: 2.5, borderRadius: '20px', border: '1px solid #f1f5f9' }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                   <Typography variant="body2" color="text.secondary" fontWeight="700">Card Number</Typography>
-                  <Typography variant="body2" fontWeight="900" color="#002855">{staff.cardNo}</Typography>
+                  <Typography variant="body2" fontWeight="900" color="#091542">{staff.cardNo}</Typography>
                 </Box>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                   <Typography variant="body2" color="text.secondary" fontWeight="700">Joining Date</Typography>
-                  <Typography variant="body2" fontWeight="900" color="#002855">{staff.joiningDate}</Typography>
+                  <Typography variant="body2" fontWeight="900" color="#091542">{staff.joiningDate}</Typography>
                 </Box>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                   <Typography variant="body2" color="text.secondary" fontWeight="700">Verification</Typography>
@@ -262,7 +262,7 @@ export default function StaffDetails() {
             
             {/* General Info Profile */}
             <Paper elevation={0} sx={{ p: 4, border: '1px solid #e2e8f0', borderRadius: '32px', bgcolor: 'white' }}>
-              <Typography variant="h5" fontWeight="900" sx={{ mb: 4, color: '#002855' }}>General Information</Typography>
+              <Typography variant="h5" fontWeight="900" sx={{ mb: 4, color: '#091542' }}>General Information</Typography>
               
               <Grid container spacing={4}>
                 <Grid size={{ xs: 12, sm: 6 }}>
@@ -309,7 +309,7 @@ export default function StaffDetails() {
 
             {/* Employment and Contact Info */}
             <Paper elevation={0} sx={{ p: 4, border: '1px solid #e2e8f0', borderRadius: '32px', bgcolor: 'white' }}>
-              <Typography variant="h5" fontWeight="900" sx={{ mb: 4, color: '#002855' }}>Employment & Security Details</Typography>
+              <Typography variant="h5" fontWeight="900" sx={{ mb: 4, color: '#091542' }}>Employment & Security Details</Typography>
               
               <Grid container spacing={4}>
                 <Grid size={{ xs: 12, sm: 6 }}>
@@ -367,7 +367,7 @@ export default function StaffDetails() {
 
             {/* Work Schedule & Access Details */}
             <Paper elevation={0} sx={{ p: 4, border: '1px solid #e2e8f0', borderRadius: '32px', bgcolor: 'white' }}>
-              <Typography variant="h5" fontWeight="900" sx={{ mb: 4, color: '#002855' }}>Schedule & Access Details</Typography>
+              <Typography variant="h5" fontWeight="900" sx={{ mb: 4, color: '#091542' }}>Schedule & Access Details</Typography>
               
               <Grid container spacing={4}>
                 <Grid size={{ xs: 12, sm: 6 }}>

@@ -27,7 +27,7 @@ export default function FormCard({ title, subtitle, onBack, children }: FormCard
             </IconButton>
           )}
           <Box>
-            <Typography variant="h4" fontWeight="900" color="#002855">
+            <Typography variant="h4" fontWeight="900" color="#091542">
               {title}
             </Typography>
             {subtitle && (

@@ -364,7 +364,7 @@ export default function EditResident() {
             <Typography
               variant="subtitle1"
               fontWeight="bold"
-              color="#002855"
+              color="#091542"
               sx={{ mb: 2 }}
             >
               Resident Flat Allocation: {formData.apartment || "Not selected"}

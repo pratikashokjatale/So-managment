@@ -333,7 +333,7 @@ export default function EditStaff() {
                   minWidth: 40,
                   height: 40,
                   p: 0,
-                  bgcolor: "#002855",
+                  bgcolor: "#091542",
                   "&:hover": { bgcolor: "#001a35" },
                 }}
               >
@@ -656,7 +656,7 @@ export default function EditStaff() {
                 px: 4,
                 py: 1.5,
                 fontWeight: 900,
-                bgcolor: "#002855",
+                bgcolor: "#091542",
                 boxShadow: "none",
               }}
             >

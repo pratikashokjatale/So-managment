@@ -38,7 +38,7 @@ export default function GetSupport() {
       
       {/* Header Panel */}
       <Box sx={{ mb: 6 }}>
-        <Typography variant="h3" fontWeight="900" color="#002855">Help & Support</Typography>
+        <Typography variant="h3" fontWeight="900" color="#091542">Help & Support</Typography>
         <Typography variant="subtitle1" color="text.secondary" fontWeight="700">
           Access core FAQs, submit support tickets, or contact Marbella Clubhouse operations desks
         </Typography>
@@ -51,7 +51,7 @@ export default function GetSupport() {
           <Stack spacing={4}>
             
             {/* Quick Contact Cards */}
-            <Typography variant="h5" fontWeight="900" color="#002855">Direct Channels</Typography>
+            <Typography variant="h5" fontWeight="900" color="#091542">Direct Channels</Typography>
             <Grid container spacing={2}>
               <Grid size={{ xs: 12, sm: 6 }}>
                 <Card elevation={0} sx={{ border: '1px solid #e2e8f0', borderRadius: '24px', bgcolor: 'white' }}>
@@ -59,7 +59,7 @@ export default function GetSupport() {
                     <Avatar sx={{ bgcolor: '#eff6ff', color: '#1d4ed8' }}><PhoneIcon /></Avatar>
                     <Box>
                       <Typography variant="caption" color="text.secondary" fontWeight="800">EMERGENCY HELPDESK</Typography>
-                      <Typography variant="body1" fontWeight="800" color="#002855">+91 22 8879 4400</Typography>
+                      <Typography variant="body1" fontWeight="800" color="#091542">+91 22 8879 4400</Typography>
                     </Box>
                   </CardContent>
                 </Card>
@@ -70,7 +70,7 @@ export default function GetSupport() {
                     <Avatar sx={{ bgcolor: '#f0fdf4', color: '#10b981' }}><EmailIcon /></Avatar>
                     <Box>
                       <Typography variant="caption" color="text.secondary" fontWeight="800">OFFICIAL SUPPORT EMAIL</Typography>
-                      <Typography variant="body1" fontWeight="800" color="#002855">support@marbellaclub.com</Typography>
+                      <Typography variant="body1" fontWeight="800" color="#091542">support@marbellaclub.com</Typography>
                     </Box>
                   </CardContent>
                 </Card>
@@ -79,7 +79,7 @@ export default function GetSupport() {
 
             {/* FAQs Accordion */}
             <Box>
-              <Typography variant="h5" fontWeight="900" color="#002855" sx={{ mb: 3 }}>
+              <Typography variant="h5" fontWeight="900" color="#091542" sx={{ mb: 3 }}>
                 Frequently Asked Questions
               </Typography>
               
@@ -96,12 +96,12 @@ export default function GetSupport() {
                   }}
                 >
                   <AccordionSummary 
-                    expandIcon={<ExpandMoreIcon sx={{ color: '#002855' }} />}
+                    expandIcon={<ExpandMoreIcon sx={{ color: '#091542' }} />}
                     sx={{ bgcolor: 'white', py: 1 }}
                   >
                     <Stack direction="row" spacing={2} alignItems="center">
                       <HelpIcon sx={{ color: '#3b82f6' }} />
-                      <Typography variant="body1" fontWeight="800" color="#002855">
+                      <Typography variant="body1" fontWeight="800" color="#091542">
                         {faq.q}
                       </Typography>
                     </Stack>
@@ -124,7 +124,7 @@ export default function GetSupport() {
             <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
               <Avatar sx={{ bgcolor: '#eff6ff', color: '#1d4ed8' }}><AgentIcon /></Avatar>
               <Box>
-                <Typography variant="h5" fontWeight="900" color="#002855">Submit a Ticket</Typography>
+                <Typography variant="h5" fontWeight="900" color="#091542">Submit a Ticket</Typography>
                 <Typography variant="caption" color="text.secondary" fontWeight="700">Direct query to operational executives</Typography>
               </Box>
             </Stack>
@@ -179,7 +179,7 @@ export default function GetSupport() {
                     borderRadius: '16px', 
                     py: 1.75, 
                     fontWeight: 900, 
-                    bgcolor: '#002855', 
+                    bgcolor: '#091542', 
                     boxShadow: 'none',
                     '&:hover': { bgcolor: '#001a35' }
                   }}

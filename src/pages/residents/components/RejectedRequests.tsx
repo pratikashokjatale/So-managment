@@ -88,7 +88,7 @@ export default function RejectedRequests() {
     <Box sx={{ mt: 2 }}>
       <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Box>
-          <Typography variant="h5" fontWeight="900" color="#002855">Rejected Requests</Typography>
+          <Typography variant="h5" fontWeight="900" color="#091542">Rejected Requests</Typography>
           <Typography variant="body2" color="text.secondary">Residents whose enrollment was rejected or suspended.</Typography>
         </Box>
         <Chip label={`${rejectedTotal} Records`} color="error" sx={{ fontWeight: 800, borderRadius: '8px' }} />
@@ -197,7 +197,7 @@ export default function RejectedRequests() {
       </Box>
 
       <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
-        <DialogTitle sx={{ fontWeight: 800, color: '#002855', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <DialogTitle sx={{ fontWeight: 800, color: '#091542', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           Resident Details
           <IconButton onClick={handleCloseDialog} size="small">
             <CloseIcon />
@@ -214,7 +214,7 @@ export default function RejectedRequests() {
                   {selectedResident.name?.[0]}
                 </Avatar>
                 <Box>
-                  <Typography variant="h6" fontWeight="800" color="#002855">{selectedResident.name}</Typography>
+                  <Typography variant="h6" fontWeight="800" color="#091542">{selectedResident.name}</Typography>
                   <Typography variant="body2" color="text.secondary">{selectedResident.email}</Typography>
                   <Typography variant="body2" color="text.secondary">{selectedResident.phone}</Typography>
                 </Box>
@@ -224,19 +224,19 @@ export default function RejectedRequests() {
               <Grid container spacing={2}>
                 <Grid size={{ xs: 6 }}>
                   <Typography variant="caption" color="text.secondary" fontWeight="600">Flat Details</Typography>
-                  <Typography variant="body1" fontWeight="700" color="#002855">
+                  <Typography variant="body1" fontWeight="700" color="#091542">
                     {selectedResident.flat ? `${selectedResident.flat.flatNumber} (Floor ${selectedResident.flat.floorNumber})` : (selectedResident.flatId || 'N/A')}
                   </Typography>
                 </Grid>
                 <Grid size={{ xs: 6 }}>
                   <Typography variant="caption" color="text.secondary" fontWeight="600">Submitted Date</Typography>
-                  <Typography variant="body1" fontWeight="700" color="#002855">
+                  <Typography variant="body1" fontWeight="700" color="#091542">
                     {selectedResident.createdAt ? new Date(selectedResident.createdAt).toLocaleDateString() : 'N/A'}
                   </Typography>
                 </Grid>
                 <Grid size={{ xs: 6 }}>
                   <Typography variant="caption" color="text.secondary" fontWeight="600">Role</Typography>
-                  <Typography variant="body1" fontWeight="700" color="#002855">
+                  <Typography variant="body1" fontWeight="700" color="#091542">
                     {selectedResident.role || 'RESIDENT'}
                   </Typography>
                 </Grid>

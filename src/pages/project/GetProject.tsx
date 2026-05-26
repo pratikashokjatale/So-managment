@@ -193,7 +193,7 @@ export default function GetProject() {
           <Typography
             variant="h4"
             fontWeight="bold"
-            sx={{ mb: 1, color: "#002855" }}
+            sx={{ mb: 1, color: "#091542" }}
           >
             Projects
           </Typography>
@@ -264,7 +264,7 @@ export default function GetProject() {
                 <Typography
                   variant="h5"
                   fontWeight="800"
-                  sx={{ color: "#002855" }}
+                  sx={{ color: "#091542" }}
                 >
                   {totalProjects}
                 </Typography>
@@ -371,7 +371,7 @@ export default function GetProject() {
             sortable: true,
             render: (row) => (
               <Box>
-                <Typography variant="body2" fontWeight="700" color="#002855">
+                <Typography variant="body2" fontWeight="700" color="#091542">
                   {row.name}
                 </Typography>
                 <Typography
@@ -481,7 +481,7 @@ export default function GetProject() {
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={!!deleteId} onClose={() => setDeleteId(null)}>
-        <DialogTitle sx={{ fontWeight: "bold", color: "#002855" }}>
+        <DialogTitle sx={{ fontWeight: "bold", color: "#091542" }}>
           Delete Project?
         </DialogTitle>
         <DialogContent>

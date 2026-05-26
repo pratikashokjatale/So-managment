@@ -26,21 +26,21 @@ export default function GetGateEntry() {
       {/* Page Header */}
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 6 }}>
         <Box>
-          <Typography variant="h3" fontWeight="900" color="#002855">Gate Entry Auditor</Typography>
+          <Typography variant="h3" fontWeight="900" color="#091542">Gate Entry Auditor</Typography>
           <Typography variant="subtitle1" color="text.secondary" fontWeight="700">Real-time RFID biometric access logs & zone security</Typography>
         </Box>
         <Stack direction="row" spacing={2}>
           <Button 
             variant="outlined" 
             startIcon={<RefreshIcon />} 
-            sx={{ borderRadius: '16px', fontWeight: 800, borderColor: '#e2e8f0', color: '#002855' }}
+            sx={{ borderRadius: '16px', fontWeight: 800, borderColor: '#e2e8f0', color: '#091542' }}
           >
             Live Sync
           </Button>
           <Button 
             variant="contained" 
             startIcon={<FilterIcon />} 
-            sx={{ borderRadius: '16px', px: 4, fontWeight: 900, bgcolor: '#002855' }}
+            sx={{ borderRadius: '16px', px: 4, fontWeight: 900, bgcolor: '#091542' }}
           >
             Filters
           </Button>
@@ -53,7 +53,7 @@ export default function GetGateEntry() {
           <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
             <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 3 }}>
               <Box sx={{ p: 1, bgcolor: '#eff6ff', borderRadius: '10px', color: '#1d4ed8' }}><GateIcon /></Box>
-              <Typography variant="h6" fontWeight="900" color="#002855">Main Basement</Typography>
+              <Typography variant="h6" fontWeight="900" color="#091542">Main Basement</Typography>
               <Box sx={{ flexGrow: 1 }} />
               <Chip label="ONLINE" size="small" sx={{ bgcolor: '#f0fdf4', color: '#10b981', fontWeight: 900 }} />
             </Stack>
@@ -64,7 +64,7 @@ export default function GetGateEntry() {
           <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
             <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 3 }}>
               <Box sx={{ p: 1, bgcolor: '#fdf2f8', borderRadius: '10px', color: '#db2777' }}><GateIcon /></Box>
-              <Typography variant="h6" fontWeight="900" color="#002855">Club Entry</Typography>
+              <Typography variant="h6" fontWeight="900" color="#091542">Club Entry</Typography>
               <Box sx={{ flexGrow: 1 }} />
               <Chip label="ONLINE" size="small" sx={{ bgcolor: '#f0fdf4', color: '#10b981', fontWeight: 900 }} />
             </Stack>
@@ -75,7 +75,7 @@ export default function GetGateEntry() {
           <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
             <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 3 }}>
               <Box sx={{ p: 1, bgcolor: '#fff7ed', borderRadius: '10px', color: '#ea580c' }}><GateIcon /></Box>
-              <Typography variant="h6" fontWeight="900" color="#002855">Service Gate</Typography>
+              <Typography variant="h6" fontWeight="900" color="#091542">Service Gate</Typography>
               <Box sx={{ flexGrow: 1 }} />
               <Chip label="OFFLINE" size="small" sx={{ bgcolor: '#fef2f2', color: '#ef4444', fontWeight: 900 }} />
             </Stack>
@@ -87,8 +87,8 @@ export default function GetGateEntry() {
         <Grid size={{ xs: 12 }}>
           <Paper elevation={0} sx={{ borderRadius: '32px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
             <Box sx={{ p: 3, borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', gap: 2 }}>
-              <HistoryIcon sx={{ color: '#002855' }} />
-              <Typography variant="h6" fontWeight="900" color="#002855">Biometric Entry Logs</Typography>
+              <HistoryIcon sx={{ color: '#091542' }} />
+              <Typography variant="h6" fontWeight="900" color="#091542">Biometric Entry Logs</Typography>
               <Box sx={{ flexGrow: 1 }} />
               <Typography variant="caption" color="#10b981" fontWeight="800">LIVE UPDATING...</Typography>
             </Box>
@@ -110,14 +110,14 @@ export default function GetGateEntry() {
                       <TableCell sx={{ py: 2, pl: 4 }}>
                         <Stack direction="row" spacing={2} alignItems="center">
                           <Avatar src={log.avatar} sx={{ width: 40, height: 40, border: '2px solid #f1f5f9' }}>{log.name[0]}</Avatar>
-                          <Typography variant="body1" fontWeight="800" color="#002855">{log.name}</Typography>
+                          <Typography variant="body1" fontWeight="800" color="#091542">{log.name}</Typography>
                         </Stack>
                       </TableCell>
                       <TableCell>
                         <Chip label={log.role} size="small" sx={{ fontWeight: 900, borderRadius: '8px', bgcolor: '#f1f5f9' }} />
                       </TableCell>
                       <TableCell><Typography variant="body2" fontWeight="800" color="#475569">{log.point}</Typography></TableCell>
-                      <TableCell><Typography variant="body2" fontWeight="800" color="#002855">{log.time}</Typography></TableCell>
+                      <TableCell><Typography variant="body2" fontWeight="800" color="#091542">{log.time}</Typography></TableCell>
                       <TableCell>
                         <Stack direction="row" spacing={1} alignItems="center">
                           <CircleIcon sx={{ fontSize: 8, color: log.action === 'Entry' ? '#10b981' : '#f59e0b' }} />

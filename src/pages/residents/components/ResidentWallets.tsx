@@ -33,7 +33,7 @@ export default function ResidentWallets({ wallets }: WalletProps) {
           <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: 'white', height: '100%' }}>
             <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 4 }}>
               <Box sx={{ p: 1.5, bgcolor: '#eff6ff', borderRadius: '12px', color: '#1d4ed8' }}><WalletIcon /></Box>
-              <Typography variant="h6" fontWeight="900" color="#002855">Membership Wallet</Typography>
+              <Typography variant="h6" fontWeight="900" color="#091542">Membership Wallet</Typography>
             </Stack>
             <Box sx={{ mb: 4 }}>
               <Typography variant="caption" fontWeight="800" color="#94a3b8">CURRENT STATUS</Typography>
@@ -45,7 +45,7 @@ export default function ResidentWallets({ wallets }: WalletProps) {
             <Divider sx={{ mb: 4 }} />
             <Box sx={{ mb: 4 }}>
               <Typography variant="caption" fontWeight="800" color="#94a3b8">ACTIVE PERIOD (NON-REFUNDABLE)</Typography>
-              <Typography variant="body1" fontWeight="800" color="#002855" sx={{ mt: 1 }}>{wallets.membership.currentMonth}</Typography>
+              <Typography variant="body1" fontWeight="800" color="#091542" sx={{ mt: 1 }}>{wallets.membership.currentMonth}</Typography>
             </Box>
             <Box>
               <Typography variant="caption" fontWeight="800" color="#94a3b8">REFUNDABLE BALANCE (UPCOMING)</Typography>
@@ -59,7 +59,7 @@ export default function ResidentWallets({ wallets }: WalletProps) {
           <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: 'white', height: '100%' }}>
             <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 4 }}>
               <Box sx={{ p: 1.5, bgcolor: '#f0fdf4', borderRadius: '12px', color: '#10b981' }}><TimelineIcon /></Box>
-              <Typography variant="h6" fontWeight="900" color="#002855">Activity Wallet</Typography>
+              <Typography variant="h6" fontWeight="900" color="#091542">Activity Wallet</Typography>
             </Stack>
             <Box sx={{ mb: 4 }}>
               <Typography variant="caption" fontWeight="800" color="#94a3b8">AVAILABLE BALANCE</Typography>
@@ -81,7 +81,7 @@ export default function ResidentWallets({ wallets }: WalletProps) {
         </Grid>
 
         <Grid size={{ xs: 12, md: 4 }}>
-          <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: '#002855', color: 'white', height: '100%' }}>
+          <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: '#091542', color: 'white', height: '100%' }}>
             <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 4 }}>
               <Box sx={{ p: 1.5, bgcolor: 'rgba(255,255,255,0.1)', borderRadius: '12px', color: 'white' }}><SecurityIcon /></Box>
               <Typography variant="h6" fontWeight="900">Security Deposit</Typography>
@@ -93,7 +93,7 @@ export default function ResidentWallets({ wallets }: WalletProps) {
             <Box sx={{ p: 2, bgcolor: 'rgba(255,255,255,0.1)', borderRadius: '16px', mb: 4 }}>
               <Stack direction="row" justifyContent="space-between" alignItems="center">
                 <Typography variant="body2" fontWeight="700">Refund Eligibility</Typography>
-                <Chip label={wallets.security.refundable} size="small" sx={{ bgcolor: 'white', color: '#002855', fontWeight: 900 }} />
+                <Chip label={wallets.security.refundable} size="small" sx={{ bgcolor: 'white', color: '#091542', fontWeight: 900 }} />
               </Stack>
             </Box>
             <Stack spacing={1}>
@@ -108,14 +108,14 @@ export default function ResidentWallets({ wallets }: WalletProps) {
         <Grid size={{ xs: 12 }}>
           <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
             <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 4 }}>
-              <HistoryIcon sx={{ color: '#002855' }} />
-              <Typography variant="h6" fontWeight="900" color="#002855">Membership Timeline</Typography>
+              <HistoryIcon sx={{ color: '#091542' }} />
+              <Typography variant="h6" fontWeight="900" color="#091542">Membership Timeline</Typography>
             </Stack>
             <Grid container spacing={3}>
               <Grid size={{ xs: 12, md: 3 }}>
                 <Box sx={{ p: 3, bgcolor: '#f0fdf4', borderRadius: '20px', border: '1px solid #dcfce7' }}>
                   <Typography variant="caption" fontWeight="800" color="#10b981">CURRENT ACTIVE</Typography>
-                  <Typography variant="body1" fontWeight="800" color="#002855">{wallets.membership.currentMonth}</Typography>
+                  <Typography variant="body1" fontWeight="800" color="#091542">{wallets.membership.currentMonth}</Typography>
                   <Typography variant="caption" color="#64748b" fontWeight="700">Non-Refundable Phase</Typography>
                 </Box>
               </Grid>

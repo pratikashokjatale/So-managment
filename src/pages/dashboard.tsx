@@ -57,7 +57,7 @@ function StatCard({ title, value, trend, trendValue, isPositive }: any) {
   return (
     <Paper elevation={0} sx={{ p: 2.5, border: '1px solid #f1f5f9', borderRadius: '12px', bgcolor: '#ffffff', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
       <Typography variant="caption" color="text.secondary" fontWeight="700" sx={{ mb: 1, display: 'block', textTransform: 'uppercase', letterSpacing: 0.5 }}>{title}</Typography>
-      <Typography variant="h4" fontWeight="800" color="#002855" sx={{ mb: 1 }}>{value}</Typography>
+      <Typography variant="h4" fontWeight="800" color="#091542" sx={{ mb: 1 }}>{value}</Typography>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
         {isPositive ? <TrendingUpIcon sx={{ fontSize: 14, color: '#10b981' }} /> : <TrendingDownIcon sx={{ fontSize: 14, color: '#ef4444' }} />}
         <Typography variant="caption" fontWeight="800" color={isPositive ? '#10b981' : '#ef4444'}>
@@ -84,7 +84,7 @@ export default function Dashboard() {
       {/* Top Header Row */}
       <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
         <Box>
-          <Typography variant="h4" fontWeight="900" color="#002855" sx={{ letterSpacing: '-0.5px' }}>Dashboard Overview</Typography>
+          <Typography variant="h4" fontWeight="900" color="#091542" sx={{ letterSpacing: '-0.5px' }}>Dashboard Overview</Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>Welcome back, Admin! Here is what is happening today.</Typography>
         </Box>
         <Stack direction="row" spacing={2} alignItems="center">
@@ -126,7 +126,7 @@ export default function Dashboard() {
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           {/* Bookings Overview */}
           <Paper elevation={0} sx={{ p: 4, border: '1px solid #f1f5f9', borderRadius: '12px', height: '400px', display: 'flex', flexDirection: 'column' }}>
-            <Typography variant="subtitle1" fontWeight="800" color="#002855" sx={{ mb: 4 }}>Bookings Overview ({filterType})</Typography>
+            <Typography variant="subtitle1" fontWeight="800" color="#091542" sx={{ mb: 4 }}>Bookings Overview ({filterType})</Typography>
             <Box sx={{ flexGrow: 1, minHeight: 0 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={lineData}>
@@ -144,7 +144,7 @@ export default function Dashboard() {
 
           {/* Facility Usage */}
           <Paper elevation={0} sx={{ p: 4, border: '1px solid #f1f5f9', borderRadius: '12px', height: '400px', display: 'flex', flexDirection: 'column' }}>
-            <Typography variant="subtitle1" fontWeight="800" color="#002855" sx={{ mb: 4 }}>Facility Usage</Typography>
+            <Typography variant="subtitle1" fontWeight="800" color="#091542" sx={{ mb: 4 }}>Facility Usage</Typography>
             <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: 'center', gap: 4, flexGrow: 1, minHeight: 0 }}>
               <Box sx={{ height: '100%', width: { xs: '100%', md: 280 }, position: 'relative' }}>
                 <ResponsiveContainer width="100%" height="100%">
@@ -166,7 +166,7 @@ export default function Dashboard() {
                   </PieChart>
                 </ResponsiveContainer>
                 <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
-                  <Typography variant="h4" fontWeight="900" color="#002855">1,560</Typography>
+                  <Typography variant="h4" fontWeight="900" color="#091542">1,560</Typography>
                   <Typography variant="caption" color="text.secondary" fontWeight="700">TOTAL</Typography>
                 </Box>
               </Box>
@@ -178,7 +178,7 @@ export default function Dashboard() {
                       <Box sx={{ width: 10, height: 10, borderRadius: '2px', bgcolor: item.color }} />
                       <Typography sx={{ fontSize: '0.8rem', fontWeight: 700, color: '#64748b' }}>{item.name}</Typography>
                     </Box>
-                    <Typography sx={{ fontSize: '0.9rem', fontWeight: 900, color: '#002855' }}>{item.value}%</Typography>
+                    <Typography sx={{ fontSize: '0.9rem', fontWeight: 900, color: '#091542' }}>{item.value}%</Typography>
                   </Box>
                 ))}
               </Box>
@@ -189,7 +189,7 @@ export default function Dashboard() {
         {/* Right Column: Sidebar (Upcoming Activities) */}
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
           <Paper elevation={0} sx={{ p: 4, border: '1px solid #f1f5f9', borderRadius: '12px', height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <Typography variant="subtitle1" fontWeight="800" color="#002855" sx={{ mb: 4 }}>Upcoming Activities</Typography>
+            <Typography variant="subtitle1" fontWeight="800" color="#091542" sx={{ mb: 4 }}>Upcoming Activities</Typography>
             <Stack spacing={3} sx={{ flexGrow: 1, overflow: 'hidden' }}>
               {activities.map((activity) => (
                 <Box key={activity.id} sx={{ display: 'flex', alignItems: 'center', gap: 2.5 }}>
@@ -217,7 +217,7 @@ export default function Dashboard() {
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
             <Stack direction="row" spacing={1.5} alignItems="center">
               <LogsIcon sx={{ color: '#0047b3' }} />
-              <Typography variant="subtitle1" fontWeight="800" color="#002855">System Activity Logs (Recent)</Typography>
+              <Typography variant="subtitle1" fontWeight="800" color="#091542">System Activity Logs (Recent)</Typography>
             </Stack>
             <Button 
               size="small" 
@@ -247,7 +247,7 @@ export default function Dashboard() {
         <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Stack direction="row" spacing={1.5} alignItems="center">
             <LogsIcon sx={{ color: '#0047b3' }} />
-            <Typography variant="h6" fontWeight="900" color="#002855">All System Logs</Typography>
+            <Typography variant="h6" fontWeight="900" color="#091542">All System Logs</Typography>
           </Stack>
           <IconButton onClick={() => setLogsOpen(false)}>
             <CloseIcon />

@@ -55,7 +55,7 @@ export default function GetBooking() {
     <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: '#ffffff', minHeight: '100vh', borderRadius: 2 }}>
       
       <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" fontWeight="bold" sx={{ mb: 1, color: '#002855' }}>
+        <Typography variant="h4" fontWeight="bold" sx={{ mb: 1, color: '#091542' }}>
           Bookings List
         </Typography>
         <Breadcrumbs separator=">" aria-label="breadcrumb">
@@ -124,35 +124,35 @@ export default function GetBooking() {
         <Table sx={{ minWidth: 800 }} aria-label="bookings table">
           <TableHead>
             <TableRow>
-              <TableCell sx={{ color: '#002855', fontWeight: 600, borderBottom: 'none' }}>Date & Time</TableCell>
-              <TableCell sx={{ color: '#002855', fontWeight: 600, borderBottom: 'none' }}>Facility</TableCell>
-              <TableCell sx={{ color: '#002855', fontWeight: 600, borderBottom: 'none' }}>Member/Guest</TableCell>
-              <TableCell sx={{ color: '#002855', fontWeight: 600, borderBottom: 'none' }}>Type</TableCell>
-              <TableCell sx={{ color: '#002855', fontWeight: 600, borderBottom: 'none' }}>Status</TableCell>
-              <TableCell sx={{ color: '#002855', fontWeight: 600, borderBottom: 'none' }}>Amount</TableCell>
-              <TableCell sx={{ color: '#002855', fontWeight: 600, borderBottom: 'none', textAlign: 'right' }}>Actions</TableCell>
+              <TableCell sx={{ color: '#091542', fontWeight: 600, borderBottom: 'none' }}>Date & Time</TableCell>
+              <TableCell sx={{ color: '#091542', fontWeight: 600, borderBottom: 'none' }}>Facility</TableCell>
+              <TableCell sx={{ color: '#091542', fontWeight: 600, borderBottom: 'none' }}>Member/Guest</TableCell>
+              <TableCell sx={{ color: '#091542', fontWeight: 600, borderBottom: 'none' }}>Type</TableCell>
+              <TableCell sx={{ color: '#091542', fontWeight: 600, borderBottom: 'none' }}>Status</TableCell>
+              <TableCell sx={{ color: '#091542', fontWeight: 600, borderBottom: 'none' }}>Amount</TableCell>
+              <TableCell sx={{ color: '#091542', fontWeight: 600, borderBottom: 'none', textAlign: 'right' }}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {mockBookings.map((row) => (
               <TableRow key={row.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                 <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Typography variant="body2" sx={{ color: '#002855', fontWeight: 500 }}>{row.dateTime}</Typography>
+                  <Typography variant="body2" sx={{ color: '#091542', fontWeight: 500 }}>{row.dateTime}</Typography>
                 </TableCell>
                 <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Typography variant="body2" sx={{ color: '#002855' }}>{row.facility}</Typography>
+                  <Typography variant="body2" sx={{ color: '#091542' }}>{row.facility}</Typography>
                 </TableCell>
                 <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Typography variant="body2" sx={{ color: '#002855', fontWeight: 500 }}>{row.name}</Typography>
+                  <Typography variant="body2" sx={{ color: '#091542', fontWeight: 500 }}>{row.name}</Typography>
                 </TableCell>
                 <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Typography variant="body2" sx={{ color: '#002855' }}>{row.type}</Typography>
+                  <Typography variant="body2" sx={{ color: '#091542' }}>{row.type}</Typography>
                 </TableCell>
                 <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
                   <StatusBadge status={row.status} variantType="text" />
                 </TableCell>
                 <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Typography variant="body2" sx={{ color: '#002855', fontWeight: 500 }}>{row.amount}</Typography>
+                  <Typography variant="body2" sx={{ color: '#091542', fontWeight: 500 }}>{row.amount}</Typography>
                 </TableCell>
                 <TableCell align="right" sx={{ borderBottomColor: '#f0f0f0' }}>
                   <IconButton size="small" sx={{ color: 'text.secondary' }} onClick={() => navigate(`/booking/${row.id}`)}>

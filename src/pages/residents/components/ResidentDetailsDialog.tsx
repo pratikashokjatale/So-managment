@@ -33,7 +33,7 @@ export default function ResidentDetailsDialog({ open, onClose, resident }: Resid
       fullWidth
       PaperProps={{ sx: { borderRadius: '24px', overflow: 'hidden' } }}
     >
-      <DialogTitle sx={{ bgcolor: '#002855', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 3 }}>
+      <DialogTitle sx={{ bgcolor: '#091542', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 3 }}>
         <Stack direction="row" spacing={2} alignItems="center">
           <Avatar src={resident.avatar} sx={{ width: 48, height: 48, border: '2px solid white' }} />
           <Box>

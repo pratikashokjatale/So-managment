@@ -55,7 +55,7 @@ export default function GetMembership() {
     <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: '#ffffff', minHeight: '100vh', borderRadius: 2 }}>
       
       <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" fontWeight="bold" sx={{ mb: 1, color: '#002855' }}>
+        <Typography variant="h4" fontWeight="bold" sx={{ mb: 1, color: '#091542' }}>
           Memberships
         </Typography>
         <Breadcrumbs separator=">" aria-label="breadcrumb">
@@ -113,14 +113,14 @@ export default function GetMembership() {
         <Table sx={{ minWidth: 800 }} aria-label="memberships table">
           <TableHead>
             <TableRow>
-              <TableCell sx={{ color: '#002855', fontWeight: 600, borderBottom: 'none' }}>Member Name</TableCell>
-              <TableCell sx={{ color: '#002855', fontWeight: 600, borderBottom: 'none' }}>Apartment</TableCell>
-              <TableCell sx={{ color: '#002855', fontWeight: 600, borderBottom: 'none' }}>Plan</TableCell>
-              <TableCell sx={{ color: '#002855', fontWeight: 600, borderBottom: 'none' }}>Start Date</TableCell>
-              <TableCell sx={{ color: '#002855', fontWeight: 600, borderBottom: 'none' }}>End Date</TableCell>
-              <TableCell sx={{ color: '#002855', fontWeight: 600, borderBottom: 'none' }}>Status</TableCell>
-              <TableCell sx={{ color: '#002855', fontWeight: 600, borderBottom: 'none' }}>Upcoming</TableCell>
-              <TableCell sx={{ color: '#002855', fontWeight: 600, borderBottom: 'none', textAlign: 'right' }}>Actions</TableCell>
+              <TableCell sx={{ color: '#091542', fontWeight: 600, borderBottom: 'none' }}>Member Name</TableCell>
+              <TableCell sx={{ color: '#091542', fontWeight: 600, borderBottom: 'none' }}>Apartment</TableCell>
+              <TableCell sx={{ color: '#091542', fontWeight: 600, borderBottom: 'none' }}>Plan</TableCell>
+              <TableCell sx={{ color: '#091542', fontWeight: 600, borderBottom: 'none' }}>Start Date</TableCell>
+              <TableCell sx={{ color: '#091542', fontWeight: 600, borderBottom: 'none' }}>End Date</TableCell>
+              <TableCell sx={{ color: '#091542', fontWeight: 600, borderBottom: 'none' }}>Status</TableCell>
+              <TableCell sx={{ color: '#091542', fontWeight: 600, borderBottom: 'none' }}>Upcoming</TableCell>
+              <TableCell sx={{ color: '#091542', fontWeight: 600, borderBottom: 'none', textAlign: 'right' }}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -129,26 +129,26 @@ export default function GetMembership() {
                 <TableCell component="th" scope="row" sx={{ borderBottomColor: '#f0f0f0' }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                     <Avatar src={row.avatar} sx={{ width: 32, height: 32 }} />
-                    <Typography variant="body2" fontWeight="500" sx={{ color: '#002855' }}>{row.name}</Typography>
+                    <Typography variant="body2" fontWeight="500" sx={{ color: '#091542' }}>{row.name}</Typography>
                   </Box>
                 </TableCell>
                 <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Typography variant="body2" sx={{ color: '#002855' }}>{row.apartment}</Typography>
+                  <Typography variant="body2" sx={{ color: '#091542' }}>{row.apartment}</Typography>
                 </TableCell>
                 <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Typography variant="body2" sx={{ color: '#002855' }}>{row.plan}</Typography>
+                  <Typography variant="body2" sx={{ color: '#091542' }}>{row.plan}</Typography>
                 </TableCell>
                 <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Typography variant="body2" sx={{ color: '#002855' }}>{row.startDate}</Typography>
+                  <Typography variant="body2" sx={{ color: '#091542' }}>{row.startDate}</Typography>
                 </TableCell>
                 <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Typography variant="body2" sx={{ color: '#002855' }}>{row.endDate}</Typography>
+                  <Typography variant="body2" sx={{ color: '#091542' }}>{row.endDate}</Typography>
                 </TableCell>
                 <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
                   <StatusBadge status={row.status} variantType="text" />
                 </TableCell>
                 <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Typography variant="body2" sx={{ color: '#002855' }}>{row.upcoming}</Typography>
+                  <Typography variant="body2" sx={{ color: '#091542' }}>{row.upcoming}</Typography>
                 </TableCell>
                 <TableCell align="right" sx={{ borderBottomColor: '#f0f0f0' }}>
                   <IconButton size="small" sx={{ color: 'text.secondary' }}>

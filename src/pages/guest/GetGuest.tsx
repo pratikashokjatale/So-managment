@@ -244,7 +244,7 @@ export default function GetGuest() {
               <Stack direction="row" spacing={1.5} alignItems="center">
                 <Avatar src={row.avatar} sx={{ width: 40, height: 40, borderRadius: '12px', bgcolor: '#e0e7ff', fontSize: '0.85rem', fontWeight: 800, color: '#3730a3' }} />
                 <Box>
-                  <Typography variant="body2" fontWeight={800} color="#002855">{row.name}</Typography>
+                  <Typography variant="body2" fontWeight={800} color="#091542">{row.name}</Typography>
                   <Typography variant="caption" color="text.secondary">{row.email}</Typography>
                 </Box>
               </Stack>
@@ -268,7 +268,7 @@ export default function GetGuest() {
             label: 'Stay Until',
             render: (row) => (
               <Box>
-                <Typography variant="body2" fontWeight={700} color={row.isExpired ? '#ef4444' : '#002855'}>
+                <Typography variant="body2" fontWeight={700} color={row.isExpired ? '#ef4444' : '#091542'}>
                   {row.stayEndsAt}
                 </Typography>
                 {row.isExpired && (
@@ -299,7 +299,7 @@ export default function GetGuest() {
               <Stack direction="row" spacing={0.5} justifyContent="flex-end">
                 <Tooltip title="View Details">
                   <IconButton size="small"
-                    sx={{ color: '#002855', bgcolor: '#eff6ff', borderRadius: '8px', '&:hover': { bgcolor: '#dbeafe' } }}
+                    sx={{ color: '#091542', bgcolor: '#eff6ff', borderRadius: '8px', '&:hover': { bgcolor: '#dbeafe' } }}
                     onClick={() => setDrawerGuest(row)}>
                     <VisibilityOutlinedIcon fontSize="small" />
                   </IconButton>
@@ -349,7 +349,7 @@ export default function GetGuest() {
 
               {/* Drawer header */}
               <Box sx={{ px: 3, py: 2.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #f1f5f9', bgcolor: '#f8fafc' }}>
-                <Typography variant="h6" fontWeight={800} color="#002855">Guest Profile</Typography>
+                <Typography variant="h6" fontWeight={800} color="#091542">Guest Profile</Typography>
                 <IconButton onClick={() => setDrawerGuest(null)} size="small" sx={{ bgcolor: '#f1f5f9', borderRadius: '8px' }}>
                   <CloseIcon fontSize="small" />
                 </IconButton>
@@ -362,7 +362,7 @@ export default function GetGuest() {
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3, p: 2.5, bgcolor: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
                   <Avatar src={drawerGuest.avatar} sx={{ width: 64, height: 64, borderRadius: '16px', bgcolor: '#e0e7ff', fontSize: '1.4rem', fontWeight: 800, color: '#3730a3' }} />
                   <Box>
-                    <Typography variant="h6" fontWeight={800} color="#002855">{drawerGuest.name}</Typography>
+                    <Typography variant="h6" fontWeight={800} color="#091542">{drawerGuest.name}</Typography>
                     <Typography variant="body2" color="text.secondary">{drawerGuest.email}</Typography>
                     <Box sx={{ mt: 0.75 }}>
                       <StatusChip status={drawerGuest.status} />
@@ -371,7 +371,7 @@ export default function GetGuest() {
                 </Box>
 
                 {/* Contact */}
-                <Typography variant="caption" fontWeight={800} color="#002855" sx={{ textTransform: 'uppercase', letterSpacing: '0.6px', mb: 1, display: 'block' }}>
+                <Typography variant="caption" fontWeight={800} color="#091542" sx={{ textTransform: 'uppercase', letterSpacing: '0.6px', mb: 1, display: 'block' }}>
                   Contact
                 </Typography>
                 <InfoRow icon={<PhoneOutlinedIcon fontSize="small" />} label="Phone" value={drawerGuest.phone} />
@@ -380,7 +380,7 @@ export default function GetGuest() {
                 <Divider sx={{ my: 2.5 }} />
 
                 {/* Stay */}
-                <Typography variant="caption" fontWeight={800} color="#002855" sx={{ textTransform: 'uppercase', letterSpacing: '0.6px', mb: 1, display: 'block' }}>
+                <Typography variant="caption" fontWeight={800} color="#091542" sx={{ textTransform: 'uppercase', letterSpacing: '0.6px', mb: 1, display: 'block' }}>
                   Stay Details
                 </Typography>
                 <InfoRow icon={<CalendarMonthOutlinedIcon fontSize="small" />} label="Stay Ends At"
@@ -392,7 +392,7 @@ export default function GetGuest() {
                 <Divider sx={{ my: 2.5 }} />
 
                 {/* Flat */}
-                <Typography variant="caption" fontWeight={800} color="#002855" sx={{ textTransform: 'uppercase', letterSpacing: '0.6px', mb: 1, display: 'block' }}>
+                <Typography variant="caption" fontWeight={800} color="#091542" sx={{ textTransform: 'uppercase', letterSpacing: '0.6px', mb: 1, display: 'block' }}>
                   Flat Details
                 </Typography>
                 {g.flat ? (
@@ -407,7 +407,7 @@ export default function GetGuest() {
                       ].map(([label, val]) => (
                         <Grid size={{ xs: 6 }} key={label}>
                           <Typography variant="caption" color="text.secondary" fontWeight={700} display="block">{label}</Typography>
-                          <Typography variant="body2" fontWeight={800} color="#002855">{val || '—'}</Typography>
+                          <Typography variant="body2" fontWeight={800} color="#091542">{val || '—'}</Typography>
                         </Grid>
                       ))}
                     </Grid>
@@ -419,7 +419,7 @@ export default function GetGuest() {
                 <Divider sx={{ my: 2.5 }} />
 
                 {/* Verification */}
-                <Typography variant="caption" fontWeight={800} color="#002855" sx={{ textTransform: 'uppercase', letterSpacing: '0.6px', mb: 1, display: 'block' }}>
+                <Typography variant="caption" fontWeight={800} color="#091542" sx={{ textTransform: 'uppercase', letterSpacing: '0.6px', mb: 1, display: 'block' }}>
                   Verification
                 </Typography>
                 <InfoRow icon={<VerifiedOutlinedIcon fontSize="small" />} label="Email Verified"
@@ -455,7 +455,7 @@ export default function GetGuest() {
       {/* Reject Dialog */}
       <Dialog open={openRejectDialog} onClose={() => setOpenRejectDialog(false)} fullWidth maxWidth="sm"
         PaperProps={{ sx: { borderRadius: '16px' } }}>
-        <DialogTitle sx={{ fontWeight: 700, color: '#002855' }}>Reject Guest Request</DialogTitle>
+        <DialogTitle sx={{ fontWeight: 700, color: '#091542' }}>Reject Guest Request</DialogTitle>
         <DialogContent>
           <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
             Rejecting request for <strong>{selectedGuest?.name}</strong>. Provide a reason:

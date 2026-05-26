@@ -157,13 +157,13 @@ export default function GetStaff() {
     minWidth: 180,
     fontSize: "0.875rem",
     fontWeight: 700,
-    color: "#002855",
+    color: "#091542",
     borderRadius: "16px",
     bgcolor: "#f8fafc",
     ".MuiOutlinedInput-notchedOutline": { borderColor: "#e2e8f0" },
     "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#cbd5e1" },
     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#002855",
+      borderColor: "#091542",
     },
   };
 
@@ -251,7 +251,7 @@ export default function GetStaff() {
                 <Typography
                   variant="body1"
                   fontWeight="800"
-                  color="#002855"
+                  color="#091542"
                   sx={{ "&:hover": { color: "#1d4ed8" } }}
                 >
                   {row.name}
@@ -304,7 +304,7 @@ export default function GetStaff() {
             id: "cardNo",
             label: "CARD NUMBER",
             render: (row) => (
-              <Typography variant="body2" fontWeight={800} color="#002855">
+              <Typography variant="body2" fontWeight={800} color="#091542">
                 {row.cardNo}
               </Typography>
             ),
@@ -336,7 +336,7 @@ export default function GetStaff() {
                 </IconButton>
                 <IconButton
                   size="small"
-                  sx={{ color: "#002855" }}
+                  sx={{ color: "#091542" }}
                   onClick={() => navigate(`/staff/edit/${row.id}`)}
                 >
                   <EditOutlinedIcon fontSize="small" />

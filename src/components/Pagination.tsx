@@ -55,7 +55,7 @@ export default function Pagination({
           sx={{
             fontSize: "0.85rem",
             fontWeight: "800",
-            color: "#002855",
+            color: "#091542",
             "& .MuiSelect-select": { py: 0.5, pr: "20px !important" },
             "&:before, &:after": { display: "none" },
             bgcolor: "transparent",
@@ -89,9 +89,9 @@ export default function Pagination({
             border: "1px solid #e2e8f0",
             bgcolor: "white",
             "&.Mui-selected": {
-              bgcolor: "#002855",
+              bgcolor: "#091542",
               color: "white",
-              borderColor: "#002855",
+              borderColor: "#091542",
               "&:hover": {
                 bgcolor: "#001f40",
               },

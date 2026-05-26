@@ -184,14 +184,14 @@ export default function FacilityDetails() {
             </Link>
             <Typography color="text.primary" sx={{ fontWeight: 900 }}>{facility.name}</Typography>
           </Breadcrumbs>
-          <Typography variant="h3" fontWeight="900" color="#002855">{facility.name}</Typography>
+          <Typography variant="h3" fontWeight="900" color="#091542">{facility.name}</Typography>
         </Box>
         <Stack direction="row" spacing={2}>
             <Button
               variant="outlined"
               startIcon={<EditOutlinedIcon />}
               onClick={() => navigate(`/facility/edit/${facility.id}`)}
-              sx={{ borderRadius: '16px', px: 3, py: 1.25, fontWeight: 900, borderColor: '#e2e8f0', color: '#002855' }}
+              sx={{ borderRadius: '16px', px: 3, py: 1.25, fontWeight: 900, borderColor: '#e2e8f0', color: '#091542' }}
             >
               Edit Facility
             </Button>
@@ -258,7 +258,7 @@ export default function FacilityDetails() {
             
             {/* Overview & Pricing Card */}
             <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
-              <Typography variant="h6" fontWeight="900" color="#002855" sx={{ mb: 1 }}>
+              <Typography variant="h6" fontWeight="900" color="#091542" sx={{ mb: 1 }}>
                 Facility Description
               </Typography>
               <Typography variant="body1" color="text.secondary" sx={{ mb: 4, lineHeight: 1.7, fontWeight: 500 }}>
@@ -287,7 +287,7 @@ export default function FacilityDetails() {
 
             {/* Logistics & Rules */}
             <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
-              <Typography variant="h5" fontWeight="900" color="#002855" sx={{ mb: 3 }}>
+              <Typography variant="h5" fontWeight="900" color="#091542" sx={{ mb: 3 }}>
                 Logistics & Schedule
               </Typography>
               
@@ -324,7 +324,7 @@ export default function FacilityDetails() {
                   <Typography variant="subtitle2" color="text.secondary" fontWeight="800" sx={{ mb: 1 }}>
                     Rules & Regulations
                   </Typography>
-                  <Typography variant="body2" color="#002855" fontWeight="600" sx={{ p: 2, bgcolor: '#f8fafc', borderRadius: '12px' }}>
+                  <Typography variant="body2" color="#091542" fontWeight="600" sx={{ p: 2, bgcolor: '#f8fafc', borderRadius: '12px' }}>
                     {facility.rules}
                   </Typography>
                 </>
@@ -333,7 +333,7 @@ export default function FacilityDetails() {
 
             {/* Operations Command Status Toggle */}
             <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
-              <Typography variant="h5" fontWeight="900" color="#002855" sx={{ mb: 1.5 }}>
+              <Typography variant="h5" fontWeight="900" color="#091542" sx={{ mb: 1.5 }}>
                 Operations Control
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 3, fontWeight: 600 }}>
@@ -359,7 +359,7 @@ export default function FacilityDetails() {
                     <BlockOutlinedIcon sx={{ color: '#cbd5e1', fontSize: 32 }} />
                   )}
                   <Box>
-                    <Typography variant="body1" fontWeight="800" color="#002855">
+                    <Typography variant="body1" fontWeight="800" color="#091542">
                       Active Status Switch
                     </Typography>
                     <Typography variant="caption" color="text.secondary" fontWeight="700">
@@ -378,7 +378,7 @@ export default function FacilityDetails() {
 
             {/* Supervision Details */}
             <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
-              <Typography variant="h5" fontWeight="900" color="#002855" sx={{ mb: 3 }}>
+              <Typography variant="h5" fontWeight="900" color="#091542" sx={{ mb: 3 }}>
                 Supervisor Information
               </Typography>
               <Grid container spacing={3}>
@@ -410,7 +410,7 @@ export default function FacilityDetails() {
             {/* Assigned Staff Members */}
             {facility.staffMembers && facility.staffMembers.length > 0 && (
               <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
-                <Typography variant="h5" fontWeight="900" color="#002855" sx={{ mb: 3 }}>
+                <Typography variant="h5" fontWeight="900" color="#091542" sx={{ mb: 3 }}>
                   Assigned Staff Members
                 </Typography>
                 <Stack spacing={2.5}>
@@ -420,7 +420,7 @@ export default function FacilityDetails() {
                         <Stack direction="row" spacing={2} alignItems="center">
                           <Avatar src={staff.profilePhotoUrl || staff.avatar} sx={{ width: 40, height: 40 }} />
                           <Box>
-                            <Typography variant="body2" fontWeight="800" color="#002855">{staff.name}</Typography>
+                            <Typography variant="body2" fontWeight="800" color="#091542">{staff.name}</Typography>
                             <Typography variant="caption" color="text.secondary" fontWeight="700">{staff.designation || staff.department}</Typography>
                           </Box>
                         </Stack>
@@ -442,7 +442,7 @@ export default function FacilityDetails() {
             
             {/* Active Bookings Log */}
             <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
-              <Typography variant="h5" fontWeight="900" color="#002855" sx={{ mb: 3 }}>
+              <Typography variant="h5" fontWeight="900" color="#091542" sx={{ mb: 3 }}>
                 Today's Bookings
               </Typography>
               
@@ -458,7 +458,7 @@ export default function FacilityDetails() {
                     <Box key={index}>
                       <Stack direction="row" justifyContent="space-between" alignItems="center">
                         <Box>
-                          <Typography variant="body2" fontWeight="800" color="#002855">{slot.resident}</Typography>
+                          <Typography variant="body2" fontWeight="800" color="#091542">{slot.resident}</Typography>
                           <Typography variant="caption" color="text.secondary" fontWeight="700">{slot.flat}</Typography>
                         </Box>
                         <Chip label={slot.time} size="small" sx={{ fontWeight: 800, borderRadius: '8px', bgcolor: '#eff6ff', color: '#1d4ed8' }} />
@@ -472,7 +472,7 @@ export default function FacilityDetails() {
 
             {/* Maintenance Log */}
             <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
-              <Typography variant="h5" fontWeight="900" color="#002855" sx={{ mb: 3 }}>
+              <Typography variant="h5" fontWeight="900" color="#091542" sx={{ mb: 3 }}>
                 Maintenance Log
               </Typography>
               <Stack spacing={2.5}>
@@ -480,7 +480,7 @@ export default function FacilityDetails() {
                   <Box key={index}>
                     <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
                       <Box>
-                        <Typography variant="body2" fontWeight="800" color="#002855">{log.type}</Typography>
+                        <Typography variant="body2" fontWeight="800" color="#091542">{log.type}</Typography>
                         <Typography variant="caption" color="text.secondary" fontWeight="700">Audit Date: {log.date}</Typography>
                       </Box>
                       <Box sx={{ textAlign: 'right' }}>

@@ -18,7 +18,7 @@ export default function AddMembership() {
           <IconButton onClick={() => navigate('/membership')} sx={{ mr: 1, color: 'text.secondary' }}>
             <ArrowBackIcon />
           </IconButton>
-          <Typography variant="h4" fontWeight="bold" sx={{ color: '#002855' }}>
+          <Typography variant="h4" fontWeight="bold" sx={{ color: '#091542' }}>
             Add Membership
           </Typography>
         </Box>
@@ -36,7 +36,7 @@ export default function AddMembership() {
       {/* Form Container */}
       <Paper elevation={0} sx={{ border: '1px solid #f0f0f0', borderRadius: 2, p: { xs: 3, md: 5 } }}>
         
-        <Typography variant="h6" fontWeight="bold" sx={{ mb: 3, color: '#002855' }}>
+        <Typography variant="h6" fontWeight="bold" sx={{ mb: 3, color: '#091542' }}>
           Membership Details
         </Typography>
 

@@ -52,7 +52,7 @@ function UploadWidget({ label, required, url, uploading, error, onFileSelect, on
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, p: 2, bgcolor: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '12px' }}>
           <CheckCircleIcon sx={{ color: '#10b981', flexShrink: 0 }} />
           <Box sx={{ flex: 1, overflow: 'hidden' }}>
-            <Typography variant="body2" fontWeight={700} color="#002855" noWrap>Uploaded successfully</Typography>
+            <Typography variant="body2" fontWeight={700} color="#091542" noWrap>Uploaded successfully</Typography>
             <Typography variant="caption" color="text.secondary" noWrap>{url.split('/').pop()}</Typography>
           </Box>
           <MuiIconButton size="small" onClick={onRemove} sx={{ color: '#ef4444' }}>
@@ -67,13 +67,13 @@ function UploadWidget({ label, required, url, uploading, error, onFileSelect, on
             borderRadius: '12px', bgcolor: '#f8fafc', p: 3,
             textAlign: 'center', cursor: uploading ? 'wait' : 'pointer',
             transition: 'all 0.2s',
-            '&:hover': !uploading ? { borderColor: '#002855', bgcolor: '#f1f5f9' } : {},
+            '&:hover': !uploading ? { borderColor: '#091542', bgcolor: '#f1f5f9' } : {},
           }}
         >
           <input ref={inputRef} type="file" accept=".png,.jpg,.jpeg,.pdf" style={{ display: 'none' }}
             onChange={(e) => { const f = e.target.files?.[0]; if (f) onFileSelect(f); e.target.value = ''; }} />
           <CloudUploadOutlinedIcon sx={{ fontSize: 32, color: error ? '#ef4444' : '#94a3b8', mb: 1 }} />
-          <Typography variant="body2" fontWeight={700} color={error ? 'error' : '#002855'}>
+          <Typography variant="body2" fontWeight={700} color={error ? 'error' : '#091542'}>
             {uploading ? 'Uploading…' : 'Click to upload'}
           </Typography>
           <Typography variant="caption" color="text.secondary">PNG, JPG, PDF — max 5 MB</Typography>
@@ -226,7 +226,7 @@ export default function AddGuest() {
       {/* Header */}
       <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Box>
-          <Typography variant="h4" fontWeight="bold" sx={{ color: '#002855', mb: 1 }}>Add Guest</Typography>
+          <Typography variant="h4" fontWeight="bold" sx={{ color: '#091542', mb: 1 }}>Add Guest</Typography>
           <Breadcrumbs separator=">" aria-label="breadcrumb">
             <Link underline="hover" color="inherit" onClick={() => navigate('/')} sx={{ cursor: 'pointer' }}>Dashboard</Link>
             <Link underline="hover" color="inherit" onClick={() => navigate('/guest')} sx={{ cursor: 'pointer' }}>Guests</Link>
@@ -242,7 +242,7 @@ export default function AddGuest() {
 
           {/* ── Left: account fields ── */}
           <Grid size={{ xs: 12, md: 7 }}>
-            <Typography variant="h6" fontWeight={800} color="#002855" sx={{ mb: 3 }}>Guest Login Details</Typography>
+            <Typography variant="h6" fontWeight={800} color="#091542" sx={{ mb: 3 }}>Guest Login Details</Typography>
 
             <Grid container spacing={3}>
               <Grid size={{ xs: 12, sm: 6 }}>
@@ -305,11 +305,11 @@ export default function AddGuest() {
                       sx={{
                         px: 2, py: 1.5, cursor: 'pointer',
                         bgcolor: flatId === f.id ? '#eff6ff' : 'transparent',
-                        borderLeft: flatId === f.id ? '3px solid #002855' : '3px solid transparent',
+                        borderLeft: flatId === f.id ? '3px solid #091542' : '3px solid transparent',
                         '&:hover': { bgcolor: '#f8fafc' },
                         borderBottom: '1px solid #f1f5f9',
                       }}>
-                      <Typography variant="body2" fontWeight={700} color={flatId === f.id ? '#002855' : 'text.primary'}>
+                      <Typography variant="body2" fontWeight={700} color={flatId === f.id ? '#091542' : 'text.primary'}>
                         Flat {f.flatNumber}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
@@ -325,7 +325,7 @@ export default function AddGuest() {
 
           {/* ── Right: document upload ── */}
           <Grid size={{ xs: 12, md: 5 }}>
-            <Typography variant="h6" fontWeight={800} color="#002855" sx={{ mb: 1 }}>
+            <Typography variant="h6" fontWeight={800} color="#091542" sx={{ mb: 1 }}>
               Identity Documents
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
@@ -390,7 +390,7 @@ export default function AddGuest() {
             Cancel
           </Button>
           <Button variant="contained" onClick={handleSubmit} disabled={saving || uploadingAadhaar || uploadingPan}
-            sx={{ borderRadius: '10px', textTransform: 'none', fontWeight: 700, px: 4, bgcolor: '#002855', '&:hover': { bgcolor: '#001a3f' }, boxShadow: 'none' }}>
+            sx={{ borderRadius: '10px', textTransform: 'none', fontWeight: 700, px: 4, bgcolor: '#091542', '&:hover': { bgcolor: '#001a3f' }, boxShadow: 'none' }}>
             {saving ? 'Creating…' : 'Create Guest'}
           </Button>
         </Box>

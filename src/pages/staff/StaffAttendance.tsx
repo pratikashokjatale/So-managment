@@ -89,7 +89,7 @@ const StatCard = ({ label, value, total, color }: StatCardProps) => {
         </Box>
         <Box>
           <Typography variant="subtitle2" fontWeight="700" color="#64748b">{label}</Typography>
-          <Typography variant="h5" fontWeight="900" color="#002855">{value}</Typography>
+          <Typography variant="h5" fontWeight="900" color="#091542">{value}</Typography>
         </Box>
       </Stack>
     </Paper>
@@ -233,7 +233,7 @@ export default function StaffAttendance() {
       {/* Header section */}
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 6, flexWrap: 'wrap', gap: 2 }}>
         <Box>
-          <Typography variant="h3" fontWeight="900" color="#002855">Staff Attendance</Typography>
+          <Typography variant="h3" fontWeight="900" color="#091542">Staff Attendance</Typography>
           <Typography variant="subtitle1" color="text.secondary" fontWeight="700">Real-time Clubhouse crew duty tracking & activity timeline logs</Typography>
         </Box>
         <Stack direction="row" spacing={2} sx={{ width: { xs: '100%', md: 'auto' } }}>
@@ -289,7 +289,7 @@ export default function StaffAttendance() {
                     <Stack direction="row" spacing={2} alignItems="center">
                       <Avatar src={getFileUrl(row.avatar)} sx={{ width: 44, height: 44, border: '2px solid #f1f5f9' }} />
                       <Box>
-                        <Typography variant="body1" fontWeight="800" color="#002855">{row.name}</Typography>
+                        <Typography variant="body1" fontWeight="800" color="#091542">{row.name}</Typography>
                         <Typography variant="caption" color="#64748b" fontWeight="800">Emp ID: #CM-{row.id}00</Typography>
                       </Box>
                     </Stack>
@@ -307,13 +307,13 @@ export default function StaffAttendance() {
                   </TableCell>
 
                   <TableCell>
-                    <Typography variant="body2" fontWeight="900" color={row.checkIn === '-' ? '#cbd5e1' : '#002855'}>
+                    <Typography variant="body2" fontWeight="900" color={row.checkIn === '-' ? '#cbd5e1' : '#091542'}>
                       {row.checkIn}
                     </Typography>
                   </TableCell>
 
                   <TableCell>
-                    <Typography variant="body2" fontWeight="900" color={row.checkOut === '-' ? '#cbd5e1' : '#002855'}>
+                    <Typography variant="body2" fontWeight="900" color={row.checkOut === '-' ? '#cbd5e1' : '#091542'}>
                       {row.checkOut}
                     </Typography>
                   </TableCell>
@@ -326,7 +326,7 @@ export default function StaffAttendance() {
                       size="small" 
                       startIcon={<AccessTimeIcon />}
                       onClick={() => handleOpenDialog(row)}
-                      sx={{ borderRadius: '12px', textTransform: 'none', fontWeight: 900, borderColor: '#e2e8f0', color: '#002855', '&:hover': { bgcolor: '#f8fafc' } }}
+                      sx={{ borderRadius: '12px', textTransform: 'none', fontWeight: 900, borderColor: '#e2e8f0', color: '#091542', '&:hover': { bgcolor: '#f8fafc' } }}
                     >
                       View Logs
                     </Button>
@@ -367,7 +367,7 @@ export default function StaffAttendance() {
       >
         <DialogTitle sx={{ pb: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Box>
-            <Typography variant="h4" fontWeight="900" color="#002855">Access Control Logs</Typography>
+            <Typography variant="h4" fontWeight="900" color="#091542">Access Control Logs</Typography>
             <Typography variant="subtitle2" color="text.secondary" fontWeight="700">
               Activity Terminal Logsheet
             </Typography>
@@ -383,7 +383,7 @@ export default function StaffAttendance() {
               <Paper elevation={0} sx={{ p: 2.5, bgcolor: '#f8fafc', borderRadius: '20px', border: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', gap: 2 }}>
                 <Avatar src={getFileUrl(selectedRecord.avatar)} sx={{ width: 56, height: 56, border: '2px solid white', boxShadow: '0 8px 16px rgba(0,0,0,0.06)' }} />
                 <Box>
-                  <Typography variant="h5" fontWeight="900" color="#002855">{selectedRecord.name}</Typography>
+                  <Typography variant="h5" fontWeight="900" color="#091542">{selectedRecord.name}</Typography>
                   <Typography variant="body2" fontWeight="700" color="#64748b">{selectedRecord.role}</Typography>
                   <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 0.5 }}>
                     <ShiftIcon sx={{ fontSize: 14, color: '#94a3b8' }} />
@@ -426,7 +426,7 @@ export default function StaffAttendance() {
                   </Box>
                 </Box>
                 <Box>
-                  <Typography variant="subtitle2" fontWeight="900" color="#002855" sx={{ letterSpacing: 0.5 }}>1. ACCESS CHECK-IN</Typography>
+                  <Typography variant="subtitle2" fontWeight="900" color="#091542" sx={{ letterSpacing: 0.5 }}>1. ACCESS CHECK-IN</Typography>
                   {activeLog.checkInTime !== '-' ? (
                     <Box sx={{ mt: 0.5 }}>
                       <Typography variant="body2" fontWeight="800" color="#1e293b">
@@ -475,7 +475,7 @@ export default function StaffAttendance() {
                   </Box>
                 </Box>
                 <Box>
-                  <Typography variant="subtitle2" fontWeight="900" color="#002855" sx={{ letterSpacing: 0.5 }}>2. MEAL & SHIFT BREAKS</Typography>
+                  <Typography variant="subtitle2" fontWeight="900" color="#091542" sx={{ letterSpacing: 0.5 }}>2. MEAL & SHIFT BREAKS</Typography>
                   {activeLog.breakTime !== '-' ? (
                     <Box sx={{ mt: 0.5 }}>
                       <Typography variant="body2" fontWeight="800" color="#1e293b">
@@ -517,7 +517,7 @@ export default function StaffAttendance() {
                   </Box>
                 </Box>
                 <Box>
-                  <Typography variant="subtitle2" fontWeight="900" color="#002855" sx={{ letterSpacing: 0.5 }}>3. ACCESS CHECK-OUT</Typography>
+                  <Typography variant="subtitle2" fontWeight="900" color="#091542" sx={{ letterSpacing: 0.5 }}>3. ACCESS CHECK-OUT</Typography>
                   {activeLog.checkOutTime !== '-' ? (
                     <Box sx={{ mt: 0.5 }}>
                       {activeLog.checkOutTime === 'Active' ? (
@@ -560,7 +560,7 @@ export default function StaffAttendance() {
           <Button 
             onClick={handleCloseDialog}
             variant="contained"
-            sx={{ borderRadius: '12px', textTransform: 'none', fontWeight: 900, bgcolor: '#002855', px: 4, py: 1, boxShadow: 'none', '&:hover': { bgcolor: '#001a35' } }}
+            sx={{ borderRadius: '12px', textTransform: 'none', fontWeight: 900, bgcolor: '#091542', px: 4, py: 1, boxShadow: 'none', '&:hover': { bgcolor: '#001a35' } }}
           >
             Close Logs
           </Button>

@@ -35,7 +35,7 @@ export default function GetSettings() {
       borderRadius: '14px',
       bgcolor: '#f8fafc',
       '& fieldset': { border: '1px solid #e2e8f0' },
-      '&:hover fieldset': { borderColor: '#002855' },
+      '&:hover fieldset': { borderColor: '#091542' },
     }
   };
 
@@ -44,7 +44,7 @@ export default function GetSettings() {
       
       {/* Page Header */}
       <Box sx={{ mb: 6 }}>
-        <Typography variant="h3" fontWeight="900" color="#002855" sx={{ mb: 1 }}>Settings</Typography>
+        <Typography variant="h3" fontWeight="900" color="#091542" sx={{ mb: 1 }}>Settings</Typography>
         <Breadcrumbs separator=">" sx={{ fontWeight: 600 }}>
           <Link underline="hover" color="inherit" onClick={() => navigate('/')} sx={{ cursor: 'pointer' }}>Dashboard</Link>
           <Typography color="text.primary" fontWeight="800">Command Center</Typography>
@@ -86,16 +86,16 @@ export default function GetSettings() {
                   display: 'flex', 
                   alignItems: 'center', 
                   justifyContent: 'center',
-                  bgcolor: isActive ? '#002855' : '#f1f5f9',
+                  bgcolor: isActive ? '#091542' : '#f1f5f9',
                   color: isActive ? 'white' : '#64748b',
                   transition: '0.3s'
                 }}>
                   {tab.icon}
                 </Box>
-                <Typography variant="h6" fontWeight="800" sx={{ flexGrow: 1, color: isActive ? '#002855' : '#475569' }}>
+                <Typography variant="h6" fontWeight="800" sx={{ flexGrow: 1, color: isActive ? '#091542' : '#475569' }}>
                   {tab.label}
                 </Typography>
-                {isActive && <ChevronIcon sx={{ color: '#002855' }} />}
+                {isActive && <ChevronIcon sx={{ color: '#091542' }} />}
               </Box>
             );
           })}
@@ -105,12 +105,12 @@ export default function GetSettings() {
         <Paper elevation={0} sx={{ p: 5, borderRadius: '40px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
           {activeTab === 'general' && (
             <Box>
-              <Typography variant="h4" fontWeight="900" color="#002855" sx={{ mb: 1 }}>General Settings</Typography>
+              <Typography variant="h4" fontWeight="900" color="#091542" sx={{ mb: 1 }}>General Settings</Typography>
               <Typography variant="body1" color="text.secondary" sx={{ mb: 5 }}>Configure your society's primary identity and global preferences.</Typography>
               
               <Stack spacing={5}>
                 <Box>
-                  <Typography variant="subtitle1" fontWeight="800" sx={{ mb: 2, color: '#002855' }}>SOCIETY IDENTITY</Typography>
+                  <Typography variant="subtitle1" fontWeight="800" sx={{ mb: 2, color: '#091542' }}>SOCIETY IDENTITY</Typography>
                   <Stack spacing={3}>
                     <TextField label="Society Name" fullWidth defaultValue="Club Marbella" sx={textFieldSx} />
                     <TextField label="Official Email" fullWidth defaultValue="admin@marbellaclub.com" sx={textFieldSx} />
@@ -119,7 +119,7 @@ export default function GetSettings() {
                 </Box>
                 <Divider />
                 <Box>
-                  <Typography variant="subtitle1" fontWeight="800" sx={{ mb: 2, color: '#002855' }}>REGIONAL CONFIG</Typography>
+                  <Typography variant="subtitle1" fontWeight="800" sx={{ mb: 2, color: '#091542' }}>REGIONAL CONFIG</Typography>
                   <TextField select label="Timezone" fullWidth defaultValue="Asia/Kolkata" sx={textFieldSx}>
                     <MenuItem value="Asia/Kolkata">Asia/Kolkata (IST)</MenuItem>
                     <MenuItem value="UTC">UTC (Universal Time)</MenuItem>
@@ -131,14 +131,14 @@ export default function GetSettings() {
 
           {activeTab === 'membership' && (
             <Box>
-              <Typography variant="h4" fontWeight="900" color="#002855" sx={{ mb: 1 }}>Membership Logic</Typography>
+              <Typography variant="h4" fontWeight="900" color="#091542" sx={{ mb: 1 }}>Membership Logic</Typography>
               <Typography variant="body1" color="text.secondary" sx={{ mb: 5 }}>Manage enrollment rules and card identity standards.</Typography>
               
               <Stack spacing={4}>
                 <FormControlLabel control={<Switch defaultChecked />} label={<Typography fontWeight="700">Auto-Expiry on Payment Overdue</Typography>} />
                 <FormControlLabel control={<Switch defaultChecked />} label={<Typography fontWeight="700">Allow Master User Guest Creation</Typography>} />
                 <Divider />
-                <Typography variant="subtitle1" fontWeight="800" color="#002855">DEFAULT FEE STRUCTURE</Typography>
+                <Typography variant="subtitle1" fontWeight="800" color="#091542">DEFAULT FEE STRUCTURE</Typography>
                 <Grid container spacing={3}>
                   <Grid size={{ xs: 6 }}><TextField label="Monthly Fee" fullWidth defaultValue="₹2,500.00" sx={textFieldSx} /></Grid>
                   <Grid size={{ xs: 6 }}><TextField label="Security Deposit" fullWidth defaultValue="₹5,000.00" sx={textFieldSx} /></Grid>
@@ -149,7 +149,7 @@ export default function GetSettings() {
 
           {activeTab === 'payment' && (
             <Box>
-              <Typography variant="h4" fontWeight="900" color="#002855" sx={{ mb: 1 }}>Payment Gateway</Typography>
+              <Typography variant="h4" fontWeight="900" color="#091542" sx={{ mb: 1 }}>Payment Gateway</Typography>
               <Typography variant="body1" color="text.secondary" sx={{ mb: 5 }}>Configure financial transaction protocols and wallet rules.</Typography>
               
               <Stack spacing={4}>
@@ -167,7 +167,7 @@ export default function GetSettings() {
           {/* Action Footer */}
           <Box sx={{ mt: 8, pt: 4, borderTop: '1px solid #f1f5f9', display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
             <Button sx={{ borderRadius: '14px', textTransform: 'none', px: 4, fontWeight: 700, color: '#64748b' }}>Discard</Button>
-            <Button variant="contained" sx={{ borderRadius: '16px', textTransform: 'none', px: 6, py: 1.5, fontWeight: 900, bgcolor: '#002855' }}>Apply Changes</Button>
+            <Button variant="contained" sx={{ borderRadius: '16px', textTransform: 'none', px: 6, py: 1.5, fontWeight: 900, bgcolor: '#091542' }}>Apply Changes</Button>
           </Box>
         </Paper>
       </Box>

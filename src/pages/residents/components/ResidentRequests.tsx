@@ -242,7 +242,7 @@ export default function ResidentRequests() {
         }}
       >
         <Box>
-          <Typography variant="h5" fontWeight="900" color="#002855">
+          <Typography variant="h5" fontWeight="900" color="#091542">
             Pending Enrollment Requests
           </Typography>
           <Typography variant="body2" color="text.secondary">
@@ -419,7 +419,7 @@ export default function ResidentRequests() {
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
-                bgcolor: "#002855",
+                bgcolor: "#091542",
                 color: "white",
                 borderRadius: "20px 20px 0 0",
               }}
@@ -486,7 +486,7 @@ export default function ResidentRequests() {
                         <Typography
                           variant="h5"
                           fontWeight="900"
-                          color="#002855"
+                          color="#091542"
                         >
                           {kycDetails?.name || selectedRequest.name}
                         </Typography>
@@ -583,8 +583,8 @@ export default function ResidentRequests() {
                           fontWeight: 700,
                           textTransform: "none",
                           whiteSpace: "nowrap",
-                          borderColor: "#002855",
-                          color: "#002855",
+                          borderColor: "#091542",
+                          color: "#091542",
                         }}
                       >
                         View Full Profile
@@ -891,7 +891,7 @@ export default function ResidentRequests() {
                                     <Typography
                                       variant="body2"
                                       fontWeight="800"
-                                      color="#002855"
+                                      color="#091542"
                                     >
                                       {f.name}
                                     </Typography>
@@ -1030,7 +1030,7 @@ export default function ResidentRequests() {
       >
         <DialogTitle
           sx={{
-            bgcolor: "#002855",
+            bgcolor: "#091542",
             color: "white",
             display: "flex",
             justifyContent: "space-between",

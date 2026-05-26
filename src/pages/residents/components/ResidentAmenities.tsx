@@ -16,7 +16,7 @@ interface AmenitiesProps {
 export default function ResidentAmenities({ bookings }: AmenitiesProps) {
   return (
     <Box>
-      <Typography variant="h6" fontWeight="900" color="#002855" sx={{ mb: 4 }}>Amenity Booking Ledger</Typography>
+      <Typography variant="h6" fontWeight="900" color="#091542" sx={{ mb: 4 }}>Amenity Booking Ledger</Typography>
       <TableContainer component={Paper} elevation={0} sx={{ borderRadius: '24px', border: '1px solid #e2e8f0', mb: 5 }}>
         <Table>
           <TableHead sx={{ bgcolor: '#f8fafc' }}>
@@ -31,7 +31,7 @@ export default function ResidentAmenities({ bookings }: AmenitiesProps) {
           <TableBody>
             {bookings.map((b) => (
               <TableRow key={b.id} hover>
-                <TableCell sx={{ fontWeight: 800, color: '#002855' }}>{b.activity}</TableCell>
+                <TableCell sx={{ fontWeight: 800, color: '#091542' }}>{b.activity}</TableCell>
                 <TableCell sx={{ fontWeight: 700 }}>{b.slots}</TableCell>
                 <TableCell sx={{ fontWeight: 700 }}>{b.date}</TableCell>
                 <TableCell sx={{ fontWeight: 800 }}>{b.amount}</TableCell>

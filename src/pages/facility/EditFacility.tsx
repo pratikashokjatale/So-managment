@@ -313,7 +313,7 @@ export default function EditFacility() {
               Edit Facility
             </Typography>
           </Breadcrumbs>
-          <Typography variant="h3" fontWeight="900" color="#002855">
+          <Typography variant="h3" fontWeight="900" color="#091542">
             Edit Facility
           </Typography>
         </Box>
@@ -370,7 +370,7 @@ export default function EditFacility() {
                     minWidth: 40,
                     height: 40,
                     p: 0,
-                    bgcolor: "#002855",
+                    bgcolor: "#091542",
                     "&:hover": { bgcolor: "#001a35" },
                   }}
                 >
@@ -916,7 +916,7 @@ export default function EditFacility() {
                       px: 4,
                       py: 1.5,
                       fontWeight: 900,
-                      bgcolor: "#002855",
+                      bgcolor: "#091542",
                     }}
                   >
                     Save Changes

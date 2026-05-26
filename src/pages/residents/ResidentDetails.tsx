@@ -249,7 +249,7 @@ export default function ResidentDetails() {
             bgcolor: 'rgba(255,255,255,0.95)', zIndex: 2, 
             boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
             '&:hover': { bgcolor: 'white' },
-            color: '#002855'
+            color: '#091542'
           }} 
         />
 
@@ -295,7 +295,7 @@ export default function ResidentDetails() {
                 onClick={() => navigate(`/residents/edit/${id}`)}
                 sx={{ 
                   borderRadius: '12px', textTransform: 'none', fontWeight: 800, 
-                  height: 48, px: 4, bgcolor: '#002855'
+                  height: 48, px: 4, bgcolor: '#091542'
                 }}
               >
                 Edit Profile
@@ -313,8 +313,8 @@ export default function ResidentDetails() {
           sx={{ 
             borderBottom: '1px solid #e2e8f0',
             '& .MuiTab-root': { textTransform: 'none', fontWeight: 800, color: '#64748b', minWidth: 160, fontSize: '1rem', py: 2 },
-            '& .Mui-selected': { color: '#002855 !important' },
-            '& .MuiTabs-indicator': { backgroundColor: '#002855', height: 4, borderRadius: '4px' }
+            '& .Mui-selected': { color: '#091542 !important' },
+            '& .MuiTabs-indicator': { backgroundColor: '#091542', height: 4, borderRadius: '4px' }
           }}
         >
           <Tab label="Profile Overview" />
@@ -331,7 +331,7 @@ export default function ResidentDetails() {
           <Grid container spacing={4}>
             <Grid size={{ xs: 12, md: 8 }}>
               <Paper elevation={0} sx={{ p: 4, borderRadius: '28px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
-                <Typography variant="h6" fontWeight="900" color="#002855" sx={{ mb: 4 }}>Administrative Details</Typography>
+                <Typography variant="h6" fontWeight="900" color="#091542" sx={{ mb: 4 }}>Administrative Details</Typography>
                 <Grid container spacing={4}>
                   <Grid size={{ xs: 6 }}>
                     <Typography variant="caption" color="#94a3b8" fontWeight="800">FULL NAME</Typography>
@@ -369,7 +369,7 @@ export default function ResidentDetails() {
             <Grid size={{ xs: 12, md: 4 }}>
               <Stack spacing={3}>
                 <Paper elevation={0} sx={{ p: 4, borderRadius: '28px', border: '1px solid #e2e8f0', bgcolor: 'white', textAlign: 'center' }}>
-                  <Typography variant="h6" fontWeight="900" color="#002855" sx={{ mb: 3 }}>Active Blue Card</Typography>
+                  <Typography variant="h6" fontWeight="900" color="#091542" sx={{ mb: 3 }}>Active Blue Card</Typography>
                   <Box sx={{ p: 4, bgcolor: '#eff6ff', borderRadius: '24px', border: '2px dashed #bfdbfe' }}>
                     <CardIcon sx={{ fontSize: 40, color: '#1d4ed8', mb: 1 }} />
                     <Typography variant="h4" fontWeight="900" color="#1d4ed8" sx={{ mb: 1 }}>
@@ -381,7 +381,7 @@ export default function ResidentDetails() {
                 </Paper>
                 <Paper elevation={0} sx={{ p: 3, borderRadius: '24px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
                   <Stack direction="row" justifyContent="space-between" alignItems="center">
-                    <Typography variant="body2" fontWeight="800" color="#002855">Card Condition</Typography>
+                    <Typography variant="body2" fontWeight="800" color="#091542">Card Condition</Typography>
                     <Chip label={resident.wallets?.security?.condition || 'Good'} size="small" sx={{ bgcolor: '#f0fdf4', color: '#10b981', fontWeight: 900 }} />
                   </Stack>
                 </Paper>
@@ -400,12 +400,12 @@ export default function ResidentDetails() {
         {activeTab === 3 && (
           <Box>
             <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 4 }}>
-              <Typography variant="h6" fontWeight="900" color="#002855">Dependent Management</Typography>
+              <Typography variant="h6" fontWeight="900" color="#091542">Dependent Management</Typography>
               <Button 
                 variant="contained" 
                 startIcon={<AddIcon />} 
                 onClick={handleOpenAddModal}
-                sx={{ bgcolor: '#002855', borderRadius: '12px', fontWeight: 800, textTransform: 'none' }}
+                sx={{ bgcolor: '#091542', borderRadius: '12px', fontWeight: 800, textTransform: 'none' }}
               >
                 Enroll Member
               </Button>
@@ -415,10 +415,10 @@ export default function ResidentDetails() {
                 <Grid size={{ xs: 12, md: 6 }} key={m.id}>
                   <Paper elevation={0} sx={{ p: 4, borderRadius: '24px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
                     <Stack direction="row" spacing={3} alignItems="center">
-                      <Avatar sx={{ width: 60, height: 60, bgcolor: '#f0f4f8', color: '#002855', fontWeight: 900 }}>{m.name[0]}</Avatar>
+                      <Avatar sx={{ width: 60, height: 60, bgcolor: '#f0f4f8', color: '#091542', fontWeight: 900 }}>{m.name[0]}</Avatar>
                       <Box sx={{ flexGrow: 1 }}>
                         <Stack direction="row" spacing={1} alignItems="center">
-                          <Typography variant="h6" fontWeight="900" color="#002855">{m.name}</Typography>
+                          <Typography variant="h6" fontWeight="900" color="#091542">{m.name}</Typography>
                           {m.gender && <Chip label={m.gender} size="small" variant="outlined" sx={{ borderRadius: '6px', height: 20, fontSize: '0.7rem' }} />}
                         </Stack>
                         <Typography variant="body2" color="#64748b" fontWeight="700">
@@ -496,11 +496,11 @@ export default function ResidentDetails() {
         {activeTab === 4 && (
           <Box>
             <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 4 }}>
-              <Typography variant="h6" fontWeight="900" color="#002855">KYC Compliance Repository</Typography>
-              <Button variant="outlined" startIcon={<UploadIcon />} sx={{ borderRadius: '12px', fontWeight: 800, borderColor: '#002855', color: '#002855', textTransform: 'none' }}>Upload New Document</Button>
+              <Typography variant="h6" fontWeight="900" color="#091542">KYC Compliance Repository</Typography>
+              <Button variant="outlined" startIcon={<UploadIcon />} sx={{ borderRadius: '12px', fontWeight: 800, borderColor: '#091542', color: '#091542', textTransform: 'none' }}>Upload New Document</Button>
             </Stack>
             
-            <Typography variant="subtitle1" fontWeight="800" color="#002855" sx={{ mb: 2 }}>Master Resident Documents</Typography>
+            <Typography variant="subtitle1" fontWeight="800" color="#091542" sx={{ mb: 2 }}>Master Resident Documents</Typography>
             {allDocs.length > 0 ? (
               <Grid container spacing={4} sx={{ mb: 5 }}>
                 {allDocs.map((doc) => (
@@ -510,10 +510,10 @@ export default function ResidentDetails() {
                         {doc.photoUrl && !isPdfFile(doc.photoUrl) ? (
                           <Box component="img" src={getFileUrl(doc.photoUrl)} sx={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         ) : (
-                          <FileIcon sx={{ fontSize: 44, color: '#002855' }} />
+                          <FileIcon sx={{ fontSize: 44, color: '#091542' }} />
                         )}
                       </Box>
-                      <Typography variant="body1" fontWeight="900" color="#002855" sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{doc.title || doc.documentType}</Typography>
+                      <Typography variant="body1" fontWeight="900" color="#091542" sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{doc.title || doc.documentType}</Typography>
                       <Chip
                         icon={doc.isVerified ? <CheckIcon sx={{ fontSize: '14px !important' }} /> : <PendingIcon sx={{ fontSize: '14px !important' }} />}
                         label={doc.isVerified ? 'Verified' : (doc.status || 'PENDING')}
@@ -557,7 +557,7 @@ export default function ResidentDetails() {
               <Typography variant="body2" color="text.secondary" sx={{ mb: 5 }}>No documents uploaded for master resident.</Typography>
             )}
 
-            <Typography variant="subtitle1" fontWeight="800" color="#002855" sx={{ mb: 2 }}>Family Member KYC Documents</Typography>
+            <Typography variant="subtitle1" fontWeight="800" color="#091542" sx={{ mb: 2 }}>Family Member KYC Documents</Typography>
             {familyDocs.length > 0 ? (
               <Grid container spacing={4}>
                 {familyDocs.map((doc, idx) => (
@@ -571,7 +571,7 @@ export default function ResidentDetails() {
                         )}
                       </Box>
                       <Typography variant="caption" color="primary" fontWeight="800" sx={{ display: 'block', mb: 0.5 }}>{doc.member}</Typography>
-                      <Typography variant="body1" fontWeight="900" color="#002855" sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{doc.title || doc.documentType}</Typography>
+                      <Typography variant="body1" fontWeight="900" color="#091542" sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{doc.title || doc.documentType}</Typography>
                       <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                         {doc.photoFileName || doc.pdfFileName || 'kyc_document.png'}
                       </Typography>
@@ -604,7 +604,7 @@ export default function ResidentDetails() {
         maxWidth="md"
         PaperProps={{ sx: { borderRadius: '24px', overflow: 'hidden' } }}
       >
-        <DialogTitle sx={{ bgcolor: '#002855', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <DialogTitle sx={{ bgcolor: '#091542', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography variant="h6" fontWeight="900">{docToShow.title}</Typography>
           <IconButton onClick={() => setDocOpen(false)} sx={{ color: 'white' }}>
             <CloseIcon />
@@ -635,7 +635,7 @@ export default function ResidentDetails() {
         PaperProps={{ sx: { borderRadius: '20px', p: 1 } }}
       >
         <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>
-          <Typography variant="h6" fontWeight="900" color="#002855">
+          <Typography variant="h6" fontWeight="900" color="#091542">
             {selectedMember ? "Edit Family Member" : "Enroll Family Member"}
           </Typography>
           <IconButton onClick={() => setEditModalOpen(false)}>
@@ -748,7 +748,7 @@ export default function ResidentDetails() {
             onClick={handleSaveFamilyMember} 
             variant="contained"
             disabled={updatingMember}
-            sx={{ bgcolor: '#002855', borderRadius: '10px', textTransform: 'none', fontWeight: 800 }}
+            sx={{ bgcolor: '#091542', borderRadius: '10px', textTransform: 'none', fontWeight: 800 }}
           >
             {updatingMember ? 'Saving...' : 'Save Changes'}
           </Button>
