@@ -43,7 +43,7 @@ export default function DataTable<T extends { id?: string | number }>({
   loading = false,
   totalCount = 0,
   page = 1,
-  rowsPerPage = 10,
+  rowsPerPage = 5,
   onPageChange,
   onRowsPerPageChange,
   emptyMessage = "No records found.",

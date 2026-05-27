@@ -70,3 +70,12 @@ export const getAllTowersApi = async (params?: ListTowersParams) => {
     throw handleApiError(error);
   }
 };
+
+export const deleteTowerApi = async (towerId: string) => {
+  try {
+    const res = await api.delete(`towers/${towerId}`);
+    return res?.data;
+  } catch (error) {
+    throw handleApiError(error);
+  }
+};

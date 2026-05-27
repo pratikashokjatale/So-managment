@@ -26,7 +26,7 @@ export default function GetMembership() {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
    const [searchQuery, setSearchQuery] = useState('');
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const [statusFilter, setStatusFilter] = useState('All Status');
   const [planFilter, setPlanFilter] = useState('All Plans');

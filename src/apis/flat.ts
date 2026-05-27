@@ -77,3 +77,12 @@ export const getAllFlatsApi = async (params?: ListFlatsParams) => {
   }
 };
 
+export const deleteFlatApi = async (flatId: string) => {
+  try {
+    const res = await api.delete(`flats/${flatId}`);
+    return res?.data;
+  } catch (error) {
+    throw handleApiError(error);
+  }
+};
+

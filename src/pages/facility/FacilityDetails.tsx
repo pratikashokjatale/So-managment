@@ -1,56 +1,75 @@
 import { useState, useEffect } from 'react';
 import { 
-  Box, Typography, Button, Breadcrumbs, Link, Paper, Grid, Stack, Chip, Switch, Divider, Avatar, CircularProgress
+  Box, Typography, Button, Breadcrumbs, Link, Paper, Grid, Stack, Tabs, Tab,
+  CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Select, MenuItem,
+  FormControl, InputLabel
 } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import PhoneInTalkOutlinedIcon from '@mui/icons-material/PhoneInTalkOutlined';
-import SupervisorAccountOutlinedIcon from '@mui/icons-material/SupervisorAccountOutlined';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
+
 import BackButton from '@/components/BackButton';
 import { getFacilityDetailsApi, updateFacilityApi } from '@/apis/facility';
-import { toggleFacilityStatus } from '@/utils/facilityStore';
-import { getFileUrl } from '@/utils/file';
-
-// Dynamic category icons helper
+import { getBookingsApi, approveBookingApi, rejectBookingApi } from '@/apis/booking';
 import { 
-  SportsTennis as TennisIcon, 
-  FitnessCenter as GymIcon,
-  Movie as CinemaIcon,
-  Spa as SpaIcon,
-  SelfImprovement as YogaIcon,
-  Pool as PoolIcon,
-  Park as ParkIcon,
-  Circle as CircleIcon
-} from '@mui/icons-material';
+  getSubscriptionPlansApi, 
+  createSubscriptionPlanApi, 
+  getSubscriptionsApi, 
+  updateSubscriptionPaymentApi,
+  approveSubscriptionApi,
+  rejectSubscriptionApi,
+  cancelSubscriptionApi 
+} from '@/apis/subscription';
+import { toggleFacilityStatus } from '@/utils/facilityStore';
 
-function getFacilityIcon(iconName: string) {
-  switch (iconName) {
-    case 'SportsTennis':
-      return <TennisIcon />;
-    case 'FitnessCenter':
-      return <GymIcon />;
-    case 'Movie':
-      return <CinemaIcon />;
-    case 'Spa':
-      return <SpaIcon />;
-    case 'SelfImprovement':
-      return <YogaIcon />;
-    case 'Pool':
-      return <PoolIcon />;
-    case 'Park':
-      return <ParkIcon />;
-    default:
-      return <CircleIcon />;
-  }
-}
+// Modular Component Imports
+import FacilityHero from './components/FacilityHero';
+import FacilitySidebar from './components/FacilitySidebar';
+import FacilityOverviewTab from './components/FacilityOverviewTab';
+import FacilityBookingsTab from './components/FacilityBookingsTab';
+import FacilityPlansTab from './components/FacilityPlansTab';
+import FacilitySubscriptionsTab from './components/FacilitySubscriptionsTab';
 
 export default function FacilityDetails() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  
+  // General states
   const [facility, setFacility] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState(0);
+
+  // Tab 2: Bookings states
+  const [bookings, setBookings] = useState<any[]>([]);
+  const [bookingsLoading, setBookingsLoading] = useState(false);
+
+  // Tab 3: Plans states
+  const [plans, setPlans] = useState<any[]>([]);
+  const [plansLoading, setPlansLoading] = useState(false);
+  const [createPlanOpen, setCreatePlanOpen] = useState(false);
+  const [planForm, setPlanForm] = useState({
+    name: '',
+    code: '',
+    description: '',
+    durationDays: 30,
+    priceAmount: 1000,
+    priceCurrency: 'INR',
+    requiresApproval: false,
+    maxUsesPerDay: ''
+  });
+
+  // Tab 4: Subscriptions states
+  const [subscriptions, setSubscriptions] = useState<any[]>([]);
+  const [subscriptionsLoading, setSubscriptionsLoading] = useState(false);
+
+  // Subscription Actions dialog states
+  const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
+  const [selectedSub, setSelectedSub] = useState<any>(null);
+  const [paymentStatusVal, setPaymentStatusVal] = useState<'PENDING' | 'PAID' | 'FAILED' | 'REFUNDED'>('PENDING');
+
+  const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
+  const [rejectReason, setRejectReason] = useState('');
+
+  const [actionLoading, setActionLoading] = useState(false);
 
   const loadFacility = async () => {
     setLoading(true);
@@ -87,6 +106,7 @@ export default function FacilityDetails() {
             name: f.name,
             code: f.code || '',
             bookingMode: f.bookingMode || 'SLOT',
+            accessType: f.accessType || 'BOOKING', // 'BOOKING', 'SUBSCRIPTION', 'MIXED'
             isActive: f.isActive !== undefined ? f.isActive : true,
             requiresApproval: !!f.requiresApproval,
             category: normCategory,
@@ -110,20 +130,254 @@ export default function FacilityDetails() {
             rules: f.rules || '',
             images: f.images || []
           });
-          setLoading(false);
-          return;
         }
       } catch (error) {
         console.warn("Failed to load facility via API:", error);
-        setFacility(null);
       }
     }
     setLoading(false);
   };
 
+  const fetchTodayBookings = async () => {
+    if (!id) return;
+    setBookingsLoading(true);
+    try {
+      const todayStr = new Date().toISOString().split('T')[0];
+      const res = await getBookingsApi({ 
+        facilityId: id, 
+        dateFrom: todayStr, 
+        dateTo: todayStr,
+        limit: 100 
+      });
+      if (res?.success && res?.data?.items) {
+        setBookings(res.data.items);
+      }
+    } catch (err) {
+      console.error('Failed to load today bookings:', err);
+    } finally {
+      setBookingsLoading(false);
+    }
+  };
+
+  const fetchPlans = async () => {
+    if (!id) return;
+    setPlansLoading(true);
+    try {
+      const res = await getSubscriptionPlansApi(id);
+      let fetchedPlans: any[] = [];
+      if (res?.success && res?.data) {
+        if (Array.isArray(res.data)) {
+          fetchedPlans = res.data;
+        } else if (res.data.items && Array.isArray(res.data.items)) {
+          fetchedPlans = res.data.items;
+        } else if (res.data.plans && Array.isArray(res.data.plans)) {
+          fetchedPlans = res.data.plans;
+        } else if (typeof res.data === 'object') {
+          const possibleArr = Object.values(res.data).find(val => Array.isArray(val));
+          if (possibleArr) fetchedPlans = possibleArr as any[];
+        }
+      } else if (Array.isArray(res)) {
+        fetchedPlans = res;
+      } else if (res?.items && Array.isArray(res.items)) {
+        fetchedPlans = res.items;
+      }
+      setPlans(fetchedPlans);
+    } catch (err) {
+      console.error('Failed to load plans:', err);
+      setPlans([]);
+    } finally {
+      setPlansLoading(false);
+    }
+  };
+
+  const fetchSubscriptions = async () => {
+    if (!id) return;
+    setSubscriptionsLoading(true);
+    try {
+      const res = await getSubscriptionsApi({ facilityId: id });
+      let fetchedSubs: any[] = [];
+      if (res?.success && res?.data) {
+        if (Array.isArray(res.data)) {
+          fetchedSubs = res.data;
+        } else if (res.data.items && Array.isArray(res.data.items)) {
+          fetchedSubs = res.data.items;
+        } else if (typeof res.data === 'object') {
+          const possibleArr = Object.values(res.data).find(val => Array.isArray(val));
+          if (possibleArr) fetchedSubs = possibleArr as any[];
+        }
+      } else if (Array.isArray(res)) {
+        fetchedSubs = res;
+      } else if (res?.items && Array.isArray(res.items)) {
+        fetchedSubs = res.items;
+      }
+      setSubscriptions(fetchedSubs);
+    } catch (err) {
+      console.error('Failed to load subscriptions:', err);
+      setSubscriptions([]);
+    } finally {
+      setSubscriptionsLoading(false);
+    }
+  };
+
   useEffect(() => {
     loadFacility();
   }, [id]);
+
+  useEffect(() => {
+    if (activeTab === 1) {
+      fetchTodayBookings();
+    } else if (activeTab === 2) {
+      fetchPlans();
+    } else if (activeTab === 3) {
+      fetchSubscriptions();
+    }
+  }, [activeTab, id]);
+
+  const handleStatusToggle = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const active = e.target.checked;
+    const newStatus = active ? 'OPERATIONAL' : 'CLOSED';
+    try {
+      await updateFacilityApi(facility.id, { status: newStatus, isActive: active });
+      loadFacility();
+    } catch (err) {
+      console.warn("Failed to toggle status via API, falling back:", err);
+      const updated = toggleFacilityStatus(facility.id, active);
+      setFacility(updated);
+    }
+  };
+
+  // Booking approvals
+  const handleApproveBooking = async (bookingId: string) => {
+    setActionLoading(true);
+    try {
+      await approveBookingApi(bookingId);
+      fetchTodayBookings();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleRejectBooking = async (bookingId: string) => {
+    setActionLoading(true);
+    try {
+      await rejectBookingApi(bookingId, { reason: 'Rejected by Admin' });
+      fetchTodayBookings();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // Plan creation
+  const handleCreatePlanSubmit = async () => {
+    if (!id) return;
+    setActionLoading(true);
+    try {
+      const payload = {
+        facilityId: id,
+        name: planForm.name,
+        code: planForm.code,
+        description: planForm.description,
+        durationDays: Number(planForm.durationDays),
+        priceAmount: Number(planForm.priceAmount),
+        priceCurrency: planForm.priceCurrency,
+        requiresApproval: planForm.requiresApproval,
+        maxUsesPerDay: planForm.maxUsesPerDay !== '' ? Number(planForm.maxUsesPerDay) : null
+      };
+      const res = await createSubscriptionPlanApi(payload);
+      if (res?.success) {
+        setCreatePlanOpen(false);
+        setPlanForm({
+          name: '',
+          code: '',
+          description: '',
+          durationDays: 30,
+          priceAmount: 1000,
+          priceCurrency: 'INR',
+          requiresApproval: false,
+          maxUsesPerDay: ''
+        });
+        fetchPlans();
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // Subscriptions management
+  const openPaymentDialog = (sub: any) => {
+    setSelectedSub(sub);
+    setPaymentStatusVal(sub.paymentStatus || 'PENDING');
+    setPaymentDialogOpen(true);
+  };
+
+  const handleUpdatePaymentStatus = async () => {
+    if (!selectedSub) return;
+    setActionLoading(true);
+    try {
+      const res = await updateSubscriptionPaymentApi(selectedSub.id, { paymentStatus: paymentStatusVal });
+      if (res?.success) {
+        setPaymentDialogOpen(false);
+        fetchSubscriptions();
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleApproveSub = async (subId: string) => {
+    setActionLoading(true);
+    try {
+      await approveSubscriptionApi(subId);
+      fetchSubscriptions();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const openRejectDialog = (sub: any) => {
+    setSelectedSub(sub);
+    setRejectReason('');
+    setRejectDialogOpen(true);
+  };
+
+  const handleRejectSub = async () => {
+    if (!selectedSub) return;
+    setActionLoading(true);
+    try {
+      const res = await rejectSubscriptionApi(selectedSub.id, { reason: rejectReason });
+      if (res?.success) {
+        setRejectDialogOpen(false);
+        fetchSubscriptions();
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleCancelSub = async (subId: string) => {
+    if (!window.confirm("Are you sure you want to cancel this subscription?")) return;
+    setActionLoading(true);
+    try {
+      await cancelSubscriptionApi(subId);
+      fetchSubscriptions();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setActionLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -141,33 +395,6 @@ export default function FacilityDetails() {
       </Box>
     );
   }
-
-  const handleStatusToggle = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const active = e.target.checked;
-    const newStatus = active ? 'OPERATIONAL' : 'CLOSED';
-    
-    try {
-      await updateFacilityApi(facility.id, { status: newStatus, isActive: active });
-      loadFacility();
-    } catch (err) {
-      console.warn("Failed to toggle status via API, falling back:", err);
-      const updated = toggleFacilityStatus(facility.id, active);
-      setFacility(updated);
-    }
-  };
-
-  // Mock booking slots for high-fidelity representation
-  const mockBookings = [
-    { time: '09:00 AM - 10:00 AM', resident: 'John Doe', flat: 'Tower A • Flat 101' },
-    { time: '11:00 AM - 12:00 PM', resident: 'Jane Smith', flat: 'Tower B • Flat 201' },
-    { time: '04:00 PM - 05:00 PM', resident: 'Mike Johnson', flat: 'Tower B • Flat 202' }
-  ];
-
-  // Mock maintenance history
-  const mockMaintenance = [
-    { date: '12 May 2026', type: 'Routine Cleaning', status: 'Completed', cost: '₹500' },
-    { date: '04 May 2026', type: 'Equipment Inspection', status: 'Completed', cost: '₹1,200' }
-  ];
 
   return (
     <Box sx={{ p: { xs: 2, md: 5 }, bgcolor: '#f8fafc', minHeight: '100vh' }}>
@@ -187,317 +414,274 @@ export default function FacilityDetails() {
           <Typography variant="h3" fontWeight="900" color="#091542">{facility.name}</Typography>
         </Box>
         <Stack direction="row" spacing={2}>
-            <Button
-              variant="outlined"
-              startIcon={<EditOutlinedIcon />}
-              onClick={() => navigate(`/facility/edit/${facility.id}`)}
-              sx={{ borderRadius: '16px', px: 3, py: 1.25, fontWeight: 900, borderColor: '#e2e8f0', color: '#091542' }}
-            >
-              Edit Facility
-            </Button>
+          <Button
+            variant="outlined"
+            startIcon={<EditOutlinedIcon />}
+            onClick={() => navigate(`/facility/edit/${facility.id}`)}
+            sx={{ borderRadius: '16px', px: 3, py: 1.25, fontWeight: 900, borderColor: '#e2e8f0', color: '#091542' }}
+          >
+            Edit Facility
+          </Button>
           <BackButton to="/facility" />
         </Stack>
       </Stack>
 
-      {/* Massive Hero Banner */}
-      <Box sx={{ mb: 5, position: 'relative', height: { xs: '300px', md: '400px' }, borderRadius: '32px', overflow: 'hidden', border: '1px solid #e2e8f0', boxShadow: '0 10px 40px rgba(0,40,85,0.08)' }}>
-        <Box 
-          component="img"
-          src={getFileUrl((facility.images && facility.images[0]) || 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop')}
-          onError={(e: any) => { e.target.src = 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop'; }}
-          sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
-        />
-        <Box sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '80%', background: 'linear-gradient(to top, rgba(0,20,45,0.95), transparent)' }} />
-        
-        <Box sx={{ position: 'absolute', bottom: 0, left: 0, width: '100%', p: { xs: 3, md: 5 } }}>
-          <Stack direction="row" spacing={3} alignItems="flex-end">
-            <Avatar sx={{ 
-              bgcolor: facility.color, 
-              color: 'white', 
-              width: { xs: 80, md: 100 }, 
-              height: { xs: 80, md: 100 }, 
-              borderRadius: '28px', 
-              border: '4px solid rgba(255,255,255,0.2)',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
-              backdropFilter: 'blur(10px)'
-            }}>
-              {getFacilityIcon(facility.iconName)}
-            </Avatar>
-            <Box>
-              <Typography variant="h2" fontWeight="900" color="white" sx={{ mb: 1.5, textShadow: '0 2px 10px rgba(0,0,0,0.3)' }}>
-                {facility.name}
-              </Typography>
-              <Stack direction="row" spacing={1.5} alignItems="center">
-                <Chip label={facility.category} size="small" sx={{ fontWeight: 800, borderRadius: '8px', bgcolor: 'rgba(255,255,255,0.2)', color: 'white', backdropFilter: 'blur(10px)' }} />
-                {facility.code && (
-                  <Chip label={`Code: ${facility.code}`} size="small" sx={{ fontWeight: 800, borderRadius: '8px', bgcolor: 'rgba(255,255,255,0.2)', color: 'white', backdropFilter: 'blur(10px)' }} />
-                )}
-                <Chip 
-                  label={facility.status} 
-                  size="small" 
-                  sx={{ 
-                    fontWeight: 800, 
-                    borderRadius: '8px',
-                    bgcolor: facility.status !== 'Inactive' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)',
-                    color: facility.status !== 'Inactive' ? '#34d399' : '#f87171',
-                    border: `1px solid ${facility.status !== 'Inactive' ? 'rgba(16, 185, 129, 0.4)' : 'rgba(239, 68, 68, 0.4)'}`,
-                    backdropFilter: 'blur(10px)'
-                  }} 
-                />
-              </Stack>
-            </Box>
-          </Stack>
-        </Box>
-      </Box>
+      {/* Facility Hero Sub-component */}
+      <FacilityHero facility={facility} />
 
+      {/* Main Content Layout */}
       <Grid container spacing={4}>
         
-        {/* Left Side: General Info & Command */}
-        <Grid size={{ xs: 12, md: 7 }}>
-          <Stack spacing={4}>
-            
-            {/* Overview & Pricing Card */}
-            <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
-              <Typography variant="h6" fontWeight="900" color="#091542" sx={{ mb: 1 }}>
-                Facility Description
-              </Typography>
-              <Typography variant="body1" color="text.secondary" sx={{ mb: 4, lineHeight: 1.7, fontWeight: 500 }}>
-                {facility.description || 'No description provided.'}
-              </Typography>
+        {/* Left Side Column */}
+        <Grid size={{ xs: 12, md: 4 }}>
+          <FacilitySidebar facility={facility} handleStatusToggle={handleStatusToggle} />
+        </Grid>
 
-              <Grid container spacing={3}>
-                <Grid size={6}>
-                  <Typography variant="caption" color="text.secondary" fontWeight="800" display="block" sx={{ mb: 0.5 }}>
-                    PRICING MODEL
-                  </Typography>
-                  <Typography variant="h5" fontWeight="900" color="#1e293b">
-                    {facility.price}
-                  </Typography>
-                </Grid>
-                <Grid size={6}>
-                  <Typography variant="caption" color="text.secondary" fontWeight="800" display="block" sx={{ mb: 0.5 }}>
-                    CURRENT AVAILABILITY
-                  </Typography>
-                  <Typography variant="h5" fontWeight="900" color="#1e293b">
-                    {facility.slots}
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Paper>
-
-            {/* Logistics & Rules */}
-            <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
-              <Typography variant="h5" fontWeight="900" color="#091542" sx={{ mb: 3 }}>
-                Logistics & Schedule
-              </Typography>
-              
-              <Grid container spacing={3} sx={{ mb: 3 }}>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <Typography variant="caption" color="text.secondary" fontWeight="800" display="block">LOCATION</Typography>
-                  <Typography variant="body1" fontWeight="800" color="#1e293b">{facility.location} • {facility.floor}</Typography>
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <Typography variant="caption" color="text.secondary" fontWeight="800" display="block">OPERATIONAL HOURS</Typography>
-                  <Typography variant="body1" fontWeight="800" color="#1e293b">{facility.openingTime} to {facility.closingTime}</Typography>
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <Typography variant="caption" color="text.secondary" fontWeight="800" display="block">ACTIVE DAYS</Typography>
-                  <Typography variant="body1" fontWeight="800" color="#1e293b">{facility.availableDays?.join(', ')}</Typography>
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <Typography variant="caption" color="text.secondary" fontWeight="800" display="block">BOOKING CONSTRAINTS</Typography>
-                  <Typography variant="body1" fontWeight="800" color="#1e293b">Max {facility.advanceBookingDays} Days Adv. • {facility.cancellationHours}H Cancel</Typography>
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <Typography variant="caption" color="text.secondary" fontWeight="800" display="block">BOOKING MODE</Typography>
-                  <Typography variant="body1" fontWeight="800" color="#1e293b">{facility.bookingMode === 'SLOT' ? 'Slot-based Booking' : facility.bookingMode === 'EVENT' ? 'Event/Day-based Booking' : 'Free Entry'}</Typography>
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <Typography variant="caption" color="text.secondary" fontWeight="800" display="block">MANAGER APPROVAL</Typography>
-                  <Typography variant="body1" fontWeight="800" color="#1e293b">{facility.requiresApproval ? 'Yes, required' : 'No, auto-approved'}</Typography>
-                </Grid>
-              </Grid>
-
-              {facility.rules && (
-                <>
-                  <Divider sx={{ my: 3 }} />
-                  <Typography variant="subtitle2" color="text.secondary" fontWeight="800" sx={{ mb: 1 }}>
-                    Rules & Regulations
-                  </Typography>
-                  <Typography variant="body2" color="#091542" fontWeight="600" sx={{ p: 2, bgcolor: '#f8fafc', borderRadius: '12px' }}>
-                    {facility.rules}
-                  </Typography>
-                </>
-              )}
-            </Paper>
-
-            {/* Operations Command Status Toggle */}
-            <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
-              <Typography variant="h5" fontWeight="900" color="#091542" sx={{ mb: 1.5 }}>
-                Operations Control
-              </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 3, fontWeight: 600 }}>
-                Toggle active status to close bookings during scheduled cleanings or sudden maintenance intervals.
-              </Typography>
-              
-              <Paper 
-                elevation={0} 
-                sx={{ 
-                  p: 3, 
-                  borderRadius: '20px', 
-                  bgcolor: '#f8fafc',
-                  border: '1px dashed #cbd5e1',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between'
+        {/* Right Side Column (Tabs Panel) */}
+        <Grid size={{ xs: 12, md: 8 }}>
+          <Paper elevation={0} sx={{ borderRadius: '24px', border: '1px solid #e2e8f0', bgcolor: 'white', overflow: 'hidden' }}>
+            <Box sx={{ borderBottom: 1, borderColor: '#f1f5f9', px: 3, pt: 2, bgcolor: '#fafbfd' }}>
+              <Tabs 
+                value={activeTab} 
+                onChange={(_, val) => setActiveTab(val)} 
+                variant="scrollable"
+                scrollButtons="auto"
+                sx={{
+                  '& .MuiTab-root': {
+                    textTransform: 'none',
+                    fontWeight: 700,
+                    fontSize: '0.95rem',
+                    pb: 2,
+                    minWidth: 100
+                  }
                 }}
               >
-                <Stack direction="row" spacing={2} alignItems="center">
-                  {facility.status !== 'Inactive' ? (
-                    <CheckCircleOutlineIcon sx={{ color: '#10b981', fontSize: 32 }} />
-                  ) : (
-                    <BlockOutlinedIcon sx={{ color: '#cbd5e1', fontSize: 32 }} />
-                  )}
-                  <Box>
-                    <Typography variant="body1" fontWeight="800" color="#091542">
-                      Active Status Switch
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary" fontWeight="700">
-                      Currently: {facility.status !== 'Inactive' ? 'ONLINE (Operational)' : 'OFFLINE (Inactive)'}
-                    </Typography>
-                  </Box>
-                </Stack>
-                <Switch
-                  checked={facility.status !== 'Inactive'}
-                  onChange={handleStatusToggle}
-                  color="success"
-                  inputProps={{ 'aria-label': 'controlled' }}
-                />
-              </Paper>
-            </Paper>
+                <Tab label="General Overview" />
+                <Tab label="Today's Bookings" />
+                <Tab label="Subscription Plans" />
+                <Tab label="Subscriptions" />
+              </Tabs>
+            </Box>
 
-            {/* Supervision Details */}
-            <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
-              <Typography variant="h5" fontWeight="900" color="#091542" sx={{ mb: 3 }}>
-                Supervisor Information
-              </Typography>
-              <Grid container spacing={3}>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <Stack direction="row" spacing={2} alignItems="center">
-                    <Avatar sx={{ bgcolor: '#eff6ff', color: '#1d4ed8', width: 44, height: 44 }}>
-                      <SupervisorAccountOutlinedIcon />
-                    </Avatar>
-                    <Box>
-                      <Typography variant="caption" color="text.secondary" fontWeight="800">FACILITY MANAGER</Typography>
-                      <Typography variant="body1" fontWeight="800" color="#1e293b">{facility.managerName}</Typography>
-                    </Box>
-                  </Stack>
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <Stack direction="row" spacing={2} alignItems="center">
-                    <Avatar sx={{ bgcolor: '#f0fdf4', color: '#10b981', width: 44, height: 44 }}>
-                      <PhoneInTalkOutlinedIcon />
-                    </Avatar>
-                    <Box>
-                      <Typography variant="caption" color="text.secondary" fontWeight="800">DIRECT CONTACT</Typography>
-                      <Typography variant="body1" fontWeight="800" color="#1e293b">{facility.managerContact}</Typography>
-                    </Box>
-                  </Stack>
-                </Grid>
-              </Grid>
-            </Paper>
-
-            {/* Assigned Staff Members */}
-            {facility.staffMembers && facility.staffMembers.length > 0 && (
-              <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
-                <Typography variant="h5" fontWeight="900" color="#091542" sx={{ mb: 3 }}>
-                  Assigned Staff Members
-                </Typography>
-                <Stack spacing={2.5}>
-                  {facility.staffMembers.map((staff: any, idx: number) => (
-                    <Box key={staff.id || idx}>
-                      <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between">
-                        <Stack direction="row" spacing={2} alignItems="center">
-                          <Avatar src={staff.profilePhotoUrl || staff.avatar} sx={{ width: 40, height: 40 }} />
-                          <Box>
-                            <Typography variant="body2" fontWeight="800" color="#091542">{staff.name}</Typography>
-                            <Typography variant="caption" color="text.secondary" fontWeight="700">{staff.designation || staff.department}</Typography>
-                          </Box>
-                        </Stack>
-                        <Chip label={staff.status || 'ACTIVE'} size="small" sx={{ fontWeight: 800, borderRadius: '8px', bgcolor: '#f0fdf4', color: '#10b981' }} />
-                      </Stack>
-                      {idx < facility.staffMembers.length - 1 && <Divider sx={{ mt: 2.5 }} />}
-                    </Box>
-                  ))}
-                </Stack>
-              </Paper>
-            )}
-
-          </Stack>
-        </Grid>
-
-        {/* Right Side: Active Slots & History */}
-        <Grid size={{ xs: 12, md: 5 }}>
-          <Stack spacing={4}>
-            
-            {/* Active Bookings Log */}
-            <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
-              <Typography variant="h5" fontWeight="900" color="#091542" sx={{ mb: 3 }}>
-                Today's Bookings
-              </Typography>
-              
-              {facility.status === 'Inactive' ? (
-                <Box sx={{ p: 3, textAlign: 'center' }}>
-                  <Typography variant="body2" color="text.secondary" fontWeight="700">
-                    No active slots. Facility is currently offline.
-                  </Typography>
-                </Box>
-              ) : (
-                <Stack spacing={2.5}>
-                  {mockBookings.map((slot, index) => (
-                    <Box key={index}>
-                      <Stack direction="row" justifyContent="space-between" alignItems="center">
-                        <Box>
-                          <Typography variant="body2" fontWeight="800" color="#091542">{slot.resident}</Typography>
-                          <Typography variant="caption" color="text.secondary" fontWeight="700">{slot.flat}</Typography>
-                        </Box>
-                        <Chip label={slot.time} size="small" sx={{ fontWeight: 800, borderRadius: '8px', bgcolor: '#eff6ff', color: '#1d4ed8' }} />
-                      </Stack>
-                      {index < mockBookings.length - 1 && <Divider sx={{ mt: 2.5 }} />}
-                    </Box>
-                  ))}
-                </Stack>
+            {/* TAB CONTENT PANELS */}
+            <Box sx={{ p: 4 }}>
+              {activeTab === 0 && (
+                <FacilityOverviewTab facility={facility} />
               )}
-            </Paper>
 
-            {/* Maintenance Log */}
-            <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
-              <Typography variant="h5" fontWeight="900" color="#091542" sx={{ mb: 3 }}>
-                Maintenance Log
-              </Typography>
-              <Stack spacing={2.5}>
-                {mockMaintenance.map((log, index) => (
-                  <Box key={index}>
-                    <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
-                      <Box>
-                        <Typography variant="body2" fontWeight="800" color="#091542">{log.type}</Typography>
-                        <Typography variant="caption" color="text.secondary" fontWeight="700">Audit Date: {log.date}</Typography>
-                      </Box>
-                      <Box sx={{ textAlign: 'right' }}>
-                        <Chip label={log.status} size="small" color="success" sx={{ fontWeight: 800, borderRadius: '8px', mb: 0.5 }} />
-                        <Typography variant="body2" fontWeight="800" color="#64748b" display="block">{log.cost}</Typography>
-                      </Box>
-                    </Stack>
-                    {index < mockMaintenance.length - 1 && <Divider sx={{ mt: 2.5 }} />}
-                  </Box>
-                ))}
-              </Stack>
-            </Paper>
+              {activeTab === 1 && (
+                <FacilityBookingsTab 
+                  bookings={bookings} 
+                  loading={bookingsLoading} 
+                  actionLoading={actionLoading}
+                  handleApproveBooking={handleApproveBooking}
+                  handleRejectBooking={handleRejectBooking}
+                />
+              )}
 
-          </Stack>
+              {activeTab === 2 && (
+                <FacilityPlansTab 
+                  accessType={facility.accessType}
+                  plans={plans}
+                  loading={plansLoading}
+                  setCreatePlanOpen={setCreatePlanOpen}
+                />
+              )}
+
+              {activeTab === 3 && (
+                <FacilitySubscriptionsTab 
+                  subscriptions={subscriptions}
+                  loading={subscriptionsLoading}
+                  actionLoading={actionLoading}
+                  openPaymentDialog={openPaymentDialog}
+                  handleApproveSub={handleApproveSub}
+                  openRejectDialog={openRejectDialog}
+                  handleCancelSub={handleCancelSub}
+                />
+              )}
+            </Box>
+          </Paper>
         </Grid>
-
       </Grid>
+
+      {/* Create Plan Dialog */}
+      <Dialog open={createPlanOpen} onClose={() => !actionLoading && setCreatePlanOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ fontWeight: 'bold', color: '#091542' }}>Create Subscription Plan</DialogTitle>
+        <DialogContent>
+          <Stack spacing={2} sx={{ mt: 1 }}>
+            <TextField 
+              label="Plan Name" 
+              fullWidth 
+              value={planForm.name} 
+              onChange={(e) => setPlanForm({ ...planForm, name: e.target.value })} 
+              disabled={actionLoading}
+            />
+            <TextField 
+              label="Plan Code (e.g. GYM-MONTHLY)" 
+              fullWidth 
+              value={planForm.code} 
+              onChange={(e) => setPlanForm({ ...planForm, code: e.target.value.toUpperCase() })} 
+              disabled={actionLoading}
+            />
+            <TextField 
+              label="Description" 
+              fullWidth 
+              multiline 
+              rows={2} 
+              value={planForm.description} 
+              onChange={(e) => setPlanForm({ ...planForm, description: e.target.value })} 
+              disabled={actionLoading}
+            />
+            <Grid container spacing={2}>
+              <Grid size={6}>
+                <TextField 
+                  label="Duration (Days)" 
+                  type="number" 
+                  fullWidth 
+                  value={planForm.durationDays} 
+                  onChange={(e) => setPlanForm({ ...planForm, durationDays: Number(e.target.value) })} 
+                  disabled={actionLoading}
+                />
+              </Grid>
+              <Grid size={6}>
+                <TextField 
+                  label="Price Amount" 
+                  type="number" 
+                  fullWidth 
+                  value={planForm.priceAmount} 
+                  onChange={(e) => setPlanForm({ ...planForm, priceAmount: Number(e.target.value) })} 
+                  disabled={actionLoading}
+                />
+              </Grid>
+            </Grid>
+
+            <Grid container spacing={2}>
+              <Grid size={6}>
+                <FormControl fullWidth>
+                  <InputLabel>Currency</InputLabel>
+                  <Select
+                    value={planForm.priceCurrency}
+                    label="Currency"
+                    onChange={(e) => setPlanForm({ ...planForm, priceCurrency: e.target.value })}
+                    disabled={actionLoading}
+                  >
+                    <MenuItem value="INR">INR (₹)</MenuItem>
+                    <MenuItem value="USD">USD ($)</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid size={6}>
+                <TextField 
+                  label="Max Uses/Day (Optional)" 
+                  type="number" 
+                  fullWidth 
+                  value={planForm.maxUsesPerDay} 
+                  onChange={(e) => setPlanForm({ ...planForm, maxUsesPerDay: e.target.value })} 
+                  disabled={actionLoading}
+                  placeholder="Unlimited"
+                />
+              </Grid>
+            </Grid>
+
+            <FormControl fullWidth>
+              <InputLabel>Requires Approval</InputLabel>
+              <Select
+                value={planForm.requiresApproval ? "true" : "false"}
+                label="Requires Approval"
+                onChange={(e) => setPlanForm({ ...planForm, requiresApproval: e.target.value === "true" })}
+                disabled={actionLoading}
+              >
+                <MenuItem value="false">Auto-Approve</MenuItem>
+                <MenuItem value="true">Requires Manager Approval</MenuItem>
+              </Select>
+            </FormControl>
+          </Stack>
+        </DialogContent>
+        <DialogActions sx={{ p: 3 }}>
+          <Button onClick={() => setCreatePlanOpen(false)} color="inherit" disabled={actionLoading} sx={{ textTransform: 'none' }}>
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleCreatePlanSubmit} 
+            variant="contained" 
+            disabled={actionLoading}
+            sx={{ textTransform: 'none', boxShadow: 'none' }}
+          >
+            Create Plan
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Update Payment Dialog */}
+      <Dialog open={paymentDialogOpen} onClose={() => !actionLoading && setPaymentDialogOpen(false)}>
+        <DialogTitle sx={{ fontWeight: 'bold', color: '#091542' }}>Update Payment Status</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+            Change the payment status for this user subscription.
+          </Typography>
+          <FormControl fullWidth sx={{ mt: 1 }}>
+            <InputLabel>Payment Status</InputLabel>
+            <Select
+              value={paymentStatusVal}
+              label="Payment Status"
+              onChange={(e) => setPaymentStatusVal(e.target.value as any)}
+              disabled={actionLoading}
+            >
+              <MenuItem value="PENDING">Pending</MenuItem>
+              <MenuItem value="PAID">Paid</MenuItem>
+              <MenuItem value="FAILED">Failed</MenuItem>
+              <MenuItem value="REFUNDED">Refunded</MenuItem>
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={() => setPaymentDialogOpen(false)} color="inherit" disabled={actionLoading} sx={{ textTransform: 'none' }}>
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleUpdatePaymentStatus} 
+            variant="contained" 
+            disabled={actionLoading}
+            sx={{ textTransform: 'none', boxShadow: 'none' }}
+          >
+            Update
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Reject Dialog */}
+      <Dialog open={rejectDialogOpen} onClose={() => !actionLoading && setRejectDialogOpen(false)}>
+        <DialogTitle sx={{ fontWeight: 'bold', color: '#091542' }}>Reject Subscription</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            Specify the reason for rejecting this user subscription request.
+          </Typography>
+          <TextField
+            label="Rejection Reason"
+            fullWidth
+            multiline
+            rows={3}
+            value={rejectReason}
+            onChange={(e) => setRejectReason(e.target.value)}
+            disabled={actionLoading}
+            autoFocus
+          />
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={() => setRejectDialogOpen(false)} color="inherit" disabled={actionLoading} sx={{ textTransform: 'none' }}>
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleRejectSub} 
+            color="error" 
+            variant="contained" 
+            disabled={actionLoading}
+            sx={{ textTransform: 'none', boxShadow: 'none' }}
+          >
+            Confirm Reject
+          </Button>
+        </DialogActions>
+      </Dialog>
 
     </Box>
   );

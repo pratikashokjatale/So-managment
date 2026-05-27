@@ -38,8 +38,9 @@ import Search from "@/components/Search";
 import Pagination from "@/components/Pagination";
 import { getTowers, deleteTower } from "@/utils/setupStore";
 import { getProjectsApi } from "@/apis/project";
-import { getTowersApi, getAllTowersApi } from "@/apis/tower";
+import { getTowersApi, getAllTowersApi, deleteTowerApi } from "@/apis/tower";
 import { CircularProgress } from "@mui/material";
+import { toast } from "react-hot-toast";
 
 export default function GetTower() {
   const navigate = useNavigate();
@@ -62,7 +63,7 @@ export default function GetTower() {
 
   // Pagination states
   const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [totalCount, setTotalCount] = useState(0);
   const [isApiMode, setIsApiMode] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -160,15 +161,23 @@ export default function GetTower() {
     setDeleteId(id);
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (deleteId) {
-      deleteTower(deleteId);
-      if (isApiMode) {
-        fetchTowers();
-      } else {
-        setTowers(getTowers()); // Refresh
+      try {
+        if (isApiMode) {
+          await deleteTowerApi(deleteId);
+          fetchTowers();
+        } else {
+          deleteTower(deleteId);
+          setTowers(getTowers()); // Refresh
+        }
+        toast.success("Tower deleted successfully");
+      } catch (err: any) {
+        console.error("Failed to delete tower:", err);
+        toast.error(err?.message || "Failed to delete tower");
+      } finally {
+        setDeleteId(null);
       }
-      setDeleteId(null);
     }
   };
 

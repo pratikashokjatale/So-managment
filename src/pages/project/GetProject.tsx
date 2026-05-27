@@ -54,7 +54,7 @@ export default function GetProject() {
 
   // Pagination states
   const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [totalCount, setTotalCount] = useState(0);
   const [isApiMode, setIsApiMode] = useState(false);
   const [loading, setLoading] = useState(true);

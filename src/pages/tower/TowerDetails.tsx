@@ -17,8 +17,9 @@ import Pagination from '@/components/Pagination';
 import BackButton from '@/components/BackButton';
 import { getTowers, getFlats, deleteFlat } from '@/utils/setupStore';
 import { getTowerDetailsApi } from '@/apis/tower';
-import { getFlatsApi } from '@/apis/flat';
+import { getFlatsApi, deleteFlatApi } from '@/apis/flat';
 import { CircularProgress } from '@mui/material';
+import { toast } from 'react-hot-toast';
 
 export default function TowerDetails() {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ export default function TowerDetails() {
 
   // Pagination states
   const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(20);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const handlePageChange = (_event: any, value: number) => {
     setPage(value);
@@ -111,10 +112,42 @@ export default function TowerDetails() {
     setDeleteFlatId(flatId);
   };
 
-  const handleConfirmDeleteFlat = () => {
+  const handleConfirmDeleteFlat = async () => {
     if (deleteFlatId) {
-      deleteFlat(deleteFlatId);
-      setTowerFlats(getFlats().filter(f => f.towerId === id));
+      try {
+        await deleteFlatApi(deleteFlatId);
+        toast.success("Flat deleted successfully");
+        // Reload flats via API if possible
+        try {
+          const flatsRes = await getFlatsApi(id!, { page: 1, limit: 100 });
+          const _frd = flatsRes?.data;
+          const list = (Array.isArray(_frd?.data?.data) ? _frd.data.data : null) || (Array.isArray(_frd?.data) ? _frd.data : null) || _frd?.flats || [];
+          const mappedFlats = list.map((f: any) => {
+            let normStatus = f.status || 'Vacant';
+            if (normStatus === 'VACANT') normStatus = 'Vacant';
+            else if (normStatus === 'OCCUPIED') normStatus = 'Occupied';
+            else if (normStatus === 'MAINTENANCE') normStatus = 'Maintenance';
+
+            return {
+              id: f.id,
+              projectId: f.projectId,
+              towerId: f.towerId,
+              number: f.flatNumber || f.number,
+              floor: f.floorNumber || f.floor,
+              type: f.flatType || f.type,
+              status: normStatus
+            };
+          });
+          setTowerFlats(mappedFlats);
+        } catch {
+          setTowerFlats(prev => prev.filter(f => f.id !== deleteFlatId));
+        }
+      } catch (error: any) {
+        console.warn("API flat deletion failed, performing local storage fallback:", error);
+        deleteFlat(deleteFlatId);
+        toast.success("Flat deleted successfully (offline fallback)");
+        setTowerFlats(getFlats().filter(f => f.towerId === id));
+      }
       setDeleteFlatId(null);
     }
   };

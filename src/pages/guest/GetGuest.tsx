@@ -104,7 +104,7 @@ export default function GetGuest() {
   const [guests, setGuests]           = useState<any[]>([]);
   const [loading, setLoading]         = useState(false);
   const [page, setPage]               = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState('');
   const [totalResults, setTotalResults] = useState(0);
 

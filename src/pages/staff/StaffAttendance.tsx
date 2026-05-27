@@ -128,7 +128,7 @@ const mapBackendAttendanceToFrontend = (a: any) => {
 export default function StaffAttendance() {
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [attendance, setAttendance] = useState<AttendanceRecord[]>([]);
   const [totalResults, setTotalResults] = useState(0);
   // Dialog State (View-Only Log Timeline)

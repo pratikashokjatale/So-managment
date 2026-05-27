@@ -26,7 +26,7 @@ export default function RejectedRequests() {
     setSelectedResident(null);
   };
   const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState("");
   
   const [rejectedResidents, setRejectedResidents] = useState<any[]>([]);

@@ -22,6 +22,8 @@ import BackButton from '@/components/BackButton';
 import { getProjects, getTowers, deleteTower, getFlats } from '@/utils/setupStore';
 import { getProjectDetailsApi } from '@/apis/project';
 import { getCachedFlatsSequentially } from '@/utils/apiCache';
+import { deleteTowerApi } from '@/apis/tower';
+import { toast } from 'react-hot-toast';
 
 export default function ProjectDetails() {
   const navigate = useNavigate();
@@ -91,10 +93,16 @@ export default function ProjectDetails() {
     setDeleteTowerId(towerId);
   };
 
-  const handleConfirmDeleteTower = () => {
+  const handleConfirmDeleteTower = async () => {
     if (deleteTowerId) {
-      deleteTower(deleteTowerId);
-      // Refresh local list if needed, or if API supports it. Since delete is local fallback:
+      try {
+        await deleteTowerApi(deleteTowerId);
+        toast.success("Tower deleted successfully");
+      } catch (error: any) {
+        console.warn("API tower deletion failed, performing local storage fallback:", error);
+        deleteTower(deleteTowerId);
+        toast.success("Tower deleted successfully (offline fallback)");
+      }
       if (project && (project.Towers || project.towers)) {
         const remainingTowers = projectTowers.filter(t => t.id !== deleteTowerId);
         setProjectTowers(remainingTowers);

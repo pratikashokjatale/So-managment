@@ -14,6 +14,12 @@ const statusColors: Record<string, { text: string; bg?: string }> = {
   inactive: { text: '#d32f2f', bg: '#ffebee' },
   blocked: { text: '#d32f2f', bg: '#ffebee' },
   expired: { text: '#d32f2f', bg: '#ffebee' },
+  confirmed: { text: '#2e7d32', bg: '#e8f5e9' },
+  paid: { text: '#2e7d32', bg: '#e8f5e9' },
+  cancelled: { text: '#d32f2f', bg: '#ffebee' },
+  rejected: { text: '#d32f2f', bg: '#ffebee' },
+  failed: { text: '#d32f2f', bg: '#ffebee' },
+  refunded: { text: '#1976d2', bg: '#e3f2fd' },
 };
 
 export default function StatusBadge({ status, variantType = 'text', sx, ...props }: StatusBadgeProps) {

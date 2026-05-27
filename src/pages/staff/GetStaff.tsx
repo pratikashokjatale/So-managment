@@ -61,7 +61,7 @@ export default function GetStaff() {
   const [staffList, setStaffList] = useState<Staff[]>([]);
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [totalResults, setTotalResults] = useState(0);
 
   const [deptFilter, setDeptFilter] = useState("All Departments");

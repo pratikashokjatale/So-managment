@@ -115,7 +115,7 @@ export default function GetFacility() {
 
   // Pagination states
   const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [totalResults, setTotalResults] = useState(0);
   const [loading, setLoading] = useState(true);
 

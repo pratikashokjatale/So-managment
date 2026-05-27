@@ -24,7 +24,7 @@ export default function GetPayment() {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const [typeFilter, setTypeFilter] = useState('All Payments');
   const [statusFilter, setStatusFilter] = useState('All Status');

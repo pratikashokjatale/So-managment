@@ -31,7 +31,7 @@ import { getFileUrl } from "@/utils/file";
 export default function GetResident() {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState("");
 
   const [roleFilter, setRoleFilter] = useState("ALL");

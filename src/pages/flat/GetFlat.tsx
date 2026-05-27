@@ -39,8 +39,9 @@ import Pagination from "@/components/Pagination";
 import { getFlats, deleteFlat } from "@/utils/setupStore";
 import { getProjectsApi } from "@/apis/project";
 import { getTowersApi, getAllTowersApi } from "@/apis/tower";
-import { getFlatsApi, getAllFlatsApi } from "@/apis/flat";
+import { getFlatsApi, getAllFlatsApi, deleteFlatApi } from "@/apis/flat";
 import { CircularProgress } from "@mui/material";
+import { toast } from "react-hot-toast";
 
 export default function GetFlat() {
   const navigate = useNavigate();
@@ -68,7 +69,7 @@ export default function GetFlat() {
 
   // Pagination states
   const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(20);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [totalCount, setTotalCount] = useState(0);
   const [isApiMode, setIsApiMode] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -219,15 +220,23 @@ export default function GetFlat() {
     setDeleteId(id);
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (deleteId) {
-      deleteFlat(deleteId);
-      if (isApiMode) {
-        fetchFlats();
-      } else {
-        setFlats(getFlats()); // Refresh
+      try {
+        if (isApiMode) {
+          await deleteFlatApi(deleteId);
+          fetchFlats();
+        } else {
+          deleteFlat(deleteId);
+          setFlats(getFlats()); // Refresh
+        }
+        toast.success("Flat deleted successfully");
+      } catch (err: any) {
+        console.error("Failed to delete flat:", err);
+        toast.error(err?.message || "Failed to delete flat");
+      } finally {
+        setDeleteId(null);
       }
-      setDeleteId(null);
     }
   };
 
