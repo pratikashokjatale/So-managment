@@ -14,6 +14,7 @@ export interface CreateFacilityPayload {
   name: string;
   code: string;
   category: string;
+  accessType?: string;
   iconKey?: string;
   description?: string;
   location?: string;

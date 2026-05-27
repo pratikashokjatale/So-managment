@@ -82,6 +82,7 @@ export default function EditFacility() {
   const [imageFile, setImageFile] = useState<File | null>(null);
 
   const [code, setCode] = useState("");
+  const [accessType, setAccessType] = useState("BOOKING");
   const [bookingMode, setBookingMode] = useState("SLOT");
   const [isActive, setIsActive] = useState(true);
   const [requiresApproval, setRequiresApproval] = useState(false);
@@ -149,6 +150,7 @@ export default function EditFacility() {
             setImagePreview(f.images?.[0] || "");
 
             setCode(f.code || "");
+            setAccessType(f.accessType || "BOOKING");
             setBookingMode(f.bookingMode || "SLOT");
             setIsActive(f.isActive !== undefined ? f.isActive : true);
             setRequiresApproval(!!f.requiresApproval);
@@ -246,6 +248,7 @@ export default function EditFacility() {
           name,
           code,
           category: categoryUpper,
+          accessType,
           iconKey: iconName,
           description,
           pricingModel,
@@ -607,9 +610,39 @@ export default function EditFacility() {
                 />
               </Grid>
 
-              {/* Booking Mode */}
+              {/* Access Type */}
               <Grid size={{ xs: 12, md: 6 }}>
                 <FormControl fullWidth variant="outlined">
+                  <InputLabel id="access-type-label">Access Type</InputLabel>
+                  <Select
+                    labelId="access-type-label"
+                    id="access-type"
+                    value={accessType}
+                    label="Access Type"
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setAccessType(val);
+                      if (val === "SUBSCRIPTION") {
+                        setBookingMode("NONE");
+                      } else if (bookingMode === "NONE") {
+                        setBookingMode("SLOT");
+                      }
+                    }}
+                    sx={{ borderRadius: "16px" }}
+                  >
+                    <MenuItem value="BOOKING">Booking Only</MenuItem>
+                    <MenuItem value="SUBSCRIPTION">Subscription Only</MenuItem>
+                    <MenuItem value="MIXED">Mixed (Booking & Subscription)</MenuItem>
+                  </Select>
+                  <FormHelperText>
+                    Choose how residents access this facility
+                  </FormHelperText>
+                </FormControl>
+              </Grid>
+
+              {/* Booking Mode */}
+              <Grid size={{ xs: 12, md: 6 }}>
+                <FormControl fullWidth variant="outlined" disabled={accessType === "SUBSCRIPTION"}>
                   <InputLabel id="booking-mode-label">Booking Mode</InputLabel>
                   <Select
                     labelId="booking-mode-label"
@@ -620,11 +653,15 @@ export default function EditFacility() {
                     sx={{ borderRadius: "16px" }}
                   >
                     <MenuItem value="SLOT">Slot-based Booking</MenuItem>
+                    <MenuItem value="CAPACITY">Capacity-based Booking</MenuItem>
                     <MenuItem value="EVENT">Event/Day-based Booking</MenuItem>
-                    <MenuItem value="FREE">Free Entry (No booking)</MenuItem>
+                    <MenuItem value="WALK_IN">Walk-in Entry</MenuItem>
+                    <MenuItem value="NONE">No Booking Required (Free/Open)</MenuItem>
                   </Select>
                   <FormHelperText>
-                    Select how members reserve this facility
+                    {accessType === "SUBSCRIPTION" 
+                      ? "Not applicable for Subscription Only access" 
+                      : "Select how bookings are structured"}
                   </FormHelperText>
                 </FormControl>
               </Grid>
