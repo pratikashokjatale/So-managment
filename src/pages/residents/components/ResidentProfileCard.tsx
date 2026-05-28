@@ -141,19 +141,7 @@ export default function ResidentProfileCard({ resident }: ResidentProfileCardPro
         {/* Right Section: Action Buttons */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, pb: 1 }}>
           {/* Warning Icon Button */}
-          <IconButton 
-            sx={{ 
-              bgcolor: 'white', 
-              color: '#ef4444', 
-              boxShadow: '0 4px 15px rgba(239, 68, 68, 0.08)',
-              border: '1.5px solid rgba(239, 68, 68, 0.15)',
-              width: 44, 
-              height: 44,
-              '&:hover': { bgcolor: '#fef2f2', borderColor: '#ef4444' }
-            }}
-          >
-            <WarningIcon sx={{ fontSize: 22 }} />
-          </IconButton>
+        
 
           {/* Edit Profile Button */}
           <Button 
@@ -173,7 +161,7 @@ export default function ResidentProfileCard({ resident }: ResidentProfileCardPro
               transition: 'all 0.2s'
             }}
           >
-            Edit Profile
+            Edit 
           </Button>
         </Box>
       </Box>
