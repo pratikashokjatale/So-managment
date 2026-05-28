@@ -17,7 +17,7 @@ export default function AccessStatusBadge({ status, reason }: AccessStatusBadgeP
   
   let tooltipText = s.label;
   if (reason) {
-    tooltipText += ` (${reason.replace(/_/g, ' ' || '')})`;
+    tooltipText += ` (${reason.replace(/_/g, ' ')})`;
   }
 
   return (

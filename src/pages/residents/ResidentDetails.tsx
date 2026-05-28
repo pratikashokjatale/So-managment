@@ -1,35 +1,28 @@
 import { useState, useEffect } from 'react';
 import { 
   Box, Typography, Avatar, 
-  Button, IconButton, Stack, Tabs, Tab, Paper,
-  Grid, Chip, Divider, Tooltip, CircularProgress, Dialog, DialogTitle, DialogContent,
-  DialogActions, TextField, MenuItem
+  Button, IconButton, Tabs, Tab, Paper,
+  CircularProgress, Dialog, DialogTitle, DialogContent, Stack
 } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { 
-  EditOutlined as EditIcon,
-  Description as FileIcon,
-  CalendarMonth as CalendarIcon,
-  Verified as VerifiedIcon,
-  Add as AddIcon,
-  Upload as UploadIcon,
-  CreditCard as CardIcon,
   Warning as WarningIcon,
-  Close as CloseIcon,
-  CheckCircle as CheckIcon,
-  HourglassEmpty as PendingIcon,
-  DeleteOutline as DeleteIcon,
+  Close as CloseIcon
 } from '@mui/icons-material';
 import ResidentWallets from './components/ResidentWallets';
 import ResidentAmenities from './components/ResidentAmenities';
-import bannerImg from '../../assets/marbella-banner.png';
 import BackButton from '@/components/BackButton';
 import { getUserDetailsApi } from '@/apis/user';
-import { QRCodeSVG } from 'qrcode.react';
 import { deleteFamilyMemberApi, updateFamilyMemberApi, createFamilyMemberApi } from '@/apis/family';
 import { toast } from 'react-hot-toast';
 import { getFileUrl } from '@/utils/file';
-import AccessStatusBadge from '@/components/AccessStatusBadge';
+
+// Sub-components
+import ResidentProfileCard from './components/ResidentProfileCard';
+import ResidentOverviewTab from './components/ResidentOverviewTab';
+import ResidentDependentsTab from './components/ResidentDependentsTab';
+import ResidentDocumentsTab from './components/ResidentDocumentsTab';
+import FamilyMemberDialog from './components/FamilyMemberDialog';
 
 const isPdfFile = (urlOrName: string) => {
   if (!urlOrName) return false;
@@ -59,17 +52,6 @@ export default function ResidentDetails() {
   // Edit Family Member Modal State
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState<any>(null);
-  const [editForm, setEditForm] = useState({
-    name: '',
-    relationship: 'SPOUSE',
-    phone: '',
-    email: '',
-    idType: '',
-    idNumber: '',
-    status: 'ACTIVE',
-    accessLevel: 'FULL',
-    dateOfBirth: ''
-  });
   const [updatingMember, setUpdatingMember] = useState(false);
 
   const fetchDetails = async () => {
@@ -121,38 +103,16 @@ export default function ResidentDetails() {
 
   const handleOpenEditModal = (member: any) => {
     setSelectedMember(member);
-    setEditForm({
-      name: member.name || '',
-      relationship: member.relationship || 'SPOUSE',
-      phone: member.phone || '',
-      email: member.email || '',
-      idType: member.idType || '',
-      idNumber: member.idNumber || '',
-      status: member.status || 'ACTIVE',
-      accessLevel: member.accessLevel || 'FULL',
-      dateOfBirth: member.dateOfBirth ? member.dateOfBirth.split('T')[0] : ''
-    });
     setEditModalOpen(true);
   };
 
   const handleOpenAddModal = () => {
     setSelectedMember(null);
-    setEditForm({
-      name: '',
-      relationship: 'SPOUSE',
-      phone: '',
-      email: '',
-      idType: '',
-      idNumber: '',
-      status: 'ACTIVE',
-      accessLevel: 'FULL',
-      dateOfBirth: ''
-    });
     setEditModalOpen(true);
   };
 
-  const handleSaveFamilyMember = async () => {
-    if (!editForm.name.trim()) {
+  const handleSaveFamilyMember = async (formData: any) => {
+    if (!formData.name.trim()) {
       toast.error("Name is required");
       return;
     }
@@ -160,27 +120,27 @@ export default function ResidentDetails() {
     try {
       if (selectedMember) {
         await updateFamilyMemberApi(selectedMember.id, {
-          name: editForm.name.trim(),
-          relationship: editForm.relationship,
-          phone: editForm.phone.trim() || undefined,
-          email: editForm.email.trim() || undefined,
-          idType: editForm.idType || undefined,
-          idNumber: editForm.idNumber.trim() || undefined,
-          status: editForm.status,
-          accessLevel: editForm.accessLevel,
-          dateOfBirth: editForm.dateOfBirth || undefined
+          name: formData.name.trim(),
+          relationship: formData.relationship,
+          phone: formData.phone.trim() || undefined,
+          email: formData.email.trim() || undefined,
+          idType: formData.idType || undefined,
+          idNumber: formData.idNumber.trim() || undefined,
+          status: formData.status,
+          accessLevel: formData.accessLevel,
+          dateOfBirth: formData.dateOfBirth || undefined
         });
         toast.success("Family member details updated successfully");
       } else {
         await createFamilyMemberApi(resident.id, {
-          name: editForm.name.trim(),
-          relationship: editForm.relationship,
-          phone: editForm.phone.trim() || undefined,
-          email: editForm.email.trim() || undefined,
-          idType: editForm.idType || undefined,
-          idNumber: editForm.idNumber.trim() || undefined,
-          accessLevel: editForm.accessLevel,
-          dateOfBirth: editForm.dateOfBirth || undefined
+          name: formData.name.trim(),
+          relationship: formData.relationship,
+          phone: formData.phone.trim() || undefined,
+          email: formData.email.trim() || undefined,
+          idType: formData.idType || undefined,
+          idNumber: formData.idNumber.trim() || undefined,
+          accessLevel: formData.accessLevel,
+          dateOfBirth: formData.dateOfBirth || undefined
         });
         toast.success("Family member enrolled successfully");
       }
@@ -210,116 +170,91 @@ export default function ResidentDetails() {
     );
   }
 
-  const identityProofs = resident?.documents?.IDENTITY_PROOF || [];
-  const personalDocs = resident?.documents?.PERSONAL_DOCUMENTS || [];
-  const allDocs = [...identityProofs, ...personalDocs];
-
-  const familyDocs = family.flatMap((member: any) => {
-    const memberDocs = [...(member.documents?.IDENTITY_PROOF || []), ...(member.documents?.PERSONAL_DOCUMENTS || [])];
-    return memberDocs.map((doc: any) => ({
-      ...doc,
-      member: `${member.name} (${member.relationship})`
-    }));
-  });
-
-  // Build a readable flat label from the embedded flat object
-  const flatObj = resident?.flat;
-  const flatLabel = flatObj
-    ? `Flat ${flatObj.flatNumber} • Floor ${flatObj.floorNumber} • ${flatObj.flatType || ''} (${flatObj.occupancyType || ''})`
-    : (resident?.apartment || (resident?.flatId ? `Flat ID: ${resident.flatId}` : 'N/A'));
+  if (!resident || resident.success === false || !resident.name) {
+    return (
+      <Box sx={{ 
+        bgcolor: '#f8fafc', 
+        minHeight: '100vh', 
+        display: 'flex', 
+        flexDirection: 'column',
+        alignItems: 'center', 
+        justifyContent: 'center',
+        p: 3
+      }}>
+        <Paper elevation={0} sx={{ 
+          p: 6, 
+          borderRadius: '32px', 
+          border: '1px solid #e2e8f0', 
+          textAlign: 'center',
+          maxWidth: 500,
+          bgcolor: 'white',
+          boxShadow: '0 20px 40px rgba(9, 21, 66, 0.05)'
+        }}>
+          <Avatar sx={{ bgcolor: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', width: 64, height: 64, mx: 'auto', mb: 3 }}>
+            <WarningIcon sx={{ fontSize: 32 }} />
+          </Avatar>
+          <Typography variant="h5" fontWeight="900" color="#091542" sx={{ mb: 2 }}>
+            Resident Profile Unreachable
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 4, lineHeight: 1.6 }}>
+            We couldn't retrieve the profile data for resident ID <strong>{id}</strong>. The resident might not exist, or there could be a temporary network issue.
+          </Typography>
+          <Stack direction="row" spacing={2} justifyContent="center">
+            <Button 
+              variant="outlined" 
+              onClick={() => navigate('/residents')}
+              sx={{ borderRadius: '12px', textTransform: 'none', fontWeight: 800, px: 3 }}
+            >
+              Back to Residents
+            </Button>
+            <Button 
+              variant="contained" 
+              onClick={fetchDetails}
+              sx={{ bgcolor: '#091542', borderRadius: '12px', textTransform: 'none', fontWeight: 800, px: 3 }}
+            >
+              Retry Connection
+            </Button>
+          </Stack>
+        </Paper>
+      </Box>
+    );
+  }
 
   return (
-    <Box sx={{ bgcolor: '#f8fafc', minHeight: '100vh', pb: 8 }}>
-      
-      {/* Official Branded Header */}
-      <Box sx={{ position: 'relative', mb: 10 }}>
-        <Box sx={{ 
-          height: 180, 
-          width: '100%', 
-          backgroundImage: `url(${bannerImg})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center 40%',
-          borderRadius: '0 0 40px 40px',
-          boxShadow: 'inset 0 -80px 100px -40px rgba(0,0,0,0.5), 0 10px 30px -10px rgba(0,0,0,0.1)'
-        }} />
-        
-        <BackButton 
-          to="/residents" 
-          label="Back to Residents"
-          sx={{ 
-            position: 'absolute', top: 20, right: 20, 
-            bgcolor: 'rgba(255,255,255,0.95)', zIndex: 2, 
-            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-            '&:hover': { bgcolor: 'white' },
-            color: '#091542'
-          }} 
-        />
+    <Box sx={{ bgcolor: '#f8fafc', minHeight: '100vh', pb: 8, pt: 3, px: { xs: 3, md: 6 } }}>
+      {/* Redesigned horizontal stacked layout */}
+      <Stack spacing={4}>
+        {/* Full-Width Header Profile Card */}
+        <ResidentProfileCard resident={resident} />
 
-        <Box sx={{ px: { xs: 2, md: 6 }, mt: -6, position: 'relative', zIndex: 3 }}>
-          <Stack direction="row" alignItems="flex-end" spacing={4}>
-            <Avatar 
-              src={getFileUrl(resident.photoUrl || resident.profilePhotoUrl || resident.avatar)} 
-              sx={{ 
-                width: 140, height: 140, 
-                border: '6px solid #f8fafc', 
-                boxShadow: '0 20px 40px -15px rgba(0,0,0,0.3)',
-                bgcolor: 'white'
-              }} 
-            />
-            <Box sx={{ flexGrow: 1, pb: 1 }}>
-              <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 1 }}>
-                <Typography variant="h4" fontWeight="900" color="#1e293b" sx={{ textShadow: '0 2px 4px rgba(255,255,255,0.8)' }}>
-                  {resident.name}
-                </Typography>
-                <Chip 
-                  icon={<VerifiedIcon sx={{ fontSize: '16px !important', color: '#10b981 !important' }} />} 
-                  label={resident.status || 'Active Profile'} 
-                  sx={{ bgcolor: 'white', color: '#10b981', fontWeight: 900, borderRadius: '8px', border: '1px solid #dcfce7' }} 
-                />
-                {(resident.role === 'GUEST' || (resident.role === 'RESIDENT' && resident.accountRole === 'TENANT')) && (
-                  <AccessStatusBadge status={resident.accessStatus || 'ACTIVE'} reason={resident.expiryReason} />
-                )}
-              </Stack>
-              <Stack direction="row" spacing={2} alignItems="center">
-                <Stack direction="row" spacing={1} alignItems="center">
-                  <CalendarIcon sx={{ fontSize: 18, color: '#64748b' }} />
-                  <Typography variant="body1" color="#64748b" fontWeight="700">
-                    Enrollment: {resident.startDate || (resident.createdAt ? new Date(resident.createdAt).toLocaleDateString() : 'N/A')}
-                  </Typography>
-                </Stack>
-                <Typography variant="body1" color="#1d4ed8" fontWeight="800">#{resident.id}</Typography>
-              </Stack>
-            </Box>
-            <Stack direction="row" spacing={2} sx={{ pb: 1 }}>
-              <Tooltip title="Block Card">
-                <IconButton sx={{ bgcolor: 'white', color: '#ef4444', border: '1px solid #fee2e2' }}><WarningIcon /></IconButton>
-              </Tooltip>
-              <Button 
-                variant="contained" 
-                startIcon={<EditIcon />} 
-                onClick={() => navigate(`/residents/edit/${id}`)}
-                sx={{ 
-                  borderRadius: '12px', textTransform: 'none', fontWeight: 800, 
-                  height: 48, px: 4, bgcolor: '#091542'
-                }}
-              >
-                Edit Profile
-              </Button>
-            </Stack>
-          </Stack>
-        </Box>
-      </Box>
-
-      {/* Navigation Tabs */}
-      <Box sx={{ px: { xs: 2, md: 6 }, mb: 4 }}>
+        {/* Custom Tabs Track */}
         <Tabs 
           value={activeTab} 
           onChange={handleTabChange}
+          variant="scrollable"
+          scrollButtons="auto"
           sx={{ 
             borderBottom: '1px solid #e2e8f0',
-            '& .MuiTab-root': { textTransform: 'none', fontWeight: 800, color: '#64748b', minWidth: 160, fontSize: '1rem', py: 2 },
-            '& .Mui-selected': { color: '#091542 !important' },
-            '& .MuiTabs-indicator': { backgroundColor: '#091542', height: 4, borderRadius: '4px' }
+            '& .MuiTabs-flexContainer': { gap: 1 },
+            '& .MuiTab-root': { 
+              textTransform: 'none', 
+              fontWeight: 800, 
+              color: '#64748b', 
+              fontSize: '0.92rem', 
+              minWidth: 'auto',
+              px: 3,
+              pb: 1.5,
+              transition: 'all 0.2s ease',
+              '&:hover': { color: '#091542' }
+            },
+            '& .Mui-selected': { 
+              color: '#091542 !important'
+            },
+            '& .MuiTabs-indicator': { 
+              backgroundColor: '#091542',
+              height: 3.5,
+              borderRadius: '4px 4px 0 0'
+            }
           }}
         >
           <Tab label="Profile Overview" />
@@ -328,309 +263,43 @@ export default function ResidentDetails() {
           <Tab label="Family Directory" />
           <Tab label="KYC Documents" />
         </Tabs>
-      </Box>
 
-      {/* Content Area */}
-      <Box sx={{ px: { xs: 2, md: 6 } }}>
-        {activeTab === 0 && (
-          <Grid container spacing={4}>
-            <Grid size={{ xs: 12, md: 8 }}>
-              <Paper elevation={0} sx={{ p: 4, borderRadius: '28px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
-                <Typography variant="h6" fontWeight="900" color="#091542" sx={{ mb: 4 }}>Administrative Details</Typography>
-                <Grid container spacing={4}>
-                  <Grid size={{ xs: 6 }}>
-                    <Typography variant="caption" color="#94a3b8" fontWeight="800">FULL NAME</Typography>
-                    <Typography variant="body1" fontWeight="700">{resident.name}</Typography>
-                  </Grid>
-                  <Grid size={{ xs: 6 }}>
-                    <Typography variant="caption" color="#94a3b8" fontWeight="800">RESIDENCE CATEGORY</Typography>
-                    <Typography variant="body1" fontWeight="700">
-                      {resident.category || 'Resident'} • {resident.role}
-                    </Typography>
-                  </Grid>
-                  <Grid size={{ xs: 6 }}>
-                    <Typography variant="caption" color="#94a3b8" fontWeight="800">AADHAAR CARD</Typography>
-                    <Typography variant="body1" fontWeight="700">
-                      {identityProofs.find((d: any) => d.documentType === 'AADHAR_CARD')?.isVerified ? 'Verified' : (identityProofs.some((d: any) => d.documentType === 'AADHAR_CARD') ? 'Pending Verification' : 'Not Uploaded')}
-                    </Typography>
-                  </Grid>
-                  <Grid size={{ xs: 6 }}>
-                    <Typography variant="caption" color="#94a3b8" fontWeight="800">PAN CARD</Typography>
-                    <Typography variant="body1" fontWeight="700">
-                      {identityProofs.find((d: any) => d.documentType === 'PAN_CARD')?.isVerified ? 'Verified' : (identityProofs.some((d: any) => d.documentType === 'PAN_CARD') ? 'Pending Verification' : 'Not Uploaded')}
-                    </Typography>
-                  </Grid>
-                  <Grid size={{ xs: 6 }}>
-                    <Typography variant="caption" color="#94a3b8" fontWeight="800">CONTACT PHONE</Typography>
-                    <Typography variant="body1" fontWeight="700">{resident.phone || 'N/A'}</Typography>
-                  </Grid>
-                  <Grid size={{ xs: 6 }}>
-                    <Typography variant="caption" color="#94a3b8" fontWeight="800">APARTMENT / FLAT</Typography>
-                    <Typography variant="body1" fontWeight="700">{flatLabel}</Typography>
-                  </Grid>
-                  {resident.role === 'RESIDENT' && resident.accountRole === 'TENANT' && (
-                    <>
-                      <Grid size={{ xs: 6 }}>
-                        <Typography variant="caption" color="#94a3b8" fontWeight="800">STAY ENDS AT</Typography>
-                        <Typography variant="body1" fontWeight="700" color={resident.accessExpired ? '#ef4444' : 'text.primary'}>
-                          {resident.stayEndsAt ? new Date(resident.stayEndsAt).toLocaleDateString() : 'Missing Expiry'}
-                        </Typography>
-                      </Grid>
-                      <Grid size={{ xs: 6 }}>
-                        <Typography variant="caption" color="#94a3b8" fontWeight="800">ACCESS STATUS</Typography>
-                        <Box sx={{ mt: 0.5 }}>
-                          <AccessStatusBadge status={resident.accessStatus || 'ACTIVE'} reason={resident.expiryReason} />
-                        </Box>
-                      </Grid>
-                    </>
-                  )}
-                </Grid>
-              </Paper>
-            </Grid>
-            <Grid size={{ xs: 12, md: 4 }}>
-              <Stack spacing={3}>
-                <Paper elevation={0} sx={{ p: 4, borderRadius: '28px', border: '1px solid #e2e8f0', bgcolor: 'white', textAlign: 'center' }}>
-                  <Typography variant="h6" fontWeight="900" color="#091542" sx={{ mb: 3 }}>Active Blue Card</Typography>
-                  <Box sx={{ p: 4, bgcolor: '#eff6ff', borderRadius: '24px', border: '2px dashed #bfdbfe' }}>
-                    <CardIcon sx={{ fontSize: 40, color: '#1d4ed8', mb: 1 }} />
-                    <Typography variant="h4" fontWeight="900" color="#1d4ed8" sx={{ mb: 1 }}>
-                      {resident.cardNo || `CMR-${resident.id?.substring(0,6).toUpperCase()}`}
-                    </Typography>
-                    <Chip label="Master Fob" size="small" sx={{ bgcolor: '#1d4ed8', color: 'white', fontWeight: 900 }} />
-                  </Box>
-                  <Typography variant="caption" fontWeight="800" color="#94a3b8" sx={{ mt: 2, display: 'block' }}>RFID ACTIVATED • OFFLINE SYNCED</Typography>
-                </Paper>
+        {/* Dynamic Tab Content Area */}
+        <Box>
+          {activeTab === 0 && (
+            <ResidentOverviewTab resident={resident} />
+          )}
 
-                {/* Gate Access QR Code */}
-                <Paper elevation={0} sx={{ p: 4, borderRadius: '28px', border: '1px solid #e2e8f0', bgcolor: 'white', textAlign: 'center' }}>
-                  <Typography variant="h6" fontWeight="900" color="#091542" sx={{ mb: 2 }}>Gate Access QR Code</Typography>
-                  {resident ? (
-                    <Box sx={{ p: 2.5, bgcolor: '#f8fafc', borderRadius: '24px', border: '2px dashed #cbd5e1', display: 'inline-block' }}>
-                      <QRCodeSVG value={resident.cardNo || resident.id || id || ''} size={150} level="H" />
-                    </Box>
-                  ) : (
-                    <Typography variant="body2" color="text.secondary" sx={{ my: 2 }}>No QR code available</Typography>
-                  )}
-                  <Typography variant="caption" fontWeight="800" color="#94a3b8" sx={{ mt: 2, display: 'block' }}>USE FOR GATE PASS VALIDATION</Typography>
-                </Paper>
+          {activeTab === 1 && (
+            <ResidentWallets wallets={resident.wallets || {
+              membership: { status: 'Active', currentMonth: 'Current Month Paid', upcomingMonths: [], expiry: 'N/A', refundableFuture: '₹0.00' },
+              activity: { balance: '₹0.00' },
+              security: { locked: '₹0.00', refundable: 'Yes', condition: 'Good' }
+            }} />
+          )}
 
-                <Paper elevation={0} sx={{ p: 3, borderRadius: '24px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
-                  <Stack direction="row" justifyContent="space-between" alignItems="center">
-                    <Typography variant="body2" fontWeight="800" color="#091542">Card Condition</Typography>
-                    <Chip label={resident.wallets?.security?.condition || 'Good'} size="small" sx={{ bgcolor: '#f0fdf4', color: '#10b981', fontWeight: 900 }} />
-                  </Stack>
-                </Paper>
-              </Stack>
-            </Grid>
-          </Grid>
-        )}
+          {activeTab === 2 && (
+            <ResidentAmenities bookings={mockBookings} />
+          )}
 
-        {activeTab === 1 && <ResidentWallets wallets={resident.wallets || {
-          membership: { status: 'Active', currentMonth: 'Current Month Paid', upcomingMonths: [], expiry: 'N/A', refundableFuture: '₹0.00' },
-          activity: { balance: '₹0.00' },
-          security: { locked: '₹0.00', refundable: 'Yes', condition: 'Good' }
-        }} />}
-        {activeTab === 2 && <ResidentAmenities bookings={mockBookings} />}
+          {activeTab === 3 && (
+            <ResidentDependentsTab 
+              family={family}
+              onAddMember={handleOpenAddModal}
+              onEditMember={handleOpenEditModal}
+              onDeleteMember={handleDeleteFamilyMember}
+            />
+          )}
 
-        {activeTab === 3 && (
-          <Box>
-            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 4 }}>
-              <Typography variant="h6" fontWeight="900" color="#091542">Dependent Management</Typography>
-              <Button 
-                variant="contained" 
-                startIcon={<AddIcon />} 
-                onClick={handleOpenAddModal}
-                sx={{ bgcolor: '#091542', borderRadius: '12px', fontWeight: 800, textTransform: 'none' }}
-              >
-                Enroll Member
-              </Button>
-            </Stack>
-            <Grid container spacing={3}>
-              {family.map((m) => (
-                <Grid size={{ xs: 12, md: 6 }} key={m.id}>
-                  <Paper elevation={0} sx={{ p: 4, borderRadius: '24px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
-                    <Stack direction="row" spacing={3} alignItems="center">
-                      <Avatar sx={{ width: 60, height: 60, bgcolor: '#f0f4f8', color: '#091542', fontWeight: 900 }}>{m.name[0]}</Avatar>
-                      <Box sx={{ flexGrow: 1 }}>
-                        <Stack direction="row" spacing={1} alignItems="center">
-                          <Typography variant="h6" fontWeight="900" color="#091542">{m.name}</Typography>
-                          {m.gender && <Chip label={m.gender} size="small" variant="outlined" sx={{ borderRadius: '6px', height: 20, fontSize: '0.7rem' }} />}
-                        </Stack>
-                        <Typography variant="body2" color="#64748b" fontWeight="700">
-                          Dependent ({m.relationship})
-                        </Typography>
-                      </Box>
-                      <Chip label="Blue Card" size="small" sx={{ bgcolor: '#eff6ff', color: '#1d4ed8', fontWeight: 900 }} />
-                      <IconButton 
-                        color="primary" 
-                        size="small" 
-                        onClick={() => handleOpenEditModal(m)}
-                        sx={{ ml: 1, bgcolor: '#f0f4f8', '&:hover': { bgcolor: '#e2e8f0' } }}
-                      >
-                        <EditIcon fontSize="small" />
-                      </IconButton>
-                      <IconButton 
-                        color="error" 
-                        size="small" 
-                        onClick={() => handleDeleteFamilyMember(m.id)}
-                        sx={{ ml: 1, bgcolor: '#fff5f5', '&:hover': { bgcolor: '#ffe3e3' } }}
-                      >
-                        <DeleteIcon fontSize="small" />
-                      </IconButton>
-                                              
-                    </Stack>
-                    <Divider sx={{ my: 3 }} />
-                    <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, mb: 3 }}>
-                      <Box>
-                        <Typography variant="caption" color="#94a3b8" fontWeight="800" sx={{ display: 'block' }}>MOBILE NUMBER</Typography>
-                        <Typography variant="body2" fontWeight="700" color="text.primary">{m.phone || m.mobile || 'N/A'}</Typography>
-                      </Box>
-                      <Box>
-                        <Typography variant="caption" color="#94a3b8" fontWeight="800" sx={{ display: 'block' }}>EMAIL</Typography>
-                        <Typography variant="body2" fontWeight="700" color="text.primary">{m.email || 'N/A'}</Typography>
-                      </Box>
-                      <Box>
-                        <Typography variant="caption" color="#94a3b8" fontWeight="800" sx={{ display: 'block' }}>ID PROOF TYPE</Typography>
-                        <Typography variant="body2" fontWeight="700" color="text.primary">{m.idType ? m.idType.replace('_', ' ') : 'N/A'}</Typography>
-                      </Box>
-                      <Box>
-                        <Typography variant="caption" color="#94a3b8" fontWeight="800" sx={{ display: 'block' }}>ID NUMBER</Typography>
-                        <Typography variant="body2" fontWeight="700" color="text.primary">{m.idNumber || 'N/A'}</Typography>
-                      </Box>
-                      <Box>
-                        <Typography variant="caption" color="#94a3b8" fontWeight="800" sx={{ display: 'block' }}>ACCESS CARD / VCARD</Typography>
-                        <Typography variant="body2" fontWeight="700" color="text.primary">{m.vcard !== 'N/A' && m.vcard ? m.vcard : 'Not Assigned'}</Typography>
-                      </Box>
-                      <Box>
-                        <Typography variant="caption" color="#94a3b8" fontWeight="800" sx={{ display: 'block' }}>ACCESS LEVEL</Typography>
-                        <Typography variant="body2" fontWeight="700" color="text.primary">{m.accessLevel || 'FULL'}</Typography>
-                      </Box>
-                      <Box>
-                        <Typography variant="caption" color="#94a3b8" fontWeight="800" sx={{ display: 'block' }}>DATE OF BIRTH</Typography>
-                        <Typography variant="body2" fontWeight="700" color="text.primary">{m.dateOfBirth ? m.dateOfBirth.split('T')[0] : 'N/A'}</Typography>
-                      </Box>
-                      <Box>
-                        <Typography variant="caption" color="#94a3b8" fontWeight="800" sx={{ display: 'block' }}>STATUS</Typography>
-                        <Typography variant="body2" fontWeight="700" color="text.primary">{m.status || 'ACTIVE'}</Typography>
-                      </Box>
-                    </Box>
-                  </Paper>
-                </Grid>
-              ))}
-              {family.length === 0 && (
-                <Grid size={{ xs: 12 }}>
-                  <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 4 }}>
-                    No family members enrolled.
-                  </Typography>
-                </Grid>
-              )}
-            </Grid>
-          </Box>
-        )}
-
-        {activeTab === 4 && (
-          <Box>
-            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 4 }}>
-              <Typography variant="h6" fontWeight="900" color="#091542">KYC Compliance Repository</Typography>
-              <Button variant="outlined" startIcon={<UploadIcon />} sx={{ borderRadius: '12px', fontWeight: 800, borderColor: '#091542', color: '#091542', textTransform: 'none' }}>Upload New Document</Button>
-            </Stack>
-            
-            <Typography variant="subtitle1" fontWeight="800" color="#091542" sx={{ mb: 2 }}>Master Resident Documents</Typography>
-            {allDocs.length > 0 ? (
-              <Grid container spacing={4} sx={{ mb: 5 }}>
-                {allDocs.map((doc) => (
-                  <Grid size={{ xs: 12, md: 4 }} key={doc.id || doc.title}>
-                    <Paper elevation={0} sx={{ p: 4, borderRadius: '24px', border: '1px solid #e2e8f0', textAlign: 'center', bgcolor: 'white' }}>
-                      <Box sx={{ p: (doc.photoUrl && !isPdfFile(doc.photoUrl)) ? 0 : 4, bgcolor: '#f8fafc', borderRadius: '20px', mb: 2, display: 'flex', justifyContent: 'center', height: 120, alignItems: 'center', overflow: 'hidden' }}>
-                        {doc.photoUrl && !isPdfFile(doc.photoUrl) ? (
-                          <Box component="img" src={getFileUrl(doc.photoUrl)} sx={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        ) : (
-                          <FileIcon sx={{ fontSize: 44, color: '#091542' }} />
-                        )}
-                      </Box>
-                      <Typography variant="body1" fontWeight="900" color="#091542" sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{doc.title || doc.documentType}</Typography>
-                      <Chip
-                        icon={doc.isVerified ? <CheckIcon sx={{ fontSize: '14px !important' }} /> : <PendingIcon sx={{ fontSize: '14px !important' }} />}
-                        label={doc.isVerified ? 'Verified' : (doc.status || 'PENDING')}
-                        size="small"
-                        sx={{
-                          mb: 1,
-                          bgcolor: doc.isVerified ? '#f0fdf4' : '#fffbeb',
-                          color: doc.isVerified ? '#10b981' : '#f59e0b',
-                          fontWeight: 800, borderRadius: '8px'
-                        }}
-                      />
-                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {doc.photoFileName || doc.pdfFileName || 'kyc_document.png'}
-                        {(doc.photoSize || doc.pdfSize) ? ` (${Math.round((doc.photoSize || doc.pdfSize) / 1024)} KB)` : ''}
-                      </Typography>
-                      {doc.verifiedAt && (
-                        <Typography variant="caption" color="#10b981" fontWeight="700" sx={{ display: 'block', mb: 2 }}>
-                          Verified: {new Date(doc.verifiedAt).toLocaleDateString()}
-                        </Typography>
-                      )}
-                      {doc.uploadedBy && (
-                        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
-                          Uploaded by: {doc.uploadedBy}
-                        </Typography>
-                      )}
-                      {(doc.photoUrl || doc.pdfUrl) && (
-                        <Button 
-                          fullWidth 
-                          variant="outlined" 
-                          onClick={() => handleOpenDoc(doc.title || doc.documentType, doc.photoUrl || doc.pdfUrl)}
-                          sx={{ borderRadius: '10px', fontWeight: 800, textTransform: 'none', borderColor: '#e2e8f0', color: 'text.primary' }}
-                        >
-                          View Document
-                        </Button>
-                      )}
-                    </Paper>
-                  </Grid>
-                ))}
-              </Grid>
-            ) : (
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 5 }}>No documents uploaded for master resident.</Typography>
-            )}
-
-            <Typography variant="subtitle1" fontWeight="800" color="#091542" sx={{ mb: 2 }}>Family Member KYC Documents</Typography>
-            {familyDocs.length > 0 ? (
-              <Grid container spacing={4}>
-                {familyDocs.map((doc, idx) => (
-                  <Grid size={{ xs: 12, md: 4 }} key={idx}>
-                    <Paper elevation={0} sx={{ p: 4, borderRadius: '24px', border: '1px solid #e2e8f0', textAlign: 'center', bgcolor: 'white' }}>
-                      <Box sx={{ p: (doc.photoUrl && !isPdfFile(doc.photoUrl)) ? 0 : 4, bgcolor: '#f8fafc', borderRadius: '20px', mb: 2, display: 'flex', justifyContent: 'center', height: 120, alignItems: 'center', overflow: 'hidden' }}>
-                        {doc.photoUrl && !isPdfFile(doc.photoUrl) ? (
-                          <Box component="img" src={getFileUrl(doc.photoUrl)} sx={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        ) : (
-                          <FileIcon sx={{ fontSize: 44, color: '#0047b3' }} />
-                        )}
-                      </Box>
-                      <Typography variant="caption" color="primary" fontWeight="800" sx={{ display: 'block', mb: 0.5 }}>{doc.member}</Typography>
-                      <Typography variant="body1" fontWeight="900" color="#091542" sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{doc.title || doc.documentType}</Typography>
-                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {doc.photoFileName || doc.pdfFileName || 'kyc_document.png'}
-                      </Typography>
-                      <Typography variant="caption" color="#10b981" fontWeight="800" sx={{ mb: 3, display: 'block' }}>✓ VERIFIED BY ADMIN</Typography>
-                      {(doc.photoUrl || doc.pdfUrl) && (
-                        <Button 
-                          fullWidth 
-                          variant="outlined" 
-                          onClick={() => handleOpenDoc(doc.title || doc.documentType, doc.photoUrl || doc.pdfUrl)}
-                          sx={{ borderRadius: '10px', fontWeight: 800, textTransform: 'none', borderColor: '#e2e8f0', color: 'text.primary' }}
-                        >
-                          View Document
-                        </Button>
-                      )}
-                    </Paper>
-                  </Grid>
-                ))}
-              </Grid>
-            ) : (
-              <Typography variant="body2" color="text.secondary">No documents uploaded for family members.</Typography>
-            )}
-          </Box>
-        )}
-      </Box>
+          {activeTab === 4 && (
+            <ResidentDocumentsTab 
+              resident={resident}
+              family={family}
+              onViewDocument={handleOpenDoc}
+            />
+          )}
+        </Box>
+      </Stack>
 
       {/* Document Viewer Dialog */}
       <Dialog 
@@ -661,135 +330,14 @@ export default function ResidentDetails() {
         </DialogContent>
       </Dialog>
 
-      {/* Edit Family Member Dialog */}
-      <Dialog 
-        open={editModalOpen} 
-        onClose={() => setEditModalOpen(false)} 
-        maxWidth="xs"
-        fullWidth
-        PaperProps={{ sx: { borderRadius: '20px', p: 1 } }}
-      >
-        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>
-          <Typography variant="h6" fontWeight="900" color="#091542">
-            {selectedMember ? "Edit Family Member" : "Enroll Family Member"}
-          </Typography>
-          <IconButton onClick={() => setEditModalOpen(false)}>
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent>
-          <Stack spacing={3} sx={{ mt: 1 }}>
-            <TextField
-              label="Full Name"
-              value={editForm.name}
-              onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-              fullWidth
-              variant="outlined"
-            />
-            <TextField
-              select
-              label="Relationship"
-              value={editForm.relationship}
-              onChange={(e) => setEditForm({ ...editForm, relationship: e.target.value })}
-              fullWidth
-              variant="outlined"
-            >
-              <MenuItem value="SPOUSE">Spouse</MenuItem>
-              <MenuItem value="CHILD">Child</MenuItem>
-              <MenuItem value="PARENT">Parent</MenuItem>
-              <MenuItem value="SIBLING">Sibling</MenuItem>
-              <MenuItem value="GRANDPARENT">Grandparent</MenuItem>
-              <MenuItem value="IN_LAW">In Law</MenuItem>
-              <MenuItem value="OTHER">Other</MenuItem>
-            </TextField>
-            <TextField
-              label="Mobile Phone"
-              value={editForm.phone}
-              onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
-              fullWidth
-              variant="outlined"
-            />
-            <TextField
-              label="Email Address"
-              value={editForm.email}
-              onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
-              fullWidth
-              variant="outlined"
-            />
-            <TextField
-              type="date"
-              label="Date of Birth"
-              value={editForm.dateOfBirth}
-              onChange={(e) => setEditForm({ ...editForm, dateOfBirth: e.target.value })}
-              fullWidth
-              variant="outlined"
-              InputLabelProps={{ shrink: true }}
-            />
-            <TextField
-              select
-              label="ID Proof Type"
-              value={editForm.idType}
-              onChange={(e) => setEditForm({ ...editForm, idType: e.target.value })}
-              fullWidth
-              variant="outlined"
-            >
-              <MenuItem value="">None</MenuItem>
-              <MenuItem value="AADHAAR">Aadhaar Card</MenuItem>
-              <MenuItem value="PAN">PAN Card</MenuItem>
-              <MenuItem value="PASSPORT">Passport</MenuItem>
-              <MenuItem value="DRIVING_LICENSE">Driving License</MenuItem>
-            </TextField>
-            <TextField
-              label="ID Number"
-              value={editForm.idNumber}
-              onChange={(e) => setEditForm({ ...editForm, idNumber: e.target.value })}
-              fullWidth
-              variant="outlined"
-            />
-            <TextField
-              select
-              label="Access Level"
-              value={editForm.accessLevel}
-              onChange={(e) => setEditForm({ ...editForm, accessLevel: e.target.value })}
-              fullWidth
-              variant="outlined"
-            >
-              <MenuItem value="FULL">Full Access</MenuItem>
-              <MenuItem value="LIMITED">Limited Access</MenuItem>
-              <MenuItem value="NONE">No Access</MenuItem>
-            </TextField>
-            <TextField
-              select
-              label="Status"
-              value={editForm.status}
-              onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
-              fullWidth
-              variant="outlined"
-            >
-              <MenuItem value="ACTIVE">Active</MenuItem>
-              <MenuItem value="INACTIVE">Inactive</MenuItem>
-            </TextField>
-          </Stack>
-        </DialogContent>
-        <DialogActions sx={{ px: 3, pb: 2 }}>
-          <Button 
-            onClick={() => setEditModalOpen(false)} 
-            variant="outlined"
-            sx={{ borderRadius: '10px', textTransform: 'none', fontWeight: 800, color: 'text.secondary', borderColor: '#e2e8f0' }}
-          >
-            Cancel
-          </Button>
-          <Button 
-            onClick={handleSaveFamilyMember} 
-            variant="contained"
-            disabled={updatingMember}
-            sx={{ bgcolor: '#091542', borderRadius: '10px', textTransform: 'none', fontWeight: 800 }}
-          >
-            {updatingMember ? 'Saving...' : 'Save Changes'}
-          </Button>
-        </DialogActions>
-      </Dialog>
-
+      {/* Enroll/Edit Family Member Dialog */}
+      <FamilyMemberDialog 
+        open={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        selectedMember={selectedMember}
+        onSave={handleSaveFamilyMember}
+        updatingMember={updatingMember}
+      />
     </Box>
   );
 }

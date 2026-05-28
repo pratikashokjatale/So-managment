@@ -3,7 +3,7 @@ import {
   Box, Typography, Button, IconButton,
   Avatar, Stack,
   Dialog, DialogTitle, DialogContent, DialogActions, TextField,
-  Chip, Tooltip, Drawer, Divider, Grid, CircularProgress
+  Chip, Tooltip, Drawer, Divider, Grid
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
@@ -21,7 +21,6 @@ import PageHeader from '@/components/PageHeader';
 import PageToolbar from '@/components/PageToolbar';
 import DataTable from '@/components/DataTable';
 import { getGuestsApi, approveGuestApi, rejectGuestApi } from '@/apis/guest';
-import { getMyQrApi } from '@/apis/user';
 import { QRCodeSVG } from 'qrcode.react';
 import { toast } from 'react-hot-toast';
 import AccessStatusBadge from '@/components/AccessStatusBadge';

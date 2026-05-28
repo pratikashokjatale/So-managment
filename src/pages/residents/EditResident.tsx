@@ -142,6 +142,8 @@ export default function EditResident() {
         cardNo: "CMR10101",
         status: "ACTIVE",
         avatar: "",
+        category: "Owner",
+        stayEndsAt: "",
       });
     } finally {
       setLoading(false);
