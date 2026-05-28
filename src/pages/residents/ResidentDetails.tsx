@@ -11,7 +11,7 @@ import {
 } from '@mui/icons-material';
 import ResidentWallets from './components/ResidentWallets';
 import ResidentAmenities from './components/ResidentAmenities';
-import BackButton from '@/components/BackButton';
+
 import { getUserDetailsApi } from '@/apis/user';
 import { deleteFamilyMemberApi, updateFamilyMemberApi, createFamilyMemberApi } from '@/apis/family';
 import { toast } from 'react-hot-toast';

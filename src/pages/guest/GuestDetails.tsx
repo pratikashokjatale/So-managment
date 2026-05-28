@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { 
-  Box, Typography, Button, Breadcrumbs, Link, Paper, Avatar, Stack, Chip, Divider, Grid, Alert, CircularProgress
+  Box, Typography, Button, Breadcrumbs, Link, Paper, Avatar, Stack, Chip, Divider, Grid, Alert, 
 } from '@mui/material';
 import { QRCodeSVG } from 'qrcode.react';
 import { useNavigate, useParams } from 'react-router-dom';

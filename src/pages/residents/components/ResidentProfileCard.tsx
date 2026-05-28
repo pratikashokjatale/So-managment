@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { Box, Typography, Avatar, Button, Stack, Chip, Paper, IconButton } from '@mui/material';
+import { Box, Typography, Avatar, Button, Stack, Chip, IconButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { 
   Edit as EditIcon,
