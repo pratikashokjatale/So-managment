@@ -3,7 +3,7 @@ import {
   Box, Typography, Button, IconButton,
   Avatar, Stack,
   Dialog, DialogTitle, DialogContent, DialogActions, TextField,
-  Chip, Tooltip, Drawer, Divider, Grid
+  Chip, Tooltip, Drawer, Divider, Grid, CircularProgress
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
@@ -21,7 +21,10 @@ import PageHeader from '@/components/PageHeader';
 import PageToolbar from '@/components/PageToolbar';
 import DataTable from '@/components/DataTable';
 import { getGuestsApi, approveGuestApi, rejectGuestApi } from '@/apis/guest';
+import { getMyQrApi } from '@/apis/user';
+import { QRCodeSVG } from 'qrcode.react';
 import { toast } from 'react-hot-toast';
+import AccessStatusBadge from '@/components/AccessStatusBadge';
 
 // ── helpers ────────────────────────────────────────────────────────────────────
 
@@ -63,6 +66,8 @@ const mapGuest = (g: any) => {
     isExpired: g.stayEndsAt ? new Date(g.stayEndsAt) < new Date() : false,
     createdAt: fmt(g.createdAt),
     lastLogin: g.lastLoginAt ? fmtTime(g.lastLoginAt) : 'Never',
+    accessStatus: g.accessStatus || (g.stayEndsAt ? (new Date(g.stayEndsAt) < new Date() ? 'EXPIRED' : 'ACTIVE') : 'MISSING_EXPIRY'),
+    expiryReason: g.expiryReason,
   };
 };
 
@@ -129,7 +134,6 @@ export default function GetGuest() {
     fetchCounts();
   }, [activeTab]);
 
-  // detail drawer
   const [drawerGuest, setDrawerGuest] = useState<any | null>(null);
 
   // reject dialog
@@ -265,15 +269,15 @@ export default function GetGuest() {
           },
           {
             id: 'stayUntil',
-            label: 'Stay Until',
+            label: 'Stay Until / Access Status',
             render: (row) => (
               <Box>
                 <Typography variant="body2" fontWeight={700} color={row.isExpired ? '#ef4444' : '#091542'}>
                   {row.stayEndsAt}
                 </Typography>
-                {row.isExpired && (
-                  <Typography variant="caption" color="#ef4444" fontWeight={700}>Expired</Typography>
-                )}
+                <Box sx={{ mt: 0.5 }}>
+                  <AccessStatusBadge status={row.accessStatus} reason={row.expiryReason} />
+                </Box>
               </Box>
             )
           },
@@ -370,6 +374,20 @@ export default function GetGuest() {
                   </Box>
                 </Box>
 
+                {/* Gate Access QR Pass */}
+                <Box sx={{ mb: 3, p: 2.5, bgcolor: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                  <Typography variant="caption" fontWeight={800} color="#091542" sx={{ textTransform: 'uppercase', letterSpacing: '0.6px', mb: 1.5, display: 'block' }}>
+                    Gate Access QR Pass
+                  </Typography>
+                  {drawerGuest ? (
+                    <Box sx={{ p: 2, bgcolor: 'white', borderRadius: '12px', border: '1px dashed #cbd5e1', display: 'inline-block' }}>
+                      <QRCodeSVG value={drawerGuest.id || ''} size={130} level="H" />
+                    </Box>
+                  ) : (
+                    <Typography variant="body2" color="text.secondary">No QR Pass available</Typography>
+                  )}
+                </Box>
+
                 {/* Contact */}
                 <Typography variant="caption" fontWeight={800} color="#091542" sx={{ textTransform: 'uppercase', letterSpacing: '0.6px', mb: 1, display: 'block' }}>
                   Contact
@@ -386,6 +404,12 @@ export default function GetGuest() {
                 <InfoRow icon={<CalendarMonthOutlinedIcon fontSize="small" />} label="Stay Ends At"
                   value={drawerGuest.stayEndsAt}
                   valueColor={drawerGuest.isExpired ? '#ef4444' : undefined} />
+                <InfoRow 
+                  icon={<VerifiedOutlinedIcon fontSize="small" />} 
+                  label="Access Status" 
+                  value={drawerGuest.accessStatus + (drawerGuest.expiryReason ? ` (${drawerGuest.expiryReason.replace(/_/g, ' ')})` : '')}
+                  valueColor={drawerGuest.accessStatus === 'ACTIVE' ? '#047857' : '#dc2626'} 
+                />
                 <InfoRow icon={<CalendarMonthOutlinedIcon fontSize="small" />} label="Last Login" value={drawerGuest.lastLogin} />
                 <InfoRow icon={<CalendarMonthOutlinedIcon fontSize="small" />} label="Registered On" value={drawerGuest.createdAt} />
 

@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Box, Typography, Paper, Stack, Avatar, Button, 
   Dialog, DialogTitle, DialogContent, DialogActions, 
-  Select, MenuItem, IconButton
+  Select, MenuItem, IconButton, Grid, Divider, CircularProgress, Chip
 } from "@mui/material";
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -17,6 +17,10 @@ import {
   PieChart, Pie, Cell 
 } from 'recharts';
 import LogItem from '@/components/LogItem';
+import { useAuth } from "@/contexts/AuthContext";
+import { getMyQrApi } from "@/apis/user";
+import { getFileUrl } from "@/utils/file";
+import { QRCodeSVG } from "qrcode.react";
 
 const lineData = [
   { name: 'Mon', total: 30, confirmed: 15, cancelled: 5 },
@@ -71,12 +75,248 @@ function StatCard({ title, value, trend, trendValue, isPositive }: any) {
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const { isAdmin, user } = useAuth();
   const [filterType, setFilterType] = useState('This Month');
   const [logsOpen, setLogsOpen] = useState(false);
+  const [qrCodeData, setQrCodeData] = useState<string | null>(null);
+  const [qrLoading, setQrLoading] = useState(false);
 
   const LogItemLocal = ({ log }: any) => (
     <LogItem log={log} />
   );
+
+  useEffect(() => {
+    if (!isAdmin) {
+      const fetchQr = async () => {
+        setQrLoading(true);
+        try {
+          const res = await getMyQrApi();
+          const data = res?.data?.qrCode || res?.qrCode || res?.data?.code || res?.code || res?.data || res;
+          if (data && typeof data === "string") {
+            setQrCodeData(data);
+          } else if (data && typeof data === "object" && data.code) {
+            setQrCodeData(data.code);
+          } else if (data && typeof data === "object" && data.qrCode) {
+            setQrCodeData(data.qrCode);
+          }
+        } catch (err) {
+          console.warn("Failed to fetch own QR code for dashboard:", err);
+        } finally {
+          setQrLoading(false);
+        }
+      };
+      fetchQr();
+    }
+  }, [isAdmin]);
+
+  if (!isAdmin) {
+    const userName = user?.name || "User";
+    const userInitials = userName
+      .split(" ")
+      .map((n: string) => n[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase();
+
+    return (
+      <Box sx={{ mt: 2, p: { xs: 2, md: 4 }, bgcolor: '#f8fafc', minHeight: '100vh' }}>
+        {/* Welcome Section */}
+        <Box sx={{ mb: 5 }}>
+          <Typography variant="h4" fontWeight="900" color="#091542" sx={{ mb: 1, letterSpacing: '-0.5px' }}>
+            Welcome, {userName}!
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            Access your gate entry pass and account overview here.
+          </Typography>
+        </Box>
+
+        <Grid container spacing={4}>
+          {/* Access QR Code Card */}
+          <Grid size={{ xs: 12, md: 5 }}>
+            <Paper
+              elevation={0}
+              sx={{
+                p: 4,
+                borderRadius: "32px",
+                border: "1px solid #e2e8f0",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                textAlign: "center",
+                bgcolor: "white",
+                boxShadow: "0 10px 30px rgba(0,0,0,0.02)",
+              }}
+            >
+              <Typography variant="h5" fontWeight="900" color="#091542" sx={{ mb: 1 }}>
+                Gate Entry QR Pass
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
+                Hold this QR code against the gate scanner to pass through automatically.
+              </Typography>
+
+              {qrLoading ? (
+                <Box sx={{ py: 6 }}>
+                  <CircularProgress size={50} sx={{ color: "#091542" }} />
+                </Box>
+              ) : qrCodeData ? (
+                <Box
+                  sx={{
+                    p: 3.5,
+                    bgcolor: "#f8fafc",
+                    borderRadius: "28px",
+                    border: "3px dashed #cbd5e1",
+                    display: "inline-block",
+                    boxShadow: "0 8px 24px rgba(0,0,0,0.03)",
+                  }}
+                >
+                  <QRCodeSVG value={qrCodeData} size={200} level="H" />
+                </Box>
+              ) : (
+                <Box sx={{ py: 6 }}>
+                  <Typography variant="body2" color="text.secondary" fontWeight="700">
+                    No access QR code available.
+                  </Typography>
+                </Box>
+              )}
+
+              <Chip
+                label={user?.status || "ACTIVE"}
+                color={user?.status === "EXPIRED" ? "error" : "success"}
+                sx={{
+                  mt: 4,
+                  fontWeight: 900,
+                  fontSize: "0.8rem",
+                  borderRadius: "10px",
+                  px: 2,
+                }}
+              />
+
+              <Typography variant="caption" fontWeight="800" color="#94a3b8" sx={{ mt: 3, display: 'block', letterSpacing: '1px' }}>
+                USE FOR AUTOMATED GATE ENTRY
+              </Typography>
+            </Paper>
+          </Grid>
+
+          {/* User Details & Profile Summary */}
+          <Grid size={{ xs: 12, md: 7 }}>
+            <Paper
+              elevation={0}
+              sx={{
+                p: 4,
+                borderRadius: "32px",
+                border: "1px solid #e2e8f0",
+                bgcolor: "white",
+                height: "100%",
+                boxShadow: "0 10px 30px rgba(0,0,0,0.02)",
+              }}
+            >
+              <Stack direction="row" spacing={3} alignItems="center" sx={{ mb: 4 }}>
+                <Avatar
+                  src={getFileUrl(user?.photoUrl || user?.profilePhotoUrl || user?.avatar)}
+                  sx={{
+                    width: 70,
+                    height: 70,
+                    fontSize: "1.75rem",
+                    fontWeight: 900,
+                    bgcolor: "#eff6ff",
+                    color: "#1e40af",
+                  }}
+                >
+                  {userInitials}
+                </Avatar>
+                <Box>
+                  <Typography variant="h6" fontWeight="900" color="#091542">
+                    {userName}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {user?.email}
+                  </Typography>
+                </Box>
+              </Stack>
+
+              <Divider sx={{ my: 3 }} />
+
+              <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 3 }}>
+                <Box>
+                  <Typography variant="caption" fontWeight="800" color="text.secondary" sx={{ textTransform: "uppercase" }}>
+                    Role
+                  </Typography>
+                  <Typography variant="body1" fontWeight="700" color="#091542" sx={{ mt: 0.5 }}>
+                    {user?.role || "Resident"}
+                  </Typography>
+                </Box>
+
+                {user?.accountRole && (
+                  <Box>
+                    <Typography variant="caption" fontWeight="800" color="text.secondary" sx={{ textTransform: "uppercase" }}>
+                      Account Type
+                    </Typography>
+                    <Typography variant="body1" fontWeight="700" color="#091542" sx={{ mt: 0.5 }}>
+                      {user?.accountRole}
+                    </Typography>
+                  </Box>
+                )}
+
+                <Box>
+                  <Typography variant="caption" fontWeight="800" color="text.secondary" sx={{ textTransform: "uppercase" }}>
+                    Phone Number
+                  </Typography>
+                  <Typography variant="body1" fontWeight="700" color="#091542" sx={{ mt: 0.5 }}>
+                    {user?.phone || "N/A"}
+                  </Typography>
+                </Box>
+
+                {user?.stayEndsAt && (
+                  <Box>
+                    <Typography variant="caption" fontWeight="800" color="text.secondary" sx={{ textTransform: "uppercase" }}>
+                      Access Expiry Date
+                    </Typography>
+                    <Typography variant="body1" fontWeight="700" color="#ef4444" sx={{ mt: 0.5 }}>
+                      {new Date(user.stayEndsAt).toLocaleDateString("en-US", { dateStyle: "medium" })}
+                    </Typography>
+                  </Box>
+                )}
+              </Box>
+
+              <Box sx={{ mt: 5, display: 'flex', gap: 2 }}>
+                <Button
+                  variant="contained"
+                  onClick={() => navigate("/profile")}
+                  sx={{
+                    borderRadius: "12px",
+                    textTransform: "none",
+                    fontWeight: 800,
+                    bgcolor: "#0047b3",
+                    boxShadow: "none",
+                    px: 4,
+                    py: 1.25,
+                    "&:hover": { bgcolor: "#003bb3", boxShadow: "none" }
+                  }}
+                >
+                  View Profile details
+                </Button>
+                <Button
+                  variant="outlined"
+                  onClick={() => navigate("/support")}
+                  sx={{
+                    borderRadius: "12px",
+                    textTransform: "none",
+                    fontWeight: 800,
+                    borderColor: "#e2e8f0",
+                    color: "#091542",
+                    px: 4,
+                    py: 1.25,
+                  }}
+                >
+                  Contact Support
+                </Button>
+              </Box>
+            </Paper>
+          </Grid>
+        </Grid>
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ mt: 2, p: { xs: 2, md: 4 }, bgcolor: '#f8fafc', minHeight: '100vh' }}>

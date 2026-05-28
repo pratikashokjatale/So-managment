@@ -25,9 +25,11 @@ import ResidentAmenities from './components/ResidentAmenities';
 import bannerImg from '../../assets/marbella-banner.png';
 import BackButton from '@/components/BackButton';
 import { getUserDetailsApi } from '@/apis/user';
+import { QRCodeSVG } from 'qrcode.react';
 import { deleteFamilyMemberApi, updateFamilyMemberApi, createFamilyMemberApi } from '@/apis/family';
 import { toast } from 'react-hot-toast';
 import { getFileUrl } from '@/utils/file';
+import AccessStatusBadge from '@/components/AccessStatusBadge';
 
 const isPdfFile = (urlOrName: string) => {
   if (!urlOrName) return false;
@@ -274,6 +276,9 @@ export default function ResidentDetails() {
                   label={resident.status || 'Active Profile'} 
                   sx={{ bgcolor: 'white', color: '#10b981', fontWeight: 900, borderRadius: '8px', border: '1px solid #dcfce7' }} 
                 />
+                {(resident.role === 'GUEST' || (resident.role === 'RESIDENT' && resident.accountRole === 'TENANT')) && (
+                  <AccessStatusBadge status={resident.accessStatus || 'ACTIVE'} reason={resident.expiryReason} />
+                )}
               </Stack>
               <Stack direction="row" spacing={2} alignItems="center">
                 <Stack direction="row" spacing={1} alignItems="center">
@@ -363,6 +368,22 @@ export default function ResidentDetails() {
                     <Typography variant="caption" color="#94a3b8" fontWeight="800">APARTMENT / FLAT</Typography>
                     <Typography variant="body1" fontWeight="700">{flatLabel}</Typography>
                   </Grid>
+                  {resident.role === 'RESIDENT' && resident.accountRole === 'TENANT' && (
+                    <>
+                      <Grid size={{ xs: 6 }}>
+                        <Typography variant="caption" color="#94a3b8" fontWeight="800">STAY ENDS AT</Typography>
+                        <Typography variant="body1" fontWeight="700" color={resident.accessExpired ? '#ef4444' : 'text.primary'}>
+                          {resident.stayEndsAt ? new Date(resident.stayEndsAt).toLocaleDateString() : 'Missing Expiry'}
+                        </Typography>
+                      </Grid>
+                      <Grid size={{ xs: 6 }}>
+                        <Typography variant="caption" color="#94a3b8" fontWeight="800">ACCESS STATUS</Typography>
+                        <Box sx={{ mt: 0.5 }}>
+                          <AccessStatusBadge status={resident.accessStatus || 'ACTIVE'} reason={resident.expiryReason} />
+                        </Box>
+                      </Grid>
+                    </>
+                  )}
                 </Grid>
               </Paper>
             </Grid>
@@ -379,6 +400,20 @@ export default function ResidentDetails() {
                   </Box>
                   <Typography variant="caption" fontWeight="800" color="#94a3b8" sx={{ mt: 2, display: 'block' }}>RFID ACTIVATED • OFFLINE SYNCED</Typography>
                 </Paper>
+
+                {/* Gate Access QR Code */}
+                <Paper elevation={0} sx={{ p: 4, borderRadius: '28px', border: '1px solid #e2e8f0', bgcolor: 'white', textAlign: 'center' }}>
+                  <Typography variant="h6" fontWeight="900" color="#091542" sx={{ mb: 2 }}>Gate Access QR Code</Typography>
+                  {resident ? (
+                    <Box sx={{ p: 2.5, bgcolor: '#f8fafc', borderRadius: '24px', border: '2px dashed #cbd5e1', display: 'inline-block' }}>
+                      <QRCodeSVG value={resident.cardNo || resident.id || id || ''} size={150} level="H" />
+                    </Box>
+                  ) : (
+                    <Typography variant="body2" color="text.secondary" sx={{ my: 2 }}>No QR code available</Typography>
+                  )}
+                  <Typography variant="caption" fontWeight="800" color="#94a3b8" sx={{ mt: 2, display: 'block' }}>USE FOR GATE PASS VALIDATION</Typography>
+                </Paper>
+
                 <Paper elevation={0} sx={{ p: 3, borderRadius: '24px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
                   <Stack direction="row" justifyContent="space-between" alignItems="center">
                     <Typography variant="body2" fontWeight="800" color="#091542">Card Condition</Typography>

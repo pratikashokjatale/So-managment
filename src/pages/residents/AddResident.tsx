@@ -86,6 +86,7 @@ export default function AddResident({
     pan: "",
     photo: null as string | null,
     role: "RESIDENT",
+    stayEndsAt: "",
   });
 
   const [aadhaarFile, setAadhaarFile] = useState<File | null>(null);
@@ -216,6 +217,10 @@ export default function AddResident({
       toast.error("Assigned Flat selection is required");
       return false;
     }
+    if (residentData.category === "Tenant" && !residentData.stayEndsAt) {
+      toast.error("Stay ends date (expiry date) is required for Tenants");
+      return false;
+    }
     return true;
   };
 
@@ -259,8 +264,8 @@ export default function AddResident({
     setSubmitting(true);
     try {
       const selectedFlat = flats.find((f) => f.id === flatId) as any;
-      const stayEndsAtDate = new Date();
-      stayEndsAtDate.setFullYear(stayEndsAtDate.getFullYear() + 1);
+      const accountRole = residentData.category.toUpperCase() === "TENANT" ? "TENANT" : "OWNER";
+      const stayEndsAtVal = accountRole === "TENANT" ? residentData.stayEndsAt : null;
 
       let uploadedProfileUrl = residentData.photo || undefined;
       if (profilePhotoFile) {
@@ -290,6 +295,7 @@ export default function AddResident({
         phone: residentData.mobile.trim(),
         password: residentData.password,
         role: residentData.role || "RESIDENT",
+        accountRole: accountRole,
         flatId: flatId,
         projectId: projectId,
         towerId: towerId,
@@ -300,7 +306,7 @@ export default function AddResident({
           selectedFlat?.flatNumber || selectedFlat?.number || "101",
         ),
         flatType: selectedFlat?.type || selectedFlat?.flatType || "2BHK",
-        stayEndsAt: stayEndsAtDate.toISOString().split("T")[0],
+        stayEndsAt: stayEndsAtVal,
         profilePhotoUrl: uploadedProfileUrl,
         aadhaarNumber: residentData.aadhaar.trim() || undefined,
         aadhaarDocumentUrl: residentData.aadhaar.trim()
@@ -563,14 +569,33 @@ export default function AddResident({
                 select
                 label="User Category"
                 value={residentData.category}
-                onChange={(e) =>
-                  setResidentData({ ...residentData, category: e.target.value })
-                }
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setResidentData({ 
+                    ...residentData, 
+                    category: val,
+                    stayEndsAt: val === "Tenant" ? residentData.stayEndsAt : ""
+                  });
+                }}
                 sx={{ "& fieldset": { borderRadius: "12px" } }}
               >
                 <MenuItem value="Owner">Owner</MenuItem>
                 <MenuItem value="Tenant">Tenant</MenuItem>
               </TextField>
+
+              {residentData.category === "Tenant" && (
+                <TextField
+                  fullWidth
+                  type="date"
+                  label="Stay Ends At (Expiry Date) *"
+                  value={residentData.stayEndsAt}
+                  onChange={(e) =>
+                    setResidentData({ ...residentData, stayEndsAt: e.target.value })
+                  }
+                  InputLabelProps={{ shrink: true }}
+                  sx={{ "& fieldset": { borderRadius: "12px" } }}
+                />
+              )}
 
               <TextField
                 fullWidth

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+
 import {
   Box,
   Typography,
@@ -24,6 +25,7 @@ import { getTowers, getFlats } from "@/utils/setupStore";
 import { toast } from "react-hot-toast";
 import AddResident from "./AddResident";
 import { getFileUrl } from "@/utils/file";
+import AccessStatusBadge from "@/components/AccessStatusBadge";
 
 
 
@@ -277,6 +279,18 @@ export default function GetResident() {
                 id: 'role',
                 label: 'Role',
                 render: (row) => <Typography variant="body2" fontWeight="600" color="text.secondary">{row.role}</Typography>
+              },
+              {
+                id: 'accessStatus',
+                label: 'Access Status',
+                render: (row) => {
+                  const isGuest = row.role === 'GUEST';
+                  const isTenant = row.role === 'RESIDENT' && row.accountRole === 'TENANT';
+                  if (isGuest || isTenant) {
+                    return <AccessStatusBadge status={row.accessStatus || 'ACTIVE'} reason={row.expiryReason} />;
+                  }
+                  return <Typography variant="body2" color="text.disabled">—</Typography>;
+                }
               },
               {
                 id: 'cardType',

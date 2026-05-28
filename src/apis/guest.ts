@@ -4,7 +4,7 @@ export const uploadDocumentApi = async (file: File): Promise<string> => {
   try {
     const formData = new FormData();
     formData.append("file", file);
-    const res = await api.post("enrollment/documents/upload", formData, {
+    const res = await api.post("users/documents/upload", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
     const url = res?.data?.data?.url || res?.data?.url || res?.data;

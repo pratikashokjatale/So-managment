@@ -36,10 +36,11 @@ import {
 } from "@mui/icons-material";
 import { useAuth } from "@/contexts/AuthContext";
 import { getCachedMe } from "@/utils/apiCache";
-import { updateUserApi } from "@/apis/user";
+import { updateUserApi, getMyQrApi } from "@/apis/user";
 import { uploadDocumentApi } from "@/apis/document";
 import { toast } from "react-hot-toast";
 import { getFileUrl } from "@/utils/file";
+import { QRCodeSVG } from "qrcode.react";
 
 export default function GetProfile() {
   const navigate = useNavigate();
@@ -54,6 +55,8 @@ export default function GetProfile() {
     avatar: "",
   });
   const [updating, setUpdating] = useState(false);
+  const [qrCodeData, setQrCodeData] = useState<string | null>(null);
+  const [qrLoading, setQrLoading] = useState(false);
 
   const handleOpenEditModal = () => {
     setEditForm({
@@ -122,7 +125,26 @@ export default function GetProfile() {
         setLoading(false);
       }
     };
+    const fetchQr = async () => {
+      setQrLoading(true);
+      try {
+        const res = await getMyQrApi();
+        const data = res?.data?.qrCode || res?.qrCode || res?.data?.code || res?.code || res?.data || res;
+        if (data && typeof data === "string") {
+          setQrCodeData(data);
+        } else if (data && typeof data === "object" && data.code) {
+          setQrCodeData(data.code);
+        } else if (data && typeof data === "object" && data.qrCode) {
+          setQrCodeData(data.qrCode);
+        }
+      } catch (err) {
+        console.warn("Failed to fetch own QR code:", err);
+      } finally {
+        setQrLoading(false);
+      }
+    };
     fetchUserData();
+    fetchQr();
   }, []);
 
   const formatDate = (dateString?: string) => {
@@ -244,6 +266,43 @@ export default function GetProfile() {
                 }}
               />
             </Stack>
+          </Paper>
+
+          {/* Access QR Code Card */}
+          <Paper
+            elevation={0}
+            sx={{
+              p: 4,
+              mt: 4,
+              borderRadius: "32px",
+              border: `1px solid ${theme.palette.divider}`,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              textAlign: "center",
+              bgcolor: "white",
+              boxShadow: "0 10px 30px rgba(0,0,0,0.02)",
+            }}
+          >
+            <Typography variant="h6" fontWeight="900" color="#091542" sx={{ mb: 2 }}>
+              My Access QR Code
+            </Typography>
+            
+            {qrLoading ? (
+              <CircularProgress size={30} sx={{ my: 3, color: "#091542" }} />
+            ) : qrCodeData ? (
+              <Box sx={{ p: 3, bgcolor: "#f8fafc", borderRadius: "24px", border: "2px dashed #cbd5e1" }}>
+                <QRCodeSVG value={qrCodeData} size={150} level="H" />
+              </Box>
+            ) : (
+              <Typography variant="body2" color="text.secondary" sx={{ my: 3 }}>
+                No access QR code available
+              </Typography>
+            )}
+            
+            <Typography variant="caption" fontWeight="800" color="#94a3b8" sx={{ mt: 2, display: 'block' }}>
+              USE FOR AUTOMATED GATE ENTRY
+            </Typography>
           </Paper>
         </Grid>
 

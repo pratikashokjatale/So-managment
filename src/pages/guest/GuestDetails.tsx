@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { 
-  Box, Typography, Button, Breadcrumbs, Link, Paper, Avatar, Stack, Chip, Divider, Grid, Alert
+  Box, Typography, Button, Breadcrumbs, Link, Paper, Avatar, Stack, Chip, Divider, Grid, Alert, CircularProgress
 } from '@mui/material';
+import { QRCodeSVG } from 'qrcode.react';
 import { useNavigate, useParams } from 'react-router-dom';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
@@ -222,6 +223,23 @@ export default function GuestDetails() {
 
         {/* Right compliance, validation status panel */}
         <Grid size={{ xs: 12, md: 4 }}>
+          {/* Access QR Pass */}
+          <Paper elevation={0} sx={{ border: '1px solid #f0f0f0', borderRadius: 4, p: 4, mb: 4, textAlign: 'center' }}>
+            <Typography variant="h6" fontWeight="bold" color="#091542" sx={{ mb: 2 }}>
+              Access QR Pass
+            </Typography>
+            {guest ? (
+              <Box sx={{ p: 2.5, bgcolor: '#f8fafc', borderRadius: '20px', border: '2px dashed #cbd5e1', display: 'inline-block' }}>
+                <QRCodeSVG value={guest.id || id || ''} size={150} level="H" />
+              </Box>
+            ) : (
+              <Typography variant="body2" color="text.secondary" sx={{ my: 2 }}>No QR Pass available</Typography>
+            )}
+            <Typography variant="caption" fontWeight="800" color="#94a3b8" sx={{ mt: 2, display: 'block' }}>
+              USE FOR GATE ENTRY VALIDATION
+            </Typography>
+          </Paper>
+
           <Paper elevation={0} sx={{ border: '1px solid #f0f0f0', borderRadius: 4, p: 4, mb: 4 }}>
             <Typography variant="h6" fontWeight="bold" color="#091542" sx={{ mb: 3 }}>
               Verification Status

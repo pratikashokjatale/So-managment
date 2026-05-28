@@ -247,7 +247,11 @@ export default function StaffDetails() {
                 border: '1px solid #e2e8f0', 
                 boxShadow: '0 8px 24px rgba(0,0,0,0.02)' 
               }}>
-                <QRCodeSVG value={`STAFF_VERIFIED:${staff.cardNo}:${staff.name}:${staff.department}:${staff.facilityName}`} size={140} level="H" />
+                <QRCodeSVG 
+                  value={staff.cardNo || `STAFF_VERIFIED:${staff.cardNo}:${staff.name}:${staff.department}:${staff.facilityName}`} 
+                  size={140} 
+                  level="H" 
+                />
               </Box>
               <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 2, fontWeight: 800 }}>
                 Scan with Gate Access Terminal to verify crew identity

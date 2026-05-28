@@ -20,6 +20,9 @@ import {
   ExpandLess as ExpandLessIcon, 
   ExpandMore as ExpandMoreIcon,
   Logout as LogoutIcon,
+  Dashboard as DashboardIcon,
+  PersonOutline as ProfileIcon,
+  HelpOutline as SupportIcon,
 } from "@mui/icons-material";
 import { useAuth } from "@/contexts/AuthContext";
 import { useConfig } from "@/contexts/ConfigContext";
@@ -63,7 +66,7 @@ export default function DashboardLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const { navType } = useConfig();
-  const { isLoggedIn, isAdmin, isAuthLoading, logout } = useAuth();
+  const { isLoggedIn, isAdmin, isAuthLoading, logout, user } = useAuth();
 
   if (isAuthLoading) {
     return <Loader />;
@@ -71,36 +74,6 @@ export default function DashboardLayout() {
 
   if (!isLoggedIn) {
     return <Navigate to="/login" replace />;
-  }
-
-  if (!isAdmin) {
-    return (
-      <Box 
-        sx={{ 
-          display: "flex", 
-          flexDirection: "column", 
-          alignItems: "center", 
-          justifyContent: "center", 
-          minHeight: "100vh", 
-          bgcolor: "background.default", 
-          p: 3 
-        }}
-      >
-        <PageNotFound 
-          title="only admin can view" 
-          message="404 - Only admin can view this dashboard." 
-          showBackButton={false}
-        />
-        <Button 
-          variant="outlined" 
-          color="error" 
-          onClick={logout} 
-          sx={{ mt: -2, borderRadius: "12px", fontWeight: 700 }}
-        >
-          Logout
-        </Button>
-      </Box>
-    );
   }
 
   const handleDrawerToggle = () => {
@@ -116,6 +89,23 @@ export default function DashboardLayout() {
   };
 
   const currentDrawerWidth = isMobile ? 280 : (desktopOpen ? 280 : 88);
+
+  const displayedMenuItems = isAdmin
+    ? [
+        ...menuItems,
+        { text: "Profile", icon: <ProfileIcon />, path: "/profile" },
+        { text: "Support", icon: <SupportIcon />, path: "/support" }
+      ]
+    : [
+        { text: "Dashboard", icon: <DashboardIcon />, path: "/" },
+        { text: "Profile", icon: <ProfileIcon />, path: "/profile" },
+        { text: "Support", icon: <SupportIcon />, path: "/support" }
+      ];
+
+  const isAllowedPath = 
+    location.pathname === "/" || 
+    location.pathname === "/profile" || 
+    location.pathname === "/support";
 
   const drawer = (
     <Box
@@ -187,7 +177,7 @@ export default function DashboardLayout() {
                   display: "block"
                 }}
               >
-                Admin Panel
+                {isAdmin ? "Admin Panel" : `${user?.role || "User"} Portal`}
               </Typography>
             </Box>
           </Box>
@@ -195,7 +185,7 @@ export default function DashboardLayout() {
       </Box>
 
       <List sx={{ px: desktopOpen || isMobile ? 2 : 1.5, flexGrow: 1 }}>
-        {menuItems.map((item) => {
+        {displayedMenuItems.map((item) => {
           const hasChildren = item.children && item.children.length > 0;
           const isMenuOpen = openMenus[item.text] || false;
           const active = location.pathname === item.path || (hasChildren && item.children?.some(child => location.pathname === child.path));
@@ -406,7 +396,15 @@ export default function DashboardLayout() {
       </Box>
 
       <Box component="main" sx={{ flexGrow: 1, pt: { xs: "98px", md: "114px" }, pb: { xs: 3, md: 5 }, px: { xs: 2, md: 4 }, width: { md: `calc(100% - ${currentDrawerWidth}px)` }, transition: theme.transitions.create(["width", "margin"], { easing: theme.transitions.easing.sharp, duration: theme.transitions.duration.enteringScreen }) }}>
-        <Outlet />
+        {!isAdmin && !isAllowedPath ? (
+          <PageNotFound 
+            title="Permission Denied" 
+            message="You do not have permission to view this page. Please contact your administrator if you believe this is an error."
+            showBackButton={true}
+          />
+        ) : (
+          <Outlet />
+        )}
       </Box>
     </Box>
   );

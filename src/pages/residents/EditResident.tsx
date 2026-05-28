@@ -35,6 +35,8 @@ export default function EditResident() {
     cardNo: "",
     status: "ACTIVE",
     avatar: "",
+    category: "Owner",
+    stayEndsAt: "",
   });
 
   // Cascading states
@@ -104,6 +106,8 @@ export default function EditResident() {
         cardNo: user.cardNo || `CMR-${user.id?.substring(0, 6).toUpperCase()}`,
         status: user.status || "ACTIVE",
         avatar: user.photoUrl || user.profilePhotoUrl || user.avatar || "",
+        category: user.accountRole === "TENANT" ? "Tenant" : "Owner",
+        stayEndsAt: user.stayEndsAt ? user.stayEndsAt.split("T")[0] : "",
       });
 
       if (user.flat) {
@@ -195,8 +199,15 @@ export default function EditResident() {
       toast.error("Full name is required");
       return;
     }
+    if (formData.category === "Tenant" && !formData.stayEndsAt) {
+      toast.error("Stay ends date (expiry date) is required for Tenants");
+      return;
+    }
     setSubmitting(true);
     try {
+      const accountRole = formData.category.toUpperCase() === "TENANT" ? "TENANT" : "OWNER";
+      const stayEndsAtVal = accountRole === "TENANT" ? formData.stayEndsAt : null;
+
       await updateUserApi(id || "", {
         name: formData.name.trim(),
         email: formData.email.trim(),
@@ -204,6 +215,8 @@ export default function EditResident() {
         flatId: flatId || undefined,
         status: formData.status,
         profilePhotoUrl: formData.avatar || undefined,
+        accountRole,
+        stayEndsAt: stayEndsAtVal,
       });
       toast.success("Resident details updated successfully");
       navigate("/residents");
@@ -335,6 +348,39 @@ export default function EditResident() {
             variant="outlined"
             sx={{ "& fieldset": { borderRadius: "12px" } }}
           />
+          <TextField
+            fullWidth
+            select
+            label="User Category"
+            value={formData.category}
+            onChange={(e) => {
+              const val = e.target.value;
+              setFormData({ 
+                ...formData, 
+                category: val,
+                stayEndsAt: val === "Tenant" ? formData.stayEndsAt : ""
+              });
+            }}
+            sx={{ "& fieldset": { borderRadius: "12px" } }}
+          >
+            <MenuItem value="Owner">Owner</MenuItem>
+            <MenuItem value="Tenant">Tenant</MenuItem>
+          </TextField>
+
+          {formData.category === "Tenant" && (
+            <TextField
+              fullWidth
+              type="date"
+              label="Stay Ends At (Expiry Date) *"
+              value={formData.stayEndsAt}
+              onChange={(e) =>
+                setFormData({ ...formData, stayEndsAt: e.target.value })
+              }
+              InputLabelProps={{ shrink: true }}
+              sx={{ "& fieldset": { borderRadius: "12px" } }}
+            />
+          )}
+
           <TextField
             fullWidth
             select

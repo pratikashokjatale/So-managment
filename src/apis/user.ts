@@ -19,13 +19,14 @@ export interface CreateUserPayload {
   floorNumber?: string;
   flatNumber?: string;
   flatType?: string;
-  stayEndsAt?: string;
+  stayEndsAt?: string | null;
   profilePhotoUrl?: string;
   aadhaarNumber?: string;
   aadhaarDocumentUrl?: string;
   aadhaarDocumentFileName?: string;
   aadhaarDocumentSize?: number;
   role?: string;
+  accountRole?: string;
   flatId?: string | null;
 }
 
@@ -34,6 +35,8 @@ export interface UpdateUserPayload {
   email?: string;
   phone?: string;
   role?: string;
+  accountRole?: string;
+  stayEndsAt?: string | null;
   status?: string;
   flatId?: string | null;
   profilePhotoUrl?: string | null;
@@ -78,6 +81,24 @@ export const updateUserApi = async (userId: string, data: UpdateUserPayload) => 
 export const deleteUserApi = async (userId: string, reason?: string) => {
   try {
     const res = await api.delete(`users/${userId}`, { data: { reason } });
+    return res?.data;
+  } catch (error) {
+    throw handleApiError(error);
+  }
+};
+
+export const getUserQrApi = async (userId: string) => {
+  try {
+    const res = await api.get(`users/${userId}/qr`);
+    return res?.data;
+  } catch (error) {
+    throw handleApiError(error);
+  }
+};
+
+export const getMyQrApi = async () => {
+  try {
+    const res = await api.get("access/my-qr");
     return res?.data;
   } catch (error) {
     throw handleApiError(error);
