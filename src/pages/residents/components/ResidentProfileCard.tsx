@@ -1,10 +1,9 @@
-import { Box, Typography, Avatar, Button, Stack, Chip, IconButton } from '@mui/material';
+import { Box, Typography, Avatar, Button, Stack, Chip } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { 
   Edit as EditIcon,
   ArrowBack as ArrowBackIcon,
   CalendarToday as CalendarIcon,
-  WarningAmber as WarningIcon
 } from '@mui/icons-material';
 import bannerImg from '../../../assets/marbella-banner.png';
 import { getFileUrl } from '@/utils/file';
