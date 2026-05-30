@@ -1,6 +1,16 @@
 import { useState, useEffect } from 'react';
-import { Box, Typography, Grid, Paper, Chip, Divider } from '@mui/material';
-import { CreditCard as CardIcon, QrCode2 as QrIcon } from '@mui/icons-material';
+import { Box, Typography, Grid, Paper, Chip, Divider, Fade, Zoom } from '@mui/material';
+import { 
+  CreditCard as CardIcon, 
+  QrCode2 as QrIcon, 
+  PersonRounded, 
+  BadgeRounded, 
+  VerifiedUserRounded, 
+  PhoneRounded, 
+  HomeRounded,
+  ContactPageRounded,
+  MemoryRounded
+} from '@mui/icons-material';
 import { QRCodeSVG } from 'qrcode.react';
 import { getUserQrApi } from '@/apis/user';
 
@@ -41,185 +51,257 @@ export default function ResidentOverviewTab({ resident }: ResidentOverviewTabPro
   const aadhaarStatus = identityProofs.find((d: any) => d.documentType === 'AADHAR_CARD')?.isVerified;
   const panStatus = identityProofs.find((d: any) => d.documentType === 'PAN_CARD')?.isVerified;
 
+  const InfoItem = ({ icon, label, value, valueColor = '#091542' }: any) => (
+    <Box sx={{ 
+      display: 'flex', 
+      alignItems: 'flex-start', 
+      gap: 1.5,
+      p: 2,
+      borderRadius: '16px',
+      transition: 'all 0.3s ease',
+      '&:hover': {
+        bgcolor: '#f8fafc',
+        transform: 'translateY(-2px)'
+      }
+    }}>
+      <Box sx={{ 
+        mt: 0.5,
+        p: 1, 
+        borderRadius: '12px', 
+        bgcolor: '#eff6ff', 
+        color: '#3b82f6',
+        display: 'flex' 
+      }}>
+        {icon}
+      </Box>
+      <Box>
+        <Typography variant="caption" color="#64748b" fontWeight="700" sx={{ display: 'block', mb: 0.5, letterSpacing: '0.8px', fontSize: '0.65rem', textTransform: 'uppercase' }}>
+          {label}
+        </Typography>
+        <Typography variant="body1" fontWeight="800" color={valueColor} sx={{ fontSize: '0.95rem' }}>
+          {value}
+        </Typography>
+      </Box>
+    </Box>
+  );
+
   return (
-    <Box sx={{ width: '100%' }}>
-      <style>{`
-        @keyframes scanLine {
-          0% { top: 0%; }
-          50% { top: 100%; }
-          100% { top: 0%; }
-        }
-      `}</style>
+    <Fade in={true} timeout={500}>
+      <Box sx={{ width: '100%', pt: 1 }}>
+        <style>{`
+          @keyframes scanLine {
+            0% { top: 0%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+          }
+          @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+          }
+        `}</style>
 
-      <Grid container spacing={4}>
-        {/* Left Column: Administrative Details Card (8/12 width) */}
-        <Grid size={{ xs: 12, md: 8 }}>
-          <Paper elevation={0} sx={{ 
-            p: 4.5, 
-            borderRadius: '24px', 
-            border: '1px solid #e2e8f0', 
-            bgcolor: 'white',
-            boxShadow: '0 8px 30px rgba(0,0,0,0.01)',
-            height: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center'
-          }}>
-            <Typography variant="h6" fontWeight="900" color="#091542" sx={{ mb: 4, fontSize: '1.05rem', letterSpacing: '-0.2px' }}>
-              Administrative Details
-            </Typography>
-
-            <Grid container spacing={4}>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <Box>
-                  <Typography variant="caption" color="#94a3b8" fontWeight="800" sx={{ display: 'block', mb: 0.8, letterSpacing: '0.6px', fontSize: '0.68rem', textTransform: 'uppercase' }}>
-                    Full Name
-                  </Typography>
-                  <Typography variant="body1" fontWeight="800" color="#091542" sx={{ fontSize: '0.95rem' }}>
-                    {resident.name}
-                  </Typography>
-                </Box>
-              </Grid>
-
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <Box>
-                  <Typography variant="caption" color="#94a3b8" fontWeight="800" sx={{ display: 'block', mb: 0.8, letterSpacing: '0.6px', fontSize: '0.68rem', textTransform: 'uppercase' }}>
-                    Residence Category
-                  </Typography>
-                  <Typography variant="body1" fontWeight="800" color="#091542" sx={{ fontSize: '0.95rem' }}>
-                    {resident.category || 'Resident'} • {resident.role}
-                  </Typography>
-                </Box>
-              </Grid>
-
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <Box>
-                  <Typography variant="caption" color="#94a3b8" fontWeight="800" sx={{ display: 'block', mb: 0.8, letterSpacing: '0.6px', fontSize: '0.68rem', textTransform: 'uppercase' }}>
-                    Aadhaar Card
-                  </Typography>
-                  <Typography variant="body1" fontWeight="800" color={aadhaarStatus ? '#10b981' : '#f59e0b'} sx={{ fontSize: '0.95rem' }}>
-                    {aadhaarStatus ? 'Verified' : 'Pending Verification'}
-                  </Typography>
-                </Box>
-              </Grid>
-
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <Box>
-                  <Typography variant="caption" color="#94a3b8" fontWeight="800" sx={{ display: 'block', mb: 0.8, letterSpacing: '0.6px', fontSize: '0.68rem', textTransform: 'uppercase' }}>
-                    Pan Card
-                  </Typography>
-                  <Typography variant="body1" fontWeight="800" color={panStatus ? '#10b981' : '#f59e0b'} sx={{ fontSize: '0.95rem' }}>
-                    {panStatus ? 'Verified' : 'Pending Verification'}
-                  </Typography>
-                </Box>
-              </Grid>
-
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <Box>
-                  <Typography variant="caption" color="#94a3b8" fontWeight="800" sx={{ display: 'block', mb: 0.8, letterSpacing: '0.6px', fontSize: '0.68rem', textTransform: 'uppercase' }}>
-                    Contact Phone
-                  </Typography>
-                  <Typography variant="body1" fontWeight="800" color="#091542" sx={{ fontSize: '0.95rem' }}>
-                    {resident.phone || 'N/A'}
-                  </Typography>
-                </Box>
-              </Grid>
-
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <Box>
-                  <Typography variant="caption" color="#94a3b8" fontWeight="800" sx={{ display: 'block', mb: 0.8, letterSpacing: '0.6px', fontSize: '0.68rem', textTransform: 'uppercase' }}>
-                    Apartment / Flat
-                  </Typography>
-                  <Typography variant="body1" fontWeight="800" color="#091542" sx={{ fontSize: '0.95rem' }}>
-                    {flatLabel}
-                  </Typography>
-                </Box>
-              </Grid>
-            </Grid>
-          </Paper>
-        </Grid>
-
-        {/* Right Column: Active Blue Card & QR Pass widget (4/12 width) */}
-        <Grid size={{ xs: 12, md: 4 }}>
-          <Paper elevation={0} sx={{ 
-            p: 3.5, 
-            borderRadius: '24px', 
-            border: '1px solid #e2e8f0', 
-            bgcolor: 'white',
-            boxShadow: '0 8px 30px rgba(0,0,0,0.01)',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 3,
-            alignItems: 'center'
-          }}>
-            {/* Top Mockup Card */}
-            <Box sx={{ width: '100%' }}>
-              <Typography variant="subtitle2" fontWeight="900" color="#091542" sx={{ mb: 2, fontSize: '0.9rem', letterSpacing: '-0.1px', textAlign: 'center' }}>
-                Active Blue Card
-              </Typography>
-              
+        <Grid container spacing={4}>
+          {/* Left Column: Administrative Details Card */}
+          <Grid size={{ xs: 12, md: 8 }}>
+            <Paper elevation={0} sx={{ 
+              p: { xs: 3, sm: 4.5 }, 
+              borderRadius: '28px', 
+              border: '1px solid rgba(226, 232, 240, 0.8)', 
+              bgcolor: 'white',
+              background: 'linear-gradient(145deg, #ffffff 0%, #f8fafc 100%)',
+              boxShadow: '0 12px 40px rgba(15, 23, 42, 0.04)',
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              position: 'relative',
+              overflow: 'hidden'
+            }}>
+              {/* Decorative background element */}
               <Box sx={{
-                borderRadius: '16px',
-                bgcolor: '#f0f7ff',
-                border: '1.5px dashed #2563eb',
-                p: 2.5,
+                position: 'absolute',
+                top: -100,
+                right: -100,
+                width: 300,
+                height: 300,
+                borderRadius: '50%',
+                background: 'radial-gradient(circle, rgba(59,130,246,0.05) 0%, rgba(255,255,255,0) 70%)',
+                zIndex: 0
+              }} />
+
+              <Box sx={{ position: 'relative', zIndex: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 4 }}>
+                  <Box sx={{ p: 1.2, borderRadius: '14px', bgcolor: '#1e293b', color: 'white', display: 'flex' }}>
+                    <ContactPageRounded sx={{ fontSize: 24 }} />
+                  </Box>
+                  <Typography variant="h6" fontWeight="900" color="#0f172a" sx={{ fontSize: '1.25rem', letterSpacing: '-0.3px' }}>
+                    Administrative Details
+                  </Typography>
+                </Box>
+
+                <Grid container spacing={1}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <InfoItem 
+                      icon={<PersonRounded sx={{ fontSize: 20 }} />} 
+                      label="Full Name" 
+                      value={resident.name} 
+                    />
+                  </Grid>
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <InfoItem 
+                      icon={<BadgeRounded sx={{ fontSize: 20 }} />} 
+                      label="Residence Category" 
+                      value={`${resident.category || 'Resident'} • ${resident.role}`} 
+                    />
+                  </Grid>
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <InfoItem 
+                      icon={<VerifiedUserRounded sx={{ fontSize: 20 }} />} 
+                      label="Aadhaar Card" 
+                      value={aadhaarStatus ? 'Verified' : 'Pending Verification'} 
+                      valueColor={aadhaarStatus ? '#10b981' : '#f59e0b'}
+                    />
+                  </Grid>
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <InfoItem 
+                      icon={<CardIcon sx={{ fontSize: 20 }} />} 
+                      label="Pan Card" 
+                      value={panStatus ? 'Verified' : 'Pending Verification'} 
+                      valueColor={panStatus ? '#10b981' : '#f59e0b'}
+                    />
+                  </Grid>
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <InfoItem 
+                      icon={<PhoneRounded sx={{ fontSize: 20 }} />} 
+                      label="Contact Phone" 
+                      value={resident.phone || 'N/A'} 
+                    />
+                  </Grid>
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <InfoItem 
+                      icon={<HomeRounded sx={{ fontSize: 20 }} />} 
+                      label="Apartment / Flat" 
+                      value={flatLabel} 
+                    />
+                  </Grid>
+                </Grid>
+              </Box>
+            </Paper>
+          </Grid>
+
+          {/* Right Column: Active Blue Card & QR Pass widget */}
+          <Grid size={{ xs: 12, md: 4 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4, height: '100%' }}>
+              
+              {/* Virtual ID Card */}
+              <Zoom in={true} style={{ transitionDelay: '200ms' }}>
+                <Paper elevation={0} sx={{ 
+                  borderRadius: '24px', 
+                  background: 'linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%)',
+                  boxShadow: '0 20px 40px rgba(30, 58, 138, 0.2)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  p: 3,
+                  color: 'white'
+                }}>
+                  {/* Card Gloss Effect */}
+                  <Box sx={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'linear-gradient(105deg, rgba(255,255,255,0) 30%, rgba(255,255,255,0.1) 45%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 65%)',
+                    backgroundSize: '200% 100%',
+                    animation: 'shimmer 4s infinite linear',
+                    zIndex: 1,
+                    pointerEvents: 'none'
+                  }} />
+
+                  <Box sx={{ position: 'relative', zIndex: 2 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                      <Typography variant="overline" sx={{ fontWeight: 800, letterSpacing: '1px', color: 'rgba(255,255,255,0.7)' }}>
+                        Smart Access
+                      </Typography>
+                      <MemoryRounded sx={{ fontSize: 28, color: '#fbbf24' }} />
+                    </Box>
+
+                    <Typography variant="h5" sx={{ 
+                      fontWeight: 900, 
+                      fontFamily: 'monospace', 
+                      letterSpacing: '2px', 
+                      mb: 3,
+                      textShadow: '0 2px 10px rgba(0,0,0,0.3)'
+                    }}>
+                      {cardNo.replace(/(.{4})/g, '$1 ').trim()}
+                    </Typography>
+
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                      <Box>
+                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.5)', display: 'block', mb: 0.5 }}>RESIDENT</Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 700, letterSpacing: '0.5px' }}>{resident.name}</Typography>
+                      </Box>
+                      <Chip 
+                        label="Master Fob" 
+                        size="small" 
+                        sx={{ 
+                          bgcolor: 'rgba(255,255,255,0.15)', 
+                          backdropFilter: 'blur(10px)',
+                          color: 'white', 
+                          fontWeight: 800, 
+                          fontSize: '0.65rem',
+                          border: '1px solid rgba(255,255,255,0.2)'
+                        }} 
+                      />
+                    </Box>
+                  </Box>
+                </Paper>
+              </Zoom>
+
+              {/* QR Code Section */}
+              <Paper elevation={0} sx={{
+                flex: 1,
+                borderRadius: '24px',
+                border: '1px solid rgba(226, 232, 240, 0.8)',
+                bgcolor: 'white',
+                boxShadow: '0 12px 40px rgba(15, 23, 42, 0.04)',
+                p: 3,
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                justifyContent: 'center',
-                gap: 1.5,
-                maxWidth: 260,
-                mx: 'auto'
+                justifyContent: 'center'
               }}>
-                <CardIcon sx={{ fontSize: 32, color: '#2563eb' }} />
-                <Typography variant="body1" fontWeight="900" color="#2563eb" sx={{ letterSpacing: '1px', fontFamily: 'monospace' }}>
-                  {cardNo}
+                <Typography variant="subtitle2" fontWeight="800" color="#0f172a" sx={{ mb: 3, fontSize: '0.9rem', letterSpacing: '-0.1px', display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <QrIcon sx={{ fontSize: 20, color: '#3b82f6' }} /> Gate Entry Pass
                 </Typography>
-                <Chip 
-                  label="Master Fob" 
-                  size="small" 
-                  sx={{ 
-                    bgcolor: '#2563eb', 
-                    color: 'white', 
-                    fontWeight: 900, 
-                    fontSize: '0.62rem', 
-                    height: 20,
-                    px: 0.5
-                  }} 
-                />
-              </Box>
+
+                <Box sx={{ position: 'relative', p: 2, borderRadius: '20px', border: '2px dashed #cbd5e1' }}>
+                  <Box sx={{ 
+                    position: 'absolute',
+                    top: 0, left: 0, right: 0, height: '4px',
+                    bgcolor: '#3b82f6',
+                    boxShadow: '0 0 10px #3b82f6',
+                    animation: 'scanLine 3s infinite cubic-bezier(0.4, 0, 0.2, 1)',
+                    zIndex: 10,
+                    borderRadius: '4px'
+                  }} />
+                  <QRCodeSVG 
+                    value={qrCodeData || resident.id || cardNo || ''} 
+                    size={160} 
+                    level="H" 
+                    style={{ display: 'block' }}
+                  />
+                </Box>
+                
+                <Typography variant="caption" sx={{ mt: 3, color: '#64748b', fontWeight: 600, textAlign: 'center', px: 2 }}>
+                  Scan at the automated gate terminal for seamless entry
+                </Typography>
+              </Paper>
+
             </Box>
-
-            <Divider sx={{ width: '100%', borderColor: '#f1f5f9' }} />
-
-            {/* QR Pass directly embedded below */}
-            <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <Typography variant="subtitle2" fontWeight="900" color="#091542" sx={{ mb: 2, fontSize: '0.9rem', letterSpacing: '-0.1px', display: 'flex', alignItems: 'center', gap: 1 }}>
-                <QrIcon sx={{ fontSize: 18 }} /> Gate Entry QR Pass
-              </Typography>
-
-              <Box sx={{ 
-                p: 2, 
-                bgcolor: 'white', 
-                borderRadius: '24px', 
-                display: 'inline-block', 
-                border: '1px solid #e2e8f0', 
-                boxShadow: '0 8px 24px rgba(0,0,0,0.02)' 
-              }}>
-                <QRCodeSVG 
-                  value={qrCodeData || resident.id || cardNo || ''} 
-                  size={140} 
-                  level="H" 
-                />
-              </Box>
-            </Box>
-
-            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 2, fontWeight: 800, textAlign: 'center' }}>
-              Scan with Gate Access Terminal to verify resident identity
-            </Typography>
-          </Paper>
+          </Grid>
         </Grid>
-      </Grid>
-    </Box>
+      </Box>
+    </Fade>
   );
 }
