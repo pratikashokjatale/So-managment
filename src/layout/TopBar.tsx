@@ -68,9 +68,43 @@ export default function TopBar({
     .slice(0, 2)
     .toUpperCase();
 
-  const currentTitle =
-    menuItems.find((item) => item.path === location.pathname)?.text ||
-    "Dashboard";
+  const getPageTitle = () => {
+    const pathname = location.pathname;
+    if (pathname === "/") return "Dashboard";
+    
+    // Check main menu items and children
+    for (const item of menuItems) {
+      if (item.path === pathname) return item.text;
+      if (item.children) {
+        const child = item.children.find(c => c.path === pathname);
+        if (child) return child.text;
+      }
+    }
+    
+    // Fallback parser for sub-paths
+    const segments = pathname.split("/").filter(Boolean);
+    if (segments.length > 0) {
+      const first = segments[0];
+      let title = first.charAt(0).toUpperCase() + first.slice(1);
+      if (first === "tower") title = "Towers";
+      if (first === "flat") title = "Flats";
+      
+      if (segments.includes("add")) {
+        return `Add ${title.endsWith("s") ? title.slice(0, -1) : title}`;
+      }
+      if (segments.includes("edit")) {
+        return `Edit ${title.endsWith("s") ? title.slice(0, -1) : title}`;
+      }
+      if (segments.length > 1) {
+        return `${title.endsWith("s") ? title.slice(0, -1) : title} Details`;
+      }
+      return title;
+    }
+    
+    return "Dashboard";
+  };
+
+  const currentTitle = getPageTitle();
 
   return (
     <Box

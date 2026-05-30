@@ -199,7 +199,7 @@ export default function ResidentDocumentsTab({
 // Internal component for clean layout
 function StackHeader() {
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+    <Box sx={{ display: 'flex', justifyContent: 'end', alignItems: 'center', mb: 4 }}>
       <Typography variant="h6" fontWeight="900" color="#091542">KYC Compliance Repository</Typography>
       <Button 
         variant="outlined" 

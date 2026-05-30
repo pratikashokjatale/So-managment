@@ -224,15 +224,8 @@ export default function AddGuest() {
     <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: '#f8fafc', minHeight: '100vh' }}>
 
       {/* Header */}
-      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Box>
-          <Typography variant="h4" fontWeight="bold" sx={{ color: '#091542', mb: 1 }}>Add Guest</Typography>
-          <Breadcrumbs separator=">" aria-label="breadcrumb">
-            <Link underline="hover" color="inherit" onClick={() => navigate('/')} sx={{ cursor: 'pointer' }}>Dashboard</Link>
-            <Link underline="hover" color="inherit" onClick={() => navigate('/guest')} sx={{ cursor: 'pointer' }}>Guests</Link>
-            <Typography color="text.primary" fontWeight={600}>Add Guest</Typography>
-          </Breadcrumbs>
-        </Box>
+      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
+        
         <BackButton to="/guest" label="Back to Guests" />
       </Box>
 
@@ -360,7 +353,6 @@ export default function AddGuest() {
               </Box>
             )}
 
-           
           </Grid>
 
         </Grid>

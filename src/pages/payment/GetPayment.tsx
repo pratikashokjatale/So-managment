@@ -69,13 +69,7 @@ export default function GetPayment() {
         <Typography variant="h4" fontWeight="bold" sx={{ mb: 1, color: '#091542' }}>
           Payments
         </Typography>
-        <Breadcrumbs separator=">" aria-label="breadcrumb">
-          <Link underline="hover" color="inherit" onClick={() => navigate('/')} sx={{ cursor: 'pointer' }}>
-            Dashboard
-          </Link>
-          <Typography color="text.primary">Payments</Typography>
-        </Breadcrumbs>
-      </Box>
+</Box>
 
       {/* Stats Section */}
       <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr 1fr' }, gap: 3, mb: 5 }}>

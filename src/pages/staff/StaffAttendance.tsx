@@ -366,12 +366,7 @@ export default function StaffAttendance() {
         }}
       >
         <DialogTitle sx={{ pb: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Box>
-            <Typography variant="h4" fontWeight="900" color="#091542">Access Control Logs</Typography>
-            <Typography variant="subtitle2" color="text.secondary" fontWeight="700">
-              Activity Terminal Logsheet
-            </Typography>
-          </Box>
+          
           {selectedRecord && getStatusChip(selectedRecord.status)}
         </DialogTitle>
 

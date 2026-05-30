@@ -1162,37 +1162,7 @@ export default function AddResident({
             alignItems: "center",
           }}
         >
-          <Box>
-            <Typography
-              variant="h4"
-              fontWeight="900"
-              color="#091542"
-              sx={{ mb: 1 }}
-            >
-              Resident Enrollment
-            </Typography>
-            <Breadcrumbs separator=">" aria-label="breadcrumb">
-              <Link
-                underline="hover"
-                color="inherit"
-                onClick={() => navigate("/")}
-                sx={{ cursor: "pointer" }}
-              >
-                Dashboard
-              </Link>
-              <Link
-                underline="hover"
-                color="inherit"
-                onClick={() => navigate("/residents")}
-                sx={{ cursor: "pointer" }}
-              >
-                Residents
-              </Link>
-              <Typography color="text.primary" fontWeight="600">
-                Enrollment Form
-              </Typography>
-            </Breadcrumbs>
-          </Box>
+          
           <BackButton to="/residents" label="Back to Residents" />
         </Box>
       )}

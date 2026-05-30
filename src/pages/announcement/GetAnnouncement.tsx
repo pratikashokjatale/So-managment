@@ -52,19 +52,6 @@ export default function GetAnnouncement() {
   return (
     <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: '#ffffff', minHeight: '100vh', borderRadius: 2 }}>
       
-      {/* Header Section */}
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" fontWeight="bold" sx={{ mb: 1, color: '#091542' }}>
-          Announcements
-        </Typography>
-        <Breadcrumbs separator=">" aria-label="breadcrumb">
-          <Link underline="hover" color="inherit" onClick={() => navigate('/')} sx={{ cursor: 'pointer' }}>
-            Dashboard
-          </Link>
-          <Typography color="text.primary">Announcements</Typography>
-        </Breadcrumbs>
-      </Box>
-
       {/* Filters Section */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
         <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>

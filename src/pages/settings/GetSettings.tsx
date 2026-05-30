@@ -45,11 +45,7 @@ export default function GetSettings() {
       {/* Page Header */}
       <Box sx={{ mb: 6 }}>
         <Typography variant="h3" fontWeight="900" color="#091542" sx={{ mb: 1 }}>Settings</Typography>
-        <Breadcrumbs separator=">" sx={{ fontWeight: 600 }}>
-          <Link underline="hover" color="inherit" onClick={() => navigate('/')} sx={{ cursor: 'pointer' }}>Dashboard</Link>
-          <Typography color="text.primary" fontWeight="800">Command Center</Typography>
-        </Breadcrumbs>
-      </Box>
+</Box>
 
       <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '350px 1fr' }, gap: 6 }}>
         
@@ -105,7 +101,7 @@ export default function GetSettings() {
         <Paper elevation={0} sx={{ p: 5, borderRadius: '40px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
           {activeTab === 'general' && (
             <Box>
-              <Typography variant="h4" fontWeight="900" color="#091542" sx={{ mb: 1 }}>General Settings</Typography>
+              
               <Typography variant="body1" color="text.secondary" sx={{ mb: 5 }}>Configure your society's primary identity and global preferences.</Typography>
               
               <Stack spacing={5}>

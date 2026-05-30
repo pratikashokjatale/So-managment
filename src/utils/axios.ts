@@ -6,7 +6,7 @@ import { clearSession, getSession, getSessionRefreshToken } from "./session";
 // Create axios instance
 export const api = axios.create({
   baseURL: `${API_URL}/api/v1`,
-  timeout: 1200000, // 20 minutes
+  timeout: 5000, // 5sec
 });
 
 api.interceptors.request.use(
@@ -80,9 +80,9 @@ api.interceptors.response.use(
       // Refresh failed or no refresh token — clear session and redirect to login
       clearCookies();
       clearSession();
-      if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
-        window.location.href = '/login';
-      }
+      // if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
+      //   window.location.href = '/login';
+      // }
     }
 
     if (error.response?.status === 403) {

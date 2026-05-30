@@ -327,35 +327,13 @@ export default function GetFlat() {
         sx={{
           mb: 4,
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "end",
           alignItems: "center",
           flexWrap: "wrap",
           gap: 2,
         }}
       >
-        <Box>
-          <Typography
-            variant="h4"
-            fontWeight="bold"
-            sx={{ mb: 1, color: "#091542" }}
-          >
-            Flats
-          </Typography>
-          <Breadcrumbs separator=">" aria-label="breadcrumb">
-            <Link
-              underline="hover"
-              color="inherit"
-              onClick={() => navigate("/")}
-              sx={{ cursor: "pointer" }}
-            >
-              Dashboard
-            </Link>
-            <Typography color="text.primary">Setup</Typography>
-            <Typography color="text.primary" fontWeight="600">
-              Flats
-            </Typography>
-          </Breadcrumbs>
-        </Box>
+        
         <Button
           variant="contained"
           startIcon={<AddIcon />}

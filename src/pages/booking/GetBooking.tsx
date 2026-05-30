@@ -327,13 +327,7 @@ export default function GetBooking() {
         <Typography variant="h4" fontWeight="bold" sx={{ mb: 1, color: '#091542' }}>
           Bookings List
         </Typography>
-        <Breadcrumbs separator=">" aria-label="breadcrumb">
-          <Link underline="hover" color="inherit" onClick={() => navigate('/')} sx={{ cursor: 'pointer' }}>
-            Dashboard
-          </Link>
-          <Typography color="text.primary">Bookings</Typography>
-        </Breadcrumbs>
-      </Box>
+</Box>
 
       {/* Tabs Menu */}
       <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>

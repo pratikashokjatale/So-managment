@@ -119,7 +119,7 @@ export default function Dashboard() {
       .toUpperCase();
 
     return (
-      <Box sx={{ mt: 2, p: { xs: 2, md: 4 }, bgcolor: '#f8fafc', minHeight: '100vh' }}>
+      <Box sx={{ mt: 2, bgcolor: '#f8fafc', minHeight: '100vh' }}>
         {/* Welcome Section */}
         <Box sx={{ mb: 5 }}>
           <Typography variant="h4" fontWeight="900" color="#091542" sx={{ mb: 1, letterSpacing: '-0.5px' }}>
@@ -319,14 +319,11 @@ export default function Dashboard() {
   }
 
   return (
-    <Box sx={{ mt: 2, p: { xs: 2, md: 4 }, bgcolor: '#f8fafc', minHeight: '100vh' }}>
+    <Box sx={{ mt: 2, bgcolor: '#f8fafc', minHeight: '100vh' }}>
       
       {/* Top Header Row */}
-      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
-        <Box>
-          <Typography variant="h4" fontWeight="900" color="#091542" sx={{ letterSpacing: '-0.5px' }}>Dashboard Overview</Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>Welcome back, Admin! Here is what is happening today.</Typography>
-        </Box>
+      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'end', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
+        
         <Stack direction="row" spacing={2} alignItems="center">
           <Select
             value={filterType}

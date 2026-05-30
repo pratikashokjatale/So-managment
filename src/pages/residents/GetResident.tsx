@@ -11,7 +11,9 @@ import {
   Chip,
   Menu,
   ListItemIcon,
-  ListItemText
+  ListItemText,
+  Tabs,
+  Tab,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
@@ -20,7 +22,6 @@ import MoreVertOutlinedIcon from "@mui/icons-material/MoreVertOutlined";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
-import PageHeader from "@/components/PageHeader";
 import PageToolbar from "@/components/PageToolbar";
 import DataTable from "@/components/DataTable";
 import ResidentRequests from "./components/ResidentRequests";
@@ -208,41 +209,41 @@ export default function GetResident() {
         borderRadius: "12px",
       }}
     >
-      <PageHeader
-        title="Residents"
-        breadcrumbs={[{ label: 'Dashboard', link: '/' }, { label: 'Residents' }]}
-        currentTab={tabValue}
-        onTabChange={handleTabChange}
-        tabs={[
-          {
-            label: (
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                Active Residents
-                {activeCount > 0 && <Chip label={activeCount} size="small" sx={{ height: 18, fontSize: '0.7rem', fontWeight: 800, bgcolor: '#e0f2fe', color: '#0369a1' }} />}
-              </Box>
-            ),
-            value: 0
+      <Tabs
+        value={tabValue}
+        onChange={handleTabChange}
+        sx={{
+          borderBottom: '1px solid #f1f5f9',
+          mb: 3,
+          '& .MuiTab-root': {
+            textTransform: 'none',
+            fontWeight: 800,
+            fontSize: '0.95rem',
+            minWidth: 120,
           },
-          {
-            label: (
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                Enrollment Requests
-                {pendingCount > 0 && <Chip label={pendingCount} size="small" color="warning" sx={{ height: 18, fontSize: '0.7rem', fontWeight: 800 }} />}
-              </Box>
-            ),
-            value: 1
-          },
-          {
-            label: (
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                Rejected Requests
-                {rejectedCount > 0 && <Chip label={rejectedCount} size="small" color="error" sx={{ height: 18, fontSize: '0.7rem', fontWeight: 800 }} />}
-              </Box>
-            ),
-            value: 2
-          }
-        ]}
-      />
+          '& .Mui-selected': { color: '#0047b3 !important' },
+          '& .MuiTabs-indicator': { backgroundColor: '#0047b3', height: 3 },
+        }}
+      >
+        <Tab label={(
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            Active Residents
+            {activeCount > 0 && <Chip label={activeCount} size="small" sx={{ height: 18, fontSize: '0.7rem', fontWeight: 800, bgcolor: '#e0f2fe', color: '#0369a1' }} />}
+          </Box>
+        )} value={0} />
+        <Tab label={(
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            Enrollment Requests
+            {pendingCount > 0 && <Chip label={pendingCount} size="small" color="warning" sx={{ height: 18, fontSize: '0.7rem', fontWeight: 800 }} />}
+          </Box>
+        )} value={1} />
+        <Tab label={(
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            Rejected Requests
+            {rejectedCount > 0 && <Chip label={rejectedCount} size="small" color="error" sx={{ height: 18, fontSize: '0.7rem', fontWeight: 800 }} />}
+          </Box>
+        )} value={2} />
+      </Tabs>
 
       {tabValue === 0 && (
         <>

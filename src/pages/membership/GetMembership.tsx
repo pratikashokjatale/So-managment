@@ -54,17 +54,7 @@ export default function GetMembership() {
   return (
     <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: '#ffffff', minHeight: '100vh', borderRadius: 2 }}>
       
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" fontWeight="bold" sx={{ mb: 1, color: '#091542' }}>
-          Memberships
-        </Typography>
-        <Breadcrumbs separator=">" aria-label="breadcrumb">
-          <Link underline="hover" color="inherit" onClick={() => navigate('/')} sx={{ cursor: 'pointer' }}>
-            Dashboard
-          </Link>
-          <Typography color="text.primary">Memberships</Typography>
-        </Breadcrumbs>
-      </Box>
+      
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
         <Search 

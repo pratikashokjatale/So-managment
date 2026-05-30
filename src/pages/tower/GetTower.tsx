@@ -97,14 +97,22 @@ export default function GetTower() {
       let paginationObj: any = null;
 
       if (projectFilter !== "All Projects") {
-        const res = await getTowersApi(projectFilter, { page, limit: rowsPerPage, search: searchQuery });
+        const res = await getTowersApi(projectFilter, {
+          page,
+          limit: rowsPerPage,
+          search: searchQuery,
+        });
         const list = Array.isArray(res?.data?.data)
           ? res.data.data
           : res?.data?.towers || res?.towers || res?.data || [];
         mergedTowers = list;
         paginationObj = res?.data?.pagination || res?.pagination;
       } else {
-        const res = await getAllTowersApi({ page, limit: rowsPerPage, search: searchQuery });
+        const res = await getAllTowersApi({
+          page,
+          limit: rowsPerPage,
+          search: searchQuery,
+        });
         const list = Array.isArray(res?.data?.data)
           ? res.data.data
           : res?.data?.towers || res?.towers || res?.data || [];
@@ -181,20 +189,25 @@ export default function GetTower() {
     }
   };
 
-  const filteredTowers = isApiMode ? towers : towers.filter((t) => {
-    const matchesSearch =
-      (t.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (t.projectName || "").toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesProject =
-      projectFilter === "All Projects" || t.projectId === projectFilter;
-    const matchesStatus =
-      statusFilter === "All Status" ||
-      t.status === statusFilter ||
-      (statusFilter === "Active" && t.status?.toUpperCase() === "ACTIVE") ||
-      (statusFilter === "Inactive" && t.status?.toUpperCase() === "INACTIVE");
+  const filteredTowers = isApiMode
+    ? towers
+    : towers.filter((t) => {
+        const matchesSearch =
+          (t.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (t.projectName || "")
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase());
+        const matchesProject =
+          projectFilter === "All Projects" || t.projectId === projectFilter;
+        const matchesStatus =
+          statusFilter === "All Status" ||
+          t.status === statusFilter ||
+          (statusFilter === "Active" && t.status?.toUpperCase() === "ACTIVE") ||
+          (statusFilter === "Inactive" &&
+            t.status?.toUpperCase() === "INACTIVE");
 
-    return matchesSearch && matchesProject && matchesStatus;
-  });
+        return matchesSearch && matchesProject && matchesStatus;
+      });
 
   const sortedTowers = [...filteredTowers].sort((a, b) => {
     let aVal = a[sortBy] || "";
@@ -212,10 +225,9 @@ export default function GetTower() {
     return 0;
   });
 
-  const paginatedTowers = isApiMode ? sortedTowers : sortedTowers.slice(
-    (page - 1) * rowsPerPage,
-    page * rowsPerPage,
-  );
+  const paginatedTowers = isApiMode
+    ? sortedTowers
+    : sortedTowers.slice((page - 1) * rowsPerPage, page * rowsPerPage);
 
   const totalResults = isApiMode ? totalCount : filteredTowers.length;
 
@@ -249,35 +261,12 @@ export default function GetTower() {
         sx={{
           mb: 4,
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "end",
           alignItems: "center",
           flexWrap: "wrap",
           gap: 2,
         }}
       >
-        <Box>
-          <Typography
-            variant="h4"
-            fontWeight="bold"
-            sx={{ mb: 1, color: "#091542" }}
-          >
-            Towers
-          </Typography>
-          <Breadcrumbs separator=">" aria-label="breadcrumb">
-            <Link
-              underline="hover"
-              color="inherit"
-              onClick={() => navigate("/")}
-              sx={{ cursor: "pointer" }}
-            >
-              Dashboard
-            </Link>
-            <Typography color="text.primary">Setup</Typography>
-            <Typography color="text.primary" fontWeight="600">
-              Towers
-            </Typography>
-          </Breadcrumbs>
-        </Box>
         <Button
           variant="contained"
           startIcon={<AddIcon />}

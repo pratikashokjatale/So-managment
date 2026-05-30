@@ -140,24 +140,8 @@ export default function EditGuest() {
     <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: '#ffffff', minHeight: '100vh', borderRadius: 2 }}>
       
       {/* Header Section */}
-      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Box>
-          <Typography variant="h4" fontWeight="bold" sx={{ color: '#091542', mb: 1 }}>
-            Edit Guest Pass
-          </Typography>
-          <Breadcrumbs separator=">" aria-label="breadcrumb">
-            <Link underline="hover" color="inherit" onClick={() => navigate('/')} sx={{ cursor: 'pointer' }}>
-              Dashboard
-            </Link>
-            <Link underline="hover" color="inherit" onClick={() => navigate('/guest')} sx={{ cursor: 'pointer' }}>
-              Guests
-            </Link>
-            <Link underline="hover" color="inherit" onClick={() => navigate(`/guest/${id}`)} sx={{ cursor: 'pointer' }}>
-              {name}
-            </Link>
-            <Typography color="text.primary" fontWeight="600">Edit</Typography>
-          </Breadcrumbs>
-        </Box>
+      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
+        
         <BackButton to={`/guest/${id}`} label="Cancel Edit" />
       </Box>
 

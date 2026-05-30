@@ -96,40 +96,11 @@ export default function AddProject() {
         sx={{
           mb: 4,
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "end",
           alignItems: "center",
         }}
       >
-        <Box>
-          <Typography
-            variant="h4"
-            fontWeight="bold"
-            sx={{ color: "#091542", mb: 1 }}
-          >
-            Add New Project
-          </Typography>
-          <Breadcrumbs separator=">" aria-label="breadcrumb">
-            <Link
-              underline="hover"
-              color="inherit"
-              onClick={() => navigate("/")}
-              sx={{ cursor: "pointer" }}
-            >
-              Dashboard
-            </Link>
-            <Link
-              underline="hover"
-              color="inherit"
-              onClick={() => navigate("/project")}
-              sx={{ cursor: "pointer" }}
-            >
-              Projects
-            </Link>
-            <Typography color="text.primary" fontWeight="600">
-              Add Project
-            </Typography>
-          </Breadcrumbs>
-        </Box>
+        
         <BackButton to="/project" label="Back to Projects" />
       </Box>
 

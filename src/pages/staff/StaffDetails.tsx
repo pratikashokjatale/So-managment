@@ -111,18 +111,9 @@ export default function StaffDetails() {
     <Box sx={{ p: { xs: 2, md: 5 }, bgcolor: '#f8fafc', minHeight: '100vh' }}>
       
       {/* Header Section */}
-      <Box sx={{ mb: 5, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
+      <Box sx={{ mb: 5, display: 'flex', justifyContent: 'end', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
         <Box>
-          <Breadcrumbs separator="›" aria-label="breadcrumb" sx={{ mb: 1 }}>
-            <Link underline="hover" color="inherit" onClick={() => navigate('/')} sx={{ cursor: 'pointer', fontWeight: 700 }}>
-              Dashboard
-            </Link>
-            <Link underline="hover" color="inherit" onClick={() => navigate('/staff')} sx={{ cursor: 'pointer', fontWeight: 700 }}>
-              Staff Management
-            </Link>
-            <Typography color="text.primary" sx={{ fontWeight: 900 }}>{staff.name}</Typography>
-          </Breadcrumbs>
-          <Typography variant="h3" fontWeight="900" color="#091542">Staff Details</Typography>
+<Typography variant="h3" fontWeight="900" color="#091542">Staff Details</Typography>
         </Box>
         <Stack direction="row" spacing={2}>
           <Button 

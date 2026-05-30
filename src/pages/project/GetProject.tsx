@@ -183,35 +183,13 @@ export default function GetProject() {
         sx={{
           mb: 4,
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "end",
           alignItems: "center",
           flexWrap: "wrap",
           gap: 2,
         }}
       >
-        <Box>
-          <Typography
-            variant="h4"
-            fontWeight="bold"
-            sx={{ mb: 1, color: "#091542" }}
-          >
-            Projects
-          </Typography>
-          <Breadcrumbs separator=">" aria-label="breadcrumb">
-            <Link
-              underline="hover"
-              color="inherit"
-              onClick={() => navigate("/")}
-              sx={{ cursor: "pointer" }}
-            >
-              Dashboard
-            </Link>
-            <Typography color="text.primary">Setup</Typography>
-            <Typography color="text.primary" fontWeight="600">
-              Projects
-            </Typography>
-          </Breadcrumbs>
-        </Box>
+        
         <Button
           variant="contained"
           startIcon={<AddIcon />}

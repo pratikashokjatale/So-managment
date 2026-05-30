@@ -69,21 +69,8 @@ export default function GuestDetails() {
     <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: '#ffffff', minHeight: '100vh', borderRadius: 2 }}>
       
       {/* Header Section */}
-      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 2 }}>
-        <Box>
-          <Typography variant="h4" fontWeight="bold" sx={{ color: '#091542', mb: 1 }}>
-            Guest Pass Details
-          </Typography>
-          <Breadcrumbs separator=">" aria-label="breadcrumb">
-            <Link underline="hover" color="inherit" onClick={() => navigate('/')} sx={{ cursor: 'pointer' }}>
-              Dashboard
-            </Link>
-            <Link underline="hover" color="inherit" onClick={() => navigate('/guest')} sx={{ cursor: 'pointer' }}>
-              Guests
-            </Link>
-            <Typography color="text.primary" fontWeight="600">{guest.name}</Typography>
-          </Breadcrumbs>
-        </Box>
+      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'end', alignItems: 'flex-start', flexWrap: 'wrap', gap: 2 }}>
+        
 
         <Stack direction="row" spacing={2}>
           <Button

@@ -102,21 +102,8 @@ export default function AddTower() {
     <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: '#ffffff', minHeight: '100vh', borderRadius: '12px' }}>
       
       {/* Header */}
-      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Box>
-          <Typography variant="h4" fontWeight="bold" sx={{ color: '#091542', mb: 1 }}>
-            Add New Tower
-          </Typography>
-          <Breadcrumbs separator=">" aria-label="breadcrumb">
-            <Link underline="hover" color="inherit" onClick={() => navigate('/')} sx={{ cursor: 'pointer' }}>
-              Dashboard
-            </Link>
-            <Link underline="hover" color="inherit" onClick={() => navigate('/tower')} sx={{ cursor: 'pointer' }}>
-              Towers
-            </Link>
-            <Typography color="text.primary" fontWeight="600">Add Tower</Typography>
-          </Breadcrumbs>
-        </Box>
+      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
+        
         <BackButton 
           to={queryProjectId ? `/project/${queryProjectId}` : '/tower'} 
           label={queryProjectId ? 'Back to Project' : 'Back to Towers'} 

@@ -1,30 +1,48 @@
-import { useState, useEffect } from 'react';
-import { 
-  Box, Typography, Button, Table, TableBody, TableCell, 
-  TableContainer, TableHead, TableRow, IconButton, Breadcrumbs, 
-  Link, Paper, Grid, Card, CardContent, Divider, Dialog,
-  DialogTitle, DialogContent, DialogContentText, DialogActions
-} from '@mui/material';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import {
+  Box,
+  Typography,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  IconButton,
+  Breadcrumbs,
+  Link,
+  Paper,
+  Grid,
+  Card,
+  CardContent,
+  Divider,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+} from "@mui/material";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   EditOutlined as EditOutlinedIcon,
   DeleteOutline as DeleteIcon,
   DoorBackSharp as FlatIcon,
-  Add as AddIcon
-} from '@mui/icons-material';
+  Add as AddIcon,
+} from "@mui/icons-material";
 
-import Pagination from '@/components/Pagination';
-import BackButton from '@/components/BackButton';
-import { getTowers, getFlats, deleteFlat } from '@/utils/setupStore';
-import { getTowerDetailsApi } from '@/apis/tower';
-import { getFlatsApi, deleteFlatApi } from '@/apis/flat';
-import { CircularProgress } from '@mui/material';
-import { toast } from 'react-hot-toast';
+import Pagination from "@/components/Pagination";
+import BackButton from "@/components/BackButton";
+import { getTowers, getFlats, deleteFlat } from "@/utils/setupStore";
+import { getTowerDetailsApi } from "@/apis/tower";
+import { getFlatsApi, deleteFlatApi } from "@/apis/flat";
+import { CircularProgress } from "@mui/material";
+import { toast } from "react-hot-toast";
 
 export default function TowerDetails() {
   const navigate = useNavigate();
   const { id } = useParams();
-  
+
   const [tower, setTower] = useState<any | null>(null);
   const [towerFlats, setTowerFlats] = useState<any[]>([]);
   const [deleteFlatId, setDeleteFlatId] = useState<string | null>(null);
@@ -55,19 +73,23 @@ export default function TowerDetails() {
           const projName = foundTower.Project?.name || foundTower.projectName;
           setTower({
             ...foundTower,
-            projectName: projName
+            projectName: projName,
           });
-          
+
           // Retrieve flats from API
           try {
             const flatsRes = await getFlatsApi(id, { page: 1, limit: 100 });
             const _frd = flatsRes?.data;
-            const list = (Array.isArray(_frd?.data?.data) ? _frd.data.data : null) || (Array.isArray(_frd?.data) ? _frd.data : null) || _frd?.flats || [];
+            const list =
+              (Array.isArray(_frd?.data?.data) ? _frd.data.data : null) ||
+              (Array.isArray(_frd?.data) ? _frd.data : null) ||
+              _frd?.flats ||
+              [];
             const mappedFlats = list.map((f: any) => {
-              let normStatus = f.status || 'Vacant';
-              if (normStatus === 'VACANT') normStatus = 'Vacant';
-              else if (normStatus === 'OCCUPIED') normStatus = 'Occupied';
-              else if (normStatus === 'MAINTENANCE') normStatus = 'Maintenance';
+              let normStatus = f.status || "Vacant";
+              if (normStatus === "VACANT") normStatus = "Vacant";
+              else if (normStatus === "OCCUPIED") normStatus = "Occupied";
+              else if (normStatus === "MAINTENANCE") normStatus = "Maintenance";
 
               return {
                 id: f.id,
@@ -76,30 +98,36 @@ export default function TowerDetails() {
                 number: f.flatNumber || f.number,
                 floor: f.floorNumber || f.floor,
                 type: f.flatType || f.type,
-                status: normStatus
+                status: normStatus,
               };
             });
             setTowerFlats(mappedFlats);
           } catch (flatErr) {
-            console.warn("Failed to fetch tower flats via API, performing local fallback:", flatErr);
+            console.warn(
+              "Failed to fetch tower flats via API, performing local fallback:",
+              flatErr,
+            );
             const flats = getFlats();
-            setTowerFlats(flats.filter(f => f.towerId === id));
+            setTowerFlats(flats.filter((f) => f.towerId === id));
           }
           setPage(1);
         } else {
           throw new Error("Tower details empty");
         }
       } catch (error) {
-        console.warn("Failed to fetch tower details via API, performing local storage fallback:", error);
+        console.warn(
+          "Failed to fetch tower details via API, performing local storage fallback:",
+          error,
+        );
         const towers = getTowers();
-        const foundTower = towers.find(t => t.id === id);
+        const foundTower = towers.find((t) => t.id === id);
         if (foundTower) {
           setTower(foundTower);
           const flats = getFlats();
-          setTowerFlats(flats.filter(f => f.towerId === id));
+          setTowerFlats(flats.filter((f) => f.towerId === id));
           setPage(1);
         } else {
-          navigate('/tower');
+          navigate("/tower");
         }
       } finally {
         setLoading(false);
@@ -121,12 +149,16 @@ export default function TowerDetails() {
         try {
           const flatsRes = await getFlatsApi(id!, { page: 1, limit: 100 });
           const _frd = flatsRes?.data;
-          const list = (Array.isArray(_frd?.data?.data) ? _frd.data.data : null) || (Array.isArray(_frd?.data) ? _frd.data : null) || _frd?.flats || [];
+          const list =
+            (Array.isArray(_frd?.data?.data) ? _frd.data.data : null) ||
+            (Array.isArray(_frd?.data) ? _frd.data : null) ||
+            _frd?.flats ||
+            [];
           const mappedFlats = list.map((f: any) => {
-            let normStatus = f.status || 'Vacant';
-            if (normStatus === 'VACANT') normStatus = 'Vacant';
-            else if (normStatus === 'OCCUPIED') normStatus = 'Occupied';
-            else if (normStatus === 'MAINTENANCE') normStatus = 'Maintenance';
+            let normStatus = f.status || "Vacant";
+            if (normStatus === "VACANT") normStatus = "Vacant";
+            else if (normStatus === "OCCUPIED") normStatus = "Occupied";
+            else if (normStatus === "MAINTENANCE") normStatus = "Maintenance";
 
             return {
               id: f.id,
@@ -135,18 +167,21 @@ export default function TowerDetails() {
               number: f.flatNumber || f.number,
               floor: f.floorNumber || f.floor,
               type: f.flatType || f.type,
-              status: normStatus
+              status: normStatus,
             };
           });
           setTowerFlats(mappedFlats);
         } catch {
-          setTowerFlats(prev => prev.filter(f => f.id !== deleteFlatId));
+          setTowerFlats((prev) => prev.filter((f) => f.id !== deleteFlatId));
         }
       } catch (error: any) {
-        console.warn("API flat deletion failed, performing local storage fallback:", error);
+        console.warn(
+          "API flat deletion failed, performing local storage fallback:",
+          error,
+        );
         deleteFlat(deleteFlatId);
         toast.success("Flat deleted successfully (offline fallback)");
-        setTowerFlats(getFlats().filter(f => f.towerId === id));
+        setTowerFlats(getFlats().filter((f) => f.towerId === id));
       }
       setDeleteFlatId(null);
     }
@@ -154,7 +189,14 @@ export default function TowerDetails() {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "50vh",
+        }}
+      >
         <CircularProgress />
       </Box>
     );
@@ -165,97 +207,134 @@ export default function TowerDetails() {
   }
 
   // Count occupancy
-  const occupiedCount = towerFlats.filter(f => f.status === 'Occupied').length;
-  const vacantCount = towerFlats.filter(f => f.status === 'Vacant').length;
-  const maintenanceCount = towerFlats.filter(f => f.status === 'Maintenance').length;
+  const occupiedCount = towerFlats.filter(
+    (f) => f.status === "Occupied",
+  ).length;
+  const vacantCount = towerFlats.filter((f) => f.status === "Vacant").length;
+  const maintenanceCount = towerFlats.filter(
+    (f) => f.status === "Maintenance",
+  ).length;
 
-  const paginatedFlats = towerFlats.slice((page - 1) * rowsPerPage, page * rowsPerPage);
+  const paginatedFlats = towerFlats.slice(
+    (page - 1) * rowsPerPage,
+    page * rowsPerPage,
+  );
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'Occupied': return { bg: '#eff6ff', text: '#1d4ed8', border: '#bfdbfe' }; // blue
-      case 'Vacant': return { bg: '#ecfdf5', text: '#047857', border: '#a7f3d0' }; // green
-      case 'Maintenance': return { bg: '#fffbeb', text: '#b45309', border: '#fde68a' }; // amber
-      default: return { bg: '#f8fafc', text: 'text.secondary', border: '#e2e8f0' };
+      case "Occupied":
+        return { bg: "#eff6ff", text: "#1d4ed8", border: "#bfdbfe" }; // blue
+      case "Vacant":
+        return { bg: "#ecfdf5", text: "#047857", border: "#a7f3d0" }; // green
+      case "Maintenance":
+        return { bg: "#fffbeb", text: "#b45309", border: "#fde68a" }; // amber
+      default:
+        return { bg: "#f8fafc", text: "text.secondary", border: "#e2e8f0" };
     }
   };
 
   return (
-    <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: '#ffffff', minHeight: '100vh', borderRadius: '12px' }}>
-      
-      {/* Header */}
-      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 2 }}>
-        <Box>
-          <Typography variant="h4" fontWeight="bold" sx={{ color: '#091542', mb: 1 }}>
-            {tower.name}
-          </Typography>
-          <Breadcrumbs separator=">" aria-label="breadcrumb">
-            <Link underline="hover" color="inherit" onClick={() => navigate('/')} sx={{ cursor: 'pointer' }}>
-              Dashboard
-            </Link>
-            <Link underline="hover" color="inherit" onClick={() => navigate('/tower')} sx={{ cursor: 'pointer' }}>
-              Towers
-            </Link>
-            <Typography color="text.primary" fontWeight="600">{tower.name} Details</Typography>
-          </Breadcrumbs>
-        </Box>
-        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-          <Button 
-            variant="outlined" 
-            startIcon={<EditOutlinedIcon />}
-            onClick={() => navigate(`/tower/edit/${tower.id}`)}
-            sx={{ borderRadius: '8px', textTransform: 'none', px: 2.5, fontWeight: 600, borderColor: '#e0e0e0', color: 'text.primary' }}
-          >
-            Edit Tower
-          </Button>
-          <Button 
-            variant="contained" 
-            startIcon={<AddIcon />}
-            onClick={() => navigate(`/flat/add?towerId=${tower.id}`)}
-            sx={{ borderRadius: '8px', textTransform: 'none', px: 2.5, fontWeight: 600, boxShadow: 'none', bgcolor: '#0047b3', '&:hover': { bgcolor: '#003380' } }}
-          >
-            Add Flat
-          </Button>
-          <BackButton to="/tower" label="Back to Towers" />
-        </Box>
-      </Box>
-
+    <Box
+      sx={{
+        p: { xs: 2, md: 4 },
+        bgcolor: "#ffffff",
+        minHeight: "100vh",
+        borderRadius: "12px",
+      }}
+    >
       {/* Details Area */}
       <Grid container spacing={4} sx={{ mb: 5 }}>
-        
         {/* Tower Info Card */}
         <Grid size={{ xs: 12, md: 6 }}>
-          <Paper elevation={0} sx={{ p: 4, border: '1px solid #f0f0f0', borderRadius: '16px', height: '100%' }}>
-            <Typography variant="h6" fontWeight="bold" color="#091542" sx={{ mb: 2 }}>
+          <Paper
+            elevation={0}
+            sx={{
+              p: 4,
+              border: "1px solid #f0f0f0",
+              borderRadius: "16px",
+              height: "100%",
+            }}
+          >
+            <Typography
+              variant="h6"
+              fontWeight="bold"
+              color="#091542"
+              sx={{ mb: 2 }}
+            >
               Tower Information
             </Typography>
-            
+
             <Grid container spacing={3}>
               <Grid size={{ xs: 6 }}>
-                <Typography variant="caption" color="text.secondary" fontWeight="600" display="block">TOWER NAME</Typography>
-                <Typography variant="body1" fontWeight="700" color="#091542">{tower.name}</Typography>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  fontWeight="600"
+                  display="block"
+                >
+                  TOWER NAME
+                </Typography>
+                <Typography variant="body1" fontWeight="700" color="#091542">
+                  {tower.name}
+                </Typography>
               </Grid>
               <Grid size={{ xs: 6 }}>
-                <Typography variant="caption" color="text.secondary" fontWeight="600" display="block">PROJECT NAME</Typography>
-                <Typography variant="body1" fontWeight="700" color="#0047b3">{tower.projectName}</Typography>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  fontWeight="600"
+                  display="block"
+                >
+                  PROJECT NAME
+                </Typography>
+                <Typography variant="body1" fontWeight="700" color="#0047b3">
+                  {tower.projectName}
+                </Typography>
               </Grid>
               <Grid size={{ xs: 6 }}>
-                <Typography variant="caption" color="text.secondary" fontWeight="600" display="block">TOTAL FLOORS</Typography>
-                <Typography variant="body1" fontWeight="700">{tower.totalFloors !== undefined ? tower.totalFloors : tower.floorsCount} Floors</Typography>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  fontWeight="600"
+                  display="block"
+                >
+                  TOTAL FLOORS
+                </Typography>
+                <Typography variant="body1" fontWeight="700">
+                  {tower.totalFloors !== undefined
+                    ? tower.totalFloors
+                    : tower.floorsCount}{" "}
+                  Floors
+                </Typography>
               </Grid>
               <Grid size={{ xs: 6 }}>
-                <Typography variant="caption" color="text.secondary" fontWeight="600" display="block">STATUS</Typography>
-                <Box 
-                  sx={{ 
-                    display: 'inline-flex', 
-                    px: 1.5, 
-                    py: 0.5, 
-                    borderRadius: '6px', 
-                    fontSize: '0.75rem', 
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  fontWeight="600"
+                  display="block"
+                >
+                  STATUS
+                </Typography>
+                <Box
+                  sx={{
+                    display: "inline-flex",
+                    px: 1.5,
+                    py: 0.5,
+                    borderRadius: "6px",
+                    fontSize: "0.75rem",
                     fontWeight: 700,
                     mt: 0.5,
-                    bgcolor: (tower.status?.toUpperCase() === 'ACTIVE' || tower.status === 'Active') ? '#ecfdf5' : '#fef2f2',
-                    color: (tower.status?.toUpperCase() === 'ACTIVE' || tower.status === 'Active') ? '#10b981' : '#ef4444'
+                    bgcolor:
+                      tower.status?.toUpperCase() === "ACTIVE" ||
+                      tower.status === "Active"
+                        ? "#ecfdf5"
+                        : "#fef2f2",
+                    color:
+                      tower.status?.toUpperCase() === "ACTIVE" ||
+                      tower.status === "Active"
+                        ? "#10b981"
+                        : "#ef4444",
                   }}
                 >
                   {tower.status}
@@ -265,9 +344,21 @@ export default function TowerDetails() {
                 <Divider sx={{ my: 1 }} />
               </Grid>
               <Grid size={{ xs: 12 }}>
-                <Typography variant="caption" color="text.secondary" fontWeight="600" display="block">DESCRIPTION</Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, lineHeight: 1.6 }}>
-                  {tower.description || 'No description provided for this tower.'}
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  fontWeight="600"
+                  display="block"
+                >
+                  DESCRIPTION
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ mt: 0.5, lineHeight: 1.6 }}
+                >
+                  {tower.description ||
+                    "No description provided for this tower."}
                 </Typography>
               </Grid>
             </Grid>
@@ -276,35 +367,120 @@ export default function TowerDetails() {
 
         {/* Dynamic Occupancy Stats */}
         <Grid size={{ xs: 12, md: 6 }}>
-          <Paper elevation={0} sx={{ p: 4, border: '1px solid #f0f0f0', borderRadius: '16px', height: '100%' }}>
-            <Typography variant="h6" fontWeight="bold" color="#091542" sx={{ mb: 2 }}>
+          <Paper
+            elevation={0}
+            sx={{
+              p: 4,
+              border: "1px solid #f0f0f0",
+              borderRadius: "16px",
+              height: "100%",
+            }}
+          >
+            <Typography
+              variant="h6"
+              fontWeight="bold"
+              color="#091542"
+              sx={{ mb: 2 }}
+            >
               Occupancy Statistics
             </Typography>
-            
+
             <Grid container spacing={2}>
               <Grid size={{ xs: 12 }}>
-                <Card sx={{ bgcolor: '#eff6ff', borderRadius: '12px', boxShadow: 'none', border: '1px solid #bfdbfe' }}>
-                  <CardContent sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', py: 1.5, px: 2, '&:last-child': { pb: 1.5 } }}>
-                    <Typography variant="subtitle2" fontWeight="700" color="#1d4ed8">Occupied Flats</Typography>
-                    <Typography variant="h6" fontWeight="800" color="#1d4ed8">{occupiedCount}</Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-              
-              <Grid size={{ xs: 12 }}>
-                <Card sx={{ bgcolor: '#ecfdf5', borderRadius: '12px', boxShadow: 'none', border: '1px solid #a7f3d0' }}>
-                  <CardContent sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', py: 1.5, px: 2, '&:last-child': { pb: 1.5 } }}>
-                    <Typography variant="subtitle2" fontWeight="700" color="#047857">Vacant Flats</Typography>
-                    <Typography variant="h6" fontWeight="800" color="#047857">{vacantCount}</Typography>
+                <Card
+                  sx={{
+                    bgcolor: "#eff6ff",
+                    borderRadius: "12px",
+                    boxShadow: "none",
+                    border: "1px solid #bfdbfe",
+                  }}
+                >
+                  <CardContent
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      py: 1.5,
+                      px: 2,
+                      "&:last-child": { pb: 1.5 },
+                    }}
+                  >
+                    <Typography
+                      variant="subtitle2"
+                      fontWeight="700"
+                      color="#1d4ed8"
+                    >
+                      Occupied Flats
+                    </Typography>
+                    <Typography variant="h6" fontWeight="800" color="#1d4ed8">
+                      {occupiedCount}
+                    </Typography>
                   </CardContent>
                 </Card>
               </Grid>
 
               <Grid size={{ xs: 12 }}>
-                <Card sx={{ bgcolor: '#fffbeb', borderRadius: '12px', boxShadow: 'none', border: '1px solid #fde68a' }}>
-                  <CardContent sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', py: 1.5, px: 2, '&:last-child': { pb: 1.5 } }}>
-                    <Typography variant="subtitle2" fontWeight="700" color="#b45309">Under Maintenance</Typography>
-                    <Typography variant="h6" fontWeight="800" color="#b45309">{maintenanceCount}</Typography>
+                <Card
+                  sx={{
+                    bgcolor: "#ecfdf5",
+                    borderRadius: "12px",
+                    boxShadow: "none",
+                    border: "1px solid #a7f3d0",
+                  }}
+                >
+                  <CardContent
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      py: 1.5,
+                      px: 2,
+                      "&:last-child": { pb: 1.5 },
+                    }}
+                  >
+                    <Typography
+                      variant="subtitle2"
+                      fontWeight="700"
+                      color="#047857"
+                    >
+                      Vacant Flats
+                    </Typography>
+                    <Typography variant="h6" fontWeight="800" color="#047857">
+                      {vacantCount}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+
+              <Grid size={{ xs: 12 }}>
+                <Card
+                  sx={{
+                    bgcolor: "#fffbeb",
+                    borderRadius: "12px",
+                    boxShadow: "none",
+                    border: "1px solid #fde68a",
+                  }}
+                >
+                  <CardContent
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      py: 1.5,
+                      px: 2,
+                      "&:last-child": { pb: 1.5 },
+                    }}
+                  >
+                    <Typography
+                      variant="subtitle2"
+                      fontWeight="700"
+                      color="#b45309"
+                    >
+                      Under Maintenance
+                    </Typography>
+                    <Typography variant="h6" fontWeight="800" color="#b45309">
+                      {maintenanceCount}
+                    </Typography>
                   </CardContent>
                 </Card>
               </Grid>
@@ -315,19 +491,47 @@ export default function TowerDetails() {
 
       {/* Flats List Inside Tower */}
       <Box sx={{ mt: 6 }}>
-        <Typography variant="h5" fontWeight="bold" color="#091542" sx={{ mb: 3 }}>
+        <Typography
+          variant="h5"
+          fontWeight="bold"
+          color="#091542"
+          sx={{ mb: 3 }}
+        >
           Flats in {tower.name}
         </Typography>
 
-        <TableContainer sx={{ border: '1px solid #f0f0f0', borderRadius: '12px', overflow: 'hidden' }}>
+        <TableContainer
+          sx={{
+            border: "1px solid #f0f0f0",
+            borderRadius: "12px",
+            overflow: "hidden",
+          }}
+        >
           <Table sx={{ minWidth: 800 }}>
-            <TableHead sx={{ bgcolor: '#f8fafc' }}>
+            <TableHead sx={{ bgcolor: "#f8fafc" }}>
               <TableRow>
-                <TableCell sx={{ color: '#091542', fontWeight: 700, py: 2 }}>Flat Number</TableCell>
-                <TableCell sx={{ color: '#091542', fontWeight: 700, py: 2 }}>Floor</TableCell>
-                <TableCell sx={{ color: '#091542', fontWeight: 700, py: 2 }}>Flat Type</TableCell>
-                <TableCell sx={{ color: '#091542', fontWeight: 700, py: 2 }}>Occupancy Status</TableCell>
-                <TableCell sx={{ color: '#091542', fontWeight: 700, py: 2, textAlign: 'right' }}>Actions</TableCell>
+                <TableCell sx={{ color: "#091542", fontWeight: 700, py: 2 }}>
+                  Flat Number
+                </TableCell>
+                <TableCell sx={{ color: "#091542", fontWeight: 700, py: 2 }}>
+                  Floor
+                </TableCell>
+                <TableCell sx={{ color: "#091542", fontWeight: 700, py: 2 }}>
+                  Flat Type
+                </TableCell>
+                <TableCell sx={{ color: "#091542", fontWeight: 700, py: 2 }}>
+                  Occupancy Status
+                </TableCell>
+                <TableCell
+                  sx={{
+                    color: "#091542",
+                    fontWeight: 700,
+                    py: 2,
+                    textAlign: "right",
+                  }}
+                >
+                  Actions
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -335,47 +539,77 @@ export default function TowerDetails() {
                 const colors = getStatusColor(flat.status);
 
                 return (
-                  <TableRow key={flat.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                    <TableCell sx={{ py: 2, fontWeight: 700, color: '#0047b3', borderBottomColor: '#f0f0f0' }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                        <FlatIcon sx={{ color: 'text.secondary' }} />
-                        <Typography variant="body2" fontWeight="700">{flat.number}</Typography>
+                  <TableRow
+                    key={flat.id}
+                    hover
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    <TableCell
+                      sx={{
+                        py: 2,
+                        fontWeight: 700,
+                        color: "#0047b3",
+                        borderBottomColor: "#f0f0f0",
+                      }}
+                    >
+                      <Box
+                        sx={{ display: "flex", alignItems: "center", gap: 1.5 }}
+                      >
+                        <FlatIcon sx={{ color: "text.secondary" }} />
+                        <Typography variant="body2" fontWeight="700">
+                          {flat.number}
+                        </Typography>
                       </Box>
                     </TableCell>
-                    <TableCell sx={{ py: 2, borderBottomColor: '#f0f0f0', fontWeight: 600 }}>
+                    <TableCell
+                      sx={{
+                        py: 2,
+                        borderBottomColor: "#f0f0f0",
+                        fontWeight: 600,
+                      }}
+                    >
                       {flat.floor}
                     </TableCell>
-                    <TableCell sx={{ py: 2, borderBottomColor: '#f0f0f0', fontWeight: 600 }}>
+                    <TableCell
+                      sx={{
+                        py: 2,
+                        borderBottomColor: "#f0f0f0",
+                        fontWeight: 600,
+                      }}
+                    >
                       {flat.type}
                     </TableCell>
-                    <TableCell sx={{ py: 2, borderBottomColor: '#f0f0f0' }}>
-                      <Box 
-                        sx={{ 
-                          display: 'inline-flex', 
-                          px: 1.5, 
-                          py: 0.5, 
-                          borderRadius: '6px', 
-                          fontSize: '0.75rem', 
+                    <TableCell sx={{ py: 2, borderBottomColor: "#f0f0f0" }}>
+                      <Box
+                        sx={{
+                          display: "inline-flex",
+                          px: 1.5,
+                          py: 0.5,
+                          borderRadius: "6px",
+                          fontSize: "0.75rem",
                           fontWeight: 700,
                           bgcolor: colors.bg,
                           color: colors.text,
-                          border: `1px solid ${colors.border}`
+                          border: `1px solid ${colors.border}`,
                         }}
                       >
                         {flat.status}
                       </Box>
                     </TableCell>
-                    <TableCell align="right" sx={{ py: 2, borderBottomColor: '#f0f0f0' }}>
-                      <IconButton 
-                        size="small" 
-                        sx={{ color: 'text.secondary', mr: 1 }} 
+                    <TableCell
+                      align="right"
+                      sx={{ py: 2, borderBottomColor: "#f0f0f0" }}
+                    >
+                      <IconButton
+                        size="small"
+                        sx={{ color: "text.secondary", mr: 1 }}
                         onClick={() => navigate(`/flat/edit/${flat.id}`)}
                       >
                         <EditOutlinedIcon fontSize="small" />
                       </IconButton>
-                      <IconButton 
-                        size="small" 
-                        sx={{ color: 'error.main' }}
+                      <IconButton
+                        size="small"
+                        sx={{ color: "error.main" }}
                         onClick={() => handleDeleteFlatClick(flat.id)}
                       >
                         <DeleteIcon fontSize="small" />
@@ -387,14 +621,22 @@ export default function TowerDetails() {
               {towerFlats.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={6} align="center" sx={{ py: 6 }}>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ mb: 2 }}
+                    >
                       No flats registered inside this tower yet.
                     </Typography>
-                    <Button 
-                      variant="outlined" 
-                      startIcon={<AddIcon />} 
+                    <Button
+                      variant="outlined"
+                      startIcon={<AddIcon />}
                       onClick={() => navigate(`/flat/add?towerId=${tower.id}`)}
-                      sx={{ textTransform: 'none', borderRadius: '8px', fontWeight: 600 }}
+                      sx={{
+                        textTransform: "none",
+                        borderRadius: "8px",
+                        fontWeight: 600,
+                      }}
                     >
                       Register First Flat
                     </Button>
@@ -408,12 +650,12 @@ export default function TowerDetails() {
         {/* Pagination Section */}
         {towerFlats.length > 0 && (
           <Box sx={{ mt: 2 }}>
-            <Pagination 
-              page={page} 
-              totalResults={towerFlats.length} 
-              rowsPerPage={rowsPerPage} 
-              onPageChange={handlePageChange} 
-              onRowsPerPageChange={handleRowsPerPageChange} 
+            <Pagination
+              page={page}
+              totalResults={towerFlats.length}
+              rowsPerPage={rowsPerPage}
+              onPageChange={handlePageChange}
+              onRowsPerPageChange={handleRowsPerPageChange}
               rowsPerPageOptions={[5, 10, 20, 50]}
             />
           </Box>
@@ -422,30 +664,43 @@ export default function TowerDetails() {
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={!!deleteFlatId} onClose={() => setDeleteFlatId(null)}>
-        <DialogTitle sx={{ fontWeight: 'bold', color: '#091542' }}>Delete Flat?</DialogTitle>
+        <DialogTitle sx={{ fontWeight: "bold", color: "#091542" }}>
+          Delete Flat?
+        </DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to permanently delete this flat? This action cannot be undone and will clear all occupant records.
+            Are you sure you want to permanently delete this flat? This action
+            cannot be undone and will clear all occupant records.
           </DialogContentText>
         </DialogContent>
         <DialogActions sx={{ p: 2.5 }}>
-          <Button 
-            onClick={() => setDeleteFlatId(null)} 
-            sx={{ borderRadius: '8px', textTransform: 'none', px: 3, fontWeight: 600 }}
+          <Button
+            onClick={() => setDeleteFlatId(null)}
+            sx={{
+              borderRadius: "8px",
+              textTransform: "none",
+              px: 3,
+              fontWeight: 600,
+            }}
           >
             Cancel
           </Button>
-          <Button 
-            variant="contained" 
-            color="error" 
-            onClick={handleConfirmDeleteFlat} 
-            sx={{ borderRadius: '8px', textTransform: 'none', px: 3, fontWeight: 600, boxShadow: 'none' }}
+          <Button
+            variant="contained"
+            color="error"
+            onClick={handleConfirmDeleteFlat}
+            sx={{
+              borderRadius: "8px",
+              textTransform: "none",
+              px: 3,
+              fontWeight: 600,
+              boxShadow: "none",
+            }}
           >
             Delete Permanently
           </Button>
         </DialogActions>
       </Dialog>
-
     </Box>
   );
 }

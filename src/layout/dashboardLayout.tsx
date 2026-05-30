@@ -14,6 +14,8 @@ import {
   useMediaQuery,
   Collapse,
   IconButton,
+  Breadcrumbs,
+  Link,
 } from "@mui/material";
 import { 
   ExpandLess as ExpandLessIcon, 
@@ -22,6 +24,7 @@ import {
   Dashboard as DashboardIcon,
   PersonOutline as ProfileIcon,
   HelpOutline as SupportIcon,
+  NavigateNext as NavigateNextIcon,
 } from "@mui/icons-material";
 import { useAuth } from "@/contexts/AuthContext";
 import { useConfig } from "@/contexts/ConfigContext";
@@ -66,6 +69,56 @@ export default function DashboardLayout() {
   const location = useLocation();
   const { navType } = useConfig();
   const { isLoggedIn, isAdmin, isAuthLoading, logout, user } = useAuth();
+
+  const getBreadcrumbs = () => {
+    const paths = location.pathname.split("/").filter(Boolean);
+    if (paths.length === 0) {
+      return [{ text: "Dashboard", href: "/" }];
+    }
+
+    const items = [{ text: "Dashboard", href: "/" }];
+
+    // If it's one of the setup items
+    const firstSegment = paths[0];
+    if (["project", "tower", "flat"].includes(firstSegment)) {
+      items.push({ text: "Setup", href: "#" });
+    }
+
+    let currentPath = "";
+    paths.forEach((segment, index) => {
+      currentPath += `/${segment}`;
+      
+      let text = segment.charAt(0).toUpperCase() + segment.slice(1);
+      if (segment === "tower") text = "Towers";
+      if (segment === "flat") text = "Flats";
+      if (segment === "residents") text = "Residents";
+      if (segment === "membership") text = "Membership";
+      if (segment === "booking") text = "Booking";
+      if (segment === "payment") text = "Payment";
+      if (segment === "facility") text = "Facility";
+      if (segment === "gate") text = "Gate Entry";
+      if (segment === "guest") text = "Guest";
+      if (segment === "staff") text = "Staff";
+      if (segment === "announcements") text = "Announcements";
+      if (segment === "report") text = "Report";
+      if (segment === "profile") text = "Profile";
+      if (segment === "support") text = "Support";
+      
+      // If it's numeric or has uuid format, show "Details"
+      if (!isNaN(Number(segment)) || segment.length > 15) {
+        text = "Details";
+      }
+
+      items.push({
+        text,
+        href: index === paths.length - 1 ? "" : currentPath
+      });
+    });
+
+    return items;
+  };
+
+  const breadcrumbs = getBreadcrumbs();
 
   const currentDrawerWidth = isMobile ? 280 : (desktopOpen ? 280 : 88);
 
@@ -411,6 +464,48 @@ export default function DashboardLayout() {
       </Box>
 
       <Box component="main" sx={{ flexGrow: 1, pt: { xs: "98px", md: "114px" }, pb: { xs: 3, md: 5 }, px: { xs: 2, md: 4 }, width: { md: `calc(100% - ${currentDrawerWidth}px)` }, transition: theme.transitions.create(["width", "margin"], { easing: theme.transitions.easing.sharp, duration: theme.transitions.duration.enteringScreen }) }}>
+        <Breadcrumbs 
+          separator={<NavigateNextIcon fontSize="small" sx={{ color: "#94a3b8" }} />} 
+          aria-label="breadcrumb"
+          sx={{ mb: 3 }}
+        >
+          {breadcrumbs.map((item, idx) => {
+            const isLast = idx === breadcrumbs.length - 1;
+            return isLast ? (
+              <Typography 
+                key={idx} 
+                sx={{ 
+                  color: "#0f172a", 
+                  fontWeight: 600,
+                  fontSize: "0.875rem"
+                }}
+              >
+                {item.text}
+              </Typography>
+            ) : (
+              <Link
+                key={idx}
+                underline="hover"
+                sx={{ 
+                  color: "#64748b", 
+                  fontWeight: 500,
+                  fontSize: "0.875rem",
+                  cursor: item.href === "#" ? "default" : "pointer",
+                  display: "flex",
+                  alignItems: "center"
+                }}
+                onClick={() => {
+                  if (item.href && item.href !== "#") {
+                    navigate(item.href);
+                  }
+                }}
+              >
+                {item.text}
+              </Link>
+            );
+          })}
+        </Breadcrumbs>
+
         {!isAdmin && !isAllowedPath ? (
           <PageNotFound 
             title="Permission Denied" 

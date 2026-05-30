@@ -384,16 +384,7 @@ export default function BookingCalendar() {
         <Typography variant="h4" fontWeight="bold" sx={{ mb: 1, color: '#091542' }}>
           Bookings Calendar
         </Typography>
-        <Breadcrumbs separator=">" aria-label="breadcrumb">
-          <Link underline="hover" color="inherit" onClick={() => navigate('/')} sx={{ cursor: 'pointer' }}>
-            Dashboard
-          </Link>
-          <Link underline="hover" color="inherit" onClick={() => navigate('/booking')} sx={{ cursor: 'pointer' }}>
-            Bookings
-          </Link>
-          <Typography color="text.primary">Calendar</Typography>
-        </Breadcrumbs>
-      </Box>
+</Box>
 
       {/* Main Grid: Full Width Calendar */}
       <Box sx={{ position: 'relative' }}>

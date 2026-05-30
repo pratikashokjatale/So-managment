@@ -27,6 +27,8 @@ export const registerApi = async (data: RegisterPayload) => {
 export const getMeApi = async () => {
   try {
     const res = await api.get("auth/me");
+    console.log(res);
+    
     return res?.data;
   } catch (error) {
     throw handleApiError(error);

@@ -186,20 +186,7 @@ export default function GetProfile() {
         <Typography variant="h3" fontWeight="900" color="#091542" sx={{ mb: 1 }}>
           Profile
         </Typography>
-        <Breadcrumbs separator=">" sx={{ fontWeight: 600 }}>
-          <Link
-            underline="hover"
-            color="inherit"
-            onClick={() => navigate("/")}
-            sx={{ cursor: "pointer" }}
-          >
-            Dashboard
-          </Link>
-          <Typography color="text.primary" fontWeight="800">
-            User Account
-          </Typography>
-        </Breadcrumbs>
-      </Box>
+</Box>
 
       <Grid container spacing={4}>
         {/* Profile Card */}

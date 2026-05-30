@@ -133,21 +133,8 @@ export default function ProjectDetails() {
     <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: '#ffffff', minHeight: '100vh', borderRadius: '12px' }}>
       
       {/* Header */}
-      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 2 }}>
-        <Box>
-          <Typography variant="h4" fontWeight="bold" sx={{ color: '#091542', mb: 1 }}>
-            {project.name}
-          </Typography>
-          <Breadcrumbs separator=">" aria-label="breadcrumb">
-            <Link underline="hover" color="inherit" onClick={() => navigate('/')} sx={{ cursor: 'pointer' }}>
-              Dashboard
-            </Link>
-            <Link underline="hover" color="inherit" onClick={() => navigate('/project')} sx={{ cursor: 'pointer' }}>
-              Projects
-            </Link>
-            <Typography color="text.primary" fontWeight="600">{project.code}</Typography>
-          </Breadcrumbs>
-        </Box>
+      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'end', alignItems: 'flex-start', flexWrap: 'wrap', gap: 2 }}>
+        
         <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
           <Button 
             variant="outlined" 

@@ -232,13 +232,7 @@ export default function GetFacility() {
 
   return (
     <Box sx={{ p: { xs: 2, md: 5 }, bgcolor: "#f8fafc", minHeight: "100vh" }}>
-      <PageHeader
-        title="Facility Management"
-        breadcrumbs={[
-          { label: "Dashboard", link: "/" },
-          { label: "Facilities" },
-        ]}
-      ></PageHeader>
+
 
       <PageToolbar
         hideSearch={true}

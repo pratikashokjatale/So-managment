@@ -17,6 +17,7 @@ import {
   MailOutline as MailIcon,
   People as PeopleIcon,
   ShieldOutlined as ShieldIcon,
+  VpnKeyOutlined as KeyIcon,
 } from "@mui/icons-material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -221,6 +222,11 @@ const LoginPage = () => {
                 }
                 helperText={formik.touched.password && formik.errors.password}
                 InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <KeyIcon sx={{ color: "#64748b" }} />
+                    </InputAdornment>
+                  ),
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton onClick={handleTogglePassword} edge="end">

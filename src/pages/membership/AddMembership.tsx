@@ -18,20 +18,9 @@ export default function AddMembership() {
           <IconButton onClick={() => navigate('/membership')} sx={{ mr: 1, color: 'text.secondary' }}>
             <ArrowBackIcon />
           </IconButton>
-          <Typography variant="h4" fontWeight="bold" sx={{ color: '#091542' }}>
-            Add Membership
-          </Typography>
+          
         </Box>
-        <Breadcrumbs separator=">" aria-label="breadcrumb" sx={{ ml: 6 }}>
-          <Link underline="hover" color="inherit" onClick={() => navigate('/')} sx={{ cursor: 'pointer' }}>
-            Dashboard
-          </Link>
-          <Link underline="hover" color="inherit" onClick={() => navigate('/membership')} sx={{ cursor: 'pointer' }}>
-            Memberships
-          </Link>
-          <Typography color="text.primary">Add Membership</Typography>
-        </Breadcrumbs>
-      </Box>
+</Box>
 
       {/* Form Container */}
       <Paper elevation={0} sx={{ border: '1px solid #f0f0f0', borderRadius: 2, p: { xs: 3, md: 5 } }}>

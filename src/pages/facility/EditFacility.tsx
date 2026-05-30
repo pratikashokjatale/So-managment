@@ -295,28 +295,7 @@ export default function EditFacility() {
         sx={{ mb: 4 }}
       >
         <Box>
-          <Breadcrumbs separator="›" aria-label="breadcrumb" sx={{ mb: 1 }}>
-            <Link
-              underline="hover"
-              color="inherit"
-              onClick={() => navigate("/")}
-              sx={{ cursor: "pointer", fontWeight: 700 }}
-            >
-              Dashboard
-            </Link>
-            <Link
-              underline="hover"
-              color="inherit"
-              onClick={() => navigate("/facility")}
-              sx={{ cursor: "pointer", fontWeight: 700 }}
-            >
-              Facility Management
-            </Link>
-            <Typography color="text.primary" sx={{ fontWeight: 900 }}>
-              Edit Facility
-            </Typography>
-          </Breadcrumbs>
-          <Typography variant="h3" fontWeight="900" color="#091542">
+<Typography variant="h3" fontWeight="900" color="#091542">
             Edit Facility
           </Typography>
         </Box>

@@ -402,16 +402,7 @@ export default function FacilityDetails() {
       {/* Header Panel */}
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 4 }}>
         <Box>
-          <Breadcrumbs separator="›" aria-label="breadcrumb" sx={{ mb: 1 }}>
-            <Link underline="hover" color="inherit" onClick={() => navigate('/')} sx={{ cursor: 'pointer', fontWeight: 700 }}>
-              Dashboard
-            </Link>
-            <Link underline="hover" color="inherit" onClick={() => navigate('/facility')} sx={{ cursor: 'pointer', fontWeight: 700 }}>
-              Facility Management
-            </Link>
-            <Typography color="text.primary" sx={{ fontWeight: 900 }}>{facility.name}</Typography>
-          </Breadcrumbs>
-          <Typography variant="h3" fontWeight="900" color="#091542">{facility.name}</Typography>
+<Typography variant="h3" fontWeight="900" color="#091542">{facility.name}</Typography>
         </Box>
         <Stack direction="row" spacing={2}>
           <Button

@@ -177,15 +177,7 @@ export default function GetStaff() {
         borderRadius: "12px",
       }}
     >
-      {/* Header Section */}
-      {/* Header Section */}
-      <PageHeader
-        title="Staff Management"
-        breadcrumbs={[
-          { label: "Dashboard", link: "/" },
-          { label: "Staff Management" },
-        ]}
-      />
+
 
       {/* Filters Section */}
       <PageToolbar

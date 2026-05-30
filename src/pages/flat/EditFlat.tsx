@@ -224,40 +224,11 @@ export default function EditFlat() {
         sx={{
           mb: 4,
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "end",
           alignItems: "center",
         }}
       >
-        <Box>
-          <Typography
-            variant="h4"
-            fontWeight="bold"
-            sx={{ color: "#091542", mb: 1 }}
-          >
-            Edit Flat Details
-          </Typography>
-          <Breadcrumbs separator=">" aria-label="breadcrumb">
-            <Link
-              underline="hover"
-              color="inherit"
-              onClick={() => navigate("/")}
-              sx={{ cursor: "pointer" }}
-            >
-              Dashboard
-            </Link>
-            <Link
-              underline="hover"
-              color="inherit"
-              onClick={() => navigate("/flat")}
-              sx={{ cursor: "pointer" }}
-            >
-              Flats
-            </Link>
-            <Typography color="text.primary" fontWeight="600">
-              Edit Flat
-            </Typography>
-          </Breadcrumbs>
-        </Box>
+        
         <BackButton to="/flat" label="Back to Flats" />
       </Box>
 
