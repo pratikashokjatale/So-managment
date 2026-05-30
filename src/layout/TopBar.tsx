@@ -121,7 +121,7 @@ export default function TopBar({
           }}
         >
           {/* Palette Switcher */}
-          <Tooltip title="Custom Theme">
+          {/* <Tooltip title="Custom Theme">
             <IconButton
               onClick={(e) => setPaletteAnchorEl(e.currentTarget)}
               sx={{
@@ -134,7 +134,7 @@ export default function TopBar({
             >
               <PaletteIcon fontSize="small" />
             </IconButton>
-          </Tooltip>
+          </Tooltip> */}
           <Menu
             anchorEl={paletteAnchorEl}
             open={Boolean(paletteAnchorEl)}

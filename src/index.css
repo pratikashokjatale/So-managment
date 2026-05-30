@@ -17,3 +17,10 @@ body {
 #root {
   min-height: 100vh;
 }
+
+/* Global Backdrop styling for all popups/modals */
+.MuiBackdrop-root:not(.MuiBackdrop-invisible) {
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  background-color: rgba(0, 0, 0, 0.4) !important;
+}

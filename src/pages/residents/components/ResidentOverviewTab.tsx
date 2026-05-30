@@ -1,12 +1,33 @@
+import { useState, useEffect } from 'react';
 import { Box, Typography, Grid, Paper, Chip, Divider } from '@mui/material';
 import { CreditCard as CardIcon, QrCode2 as QrIcon } from '@mui/icons-material';
 import { QRCodeSVG } from 'qrcode.react';
+import { getUserQrApi } from '@/apis/user';
 
 interface ResidentOverviewTabProps {
   resident: any;
 }
 
 export default function ResidentOverviewTab({ resident }: ResidentOverviewTabProps) {
+  const [qrCodeData, setQrCodeData] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (resident?.id) {
+      getUserQrApi(resident.id)
+        .then((res) => {
+          const data = res?.data?.qrCode || res?.qrCode || res?.data?.code || res?.code || res?.data || res;
+          if (typeof data === "string") {
+            setQrCodeData(data);
+          } else if (data && typeof data === "object" && data.code) {
+            setQrCodeData(data.code);
+          } else if (data && typeof data === "object" && data.qrCode) {
+            setQrCodeData(data.qrCode);
+          }
+        })
+        .catch((err) => console.log('Failed to fetch QR:', err));
+    }
+  }, [resident?.id]);
+
   const identityProofs = resident?.documents?.IDENTITY_PROOF || [];
   
   const flatObj = resident?.flat;
@@ -178,31 +199,23 @@ export default function ResidentOverviewTab({ resident }: ResidentOverviewTabPro
               </Typography>
 
               <Box sx={{ 
-                position: 'relative', 
-                p: 1.5, 
-                bgcolor: '#f8fafc', 
-                borderRadius: '16px', 
-                border: '1px solid #e2e8f0',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                overflow: 'hidden'
+                p: 2, 
+                bgcolor: 'white', 
+                borderRadius: '24px', 
+                display: 'inline-block', 
+                border: '1px solid #e2e8f0', 
+                boxShadow: '0 8px 24px rgba(0,0,0,0.02)' 
               }}>
-                <QRCodeSVG value={cardNo} size={110} level="H" />
-                <Box sx={{
-                  position: 'absolute',
-                  left: 0,
-                  right: 0,
-                  height: '2px',
-                  bgcolor: '#10b981',
-                  boxShadow: '0 0 6px #10b981',
-                  animation: 'scanLine 2.5s linear infinite'
-                }} />
+                <QRCodeSVG 
+                  value={qrCodeData || resident.id || cardNo || ''} 
+                  size={140} 
+                  level="H" 
+                />
               </Box>
             </Box>
 
-            <Typography variant="caption" color="#94a3b8" fontWeight="800" sx={{ letterSpacing: '0.5px', textTransform: 'uppercase', fontSize: '0.62rem' }}>
-              RFID ACTIVATED • OFFLINE SYNCED
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 2, fontWeight: 800, textAlign: 'center' }}>
+              Scan with Gate Access Terminal to verify resident identity
             </Typography>
           </Paper>
         </Grid>

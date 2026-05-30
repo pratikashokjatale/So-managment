@@ -360,16 +360,7 @@ export default function AddGuest() {
               </Box>
             )}
 
-            <Box sx={{ mt: 3, p: 2, bgcolor: '#fffbeb', border: '1px solid #fde68a', borderRadius: '12px' }}>
-              <Typography variant="caption" fontWeight={700} color="#b45309" display="block" sx={{ mb: 0.5 }}>
-                Upload Process
-              </Typography>
-              <Typography variant="caption" color="#92400e" display="block">
-                1. Select file → auto-uploads to server<br />
-                2. URL stored temporarily<br />
-                3. Submitted with guest registration
-              </Typography>
-            </Box>
+           
           </Grid>
 
         </Grid>

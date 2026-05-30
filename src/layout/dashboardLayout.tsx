@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Outlet, useNavigate, useLocation, Navigate } from "react-router-dom";
 import {
   Box,
@@ -67,6 +67,25 @@ export default function DashboardLayout() {
   const { navType } = useConfig();
   const { isLoggedIn, isAdmin, isAuthLoading, logout, user } = useAuth();
 
+  const currentDrawerWidth = isMobile ? 280 : (desktopOpen ? 280 : 88);
+
+  useEffect(() => {
+    document.body.style.setProperty("--sidebar-width", `${currentDrawerWidth}px`);
+    return () => {
+      document.body.style.removeProperty("--sidebar-width");
+    };
+  }, [currentDrawerWidth]);
+
+  useEffect(() => {
+    const handleSetSidebar = (e: any) => {
+      if (typeof e.detail === 'boolean') {
+        setDesktopOpen(e.detail);
+      }
+    };
+    window.addEventListener('set-sidebar', handleSetSidebar);
+    return () => window.removeEventListener('set-sidebar', handleSetSidebar);
+  }, []);
+
   if (isAuthLoading) {
     return <Loader />;
   }
@@ -86,9 +105,6 @@ export default function DashboardLayout() {
   const handleMenuToggle = (text: string) => {
     setOpenMenus(prev => ({ ...prev, [text]: !prev[text] }));
   };
-
-  const currentDrawerWidth = isMobile ? 280 : (desktopOpen ? 280 : 88);
-
   const displayedMenuItems = isAdmin
     ? [
         ...menuItems,

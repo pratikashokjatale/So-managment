@@ -23,6 +23,42 @@ export interface UpdateBookingPaymentPayload {
   paymentStatus: "PENDING" | "PAID" | "FAILED" | "REFUNDED";
 }
 
+export interface GetSlotsParams {
+  facilityId: string;
+  date: string; // YYYY-MM-DD
+  slotMinutes?: 30 | 45 | 60 | 90 | 120;
+}
+
+export interface CreateBookingPayload {
+  facilityId: string;
+  bookingDate: string;
+  startTime: string;  // HH:MM
+  endTime: string;    // HH:MM
+  attendeeCount?: number;
+  guestCount?: number;
+  bookedForType?: "SELF" | "OTHER";
+  userId?: string;
+  notes?: string;
+}
+
+export const getSlotsApi = async (params: GetSlotsParams) => {
+  try {
+    const res = await api.get("bookings/slots", { params });
+    return res?.data;
+  } catch (error) {
+    throw handleApiError(error);
+  }
+};
+
+export const createBookingApi = async (data: CreateBookingPayload) => {
+  try {
+    const res = await api.post("bookings", data);
+    return res?.data;
+  } catch (error) {
+    throw handleApiError(error);
+  }
+};
+
 export const getBookingsApi = async (params?: GetBookingsParams) => {
   try {
     const res = await api.get("bookings", { params });

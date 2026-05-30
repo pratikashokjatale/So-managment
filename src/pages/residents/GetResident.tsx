@@ -8,24 +8,30 @@ import {
   Select,
   MenuItem,
   Switch,
-  Chip
+  Chip,
+  Menu,
+  ListItemIcon,
+  ListItemText
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import MoreVertOutlinedIcon from "@mui/icons-material/MoreVertOutlined";
+import EventAvailableIcon from "@mui/icons-material/EventAvailable";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
 import PageHeader from "@/components/PageHeader";
 import PageToolbar from "@/components/PageToolbar";
 import DataTable from "@/components/DataTable";
 import ResidentRequests from "./components/ResidentRequests";
 import RejectedRequests from "./components/RejectedRequests";
-import { getUsersApi, updateUserApi } from "@/apis/user";
+import { getUsersApi, updateUserApi, deleteUserApi } from "@/apis/user";
 import { getTowers, getFlats } from "@/utils/setupStore";
 import { toast } from "react-hot-toast";
 import AddResident from "./AddResident";
 import { getFileUrl } from "@/utils/file";
 import AccessStatusBadge from "@/components/AccessStatusBadge";
+import CreateBookingDialog from "./components/CreateBookingDialog";
 
 
 
@@ -42,6 +48,37 @@ export default function GetResident() {
   const [cardFilter, setCardFilter] = useState("All Cards");
   const [tabValue, setTabValue] = useState(0);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  // Three-dot menu state
+  const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
+  const [menuResident, setMenuResident] = useState<any>(null);
+  const [bookingDialogOpen, setBookingDialogOpen] = useState(false);
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, row: any) => {
+    setMenuAnchor(event.currentTarget);
+    setMenuResident(row);
+  };
+  const handleMenuClose = () => {
+    setMenuAnchor(null);
+  };
+
+  const handleCreateBooking = () => {
+    setBookingDialogOpen(true);
+    handleMenuClose();
+  };
+
+  const handleDeleteResident = async () => {
+    if (!menuResident) return;
+    if (!window.confirm(`Are you sure you want to delete ${menuResident.name}?`)) return;
+    try {
+      await deleteUserApi(menuResident.id);
+      toast.success("Resident deleted successfully");
+      handleMenuClose();
+      fetchResidents();
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to delete resident");
+    }
+  };
 
   // API Integration States
   const [residents, setResidents] = useState<any[]>([]);
@@ -331,7 +368,7 @@ export default function GetResident() {
                     <IconButton size="small" sx={{ color: "text.secondary" }} onClick={() => navigate(`/residents/edit/${row.id}`)}>
                       <EditOutlinedIcon fontSize="small" />
                     </IconButton>
-                    <IconButton size="small" sx={{ color: "text.secondary" }}>
+                    <IconButton size="small" sx={{ color: "text.secondary" }} onClick={(e) => handleMenuOpen(e, row)}>
                       <MoreVertOutlinedIcon fontSize="small" />
                     </IconButton>
                   </>
@@ -357,12 +394,52 @@ export default function GetResident() {
       {isAddModalOpen && (
         <AddResident 
           open={isAddModalOpen} 
-          onClose={() => {
+          onClose={(success?: boolean) => {
             setIsAddModalOpen(false);
-            fetchResidents();
+            if (success) {
+              setTabValue(1); // Switch to Enrollment Requests tab
+              setSearchQuery(""); // Clear search so they can see the new list
+            }
+            setTimeout(() => {
+              refreshData();
+            }, 500);
           }} 
         />
       )}
+
+      {/* Three-dot context menu */}
+      <Menu
+        anchorEl={menuAnchor}
+        open={Boolean(menuAnchor)}
+        onClose={handleMenuClose}
+        PaperProps={{
+          elevation: 4,
+          sx: {
+            borderRadius: '12px',
+            minWidth: 180,
+            boxShadow: '0 8px 30px rgba(9,21,66,0.12)',
+            '& .MuiMenuItem-root': { borderRadius: '8px', mx: 0.5, my: 0.25, px: 1.5, py: 1 }
+          }
+        }}
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+      >
+        <MenuItem onClick={handleCreateBooking}>
+          <ListItemIcon><EventAvailableIcon fontSize="small" sx={{ color: '#091542' }} /></ListItemIcon>
+          <ListItemText primaryTypographyProps={{ fontSize: '0.85rem', fontWeight: 700 }}>Create Booking</ListItemText>
+        </MenuItem>
+        <MenuItem onClick={handleDeleteResident}>
+          <ListItemIcon><DeleteOutlineIcon fontSize="small" sx={{ color: '#ef4444' }} /></ListItemIcon>
+          <ListItemText primaryTypographyProps={{ fontSize: '0.85rem', fontWeight: 700, color: '#ef4444' }}>Delete Resident</ListItemText>
+        </MenuItem>
+      </Menu>
+
+      {/* Create Booking Dialog */}
+      <CreateBookingDialog
+        open={bookingDialogOpen}
+        onClose={() => setBookingDialogOpen(false)}
+        resident={menuResident}
+      />
     </Box>
   );
 }

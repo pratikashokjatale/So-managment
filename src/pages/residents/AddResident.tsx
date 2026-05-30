@@ -66,10 +66,15 @@ interface FamilyMember {
 const AADHAAR_URL = "";
 const PAN_URL = "";
 
+interface AddResidentProps {
+  open?: boolean;
+  onClose?: (success?: boolean) => void;
+}
+
 export default function AddResident({
   open,
   onClose,
-}: { open?: boolean; onClose?: () => void } = {}) {
+}: AddResidentProps = {}) {
   const navigate = useNavigate();
   const [activeStep, setActiveStep] = useState(0);
 
@@ -160,6 +165,15 @@ export default function AddResident({
     }
   };
 
+  useEffect(() => {
+    if (open || isFamilyDialogOpen) {
+      window.dispatchEvent(new CustomEvent('set-sidebar', { detail: false }));
+    } else {
+      window.dispatchEvent(new CustomEvent('set-sidebar', { detail: true }));
+    }
+  }, [open, isFamilyDialogOpen]);
+
+  // Fetch initial data
   useEffect(() => {
     loadSetupData();
   }, []);
@@ -400,7 +414,7 @@ export default function AddResident({
 
       toast.success("Resident enrolled successfully");
       if (onClose) {
-        onClose();
+        onClose(true);
       } else {
         navigate("/residents");
       }
@@ -1281,6 +1295,7 @@ export default function AddResident({
           onClose={onClose}
           maxWidth="md"
           fullWidth
+          sx={{ "& .MuiDialog-container": { pl: { md: "var(--sidebar-width, 280px)" } } }}
           PaperProps={{ sx: { borderRadius: "24px", p: 2 } }}
         >
           <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 2, borderBottom: '1px solid #f1f5f9', mb: 2 }}>
@@ -1309,6 +1324,7 @@ export default function AddResident({
         onClose={() => setIsFamilyDialogOpen(false)}
         maxWidth="md"
         fullWidth
+        sx={{ "& .MuiDialog-container": { pl: { md: "var(--sidebar-width, 280px)" } } }}
         PaperProps={{ sx: { borderRadius: "16px", p: 1 } }}
       >
         <DialogTitle sx={{ fontWeight: 800, color: "#091542" }}>

@@ -72,6 +72,7 @@ export default function FamilyMemberDialog({
       onClose={onClose} 
       maxWidth="xs"
       fullWidth
+      sx={{ "& .MuiDialog-container": { pl: { md: "var(--sidebar-width, 280px)" } } }}
       PaperProps={{ sx: { borderRadius: '24px', p: 1 } }}
     >
       <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>

@@ -46,6 +46,7 @@ import {
 } from "@/apis/enrollment";
 import { getUserDetailsApi, getUsersApi } from "@/apis/user";
 import { toast } from "react-hot-toast";
+import { getFileUrl } from "@/utils/file";
 
 export default function ResidentRequests() {
   const [selectedRequest, setSelectedRequest] = useState<any>(null);
@@ -168,6 +169,14 @@ export default function ResidentRequests() {
   useEffect(() => {
     fetchRequests();
   }, [page, rowsPerPage, searchQuery]);
+
+  useEffect(() => {
+    if (kycOpen || rejectOpen || docOpen) {
+      window.dispatchEvent(new CustomEvent('set-sidebar', { detail: false }));
+    } else {
+      window.dispatchEvent(new CustomEvent('set-sidebar', { detail: true }));
+    }
+  }, [kycOpen, rejectOpen, docOpen]);
 
   const handleOpenKyc = async (request: any) => {
     setSelectedRequest(request);
@@ -308,7 +317,7 @@ export default function ResidentRequests() {
                     <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                       <Avatar
                         src={
-                          request.avatar ||
+                          request.avatar ? getFileUrl(request.avatar) :
                           `https://i.pravatar.cc/150?u=${request.id}`
                         }
                         sx={{ width: 36, height: 36, borderRadius: "10px" }}
@@ -410,6 +419,7 @@ export default function ResidentRequests() {
         onClose={() => !approving && setKycOpen(false)}
         maxWidth="md"
         fullWidth
+        sx={{ "& .MuiDialog-container": { pl: { md: "var(--sidebar-width, 280px)" } } }}
         PaperProps={{ sx: { borderRadius: "20px" } }}
       >
         {selectedRequest && (
@@ -467,7 +477,7 @@ export default function ResidentRequests() {
                   >
                     <Stack direction="row" spacing={3} alignItems="center">
                       <Avatar
-                        src={`https://i.pravatar.cc/150?u=${kycDetails?.id || selectedRequest.id}`}
+                        src={kycDetails?.avatar || selectedRequest.avatar ? getFileUrl(kycDetails?.avatar || selectedRequest.avatar) : `https://i.pravatar.cc/150?u=${kycDetails?.id || selectedRequest.id}`}
                         sx={{
                           width: 72,
                           height: 72,
@@ -1026,7 +1036,9 @@ export default function ResidentRequests() {
         open={docOpen}
         onClose={() => setDocOpen(false)}
         maxWidth="md"
-        PaperProps={{ sx: { borderRadius: "24px", overflow: "hidden" } }}
+        fullWidth
+        sx={{ "& .MuiDialog-container": { pl: { md: "var(--sidebar-width, 280px)" } } }}
+        PaperProps={{ sx: { borderRadius: "12px", bgcolor: "transparent", boxShadow: "none" } }}
       >
         <DialogTitle
           sx={{
@@ -1054,7 +1066,7 @@ export default function ResidentRequests() {
         >
           <Box
             component="img"
-            src={docToShow.url}
+            src={getFileUrl(docToShow.url)}
             sx={{
               maxWidth: "100%",
               height: "auto",
@@ -1071,6 +1083,7 @@ export default function ResidentRequests() {
       <Dialog
         open={rejectOpen}
         onClose={() => setRejectOpen(false)}
+        sx={{ "& .MuiDialog-container": { pl: { md: "var(--sidebar-width, 280px)" } } }}
         PaperProps={{ sx: { borderRadius: "12px" } }}
       >
         <DialogTitle sx={{ fontWeight: 800 }}>Reject Request</DialogTitle>

@@ -9,6 +9,21 @@ export const loginApi = async (data: Record<string, unknown>) => {
   }
 };
 
+export interface RegisterPayload {
+  name: string;
+  email: string;
+  role: string;
+}
+
+export const registerApi = async (data: RegisterPayload) => {
+  try {
+    const res = await api.post("auth/register", data);
+    return res?.data;
+  } catch (error) {
+    throw handleApiError(error);
+  }
+};
+
 export const getMeApi = async () => {
   try {
     const res = await api.get("auth/me");

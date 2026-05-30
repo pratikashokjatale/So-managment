@@ -29,11 +29,7 @@ const isPdfFile = (urlOrName: string) => {
   return urlOrName.toLowerCase().endsWith('.pdf');
 };
 
-const mockBookings = [
-  { id: 101, activity: 'Squash Court', slots: '5:00 PM - 7:00 PM (2 Slots)', date: 'May 18, 2024', amount: '₹400.00', status: 'Confirmed' },
-  { id: 102, activity: 'Table Tennis', slots: '10:00 AM - 11:00 AM (1 Slot)', date: 'May 17, 2024', amount: '₹150.00', status: 'Completed' },
-  { id: 103, activity: 'Home Theatre', slots: '8:00 PM - 10:00 PM (2 Slots)', date: 'May 15, 2024', amount: '₹1,000.00', status: 'Completed' },
-];
+
 
 export default function ResidentDetails() {
   const navigate = useNavigate();
@@ -53,6 +49,14 @@ export default function ResidentDetails() {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState<any>(null);
   const [updatingMember, setUpdatingMember] = useState(false);
+
+  useEffect(() => {
+    if (docOpen || editModalOpen) {
+      window.dispatchEvent(new CustomEvent('set-sidebar', { detail: false }));
+    } else {
+      window.dispatchEvent(new CustomEvent('set-sidebar', { detail: true }));
+    }
+  }, [docOpen, editModalOpen]);
 
   const fetchDetails = async () => {
     setLoading(true);
@@ -279,7 +283,7 @@ export default function ResidentDetails() {
           )}
 
           {activeTab === 2 && (
-            <ResidentAmenities bookings={mockBookings} />
+            <ResidentAmenities userId={resident.id} />
           )}
 
           {activeTab === 3 && (
@@ -306,6 +310,7 @@ export default function ResidentDetails() {
         open={docOpen} 
         onClose={() => setDocOpen(false)} 
         maxWidth="md"
+        sx={{ "& .MuiDialog-container": { pl: { md: "var(--sidebar-width, 280px)" } } }}
         PaperProps={{ sx: { borderRadius: '24px', overflow: 'hidden' } }}
       >
         <DialogTitle sx={{ bgcolor: '#091542', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
