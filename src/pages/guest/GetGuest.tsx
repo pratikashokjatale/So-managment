@@ -198,6 +198,35 @@ export default function GetGuest() {
     <Box sx={{ mt: 2, p: { xs: 2, md: 4 }, bgcolor: '#ffffff', minHeight: '100vh', borderRadius: '12px' }}>
 
       {/* Header */}
+       <PageHeader
+        title="Guest Management"
+        // breadcrumbs={[
+        //   { label: 'Dashboard', link: '/' },
+        //   { label: 'Guests' }
+        // ]}
+        currentTab={activeTab}
+        onTabChange={(_e, v) => setActiveTab(v)}
+        tabs={[
+          {
+            label: (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                Active Guests
+                {activeCount > 0 && <Chip label={activeCount} size="small" sx={{ height: 18, fontSize: '0.7rem', fontWeight: 800, bgcolor: '#e0f2fe', color: '#0369a1' }} />}
+              </Box>
+            ),
+            value: 0
+          },
+          {
+            label: (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                Guest Requests
+                {pendingCount > 0 && <Chip label={pendingCount} size="small" color="warning" sx={{ height: 18, fontSize: '0.7rem', fontWeight: 800 }} />}
+              </Box>
+            ),
+            value: 1
+          }
+        ]}
+      />
     
       {/* Toolbar */}
       <PageToolbar

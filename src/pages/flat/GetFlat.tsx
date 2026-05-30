@@ -98,7 +98,7 @@ export default function GetFlat() {
         setProjects(projectList);
       }
 
-      let currentProjectId = projectFilter;
+      const currentProjectId = projectFilter;
       let towerList = towers;
 
       // Fetch towers for selected project if not "All Projects"
@@ -117,7 +117,7 @@ export default function GetFlat() {
         setTowers(list);
       }
 
-      let currentTowerId = towerFilter;
+      const currentTowerId = towerFilter;
       let mergedFlats: any[] = [];
 
       let paginationObj: any = null;

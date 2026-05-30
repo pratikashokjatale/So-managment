@@ -1262,7 +1262,7 @@ export default function AddResident({
       {open ? (
         <Dialog
           open={open}
-          onClose={onClose}
+          onClose={() => onClose && onClose()}
           maxWidth="md"
           fullWidth
           sx={{ "& .MuiDialog-container": { pl: { md: "var(--sidebar-width, 280px)" } } }}
@@ -1270,7 +1270,7 @@ export default function AddResident({
         >
           <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 2, borderBottom: '1px solid #f1f5f9', mb: 2 }}>
             <Typography variant="h5" fontWeight="900" color="#091542">Resident Enrollment</Typography>
-            <IconButton onClick={onClose} size="small" edge="end">
+            <IconButton onClick={() => onClose && onClose()} size="small" edge="end">
               <CloseIcon />
             </IconButton>
           </DialogTitle>

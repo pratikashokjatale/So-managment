@@ -21,7 +21,7 @@ export interface TabItem {
 
 export interface PageHeaderProps {
   title: string;
-  breadcrumbs: BreadcrumbItem[];
+  breadcrumbs?: BreadcrumbItem[];
   tabs?: TabItem[];
   currentTab?: number;
   onTabChange?: (event: React.SyntheticEvent, newValue: number) => void;
@@ -44,7 +44,7 @@ export default function PageHeader({
           {title}
         </Typography>
         <Breadcrumbs separator=">" aria-label="breadcrumb">
-          {breadcrumbs.map((crumb, index) => {
+          {breadcrumbs && breadcrumbs.map((crumb, index) => {
             const isLast = index === breadcrumbs.length - 1;
             return isLast ? (
               <Typography key={index} color="text.primary" fontWeight="600">
