@@ -19,12 +19,35 @@ import { getStaffById } from '@/utils/staffStore';
 // import type { Staff } from '@/utils/staffStore';
 import { getStaffDetailsApi } from '@/apis/staff';
 import { getFileUrl } from '@/utils/file';
+import { getUserQrApi } from '@/apis/user';
 
 export default function StaffDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [staff, setStaff] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
+  const [qrCodeToken, setQrCodeToken] = useState<string | null>(null);
+  const [qrImageDataUrl, setQrImageDataUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (staff) {
+      const targetUserId = staff.userId || staff.id;
+      getUserQrApi(targetUserId)
+        .then((res) => {
+          const qrData = res?.data || res;
+          if (qrData?.qrImageDataUrl) {
+            setQrImageDataUrl(qrData.qrImageDataUrl);
+          }
+          if (qrData?.accessQrToken) {
+            setQrCodeToken(qrData.accessQrToken);
+          } else {
+            const fallbackToken = qrData?.qrCode || qrData?.code || (typeof qrData === "string" ? qrData : null);
+            setQrCodeToken(fallbackToken);
+          }
+        })
+        .catch((err) => console.log('Failed to fetch QR:', err));
+    }
+  }, [staff?.id]);
 
   useEffect(() => {
     const loadStaff = async () => {
@@ -48,6 +71,7 @@ export default function StaffDetails() {
 
             setStaff({
               id: s.id,
+              userId: s.userId || s.id,
               name: s.name,
               avatar: s.photoUrl || s.profilePhotoUrl || s.avatar || "",
               department: dept,
@@ -238,11 +262,20 @@ export default function StaffDetails() {
                 border: '1px solid #e2e8f0', 
                 boxShadow: '0 8px 24px rgba(0,0,0,0.02)' 
               }}>
-                <QRCodeSVG 
-                  value={staff.cardNo || `STAFF_VERIFIED:${staff.cardNo}:${staff.name}:${staff.department}:${staff.facilityName}`} 
-                  size={140} 
-                  level="H" 
-                />
+                {qrImageDataUrl ? (
+                  <Box 
+                    component="img"
+                    src={qrImageDataUrl} 
+                    alt="Access QR"
+                    sx={{ width: 140, height: 140, display: 'block', borderRadius: '12px' }}
+                  />
+                ) : (
+                  <QRCodeSVG 
+                    value={qrCodeToken || staff.cardNo || `STAFF_VERIFIED:${staff.cardNo}:${staff.name}:${staff.department}:${staff.facilityName}`} 
+                    size={140} 
+                    level="H" 
+                  />
+                )}
               </Box>
               <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 2, fontWeight: 800 }}>
                 Scan with Gate Access Terminal to verify crew identity

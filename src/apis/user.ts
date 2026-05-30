@@ -89,7 +89,7 @@ export const deleteUserApi = async (userId: string, reason?: string) => {
 
 export const getUserQrApi = async (userId: string) => {
   try {
-    const res = await api.get(`users/${userId}/qr`);
+    const res = await api.get(`users/${userId}/access-qr`);
     return res?.data;
   } catch (error) {
     throw handleApiError(error);

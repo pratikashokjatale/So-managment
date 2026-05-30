@@ -19,19 +19,23 @@ interface ResidentOverviewTabProps {
 }
 
 export default function ResidentOverviewTab({ resident }: ResidentOverviewTabProps) {
-  const [qrCodeData, setQrCodeData] = useState<string | null>(null);
+  const [qrCodeToken, setQrCodeToken] = useState<string | null>(null);
+  const [qrImageDataUrl, setQrImageDataUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (resident?.id) {
       getUserQrApi(resident.id)
         .then((res) => {
-          const data = res?.data?.qrCode || res?.qrCode || res?.data?.code || res?.code || res?.data || res;
-          if (typeof data === "string") {
-            setQrCodeData(data);
-          } else if (data && typeof data === "object" && data.code) {
-            setQrCodeData(data.code);
-          } else if (data && typeof data === "object" && data.qrCode) {
-            setQrCodeData(data.qrCode);
+          const qrData = res?.data || res;
+          if (qrData?.qrImageDataUrl) {
+            setQrImageDataUrl(qrData.qrImageDataUrl);
+          }
+          if (qrData?.accessQrToken) {
+            setQrCodeToken(qrData.accessQrToken);
+          } else {
+            // fallback support for legacy formats
+            const fallbackToken = qrData?.qrCode || qrData?.code || (typeof qrData === "string" ? qrData : null);
+            setQrCodeToken(fallbackToken);
           }
         })
         .catch((err) => console.log('Failed to fetch QR:', err));
@@ -285,12 +289,21 @@ export default function ResidentOverviewTab({ resident }: ResidentOverviewTabPro
                     zIndex: 10,
                     borderRadius: '4px'
                   }} />
-                  <QRCodeSVG 
-                    value={qrCodeData || resident.id || cardNo || ''} 
-                    size={160} 
-                    level="H" 
-                    style={{ display: 'block' }}
-                  />
+                  {qrImageDataUrl ? (
+                    <Box 
+                      component="img"
+                      src={qrImageDataUrl} 
+                      alt="Access QR"
+                      sx={{ width: 160, height: 160, display: 'block', borderRadius: '12px' }}
+                    />
+                  ) : (
+                    <QRCodeSVG 
+                      value={qrCodeToken || resident.id || cardNo || ''} 
+                      size={160} 
+                      level="H" 
+                      style={{ display: 'block' }}
+                    />
+                  )}
                 </Box>
                 
                 <Typography variant="caption" sx={{ mt: 3, color: '#64748b', fontWeight: 600, textAlign: 'center', px: 2 }}>

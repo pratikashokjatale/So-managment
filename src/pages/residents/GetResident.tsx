@@ -402,7 +402,7 @@ export default function GetResident() {
               setSearchQuery(""); // Clear search so they can see the new list
             }
             setTimeout(() => {
-              refreshData();
+              fetchResidents();
             }, 500);
           }} 
         />

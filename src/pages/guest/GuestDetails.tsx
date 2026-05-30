@@ -13,12 +13,15 @@ import StatusBadge from '@/components/StatusBadge';
 import { getGuestById, approveGuestRequest, rejectGuestRequest } from '@/utils/guestStore';
 import type { Guest } from '@/utils/guestStore';
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material';
+import { getUserQrApi } from '@/apis/user';
 
 export default function GuestDetails() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   
   const [guest, setGuest] = useState<Guest | null>(null);
+  const [qrCodeToken, setQrCodeToken] = useState<string | null>(null);
+  const [qrImageDataUrl, setQrImageDataUrl] = useState<string | null>(null);
 
   // Rejection Dialog State
   const [openRejectDialog, setOpenRejectDialog] = useState(false);
@@ -27,6 +30,23 @@ export default function GuestDetails() {
   useEffect(() => {
     if (id) {
       setGuest(getGuestById(id) || null);
+      
+      // Fetch access QR details
+      getUserQrApi(id)
+        .then((res) => {
+          const qrData = res?.data || res;
+          if (qrData?.qrImageDataUrl) {
+            setQrImageDataUrl(qrData.qrImageDataUrl);
+          }
+          if (qrData?.accessQrToken) {
+            setQrCodeToken(qrData.accessQrToken);
+          } else {
+            // fallback
+            const fallbackToken = qrData?.qrCode || qrData?.code || (typeof qrData === "string" ? qrData : null);
+            setQrCodeToken(fallbackToken);
+          }
+        })
+        .catch((err) => console.log('Failed to fetch QR:', err));
     }
   }, [id]);
 
@@ -215,9 +235,16 @@ export default function GuestDetails() {
             <Typography variant="h6" fontWeight="bold" color="#091542" sx={{ mb: 2 }}>
               Access QR Pass
             </Typography>
-            {guest ? (
+            {qrImageDataUrl ? (
+              <Box 
+                component="img"
+                src={qrImageDataUrl} 
+                alt="Access QR"
+                sx={{ width: 150, height: 150, display: 'block', borderRadius: '12px', mx: 'auto' }}
+              />
+            ) : guest ? (
               <Box sx={{ p: 2.5, bgcolor: '#f8fafc', borderRadius: '20px', border: '2px dashed #cbd5e1', display: 'inline-block' }}>
-                <QRCodeSVG value={guest.id || id || ''} size={150} level="H" />
+                <QRCodeSVG value={qrCodeToken || guest.id || id || ''} size={150} level="H" />
               </Box>
             ) : (
               <Typography variant="body2" color="text.secondary" sx={{ my: 2 }}>No QR Pass available</Typography>
