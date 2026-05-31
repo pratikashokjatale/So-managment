@@ -22,9 +22,9 @@ import bgImage from "@/assets/test.png";
 import { registerApi } from "@/apis/auth";
 
 const roles = [
-  { value: "USER", label: "User" },
-  { value: "ADMIN", label: "Admin" },
-  { value: "RESIDENT", label: "Resident" },
+  { value: "ROLE_USER", label: "User" },
+  { value: "ROLE_ADMIN", label: "Admin" },
+  { value: "ROLE_RESIDENT", label: "Resident" },
 ];
 
 const RegisterPage = () => {
@@ -35,7 +35,7 @@ const RegisterPage = () => {
     initialValues: {
       name: "",
       email: "",
-      role: "USER",
+      role: "ROLE_USER",
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Name is required"),

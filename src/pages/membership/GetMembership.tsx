@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Box, Typography, Button, Table, TableBody, TableCell, 
   TableContainer, TableHead, TableRow, Avatar, IconButton, 
@@ -13,23 +13,65 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import Pagination from '../../components/Pagination';
 import StatusBadge from '../../components/StatusBadge';
 import Search from '@/components/Search';
-
-const mockMemberships = [
-  { id: 1, name: 'John Doe', avatar: 'https://i.pravatar.cc/150?u=1', apartment: 'A-101', plan: 'Monthly', startDate: '01 May 2024', endDate: '31 May 2024', status: 'Active', upcoming: '3 Months' },
-  { id: 2, name: 'Jane Smith', avatar: 'https://i.pravatar.cc/150?u=2', apartment: 'A-102', plan: 'Monthly', startDate: '01 May 2024', endDate: '31 May 2024', status: 'Active', upcoming: '2 Months' },
-  { id: 3, name: 'Mike Johnson', avatar: 'https://i.pravatar.cc/150?u=3', apartment: 'A-103', plan: 'Quarterly', startDate: '01 Apr 2024', endDate: '30 Jun 2024', status: 'Active', upcoming: '2 Months' },
-  { id: 4, name: 'Emily Davis', avatar: 'https://i.pravatar.cc/150?u=4', apartment: 'A-104', plan: 'Monthly', startDate: '01 Mar 2024', endDate: '31 Mar 2024', status: 'Expired', upcoming: '0' },
-  { id: 5, name: 'Robert Brown', avatar: 'https://i.pravatar.cc/150?u=5', apartment: 'A-105', plan: 'Monthly', startDate: '01 May 2024', endDate: '31 May 2024', status: 'Active', upcoming: '4 Months' },
-];
+import { getSubscriptionsApi } from '@/apis/subscription';
+import MembershipDetailsDialog from './components/MembershipDetailsDialog';
 
 export default function GetMembership() {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
-   const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const [statusFilter, setStatusFilter] = useState('All Status');
   const [planFilter, setPlanFilter] = useState('All Plans');
+
+  const [memberships, setMemberships] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const [viewDialogOpen, setViewDialogOpen] = useState(false);
+  const [selectedMembership, setSelectedMembership] = useState<any>(null);
+
+  const handleOpenView = (membership: any) => {
+    setSelectedMembership(membership);
+    setViewDialogOpen(true);
+  };
+
+  const handleCloseView = () => {
+    setViewDialogOpen(false);
+    setSelectedMembership(null);
+  };
+
+  const fetchMemberships = async () => {
+    setLoading(true);
+    try {
+      const res = await getSubscriptionsApi();
+      let fetchedSubs: any[] = [];
+      if (res?.success && res?.data) {
+        if (Array.isArray(res.data)) {
+          fetchedSubs = res.data;
+        } else if (res.data.items && Array.isArray(res.data.items)) {
+          fetchedSubs = res.data.items;
+        } else if (typeof res.data === 'object') {
+          const possibleArr = Object.values(res.data).find(val => Array.isArray(val));
+          if (possibleArr) fetchedSubs = possibleArr as any[];
+        }
+      } else if (Array.isArray(res)) {
+        fetchedSubs = res;
+      } else if (res?.items && Array.isArray(res.items)) {
+        fetchedSubs = res.items;
+      }
+      setMemberships(fetchedSubs);
+    } catch (err) {
+      console.error('Failed to load memberships:', err);
+      setMemberships([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchMemberships();
+  }, []);
 
   const handlePageChange = (_event: any, value: number) => {
     setPage(value);
@@ -109,46 +151,52 @@ export default function GetMembership() {
               <TableCell sx={{ color: '#091542', fontWeight: 600, borderBottom: 'none' }}>Start Date</TableCell>
               <TableCell sx={{ color: '#091542', fontWeight: 600, borderBottom: 'none' }}>End Date</TableCell>
               <TableCell sx={{ color: '#091542', fontWeight: 600, borderBottom: 'none' }}>Status</TableCell>
-              <TableCell sx={{ color: '#091542', fontWeight: 600, borderBottom: 'none' }}>Upcoming</TableCell>
+              <TableCell sx={{ color: '#091542', fontWeight: 600, borderBottom: 'none' }}>Payment</TableCell>
               <TableCell sx={{ color: '#091542', fontWeight: 600, borderBottom: 'none', textAlign: 'right' }}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {mockMemberships.map((row) => (
-              <TableRow key={row.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                <TableCell component="th" scope="row" sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                    <Avatar src={row.avatar} sx={{ width: 32, height: 32 }} />
-                    <Typography variant="body2" fontWeight="500" sx={{ color: '#091542' }}>{row.name}</Typography>
-                  </Box>
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={8} align="center" sx={{ py: 3 }}>
+                  Loading...
                 </TableCell>
-                <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Typography variant="body2" sx={{ color: '#091542' }}>{row.apartment}</Typography>
+              </TableRow>
+            ) : memberships.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={8} align="center" sx={{ py: 3 }}>
+                  No memberships found.
                 </TableCell>
-                <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Typography variant="body2" sx={{ color: '#091542' }}>{row.plan}</Typography>
-                </TableCell>
-                <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Typography variant="body2" sx={{ color: '#091542' }}>{row.startDate}</Typography>
-                </TableCell>
-                <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Typography variant="body2" sx={{ color: '#091542' }}>{row.endDate}</Typography>
-                </TableCell>
-                <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <StatusBadge status={row.status} variantType="text" />
-                </TableCell>
-                <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Typography variant="body2" sx={{ color: '#091542' }}>{row.upcoming}</Typography>
-                </TableCell>
+              </TableRow>
+            ) : memberships.map((row) => (
+                <TableRow key={row.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                  <TableCell component="th" scope="row" sx={{ borderBottomColor: '#f0f0f0' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                      <Avatar src={row.user?.profilePhotoUrl || ''} sx={{ width: 32, height: 32 }} />
+                      <Typography variant="body2" fontWeight="500" sx={{ color: '#091542' }}>{row.user?.name || 'Unknown'}</Typography>
+                    </Box>
+                  </TableCell>
+                  <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
+                    <Typography variant="body2" sx={{ color: '#091542' }}>{row.flat?.flatNumber || '-'}</Typography>
+                  </TableCell>
+                  <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
+                    <Typography variant="body2" sx={{ color: '#091542' }}>{row.plan?.name || '-'}</Typography>
+                  </TableCell>
+                  <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
+                    <Typography variant="body2" sx={{ color: '#091542' }}>{row.startsAt ? new Date(row.startsAt).toLocaleDateString() : '-'}</Typography>
+                  </TableCell>
+                  <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
+                    <Typography variant="body2" sx={{ color: '#091542' }}>{row.endsAt ? new Date(row.endsAt).toLocaleDateString() : '-'}</Typography>
+                  </TableCell>
+                  <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
+                    <StatusBadge status={row.status || 'Active'} variantType="text" />
+                  </TableCell>
+                  <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
+                    <Typography variant="body2" sx={{ color: '#091542' }}>{row.paymentStatus || '-'}</Typography>
+                  </TableCell>
                 <TableCell align="right" sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <IconButton size="small" sx={{ color: 'text.secondary' }}>
+                  <IconButton size="small" sx={{ color: 'text.secondary' }} onClick={() => handleOpenView(row)}>
                     <VisibilityOutlinedIcon fontSize="small" />
-                  </IconButton>
-                  <IconButton size="small" sx={{ color: 'text.secondary' }}>
-                    <EditOutlinedIcon fontSize="small" />
-                  </IconButton>
-                  <IconButton size="small" sx={{ color: 'text.secondary' }}>
-                    <MoreVertOutlinedIcon fontSize="small" />
                   </IconButton>
                 </TableCell>
               </TableRow>
@@ -161,13 +209,20 @@ export default function GetMembership() {
       <Box sx={{ mt: 2 }}>
         <Pagination 
           page={page} 
-          totalResults={123} 
+          totalResults={memberships.length || 0} 
           rowsPerPage={rowsPerPage} 
           onPageChange={handlePageChange} 
           onRowsPerPageChange={handleRowsPerPageChange} 
           rowsPerPageOptions={[5, 10, 25]}
         />
       </Box>
+
+      <MembershipDetailsDialog 
+        open={viewDialogOpen} 
+        onClose={handleCloseView} 
+        membership={selectedMembership} 
+        onRefresh={fetchMemberships}
+      />
 
     </Box>
   );
