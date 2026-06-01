@@ -1,6 +1,6 @@
 import { 
   Box, Typography, Paper, Grid, Stack, Chip, Divider, 
-  List, ListItem, ListItemText, ListItemIcon 
+  List, ListItem, ListItemText, ListItemIcon, Button, Dialog, DialogTitle, DialogContent, TextField, Select, MenuItem, DialogActions, CircularProgress 
 } from '@mui/material';
 import { 
   AccountBalanceWallet as WalletIcon, 
@@ -10,7 +10,12 @@ import {
   History as HistoryIcon
 } from '@mui/icons-material';
 
+import { adminRechargeUserWalletApi } from '@/apis/wallet';
+import { useState } from 'react';
+
 interface WalletProps {
+  userId: string;
+  onWalletUpdated?: (newBalance: number) => void;
   wallets: {
     membership: { 
       status: string; 
@@ -24,7 +29,45 @@ interface WalletProps {
   }
 }
 
-export default function ResidentWallets({ wallets }: WalletProps) {
+export default function ResidentWallets({ userId, onWalletUpdated, wallets }: WalletProps) {
+  const [rechargeModalOpen, setRechargeModalOpen] = useState(false);
+  const [amount, setAmount] = useState('');
+  const [method, setMethod] = useState('CASH');
+  const [referenceId, setReferenceId] = useState('');
+  const [remarks, setRemarks] = useState('');
+  const [recharging, setRecharging] = useState(false);
+
+  const handleRecharge = async () => {
+    if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
+      alert("Please enter a valid amount.");
+      return;
+    }
+    setRecharging(true);
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const res: any = await adminRechargeUserWalletApi(userId, {
+        amount: Number(amount),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        method: method as any,
+        referenceId,
+        remarks
+      });
+      alert("Wallet recharged successfully!");
+      setRechargeModalOpen(false);
+      setAmount('');
+      setReferenceId('');
+      setRemarks('');
+      
+      if (onWalletUpdated && res?.data?.wallet?.balance !== undefined) {
+        onWalletUpdated(res.data.wallet.balance);
+      }
+    } catch (err: any) {
+      alert(err?.message || "Failed to recharge wallet.");
+    } finally {
+      setRecharging(false);
+    }
+  };
+
   return (
     <Box>
       <Grid container spacing={4}>
@@ -137,6 +180,14 @@ export default function ResidentWallets({ wallets }: WalletProps) {
                   <ListItemText primary={<Typography variant="body2" fontWeight="700" color="#1e293b">Auto-Debit on Checkout</Typography>} />
                 </ListItem>
               </List>
+              <Button 
+                variant="outlined" 
+                fullWidth 
+                onClick={() => setRechargeModalOpen(true)}
+                sx={{ mt: 2, borderRadius: 2, color: '#065f46', borderColor: 'rgba(6, 95, 70, 0.5)', '&:hover': { borderColor: '#065f46', bgcolor: 'rgba(6, 95, 70, 0.05)' } }}
+              >
+                Admin Recharge
+              </Button>
             </Box>
           </Paper>
         </Grid>
@@ -246,6 +297,69 @@ export default function ResidentWallets({ wallets }: WalletProps) {
           </Paper>
         </Grid>
       </Grid>
+
+      {/* Admin Recharge Modal */}
+      <Dialog open={rechargeModalOpen} onClose={() => !recharging && setRechargeModalOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ fontWeight: 'bold', color: '#091542' }}>Admin Wallet Recharge</DialogTitle>
+        <DialogContent dividers>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+            Use this to credit the user's wallet manually if they paid offline via Cash, UPI, or Bank Transfer.
+          </Typography>
+          <Stack spacing={3}>
+            <TextField
+              fullWidth
+              label="Amount (₹)"
+              type="number"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              disabled={recharging}
+            />
+            <Box>
+              <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>Payment Method</Typography>
+              <Select
+                fullWidth
+                value={method}
+                onChange={(e) => setMethod(e.target.value)}
+                disabled={recharging}
+              >
+                <MenuItem value="CASH">Cash</MenuItem>
+                <MenuItem value="UPI">UPI</MenuItem>
+                <MenuItem value="BANK_TRANSFER">Bank Transfer</MenuItem>
+                <MenuItem value="MANUAL">Manual/Other</MenuItem>
+              </Select>
+            </Box>
+            <TextField
+              fullWidth
+              label="Reference ID (Optional)"
+              value={referenceId}
+              onChange={(e) => setReferenceId(e.target.value)}
+              disabled={recharging}
+            />
+            <TextField
+              fullWidth
+              label="Remarks (Optional)"
+              value={remarks}
+              onChange={(e) => setRemarks(e.target.value)}
+              disabled={recharging}
+              multiline
+              rows={2}
+            />
+          </Stack>
+        </DialogContent>
+        <DialogActions sx={{ p: 3 }}>
+          <Button onClick={() => setRechargeModalOpen(false)} disabled={recharging} sx={{ color: 'text.secondary' }}>
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleRecharge} 
+            variant="contained" 
+            disabled={recharging}
+            sx={{ bgcolor: '#065f46', px: 4, borderRadius: 2, textTransform: 'none', '&:hover': { bgcolor: '#022c22' } }}
+          >
+            {recharging ? <CircularProgress size={24} color="inherit" /> : 'Confirm Recharge'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

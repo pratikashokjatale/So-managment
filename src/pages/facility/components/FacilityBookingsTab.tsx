@@ -1,6 +1,7 @@
 import { Box, Typography, CircularProgress, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Stack, IconButton } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import StatusBadge from '@/components/StatusBadge';
 
 interface UserInfo {
@@ -14,6 +15,7 @@ interface BookingRow {
   endTime: string;
   bookingCode: string;
   status: string;
+  paymentStatus?: string;
   user: UserInfo;
 }
 
@@ -23,6 +25,7 @@ interface FacilityBookingsTabProps {
   actionLoading: boolean;
   handleApproveBooking: (id: string) => void;
   handleRejectBooking: (id: string) => void;
+  handlePayFromWallet?: (id: string) => void;
 }
 
 export default function FacilityBookingsTab({
@@ -30,7 +33,8 @@ export default function FacilityBookingsTab({
   loading,
   actionLoading,
   handleApproveBooking,
-  handleRejectBooking
+  handleRejectBooking,
+  handlePayFromWallet
 }: FacilityBookingsTabProps) {
   return (
     <Box>
@@ -93,6 +97,17 @@ export default function FacilityBookingsTab({
                         >
                           <CloseIcon fontSize="small" />
                         </IconButton>
+                        {row.paymentStatus === 'PENDING' && handlePayFromWallet && (
+                          <IconButton
+                            size="small"
+                            color="primary"
+                            onClick={() => handlePayFromWallet(row.id)}
+                            disabled={actionLoading}
+                            title="Pay from Wallet"
+                          >
+                            <AccountBalanceWalletIcon fontSize="small" />
+                          </IconButton>
+                        )}
                       </Stack>
                     ) : (
                       <Typography variant="caption" color="text.secondary" fontWeight="700">Processed</Typography>

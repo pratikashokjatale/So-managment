@@ -138,22 +138,15 @@ export default function GetResident() {
 
       let list: any[] = [];
       if (res) {
-        if (Array.isArray(res)) {
-          list = res;
-        } else if (res.data) {
-          if (Array.isArray(res.data)) {
-            list = res.data;
-          } else if (res.data.items && Array.isArray(res.data.items)) {
-            list = res.data.items;
-          } else if (res.data.data && Array.isArray(res.data.data)) {
-            list = res.data.data;
-          } else if (res.data.users && Array.isArray(res.data.users)) {
-            list = res.data.users;
-          }
-        } else if (res.items && Array.isArray(res.items)) {
-          list = res.items;
-        } else if (res.users && Array.isArray(res.users)) {
-          list = res.users;
+        if (Array.isArray(res)) list = res;
+        else if (res.data && Array.isArray(res.data)) list = res.data;
+        else if (res.data && typeof res.data === 'object') {
+          const possibleArr = Object.values(res.data).find(v => Array.isArray(v));
+          if (possibleArr) list = possibleArr as any[];
+        }
+        else if (typeof res === 'object') {
+          const possibleArr = Object.values(res).find(v => Array.isArray(v));
+          if (possibleArr) list = possibleArr as any[];
         }
       }
 

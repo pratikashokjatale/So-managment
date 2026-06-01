@@ -24,6 +24,7 @@ export interface UpdatePlanPayload {
 }
 
 export interface CreateSubscriptionPayload {
+  userId?: string;
   planId: string;
 }
 
@@ -74,7 +75,7 @@ export const createSubscriptionApi = async (data: CreateSubscriptionPayload) => 
   }
 };
 
-export const getSubscriptionsApi = async (params?: { userId?: string; facilityId?: string; status?: string }) => {
+export const getSubscriptionsApi = async (params?: { userId?: string; facilityId?: string; status?: string; page?: number; limit?: number; search?: string }) => {
   try {
     const res = await api.get("subscriptions", { params });
     return res?.data;
@@ -122,6 +123,15 @@ export const rejectSubscriptionApi = async (subscriptionId: string, data: Reject
 export const cancelSubscriptionApi = async (subscriptionId: string) => {
   try {
     const res = await api.patch(`subscriptions/${subscriptionId}/cancel`);
+    return res?.data;
+  } catch (error) {
+    throw handleApiError(error);
+  }
+};
+
+export const paySubscriptionFromWalletApi = async (subscriptionId: string) => {
+  try {
+    const res = await api.post(`subscriptions/${subscriptionId}/pay-from-wallet`);
     return res?.data;
   } catch (error) {
     throw handleApiError(error);

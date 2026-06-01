@@ -17,7 +17,7 @@ import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import DateRangeOutlinedIcon from '@mui/icons-material/DateRangeOutlined';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import StatusBadge from '@/components/StatusBadge';
-import { cancelSubscriptionApi } from '@/apis/subscription';
+import { cancelSubscriptionApi, paySubscriptionFromWalletApi } from '@/apis/subscription';
 import { useState } from 'react';
 
 interface MembershipDetailsDialogProps {
@@ -42,6 +42,20 @@ export default function MembershipDetailsDialog({ open, onClose, membership, onR
       onClose();
     } catch (err) {
       console.error(err);
+    } finally {
+      setCancelling(false);
+    }
+  };
+
+  const handlePayFromWallet = async () => {
+    if (!window.confirm("Are you sure you want to pay for this subscription using your wallet balance?")) return;
+    setCancelling(true); // Reusing the state for loading
+    try {
+      await paySubscriptionFromWalletApi(membership.id);
+      onRefresh();
+      onClose();
+    } catch (err: any) {
+      alert(err?.message || "Failed to pay from wallet.");
     } finally {
       setCancelling(false);
     }
@@ -181,17 +195,30 @@ export default function MembershipDetailsDialog({ open, onClose, membership, onR
         </Box>
       </DialogContent>
       <DialogActions sx={{ p: 3, pt: 1, borderTop: '1px solid #f1f5f9', justifyContent: 'space-between' }}>
-        {membership.status !== 'CANCELLED' ? (
-          <Button 
-            onClick={handleCancel} 
-            disabled={cancelling}
-            color="error"
-            variant="outlined"
-            sx={{ px: 3, py: 1, borderRadius: 2, textTransform: 'none', fontWeight: 600 }}
-          >
-            {cancelling ? <CircularProgress size={24} color="inherit" /> : 'Cancel Subscription'}
-          </Button>
-        ) : <Box />}
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          {membership.status !== 'CANCELLED' && (
+            <Button 
+              onClick={handleCancel} 
+              disabled={cancelling}
+              color="error"
+              variant="outlined"
+              sx={{ px: 3, py: 1, borderRadius: 2, textTransform: 'none', fontWeight: 600 }}
+            >
+              {cancelling ? <CircularProgress size={24} color="inherit" /> : 'Cancel Subscription'}
+            </Button>
+          )}
+          {membership.paymentStatus === 'PENDING' && membership.status !== 'CANCELLED' && (
+            <Button 
+              onClick={handlePayFromWallet} 
+              disabled={cancelling}
+              color="primary"
+              variant="outlined"
+              sx={{ px: 3, py: 1, borderRadius: 2, textTransform: 'none', fontWeight: 600 }}
+            >
+              Pay from Wallet
+            </Button>
+          )}
+        </Box>
         <Button onClick={onClose} variant="contained" sx={{ px: 4, py: 1.25, borderRadius: 2, textTransform: 'none', bgcolor: '#0047b3', fontWeight: 700, boxShadow: 'none', '&:hover': { bgcolor: '#003380', boxShadow: 'none' } }}>
           Done
         </Button>

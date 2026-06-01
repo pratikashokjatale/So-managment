@@ -12,13 +12,8 @@ import Pagination from '../../components/Pagination';
 import StatusBadge from '../../components/StatusBadge';
 import Search from '@/components/Search';
 
-const mockPayments = [
-  { id: 1, date: '15 May 2024', user: 'John Doe', type: 'Booking', method: 'UPI', amount: '₹300', status: 'Paid', invoice: '#INV001' },
-  { id: 2, date: '15 May 2024', user: 'Jane Smith', type: 'Wallet Topup', method: 'Card', amount: '₹1,000', status: 'Paid', invoice: '#INV002' },
-  { id: 3, date: '15 May 2024', user: 'Mike Johnson', type: 'Membership', method: 'UPI', amount: '₹3,000', status: 'Paid', invoice: '#INV003' },
-  { id: 4, date: '14 May 2024', user: 'Emily Davis', type: 'Booking', method: 'Cash', amount: '₹100', status: 'Paid', invoice: '#INV004' },
-  { id: 5, date: '14 May 2024', user: 'Robert Brown', type: 'Deposit Refund', method: 'UPI', amount: '₹1,000', status: 'Refunded', invoice: '#INV005' },
-];
+import { getPaymentsApi } from '@/apis/payment';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export default function GetPayment() {
   const navigate = useNavigate();
@@ -28,6 +23,38 @@ export default function GetPayment() {
 
   const [typeFilter, setTypeFilter] = useState('All Payments');
   const [statusFilter, setStatusFilter] = useState('All Status');
+  
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [payments, setPayments] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [totalResults, setTotalResults] = useState(0);
+
+  import('react').then(React => {
+    React.useEffect(() => {
+      fetchPayments();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [page, rowsPerPage, typeFilter, statusFilter]);
+  });
+
+  const fetchPayments = async () => {
+    setLoading(true);
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const params: any = { page, limit: rowsPerPage };
+      if (typeFilter !== 'All Payments') params.payableType = typeFilter.toUpperCase();
+      if (statusFilter !== 'All Status') params.status = statusFilter.toUpperCase();
+      
+      const res = await getPaymentsApi(params);
+      if (res.success) {
+        setPayments(res.data.items || []);
+        setTotalResults(res.data.total || 0);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handlePageChange = (_event: any, value: number) => {
     setPage(value);
@@ -128,33 +155,49 @@ export default function GetPayment() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {mockPayments.map((row) => (
-              <TableRow key={row.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                <TableCell sx={{ borderBottomColor: '#f0f0f0', py: 2.5 }}>
-                  <Typography variant="body2" sx={{ color: '#091542', fontWeight: 500 }}>{row.date}</Typography>
-                </TableCell>
-                <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Typography variant="body2" sx={{ color: '#091542', fontWeight: 600 }}>{row.user}</Typography>
-                </TableCell>
-                <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>{row.type}</Typography>
-                </TableCell>
-                <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Typography variant="body2" sx={{ color: '#091542' }}>{row.method}</Typography>
-                </TableCell>
-                <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Typography variant="body2" sx={{ color: '#091542', fontWeight: 700 }}>{row.amount}</Typography>
-                </TableCell>
-                <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <StatusBadge status={row.status} variantType="text" />
-                </TableCell>
-                <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                  <Link href="#" underline="none" sx={{ fontWeight: 600, color: '#0047b3' }}>
-                    {row.invoice}
-                  </Link>
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={7} align="center" sx={{ py: 4 }}>
+                  <CircularProgress />
                 </TableCell>
               </TableRow>
-            ))}
+            ) : payments.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={7} align="center" sx={{ py: 4, color: 'text.secondary' }}>
+                  No payments found.
+                </TableCell>
+              </TableRow>
+            ) : (
+              payments.map((row) => (
+                <TableRow key={row.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                  <TableCell sx={{ borderBottomColor: '#f0f0f0', py: 2.5 }}>
+                    <Typography variant="body2" sx={{ color: '#091542', fontWeight: 500 }}>
+                      {new Date(row.createdAt).toLocaleDateString()}
+                    </Typography>
+                  </TableCell>
+                  <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
+                    <Typography variant="body2" sx={{ color: '#091542', fontWeight: 600 }}>{row.user?.name || '-'}</Typography>
+                  </TableCell>
+                  <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
+                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>{row.payableType}</Typography>
+                  </TableCell>
+                  <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
+                    <Typography variant="body2" sx={{ color: '#091542' }}>{row.provider}</Typography>
+                  </TableCell>
+                  <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
+                    <Typography variant="body2" sx={{ color: '#091542', fontWeight: 700 }}>₹{row.amount}</Typography>
+                  </TableCell>
+                  <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
+                    <StatusBadge status={row.status} variantType="text" />
+                  </TableCell>
+                  <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
+                    <Link href="#" underline="none" sx={{ fontWeight: 600, color: '#0047b3' }}>
+                      #{row.id.substring(0,8).toUpperCase()}
+                    </Link>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </TableContainer>
@@ -163,7 +206,7 @@ export default function GetPayment() {
       <Box sx={{ mt: 3 }}>
         <Pagination 
           page={page} 
-          totalResults={243} 
+          totalResults={totalResults} 
           rowsPerPage={rowsPerPage} 
           onPageChange={handlePageChange} 
           onRowsPerPageChange={handleRowsPerPageChange} 

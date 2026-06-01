@@ -13,6 +13,8 @@ import ResidentWallets from './components/ResidentWallets';
 import ResidentAmenities from './components/ResidentAmenities';
 
 import { getUserDetailsApi } from '@/apis/user';
+import { getAdminUserWalletApi } from '@/apis/wallet';
+import { getSubscriptionsApi } from '@/apis/subscription';
 import { deleteFamilyMemberApi, updateFamilyMemberApi, createFamilyMemberApi } from '@/apis/family';
 import { toast } from 'react-hot-toast';
 import { getFileUrl } from '@/utils/file';
@@ -39,6 +41,14 @@ export default function ResidentDetails() {
   // API Integration States
   const [resident, setResident] = useState<any>(null);
   const [family, setFamily] = useState<any[]>([]);
+  const [walletBalance, setWalletBalance] = useState<number>(0);
+  const [membershipWallet, setMembershipWallet] = useState({
+    status: 'Inactive',
+    currentMonth: 'No active plan',
+    upcomingMonths: [] as string[],
+    expiry: 'N/A',
+    refundableFuture: '₹0.00'
+  });
   const [loading, setLoading] = useState(true);
 
   // Document Viewer Dialog State
@@ -67,6 +77,42 @@ export default function ResidentDetails() {
       setResident(user);
       // Use embedded familyMembers from the user detail response
       setFamily(user?.familyMembers || user?.family || []);
+
+      // Fetch wallet balance separately
+      try {
+        const wRes = await getAdminUserWalletApi(id || '');
+        if (wRes?.success && wRes?.data?.balance !== undefined) {
+          setWalletBalance(wRes.data.balance);
+        } else if (wRes?.balance !== undefined) {
+          setWalletBalance(wRes.balance);
+        }
+      } catch (e) {
+        console.warn("Failed to fetch wallet balance:", e);
+      }
+      // Fetch subscriptions separately
+      try {
+        const subRes = await getSubscriptionsApi({ userId: id || '' });
+        if (subRes?.success && subRes?.data) {
+          let subs = [];
+          if (Array.isArray(subRes.data)) subs = subRes.data;
+          else if (subRes.data.items && Array.isArray(subRes.data.items)) subs = subRes.data.items;
+
+          const activeSubs = subs.filter((s: any) => s.status === 'ACTIVE' || s.status === 'APPROVED');
+          
+          if (activeSubs.length > 0) {
+            const s = activeSubs[0];
+            setMembershipWallet({
+              status: 'Active',
+              currentMonth: s.plan?.name || s.subscriptionCode || 'Monthly Plan',
+              upcomingMonths: [], // Can be populated if advanced booking exists
+              expiry: s.endsAt ? new Date(s.endsAt).toLocaleDateString() : 'N/A',
+              refundableFuture: '₹0.00'
+            });
+          }
+        }
+      } catch (e) {
+        console.warn("Failed to fetch subscriptions:", e);
+      }
     } catch (error) {
       console.warn("Failed to fetch resident details via API:", error);
       setResident({
@@ -275,11 +321,15 @@ export default function ResidentDetails() {
           )}
 
           {activeTab === 1 && (
-            <ResidentWallets wallets={resident.wallets || {
-              membership: { status: 'Active', currentMonth: 'Current Month Paid', upcomingMonths: [], expiry: 'N/A', refundableFuture: '₹0.00' },
-              activity: { balance: '₹0.00' },
-              security: { locked: '₹0.00', refundable: 'Yes', condition: 'Good' }
-            }} />
+            <ResidentWallets 
+              userId={resident.id}
+              wallets={{
+                membership: membershipWallet,
+                activity: { balance: `₹${walletBalance}` },
+                security: { locked: '₹0.00', refundable: 'Yes', condition: 'Good' }
+              }} 
+              onWalletUpdated={(newBalance) => setWalletBalance(newBalance)}
+            />
           )}
 
           {activeTab === 2 && (

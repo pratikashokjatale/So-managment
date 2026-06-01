@@ -26,6 +26,7 @@ export default function GetMembership() {
   const [planFilter, setPlanFilter] = useState('All Plans');
 
   const [memberships, setMemberships] = useState<any[]>([]);
+  const [totalResults, setTotalResults] = useState(0);
   const [loading, setLoading] = useState(false);
 
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
@@ -44,26 +45,51 @@ export default function GetMembership() {
   const fetchMemberships = async () => {
     setLoading(true);
     try {
-      const res = await getSubscriptionsApi();
+      const params: any = {
+        page,
+        limit: rowsPerPage,
+      };
+      if (searchQuery) params.search = searchQuery;
+      if (statusFilter !== 'All Status') params.status = statusFilter;
+
+      const res = await getSubscriptionsApi(params);
       let fetchedSubs: any[] = [];
+      let total = 0;
+
       if (res?.success && res?.data) {
         if (Array.isArray(res.data)) {
           fetchedSubs = res.data;
+          total = res.data.length;
         } else if (res.data.items && Array.isArray(res.data.items)) {
           fetchedSubs = res.data.items;
+          total = res.data.totalResults || res.data.totalCount || res.data.items.length;
+        } else if (res.data.data && Array.isArray(res.data.data)) {
+          fetchedSubs = res.data.data;
+          total = res.data.totalResults || res.data.totalCount || res.data.data.length;
         } else if (typeof res.data === 'object') {
           const possibleArr = Object.values(res.data).find(val => Array.isArray(val));
-          if (possibleArr) fetchedSubs = possibleArr as any[];
+          if (possibleArr) {
+            fetchedSubs = possibleArr as any[];
+            total = res.data.totalResults || res.data.totalCount || fetchedSubs.length;
+          }
         }
       } else if (Array.isArray(res)) {
         fetchedSubs = res;
+        total = res.length;
       } else if (res?.items && Array.isArray(res.items)) {
         fetchedSubs = res.items;
+        total = res?.totalResults || res?.totalCount || res.items.length;
+      } else if (res?.data && Array.isArray(res.data)) {
+        fetchedSubs = res.data;
+        total = res?.totalResults || res?.totalCount || res.data.length;
       }
+
       setMemberships(fetchedSubs);
+      setTotalResults(total);
     } catch (err) {
       console.error('Failed to load memberships:', err);
       setMemberships([]);
+      setTotalResults(0);
     } finally {
       setLoading(false);
     }
@@ -71,7 +97,7 @@ export default function GetMembership() {
 
   useEffect(() => {
     fetchMemberships();
-  }, []);
+  }, [page, rowsPerPage, searchQuery, statusFilter, planFilter]);
 
   const handlePageChange = (_event: any, value: number) => {
     setPage(value);
@@ -209,7 +235,7 @@ export default function GetMembership() {
       <Box sx={{ mt: 2 }}>
         <Pagination 
           page={page} 
-          totalResults={memberships.length || 0} 
+          totalResults={totalResults} 
           rowsPerPage={rowsPerPage} 
           onPageChange={handlePageChange} 
           onRowsPerPageChange={handleRowsPerPageChange} 

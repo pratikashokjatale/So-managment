@@ -39,6 +39,7 @@ import GetFlat from "@/pages/flat/GetFlat";
 import AddFlat from "@/pages/flat/AddFlat";
 import EditFlat from "@/pages/flat/EditFlat";
 import GetProfile from "@/pages/profile/GetProfile";
+import MyWallet from "@/pages/wallet/MyWallet";
 
 const DashboardRoutes = {
   path: "/",
@@ -51,6 +52,10 @@ const DashboardRoutes = {
     {
       path: "profile",
       element: <GetProfile />,
+    },
+    {
+      path: "wallet",
+      element: <MyWallet />,
     },
     {
       path: "residents",

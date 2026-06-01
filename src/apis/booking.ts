@@ -112,3 +112,12 @@ export const updateBookingPaymentApi = async (bookingId: string, data: UpdateBoo
     throw handleApiError(error);
   }
 };
+
+export const payBookingFromWalletApi = async (bookingId: string) => {
+  try {
+    const res = await api.post(`bookings/${bookingId}/pay-from-wallet`);
+    return res?.data;
+  } catch (error) {
+    throw handleApiError(error);
+  }
+};

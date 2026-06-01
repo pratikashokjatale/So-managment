@@ -9,7 +9,7 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 
 import BackButton from '@/components/BackButton';
 import { getFacilityDetailsApi, updateFacilityApi } from '@/apis/facility';
-import { getBookingsApi, approveBookingApi, rejectBookingApi } from '@/apis/booking';
+import { getBookingsApi, approveBookingApi, rejectBookingApi, payBookingFromWalletApi } from '@/apis/booking';
 import { 
   getSubscriptionPlansApi, 
   createSubscriptionPlanApi, 
@@ -271,6 +271,20 @@ export default function FacilityDetails() {
     }
   };
 
+  const handlePayFromWallet = async (bookingId: string) => {
+    if (!window.confirm("Are you sure you want to pay for this booking using your wallet balance?")) return;
+    setActionLoading(true);
+    try {
+      await payBookingFromWalletApi(bookingId);
+      alert("Payment successful via Wallet!");
+      fetchTodayBookings();
+    } catch (err: any) {
+      alert(err?.message || "Failed to pay from wallet.");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   // Plan creation
   const handleCreatePlanSubmit = async () => {
     if (!id) return;
@@ -467,6 +481,7 @@ export default function FacilityDetails() {
                   actionLoading={actionLoading}
                   handleApproveBooking={handleApproveBooking}
                   handleRejectBooking={handleRejectBooking}
+                  handlePayFromWallet={handlePayFromWallet}
                 />
               )}
 

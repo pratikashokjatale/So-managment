@@ -17,8 +17,9 @@ import {
   EventSeat as SeatIcon
 } from '@mui/icons-material';
 import { getFacilitiesApi } from '@/apis/facility';
-import { getSubscriptionPlansApi, createSubscriptionApi } from '@/apis/subscription';
-import { getSlotsApi, createBookingApi } from '@/apis/booking';
+import { getSubscriptionPlansApi, createSubscriptionApi, paySubscriptionFromWalletApi } from '@/apis/subscription';
+import { getSlotsApi, createBookingApi, payBookingFromWalletApi } from '@/apis/booking';
+import { createManualPaymentApi } from '@/apis/payment';
 import { toast } from 'react-hot-toast';
 import { getFileUrl } from '@/utils/file';
 
@@ -64,6 +65,7 @@ export default function CreateBookingDialog({ open, onClose, resident }: CreateB
   const [notes, setNotes] = useState('');
 
   const [submitting, setSubmitting] = useState(false);
+  const [paying, setPaying] = useState(false);
   const [success, setSuccess] = useState(false);
   const [createdBooking, setCreatedBooking] = useState<any>(null);
 
@@ -80,6 +82,7 @@ export default function CreateBookingDialog({ open, onClose, resident }: CreateB
     setAttendeeCount(1);
     setGuestCount(0);
     setNotes('');
+    setPaying(false);
     setSuccess(false);
     setCreatedBooking(null);
     onClose();
@@ -217,6 +220,43 @@ export default function CreateBookingDialog({ open, onClose, resident }: CreateB
 
   const isSlotMode = selectedFacility &&
     (['SLOT_BOOKING', 'MIXED'].includes(selectedFacility.accessType?.toUpperCase() || ''));
+
+  const handlePayFromWallet = async () => {
+    if (!createdBooking) return;
+    setPaying(true);
+    try {
+      if (isSlotMode) {
+        await payBookingFromWalletApi(createdBooking.id);
+      } else {
+        await paySubscriptionFromWalletApi(createdBooking.id);
+      }
+      toast.success("Paid successfully from wallet!");
+      setCreatedBooking({ ...createdBooking, paymentStatus: 'PAID' });
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to pay from wallet");
+    } finally {
+      setPaying(false);
+    }
+  };
+
+  const handleMarkAsPaid = async () => {
+    if (!createdBooking) return;
+    setPaying(true);
+    try {
+      await createManualPaymentApi({
+        payableType: isSlotMode ? 'BOOKING' : 'SUBSCRIPTION',
+        payableId: createdBooking.id,
+        provider: 'CASH',
+        notes: 'Offline payment collected by Admin'
+      });
+      toast.success("Marked as paid successfully via Cash!");
+      setCreatedBooking({ ...createdBooking, paymentStatus: 'PAID' });
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to update payment status");
+    } finally {
+      setPaying(false);
+    }
+  };
 
   /* =========================================================== RENDER */
   return (
@@ -647,6 +687,32 @@ export default function CreateBookingDialog({ open, onClose, resident }: CreateB
                   </Stack>
                 )}
               </Paper>
+            )}
+
+            {createdBooking?.paymentStatus === 'PENDING' && (
+              <Box sx={{ mt: 3, p: 2, bgcolor: 'rgba(245,158,11,0.05)', borderRadius: '12px', border: '1px solid rgba(245,158,11,0.2)' }}>
+                <Typography variant="body2" fontWeight={800} color="#b45309" sx={{ mb: 1.5 }}>
+                  Payment is Pending (₹{parseFloat(createdBooking.amount || selectedPlan?.priceAmount || 0).toLocaleString('en-IN')})
+                </Typography>
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} justifyContent="center">
+                  <Button
+                    variant="contained"
+                    disabled={paying}
+                    onClick={handlePayFromWallet}
+                    sx={{ borderRadius: '8px', textTransform: 'none', fontWeight: 700, bgcolor: '#091542', '&:hover': { bgcolor: '#122566' } }}
+                  >
+                    {paying ? <CircularProgress size={20} sx={{ color: 'white' }} /> : 'Pay from Wallet'}
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    disabled={paying}
+                    onClick={handleMarkAsPaid}
+                    sx={{ borderRadius: '8px', textTransform: 'none', fontWeight: 700, borderColor: '#091542', color: '#091542' }}
+                  >
+                    {paying ? <CircularProgress size={20} color="inherit" /> : 'Mark as Paid (Offline)'}
+                  </Button>
+                </Stack>
+              </Box>
             )}
           </Box>
         )}
