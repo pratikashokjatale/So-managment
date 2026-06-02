@@ -1,6 +1,7 @@
 import { 
   Box, Typography, Paper, Grid, Stack, Chip, Divider, 
-  List, ListItem, ListItemText, ListItemIcon, Button, Dialog, DialogTitle, DialogContent, TextField, Select, MenuItem, DialogActions, CircularProgress 
+  List, ListItem, ListItemText, ListItemIcon, Button, Dialog, DialogTitle, DialogContent, TextField, Select, MenuItem, DialogActions, CircularProgress,
+  Table, TableBody, TableCell, TableContainer, TableHead, TableRow
 } from '@mui/material';
 import { 
   AccountBalanceWallet as WalletIcon, 
@@ -10,8 +11,11 @@ import {
   History as HistoryIcon
 } from '@mui/icons-material';
 
-import { adminRechargeUserWalletApi } from '@/apis/wallet';
-import { useState } from 'react';
+import { adminRechargeUserWalletApi, getWalletTransactionsApi } from '@/apis/wallet';
+import { useState, useEffect } from 'react';
+import StatusBadge from '@/components/StatusBadge';
+import Pagination from '@/components/Pagination';
+import MembershipDetailsDialog from '@/pages/membership/components/MembershipDetailsDialog';
 
 interface WalletProps {
   userId: string;
@@ -26,16 +30,53 @@ interface WalletProps {
     };
     activity: { balance: string };
     security: { locked: string; refundable: string; condition: string };
-  }
+  };
+  activeSubscriptions?: any[];
 }
 
-export default function ResidentWallets({ userId, onWalletUpdated, wallets }: WalletProps) {
+export default function ResidentWallets({ userId, onWalletUpdated, wallets, activeSubscriptions = [] }: WalletProps) {
   const [rechargeModalOpen, setRechargeModalOpen] = useState(false);
   const [amount, setAmount] = useState('');
   const [method, setMethod] = useState('CASH');
   const [referenceId, setReferenceId] = useState('');
   const [remarks, setRemarks] = useState('');
   const [recharging, setRecharging] = useState(false);
+
+  // Transaction state
+  const [transactions, setTransactions] = useState<any[]>([]);
+  const [loadingTransactions, setLoadingTransactions] = useState(false);
+  const [page, setPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [totalResults, setTotalResults] = useState(0);
+
+  // Subscription detail modal state
+  const [selectedSubscription, setSelectedSubscription] = useState<any>(null);
+  const [subscriptionDetailOpen, setSubscriptionDetailOpen] = useState(false);
+
+  const fetchTransactions = async () => {
+    if (!userId) return;
+    setLoadingTransactions(true);
+    try {
+      const res = await getWalletTransactionsApi({
+        userId,
+        page,
+        limit: rowsPerPage
+      });
+      if (res?.success) {
+        setTransactions(res.data?.items || []);
+        setTotalResults(res.data?.total || 0);
+      }
+    } catch (err) {
+      console.error("Failed to fetch transactions:", err);
+    } finally {
+      setLoadingTransactions(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTransactions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId, page, rowsPerPage]);
 
   const handleRecharge = async () => {
     if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
@@ -61,6 +102,7 @@ export default function ResidentWallets({ userId, onWalletUpdated, wallets }: Wa
       if (onWalletUpdated && res?.data?.wallet?.balance !== undefined) {
         onWalletUpdated(res.data.wallet.balance);
       }
+      fetchTransactions();
     } catch (err: any) {
       alert(err?.message || "Failed to recharge wallet.");
     } finally {
@@ -112,8 +154,78 @@ export default function ResidentWallets({ userId, onWalletUpdated, wallets }: Wa
                   <Typography variant="h5" fontWeight="900" sx={{ letterSpacing: '-0.5px' }}>{wallets.membership.status}</Typography>
                   <Chip label="Monthly Based" size="small" sx={{ fontWeight: 900, bgcolor: 'rgba(255,255,255,0.15)', color: 'white', fontSize: '0.65rem' }} />
                 </Stack>
-                <Typography variant="caption" sx={{ opacity: 0.7, fontWeight: 700, display: 'block' }}>ACTIVE PERIOD</Typography>
-                <Typography variant="body2" fontWeight="800" sx={{ mt: 0.5 }}>{wallets.membership.currentMonth}</Typography>
+                
+                {activeSubscriptions && activeSubscriptions.length > 0 ? (
+                  <Box>
+                    <Typography variant="caption" sx={{ opacity: 0.8, fontWeight: 700, display: 'block', mb: 1 }}>
+                      ACTIVE PERIODS
+                    </Typography>
+                    <Stack 
+                      spacing={1} 
+                      sx={{ 
+                        maxHeight: 145, 
+                        overflowY: 'auto',
+                        pr: 0.5,
+                        '&::-webkit-scrollbar': { width: '4px' },
+                        '&::-webkit-scrollbar-track': { background: 'rgba(255, 255, 255, 0.05)' },
+                        '&::-webkit-scrollbar-thumb': { background: 'rgba(255, 255, 255, 0.2)', borderRadius: '2px' }
+                      }}
+                    >
+                      {activeSubscriptions.map((sub) => (
+                        <Box 
+                          key={sub.id} 
+                          onClick={() => {
+                            setSelectedSubscription(sub);
+                            setSubscriptionDetailOpen(true);
+                          }}
+                          sx={{ 
+                            p: 1.25, 
+                            borderRadius: '12px', 
+                            bgcolor: 'rgba(255,255,255,0.08)',
+                            border: '1px solid rgba(255,255,255,0.12)',
+                            cursor: 'pointer',
+                            transition: 'all 0.15s ease',
+                            '&:hover': {
+                              bgcolor: 'rgba(255,255,255,0.15)',
+                              transform: 'translateY(-1px)'
+                            }
+                          }}
+                        >
+                          <Stack direction="row" justifyContent="space-between" alignItems="center">
+                            <Typography variant="body2" fontWeight="800">
+                              {sub.plan?.name || sub.facility?.name || 'Subscription'}
+                            </Typography>
+                            <Chip 
+                              label="ACTIVE" 
+                              size="small" 
+                              sx={{ 
+                                height: 16, 
+                                fontSize: '0.55rem', 
+                                fontWeight: 900, 
+                                bgcolor: 'rgba(16,185,129,0.2)', 
+                                color: '#10b981',
+                                borderRadius: '4px'
+                              }} 
+                            />
+                          </Stack>
+                          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mt: 0.5 }}>
+                            <Typography variant="caption" sx={{ display: 'block', opacity: 0.7, fontSize: '0.7rem' }}>
+                              Expires: {sub.endsAt ? new Date(sub.endsAt).toLocaleDateString() : 'N/A'}
+                            </Typography>
+                            <Typography variant="body2" fontWeight="900" sx={{ color: 'rgba(255,255,255,0.95)' }}>
+                              ₹{parseFloat(sub.amount || 0).toLocaleString('en-IN')}
+                            </Typography>
+                          </Stack>
+                        </Box>
+                      ))}
+                    </Stack>
+                  </Box>
+                ) : (
+                  <>
+                    <Typography variant="caption" sx={{ opacity: 0.7, fontWeight: 700, display: 'block' }}>ACTIVE PERIOD</Typography>
+                    <Typography variant="body2" fontWeight="800" sx={{ mt: 0.5 }}>{wallets.membership.currentMonth}</Typography>
+                  </>
+                )}
               </Box>
             </Box>
 
@@ -260,40 +372,70 @@ export default function ResidentWallets({ userId, onWalletUpdated, wallets }: Wa
           }}>
             <Stack direction="row" spacing={2.5} alignItems="center" sx={{ mb: 4 }}>
               <Box sx={{ p: 1, bgcolor: 'rgba(9, 21, 66, 0.05)', borderRadius: '10px', color: '#091542' }}><HistoryIcon /></Box>
-              <Typography variant="h6" fontWeight="900" color="#091542">Membership Timeline</Typography>
+              <Typography variant="h6" fontWeight="900" color="#091542">Transaction History</Typography>
             </Stack>
-            <Grid container spacing={3}>
-              <Grid size={{ xs: 12, md: 3 }}>
-                <Box sx={{ 
-                  p: 3, 
-                  bgcolor: '#f0fdf4', 
-                  borderRadius: '24px', 
-                  border: '1px solid #dcfce7',
-                  transition: 'all 0.2s',
-                  '&:hover': { transform: 'translateY(-2px)' }
-                }}>
-                  <Typography variant="caption" fontWeight="800" color="#10b981" sx={{ letterSpacing: '0.5px' }}>CURRENT ACTIVE</Typography>
-                  <Typography variant="body1" fontWeight="800" color="#091542" sx={{ mt: 1, mb: 0.5 }}>{wallets.membership.currentMonth}</Typography>
-                  <Typography variant="caption" color="#64748b" fontWeight="700">Non-Refundable Phase</Typography>
-                </Box>
-              </Grid>
-              {wallets.membership.upcomingMonths.map((month) => (
-                <Grid size={{ xs: 12, md: 3 }} key={month}>
-                  <Box sx={{ 
-                    p: 3, 
-                    bgcolor: '#f8fafc', 
-                    borderRadius: '24px', 
-                    border: '1px solid #e2e8f0',
-                    transition: 'all 0.2s',
-                    '&:hover': { transform: 'translateY(-2px)' }
-                  }}>
-                    <Typography variant="caption" fontWeight="800" color="#64748b" sx={{ letterSpacing: '0.5px' }}>UPCOMING (PAID)</Typography>
-                    <Typography variant="body1" fontWeight="800" color="#1e293b" sx={{ mt: 1, mb: 0.5 }}>{month}</Typography>
-                    <Typography variant="caption" color="#10b981" fontWeight="800">Refundable</Typography>
+
+            {loadingTransactions ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', py: 5 }}>
+                <CircularProgress />
+              </Box>
+            ) : (
+              <>
+                <TableContainer sx={{ overflowX: 'auto', border: '1px solid #f1f5f9', borderRadius: 3 }}>
+                  <Table sx={{ minWidth: 700 }}>
+                    <TableHead sx={{ bgcolor: '#f8fafc' }}>
+                      <TableRow>
+                        <TableCell sx={{ fontWeight: 600, color: '#475569' }}>Date</TableCell>
+                        <TableCell sx={{ fontWeight: 600, color: '#475569' }}>Type</TableCell>
+                        <TableCell sx={{ fontWeight: 600, color: '#475569' }}>Amount</TableCell>
+                        <TableCell sx={{ fontWeight: 600, color: '#475569' }}>Notes</TableCell>
+                        <TableCell sx={{ fontWeight: 600, color: '#475569' }}>Status</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {transactions.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={5} align="center" sx={{ py: 4, color: 'text.secondary' }}>
+                            No transactions found.
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        transactions.map((tx) => (
+                          <TableRow key={tx.id} hover>
+                            <TableCell sx={{ color: '#091542', fontWeight: 500 }}>
+                              {new Date(tx.createdAt).toLocaleDateString()} {new Date(tx.createdAt).toLocaleTimeString()}
+                            </TableCell>
+                            <TableCell>
+                              <StatusBadge status={tx.type} variantType="text" />
+                            </TableCell>
+                            <TableCell sx={{ fontWeight: 700, color: tx.type === 'CREDIT' ? '#10b981' : (tx.type === 'DEBIT' ? '#ef4444' : '#091542') }}>
+                              {tx.type === 'CREDIT' ? '+' : (tx.type === 'DEBIT' ? '-' : '')}₹{tx.amount}
+                            </TableCell>
+                            <TableCell sx={{ color: 'text.secondary' }}>{tx.notes || '-'}</TableCell>
+                            <TableCell>
+                              <StatusBadge status={tx.status} variantType="text" />
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+
+                {!loadingTransactions && transactions.length > 0 && (
+                  <Box sx={{ mt: 3 }}>
+                    <Pagination 
+                      page={page} 
+                      totalResults={totalResults} 
+                      rowsPerPage={rowsPerPage} 
+                      onPageChange={(_, val) => setPage(val)} 
+                      onRowsPerPageChange={(e) => { setRowsPerPage(Number(e.target.value)); setPage(1); }} 
+                      rowsPerPageOptions={[5, 10, 15]}
+                    />
                   </Box>
-                </Grid>
-              ))}
-            </Grid>
+                )}
+              </>
+            )}
           </Paper>
         </Grid>
       </Grid>
@@ -360,6 +502,19 @@ export default function ResidentWallets({ userId, onWalletUpdated, wallets }: Wa
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Subscription Details Dialog */}
+      {selectedSubscription && (
+        <MembershipDetailsDialog 
+          open={subscriptionDetailOpen}
+          onClose={() => {
+            setSubscriptionDetailOpen(false);
+            setSelectedSubscription(null);
+          }}
+          membership={selectedSubscription}
+          onRefresh={fetchTransactions}
+        />
+      )}
     </Box>
   );
 }

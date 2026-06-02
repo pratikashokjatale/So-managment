@@ -74,7 +74,7 @@ export const adminRechargeUserWalletApi = async (userId: string, data: AdminRech
 
 export const getAdminUserWalletApi = async (userId: string) => {
   try {
-    const res = await api.get(`wallet/admin/users/${userId}/wallet`);
+    const res = await api.get(`wallet/admin/users/${userId}`);
     return res?.data;
   } catch (error) {
     throw handleApiError(error);

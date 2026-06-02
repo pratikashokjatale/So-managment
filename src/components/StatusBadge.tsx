@@ -23,7 +23,7 @@ const statusColors: Record<string, { text: string; bg?: string }> = {
 };
 
 export default function StatusBadge({ status, variantType = 'text', sx, ...props }: StatusBadgeProps) {
-  const normalizedStatus = status.toLowerCase();
+  const normalizedStatus = String(status || '').toLowerCase();
   const colors = statusColors[normalizedStatus] || { text: '#757575', bg: '#f5f5f5' };
 
   if (variantType === 'chip') {

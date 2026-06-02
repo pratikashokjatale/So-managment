@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Box, Typography, Button, Table, TableBody, TableCell, 
   TableContainer, TableHead, TableRow,
-  Select, MenuItem, Breadcrumbs, Link, Paper
+  Select, MenuItem, Link, Paper
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import DownloadIcon from '@mui/icons-material/Download';
@@ -12,7 +12,7 @@ import Pagination from '../../components/Pagination';
 import StatusBadge from '../../components/StatusBadge';
 import Search from '@/components/Search';
 
-import { getPaymentsApi } from '@/apis/payment';
+import { getWalletTransactionsApi } from '@/apis/wallet';
 import CircularProgress from '@mui/material/CircularProgress';
 
 export default function GetPayment() {
@@ -21,33 +21,32 @@ export default function GetPayment() {
   const [searchQuery, setSearchQuery] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const [typeFilter, setTypeFilter] = useState('All Payments');
+  const [typeFilter, setTypeFilter] = useState('All Types');
   const [statusFilter, setStatusFilter] = useState('All Status');
   
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [payments, setPayments] = useState<any[]>([]);
+  const [transactions, setTransactions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalResults, setTotalResults] = useState(0);
 
-  import('react').then(React => {
-    React.useEffect(() => {
-      fetchPayments();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [page, rowsPerPage, typeFilter, statusFilter]);
-  });
+  useEffect(() => {
+    fetchTransactions();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, rowsPerPage, typeFilter]);
 
-  const fetchPayments = async () => {
+  const fetchTransactions = async () => {
     setLoading(true);
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const params: any = { page, limit: rowsPerPage };
-      if (typeFilter !== 'All Payments') params.payableType = typeFilter.toUpperCase();
-      if (statusFilter !== 'All Status') params.status = statusFilter.toUpperCase();
+      if (typeFilter !== 'All Types') {
+        params.type = typeFilter.toUpperCase();
+      }
       
-      const res = await getPaymentsApi(params);
+      const res = await getWalletTransactionsApi(params);
       if (res.success) {
-        setPayments(res.data.items || []);
-        setTotalResults(res.data.total || 0);
+        setTransactions(res.data?.items || []);
+        setTotalResults(res.data?.total || 0);
       }
     } catch (err) {
       console.error(err);
@@ -64,6 +63,39 @@ export default function GetPayment() {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(1);
   };
+
+  // Client side filtering for search query and status filter
+  const filteredTransactions = transactions.filter((row) => {
+    // Search filter
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      const userName = (row.user?.name || '').toLowerCase();
+      const userId = (row.userId || '').toLowerCase();
+      const notes = (row.notes || '').toLowerCase();
+      const type = (row.type || '').toLowerCase();
+      const status = (row.status || '').toLowerCase();
+      const amount = String(row.amount);
+      const id = String(row.id).toLowerCase();
+      if (
+        !userName.includes(q) && 
+        !userId.includes(q) && 
+        !notes.includes(q) && 
+        !type.includes(q) && 
+        !status.includes(q) && 
+        !amount.includes(q) && 
+        !id.includes(q)
+      ) {
+        return false;
+      }
+    }
+    // Status filter
+    if (statusFilter !== 'All Status') {
+      if ((row.status || '').toUpperCase() !== statusFilter.toUpperCase()) {
+        return false;
+      }
+    }
+    return true;
+  });
 
   const StatCard = ({ title, amount, percentage, color }: { title: string, amount: string, percentage: string, color: string }) => (
     <Paper elevation={0} sx={{ p: 3, border: '1px solid #f0f0f0', borderRadius: 4 }}>
@@ -94,9 +126,9 @@ export default function GetPayment() {
       {/* Header Section */}
       <Box sx={{ mb: 4 }}>
         <Typography variant="h4" fontWeight="bold" sx={{ mb: 1, color: '#091542' }}>
-          Payments
+          Wallet Transactions
         </Typography>
-</Box>
+      </Box>
 
       {/* Stats Section */}
       <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr 1fr' }, gap: 3, mb: 5 }}>
@@ -104,10 +136,10 @@ export default function GetPayment() {
           <StatCard title="Total Collection (May)" amount="₹45,230" percentage="+20%" color="#4caf50" />
         </Box>
         <Box>
-          <StatCard title="Online Payments" amount="₹32,150" percentage="+10%" color="#4caf50" />
+          <StatCard title="Credits" amount="₹32,150" percentage="+10%" color="#4caf50" />
         </Box>
         <Box>
-          <StatCard title="Cash Payments" amount="₹13,080" percentage="+10%" color="#4caf50" />
+          <StatCard title="Debits" amount="₹13,080" percentage="+10%" color="#4caf50" />
         </Box>
       </Box>
 
@@ -115,13 +147,17 @@ export default function GetPayment() {
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
         <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
           <Select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value as string)} sx={filterSelectSx}>
-            <MenuItem value="All Payments">All Payments</MenuItem>
-            <MenuItem value="Booking">Booking</MenuItem>
-            <MenuItem value="Membership">Membership</MenuItem>
+            <MenuItem value="All Types">All Types</MenuItem>
+            <MenuItem value="Credit">Credit</MenuItem>
+            <MenuItem value="Debit">Debit</MenuItem>
+            <MenuItem value="Refund">Refund</MenuItem>
+            <MenuItem value="Adjustment">Adjustment</MenuItem>
           </Select>
           <Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as string)} sx={filterSelectSx}>
             <MenuItem value="All Status">All Status</MenuItem>
             <MenuItem value="Paid">Paid</MenuItem>
+            <MenuItem value="Pending">Pending</MenuItem>
+            <MenuItem value="Failed">Failed</MenuItem>
             <MenuItem value="Refunded">Refunded</MenuItem>
           </Select>
           <Search 
@@ -142,16 +178,16 @@ export default function GetPayment() {
 
       {/* Table Section */}
       <TableContainer sx={{ overflowX: 'auto' }}>
-        <Table sx={{ minWidth: 900 }} aria-label="payments table">
+        <Table sx={{ minWidth: 900 }} aria-label="transactions table">
           <TableHead>
             <TableRow>
               <TableCell sx={{ color: 'text.secondary', fontWeight: 600, borderBottom: '1px solid #f0f0f0' }}>Date</TableCell>
               <TableCell sx={{ color: 'text.secondary', fontWeight: 600, borderBottom: '1px solid #f0f0f0' }}>User</TableCell>
               <TableCell sx={{ color: 'text.secondary', fontWeight: 600, borderBottom: '1px solid #f0f0f0' }}>Type</TableCell>
-              <TableCell sx={{ color: 'text.secondary', fontWeight: 600, borderBottom: '1px solid #f0f0f0' }}>Method</TableCell>
+              <TableCell sx={{ color: 'text.secondary', fontWeight: 600, borderBottom: '1px solid #f0f0f0' }}>Notes</TableCell>
               <TableCell sx={{ color: 'text.secondary', fontWeight: 600, borderBottom: '1px solid #f0f0f0' }}>Amount</TableCell>
               <TableCell sx={{ color: 'text.secondary', fontWeight: 600, borderBottom: '1px solid #f0f0f0' }}>Status</TableCell>
-              <TableCell sx={{ color: 'text.secondary', fontWeight: 600, borderBottom: '1px solid #f0f0f0' }}>Invoice</TableCell>
+              <TableCell sx={{ color: 'text.secondary', fontWeight: 600, borderBottom: '1px solid #f0f0f0' }}>ID</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -161,31 +197,31 @@ export default function GetPayment() {
                   <CircularProgress />
                 </TableCell>
               </TableRow>
-            ) : payments.length === 0 ? (
+            ) : filteredTransactions.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} align="center" sx={{ py: 4, color: 'text.secondary' }}>
-                  No payments found.
+                  No transactions found.
                 </TableCell>
               </TableRow>
             ) : (
-              payments.map((row) => (
+              filteredTransactions.map((row) => (
                 <TableRow key={row.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                   <TableCell sx={{ borderBottomColor: '#f0f0f0', py: 2.5 }}>
                     <Typography variant="body2" sx={{ color: '#091542', fontWeight: 500 }}>
-                      {new Date(row.createdAt).toLocaleDateString()}
+                      {new Date(row.createdAt).toLocaleDateString()} {new Date(row.createdAt).toLocaleTimeString()}
                     </Typography>
                   </TableCell>
                   <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                    <Typography variant="body2" sx={{ color: '#091542', fontWeight: 600 }}>{row.user?.name || '-'}</Typography>
+                    <Typography variant="body2" sx={{ color: '#091542', fontWeight: 600 }}>{row.user?.name || row.userId || '-'}</Typography>
                   </TableCell>
                   <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>{row.payableType}</Typography>
+                    <StatusBadge status={row.type} variantType="text" />
                   </TableCell>
                   <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                    <Typography variant="body2" sx={{ color: '#091542' }}>{row.provider}</Typography>
+                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>{row.notes || '-'}</Typography>
                   </TableCell>
-                  <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                    <Typography variant="body2" sx={{ color: '#091542', fontWeight: 700 }}>₹{row.amount}</Typography>
+                  <TableCell sx={{ borderBottomColor: '#f0f0f0', fontWeight: 700, color: row.type === 'CREDIT' ? '#10b981' : '#ef4444' }}>
+                    {row.type === 'CREDIT' ? '+' : '-'}₹{row.amount}
                   </TableCell>
                   <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
                     <StatusBadge status={row.status} variantType="text" />

@@ -49,6 +49,7 @@ export default function ResidentDetails() {
     expiry: 'N/A',
     refundableFuture: '₹0.00'
   });
+  const [activeSubscriptions, setActiveSubscriptions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Document Viewer Dialog State
@@ -91,21 +92,36 @@ export default function ResidentDetails() {
       }
       // Fetch subscriptions separately
       try {
-        const subRes = await getSubscriptionsApi({ userId: id || '' });
+        const subRes = await getSubscriptionsApi({ userId: id || '', status: 'ACTIVE', page: 1, limit: 20 });
         if (subRes?.success && subRes?.data) {
           let subs = [];
           if (Array.isArray(subRes.data)) subs = subRes.data;
           else if (subRes.data.items && Array.isArray(subRes.data.items)) subs = subRes.data.items;
 
           const activeSubs = subs.filter((s: any) => s.status === 'ACTIVE' || s.status === 'APPROVED');
+          setActiveSubscriptions(activeSubs);
           
           if (activeSubs.length > 0) {
-            const s = activeSubs[0];
+            const planNames = activeSubs.map((s: any) => s.plan?.name || s.subscriptionCode || 'Monthly Plan').join(', ');
+            const totalAmount = activeSubs.reduce((sum: number, s: any) => sum + parseFloat(s.amount || 0), 0);
+            const latestExpiry = activeSubs.reduce((max: string, s: any) => {
+              if (!s.endsAt) return max;
+              return (!max || new Date(s.endsAt) > new Date(max)) ? s.endsAt : max;
+            }, '');
+
             setMembershipWallet({
               status: 'Active',
-              currentMonth: s.plan?.name || s.subscriptionCode || 'Monthly Plan',
+              currentMonth: planNames,
               upcomingMonths: [], // Can be populated if advanced booking exists
-              expiry: s.endsAt ? new Date(s.endsAt).toLocaleDateString() : 'N/A',
+              expiry: latestExpiry ? new Date(latestExpiry).toLocaleDateString() : 'N/A',
+              refundableFuture: `₹${totalAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`
+            });
+          } else {
+            setMembershipWallet({
+              status: 'Inactive',
+              currentMonth: 'No active plan',
+              upcomingMonths: [],
+              expiry: 'N/A',
               refundableFuture: '₹0.00'
             });
           }
@@ -328,6 +344,7 @@ export default function ResidentDetails() {
                 activity: { balance: `₹${walletBalance}` },
                 security: { locked: '₹0.00', refundable: 'Yes', condition: 'Good' }
               }} 
+              activeSubscriptions={activeSubscriptions}
               onWalletUpdated={(newBalance) => setWalletBalance(newBalance)}
             />
           )}
