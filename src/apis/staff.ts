@@ -5,9 +5,9 @@ export interface GetStaffParams {
   status?: string;
   facilityId?: string;
   employmentType?: string;
-  
+
   page?: number;
-  limit?: number; 
+  limit?: number;
 }
 
 export interface CreateStaffPayload {
@@ -63,7 +63,10 @@ export const createStaffApi = async (data: CreateStaffPayload) => {
   }
 };
 
-export const updateStaffApi = async (id: string, data: Partial<CreateStaffPayload>) => {
+export const updateStaffApi = async (
+  id: string,
+  data: Partial<CreateStaffPayload>,
+) => {
   try {
     const res = await api.patch(`staff/${id}`, data);
     return res?.data;

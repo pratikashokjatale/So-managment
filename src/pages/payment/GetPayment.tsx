@@ -13,6 +13,7 @@ import StatusBadge from '../../components/StatusBadge';
 import Search from '@/components/Search';
 
 import { getWalletTransactionsApi } from '@/apis/wallet';
+import { getUsersApi } from '@/apis/user';
 import CircularProgress from '@mui/material/CircularProgress';
 
 export default function GetPayment() {
@@ -23,6 +24,47 @@ export default function GetPayment() {
 
   const [typeFilter, setTypeFilter] = useState('All Types');
   const [statusFilter, setStatusFilter] = useState('All Status');
+  const [userMap, setUserMap] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    const fetchAllUsers = async () => {
+      const map: Record<string, string> = {};
+      let pageNum = 1;
+      const limit = 100;
+      let hasMore = true;
+      const maxPages = 20; // safety limit (2000 users)
+
+      while (hasMore && pageNum <= maxPages) {
+        try {
+          const res = await getUsersApi({ page: pageNum, limit });
+          const d = res?.data || res;
+          const list = d?.items || (Array.isArray(d) ? d : []);
+          
+          if (list.length === 0) {
+            hasMore = false;
+            break;
+          }
+
+          list.forEach((u: any) => {
+            if (u.id) map[u.id] = u.name;
+          });
+
+          const total = d?.pagination?.total || d?.total || 0;
+          if (list.length < limit || Object.keys(map).length >= total) {
+            hasMore = false;
+          } else {
+            pageNum += 1;
+          }
+        } catch (err) {
+          console.error("Failed to load users for mapping:", err);
+          hasMore = false;
+        }
+      }
+      setUserMap(map);
+    };
+
+    fetchAllUsers();
+  }, []);
   
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [transactions, setTransactions] = useState<any[]>([]);
@@ -46,7 +88,7 @@ export default function GetPayment() {
       const res = await getWalletTransactionsApi(params);
       if (res.success) {
         setTransactions(res.data?.items || []);
-        setTotalResults(res.data?.total || 0);
+        setTotalResults(res.data?.pagination?.total || res.data?.total || 0);
       }
     } catch (err) {
       console.error(err);
@@ -69,9 +111,9 @@ export default function GetPayment() {
     // Search filter
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
-      const userName = (row.user?.name || '').toLowerCase();
+      const userName = (row.user?.name || userMap[row.userId] || '').toLowerCase();
       const userId = (row.userId || '').toLowerCase();
-      const notes = (row.notes || '').toLowerCase();
+      const notes = (row.remarks || row.notes || '').toLowerCase();
       const type = (row.type || '').toLowerCase();
       const status = (row.status || '').toLowerCase();
       const amount = String(row.amount);
@@ -182,12 +224,12 @@ export default function GetPayment() {
           <TableHead>
             <TableRow>
               <TableCell sx={{ color: 'text.secondary', fontWeight: 600, borderBottom: '1px solid #f0f0f0' }}>Date</TableCell>
+              <TableCell sx={{ color: 'text.secondary', fontWeight: 600, borderBottom: '1px solid #f0f0f0' }}>Time</TableCell>
               <TableCell sx={{ color: 'text.secondary', fontWeight: 600, borderBottom: '1px solid #f0f0f0' }}>User</TableCell>
               <TableCell sx={{ color: 'text.secondary', fontWeight: 600, borderBottom: '1px solid #f0f0f0' }}>Type</TableCell>
-              <TableCell sx={{ color: 'text.secondary', fontWeight: 600, borderBottom: '1px solid #f0f0f0' }}>Notes</TableCell>
+              <TableCell sx={{ color: 'text.secondary', fontWeight: 600, borderBottom: '1px solid #f0f0f0' }}>Transaction ID</TableCell>
               <TableCell sx={{ color: 'text.secondary', fontWeight: 600, borderBottom: '1px solid #f0f0f0' }}>Amount</TableCell>
-              <TableCell sx={{ color: 'text.secondary', fontWeight: 600, borderBottom: '1px solid #f0f0f0' }}>Status</TableCell>
-              <TableCell sx={{ color: 'text.secondary', fontWeight: 600, borderBottom: '1px solid #f0f0f0' }}>ID</TableCell>
+              <TableCell sx={{ color: 'text.secondary', fontWeight: 600, borderBottom: '1px solid #f0f0f0' }}>Reference</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -208,28 +250,30 @@ export default function GetPayment() {
                 <TableRow key={row.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                   <TableCell sx={{ borderBottomColor: '#f0f0f0', py: 2.5 }}>
                     <Typography variant="body2" sx={{ color: '#091542', fontWeight: 500 }}>
-                      {new Date(row.createdAt).toLocaleDateString()} {new Date(row.createdAt).toLocaleTimeString()}
+                      {new Date(row.createdAt).toLocaleDateString()}
+                    </Typography>
+                  </TableCell>
+                  <TableCell sx={{ borderBottomColor: '#f0f0f0', py: 2.5 }}>
+                    <Typography variant="body2" sx={{ color: '#091542', fontWeight: 500 }}>
+                      {new Date(row.createdAt).toLocaleTimeString()}
                     </Typography>
                   </TableCell>
                   <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                    <Typography variant="body2" sx={{ color: '#091542', fontWeight: 600 }}>{row.user?.name || row.userId || '-'}</Typography>
+                    <Typography variant="body2" sx={{ color: '#091542', fontWeight: 600 }}>{row.user?.name || userMap[row.userId] || row.userId || '-'}</Typography>
                   </TableCell>
                   <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
                     <StatusBadge status={row.type} variantType="text" />
                   </TableCell>
                   <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>{row.notes || '-'}</Typography>
+                    <Typography variant="body2" sx={{ color: '#0047b3', fontWeight: 600 }}>
+                      #{row.id.substring(0,8).toUpperCase()}
+                    </Typography>
                   </TableCell>
                   <TableCell sx={{ borderBottomColor: '#f0f0f0', fontWeight: 700, color: row.type === 'CREDIT' ? '#10b981' : '#ef4444' }}>
                     {row.type === 'CREDIT' ? '+' : '-'}₹{row.amount}
                   </TableCell>
                   <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                    <StatusBadge status={row.status} variantType="text" />
-                  </TableCell>
-                  <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                    <Link href="#" underline="none" sx={{ fontWeight: 600, color: '#0047b3' }}>
-                      #{row.id.substring(0,8).toUpperCase()}
-                    </Link>
+                    <StatusBadge status={row.referenceType || '-'} variantType="text" />
                   </TableCell>
                 </TableRow>
               ))

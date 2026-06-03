@@ -66,7 +66,7 @@ export default function MyWallet() {
       const txRes = await getWalletTransactionsApi({ page, limit: rowsPerPage });
       if (txRes.success) {
         setTransactions(txRes.data.items || []);
-        setTotalResults(txRes.data.total || 0);
+        setTotalResults(txRes.data.pagination?.total || txRes.data.total || 0);
       }
     } catch (err) {
       console.error(err);
@@ -198,16 +198,17 @@ export default function MyWallet() {
             <TableHead sx={{ bgcolor: '#f8fafc' }}>
               <TableRow>
                 <TableCell sx={{ fontWeight: 600, color: '#475569' }}>Date</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#475569' }}>Time</TableCell>
                 <TableCell sx={{ fontWeight: 600, color: '#475569' }}>Type</TableCell>
                 <TableCell sx={{ fontWeight: 600, color: '#475569' }}>Amount</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: '#475569' }}>Notes</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: '#475569' }}>Status</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#475569' }}>Transaction ID</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#475569' }}>Reference</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {transactions.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} align="center" sx={{ py: 4, color: 'text.secondary' }}>
+                  <TableCell colSpan={6} align="center" sx={{ py: 4, color: 'text.secondary' }}>
                     No transactions found.
                   </TableCell>
                 </TableRow>
@@ -215,7 +216,10 @@ export default function MyWallet() {
                 transactions.map((tx) => (
                   <TableRow key={tx.id} hover>
                     <TableCell sx={{ color: '#091542', fontWeight: 500 }}>
-                      {new Date(tx.createdAt).toLocaleDateString()} {new Date(tx.createdAt).toLocaleTimeString()}
+                      {new Date(tx.createdAt).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell sx={{ color: '#091542', fontWeight: 500 }}>
+                      {new Date(tx.createdAt).toLocaleTimeString()}
                     </TableCell>
                     <TableCell>
                       <StatusBadge status={tx.type} variantType="text" />
@@ -223,9 +227,13 @@ export default function MyWallet() {
                     <TableCell sx={{ fontWeight: 700, color: tx.type === 'CREDIT' ? '#10b981' : (tx.type === 'DEBIT' ? '#ef4444' : '#091542') }}>
                       {tx.type === 'CREDIT' ? '+' : (tx.type === 'DEBIT' ? '-' : '')}₹{tx.amount}
                     </TableCell>
-                    <TableCell sx={{ color: 'text.secondary' }}>{tx.notes || '-'}</TableCell>
                     <TableCell>
-                      <StatusBadge status={tx.status} variantType="text" />
+                      <Typography variant="body2" sx={{ color: '#0047b3', fontWeight: 600 }}>
+                        #{tx.id.substring(0, 8).toUpperCase()}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <StatusBadge status={tx.referenceType || '-'} variantType="text" />
                     </TableCell>
                   </TableRow>
                 ))
