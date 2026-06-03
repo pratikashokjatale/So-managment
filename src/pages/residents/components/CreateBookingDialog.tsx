@@ -102,6 +102,61 @@ export default function CreateBookingDialog({ open, onClose, resident }: CreateB
     onClose();
   };
 
+  const handleSelectFacility = (facility: any) => {
+    setSelectedFacility(facility);
+    setSelectedPlan(null);
+    setSelectedSlot(null);
+    setSlots([]);
+    setPlans([]);
+    
+    const at = facility.accessType?.toUpperCase() || '';
+    
+    if (at === 'MIXED' || at === 'SUBSCRIPTION') {
+      if (!resident?.id) return;
+      setCheckingSubscription(true);
+      setUserHasActiveSubscription(false);
+      
+      getSubscriptionsApi({ userId: resident.id, facilityId: facility.id })
+        .then((res) => {
+          const d = res?.data || res;
+          const list = d?.items || (Array.isArray(d) ? d : []);
+          const activeList = list.filter((s: any) => s.status === 'ACTIVE' || s.status === 'APPROVED');
+          if (activeList.length > 0) {
+            setUserHasActiveSubscription(true);
+            if (at === 'MIXED') {
+              // Pre-fetch slots
+              setLoadingSlots(true);
+              getSlotsApi({ facilityId: facility.id, date: bookingDate, slotMinutes: slotMinutes as any })
+                .then((slotRes) => {
+                  const slotD = slotRes?.data || slotRes;
+                  setSlots(slotD?.slots || (Array.isArray(slotD) ? slotD : []));
+                })
+                .catch(() => setSlots([]))
+                .finally(() => setLoadingSlots(false));
+            }
+          } else {
+            setUserHasActiveSubscription(false);
+          }
+        })
+        .catch((err) => {
+          console.error("Failed to check subscriptions on click:", err);
+          setUserHasActiveSubscription(false);
+        })
+        .finally(() => setCheckingSubscription(false));
+    } else {
+      // SLOT_BOOKING
+      setUserHasActiveSubscription(false);
+      setLoadingSlots(true);
+      getSlotsApi({ facilityId: facility.id, date: bookingDate, slotMinutes: slotMinutes as any })
+        .then((slotRes) => {
+          const slotD = slotRes?.data || slotRes;
+          setSlots(slotD?.slots || (Array.isArray(slotD) ? slotD : []));
+        })
+        .catch(() => setSlots([]))
+        .finally(() => setLoadingSlots(false));
+    }
+  };
+
   /* ------------------------------------------------------- load facilities */
   useEffect(() => {
     if (!open) return;
@@ -129,6 +184,9 @@ export default function CreateBookingDialog({ open, onClose, resident }: CreateB
   /* ---------------------------------------------------------- fetch slots */
   const fetchSlots = async () => {
     if (!selectedFacility || !bookingDate) return;
+    const at = selectedFacility.accessType?.toUpperCase() || '';
+    if (at === 'SUBSCRIPTION') return; // Do not fetch slots for subscription-only facilities
+    
     setLoadingSlots(true);
     setSlots([]);
     setSelectedSlot(null);
@@ -172,20 +230,20 @@ export default function CreateBookingDialog({ open, onClose, resident }: CreateB
     if (step !== 1 || !selectedFacility) return;
     const at = selectedFacility.accessType?.toUpperCase() || '';
     
-    if (at === 'MIXED' || at === 'SUBSCRIPTION') {
+    // If not checked yet or empty, run fallback fetcher
+    if ((at === 'MIXED' || at === 'SUBSCRIPTION') && !plans.length && !slots.length && !checkingSubscription) {
       if (!resident?.id) return;
       setCheckingSubscription(true);
-      setUserHasActiveSubscription(false);
-      
       getSubscriptionsApi({ userId: resident.id, facilityId: selectedFacility.id })
         .then((res) => {
-          console.log("getSubscriptionsApi result:", res);
           const d = res?.data || res;
           const list = d?.items || (Array.isArray(d) ? d : []);
           const activeList = list.filter((s: any) => s.status === 'ACTIVE' || s.status === 'APPROVED');
           if (activeList.length > 0) {
             setUserHasActiveSubscription(true);
-            fetchSlots();
+            if (at === 'MIXED') {
+              fetchSlots();
+            }
           } else {
             setUserHasActiveSubscription(false);
             fetchPlansForFacility();
@@ -197,9 +255,7 @@ export default function CreateBookingDialog({ open, onClose, resident }: CreateB
           fetchPlansForFacility();
         })
         .finally(() => setCheckingSubscription(false));
-    } else {
-      // SLOT_BOOKING
-      setUserHasActiveSubscription(false);
+    } else if (at === 'SLOT_BOOKING' && !slots.length && !loadingSlots) {
       fetchSlots();
     }
   }, [step, selectedFacility, resident?.id]);
@@ -384,7 +440,7 @@ export default function CreateBookingDialog({ open, onClose, resident }: CreateB
                   return (
                     <Paper
                       key={f.id}
-                      onClick={() => setSelectedFacility(f)}
+                      onClick={() => handleSelectFacility(f)}
                       elevation={0}
                       sx={{
                         p: 2, borderRadius: '14px', cursor: 'pointer',
@@ -477,67 +533,11 @@ export default function CreateBookingDialog({ open, onClose, resident }: CreateB
                         <Typography fontWeight="bold" sx={{ mb: 0.5 }}>Already Subscribed</Typography>
                         Resident <strong>{resident?.name}</strong> already has an active subscription for <strong>{selectedFacility.name}</strong>. No further action is required.
                       </Alert>
-                    ) : selectedFacility.accessType?.toUpperCase() === 'MIXED' ? (
+                    ) : (
                       <Alert severity="warning" sx={{ borderRadius: '12px', mb: 2.5, py: 2 }}>
                         <Typography fontWeight="bold" sx={{ mb: 0.5 }}>Subscription Required</Typography>
                         This facility is restricted to active subscribers. Resident <strong>{resident?.name}</strong> does not have an active subscription for <strong>{selectedFacility.name}</strong>. Please purchase a membership subscription first from the Resident profile to book slots.
                       </Alert>
-                    ) : (
-                      <>
-                        <Typography variant="body2" fontWeight={700} color="text.secondary" sx={{ mb: 1.5 }}>
-                          Select a Subscription Plan
-                        </Typography>
-                        {loadingPlans ? (
-                          <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}><CircularProgress size={32} sx={{ color: '#091542' }} /></Box>
-                        ) : plans.length === 0 ? (
-                          <Alert severity="info" sx={{ borderRadius: '12px' }}>No active subscription plans found for this facility.</Alert>
-                        ) : (
-                          <Stack spacing={1.5}>
-                            {plans.map((plan) => {
-                              const sel = selectedPlan?.id === plan.id;
-                              return (
-                                <Paper
-                                  key={plan.id}
-                                  onClick={() => setSelectedPlan(plan)}
-                                  elevation={0}
-                                  sx={{
-                                    p: 2, borderRadius: '12px', cursor: 'pointer',
-                                    border: sel ? '2px solid #091542' : '1.5px solid #e2e8f0',
-                                    bgcolor: sel ? 'rgba(9,21,66,0.03)' : 'white',
-                                    display: 'flex', alignItems: 'center', gap: 2,
-                                    transition: 'all 0.2s',
-                                    '&:hover': { borderColor: '#091542', boxShadow: '0 4px 12px rgba(9,21,66,0.08)' }
-                                  }}
-                                >
-                                  {sel && <CheckCircleIcon sx={{ color: '#091542', fontSize: 22, flexShrink: 0 }} />}
-                                  <Box sx={{ flex: 1 }}>
-                                    <Typography fontWeight={800} color="#091542" sx={{ fontSize: '0.88rem' }}>{plan.name}</Typography>
-                                    {plan.description && (
-                                      <Typography variant="caption" color="text.secondary">{plan.description}</Typography>
-                                    )}
-                                    <Stack direction="row" spacing={1.5} sx={{ mt: 0.5 }}>
-                                      <Typography variant="caption" fontWeight={700} color="text.secondary">
-                                        {plan.durationDays} days
-                                      </Typography>
-                                      {plan.maxUsesPerDay && (
-                                        <Typography variant="caption" fontWeight={700} color="text.secondary">
-                                          {plan.maxUsesPerDay}x/day
-                                        </Typography>
-                                      )}
-                                    </Stack>
-                                  </Box>
-                                  <Box sx={{ textAlign: 'right' }}>
-                                    <Typography fontWeight={900} color="#091542" sx={{ fontSize: '1.1rem' }}>
-                                      ₹{parseFloat(plan.priceAmount || 0).toLocaleString('en-IN')}
-                                    </Typography>
-                                    <Typography variant="caption" color="text.secondary">{plan.priceCurrency || 'INR'}</Typography>
-                                  </Box>
-                                </Paper>
-                              );
-                            })}
-                          </Stack>
-                        )}
-                      </>
                     )}
                   </>
                 )}
@@ -814,8 +814,7 @@ export default function CreateBookingDialog({ open, onClose, resident }: CreateB
                 variant="contained"
                 disabled={
                   submitting ||
-                  (!isSlotMode && userHasActiveSubscription) ||
-                  (selectedFacility.accessType?.toUpperCase() === 'MIXED' && !userHasActiveSubscription) ||
+                  (!isSlotMode && !userHasActiveSubscription) ||
                   (isSlotMode ? !selectedSlot : !selectedPlan)
                 }
                 onClick={handleSubmit}
@@ -828,9 +827,7 @@ export default function CreateBookingDialog({ open, onClose, resident }: CreateB
                       ? 'Confirm Booking' 
                       : (userHasActiveSubscription 
                           ? 'Already Subscribed' 
-                          : (selectedFacility.accessType?.toUpperCase() === 'MIXED' 
-                              ? 'Subscription Required' 
-                              : 'Confirm Subscription')))}
+                          : 'Subscription Required'))}
               </Button>
             )}
           </>
