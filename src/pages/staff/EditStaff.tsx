@@ -2,12 +2,14 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Box, Typography, Button, TextField, MenuItem, Avatar, Grid,
-  InputAdornment, ToggleButton, ToggleButtonGroup
+  InputAdornment, ToggleButton, ToggleButtonGroup, IconButton
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import FormCard from "@/components/FormCard";
 import EditIcon from "@mui/icons-material/Edit";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import toast from "react-hot-toast";
 import { getStaffById } from "@/utils/staffStore";
 import { getFacilities } from "@/utils/facilityStore";
@@ -65,6 +67,8 @@ export default function EditStaff() {
   const [allowedZones, setAllowedZones] = useState<string[]>(["CLUBHOUSE"]);
   const [accessLevel, setAccessLevel] = useState("FACILITY_ONLY");
   const [attendanceMode, setAttendanceMode] = useState("RFID");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -249,8 +253,21 @@ export default function EditStaff() {
     };
 
     if (email) payload.email = email;
-    if (facilityId && !facilityId.startsWith("fac-"))
-      payload.facilityId = facilityId;
+
+    const showFacility = ["Fitness & Gym Training", "Pool Operations", "Wellness & Spa"].includes(department);
+    if (showFacility) {
+      payload.facilityId = (facilityId && !facilityId.startsWith("fac-")) ? facilityId : null;
+    } else {
+      payload.facilityId = null;
+    }
+
+    if (password) {
+      payload.password = password;
+      payload.loginPassword = password;
+      payload.createLogin = true;
+      payload.loginRole = apiDept === "SECURITY" ? "SECURITY" : "STAFF";
+    }
+
     if (department) payload.designation = department;
     if (normalizedEmergencyPhone) {
       payload.emergencyContactName = "Emergency Contact";
@@ -384,26 +401,28 @@ export default function EditStaff() {
             </Grid>
 
             {/* Dynamic Facility Selection Dropdown */}
-            <Grid size={{ xs: 12, md: 6 }}>
-              <TextField
-                select
-                label="Assigned Duty Facility"
-                fullWidth
-                value={facilityId}
-                onChange={(e) => setFacilityId(e.target.value)}
-                sx={textFieldSx}
-                helperText="Assign the staff member to manage an active society facility"
-              >
-                {facilities.map((fac) => (
-                  <MenuItem key={fac.id} value={fac.id}>
-                    {fac.name} ({fac.category})
-                  </MenuItem>
-                ))}
-                {facilities.length === 0 && (
-                  <MenuItem value="">No facilities available</MenuItem>
-                )}
-              </TextField>
-            </Grid>
+            {["Fitness & Gym Training", "Pool Operations", "Wellness & Spa"].includes(department) && (
+              <Grid size={{ xs: 12, md: 6 }}>
+                <TextField
+                  select
+                  label="Assigned Duty Facility"
+                  fullWidth
+                  value={facilityId}
+                  onChange={(e) => setFacilityId(e.target.value)}
+                  sx={textFieldSx}
+                  helperText="Assign the staff member to manage an active society facility"
+                >
+                  {facilities.map((fac) => (
+                    <MenuItem key={fac.id} value={fac.id}>
+                      {fac.name} ({fac.category})
+                    </MenuItem>
+                  ))}
+                  {facilities.length === 0 && (
+                    <MenuItem value="">No facilities available</MenuItem>
+                  )}
+                </TextField>
+              </Grid>
+            )}
 
             <Grid size={{ xs: 12, md: 6 }}>
               <TextField
@@ -428,6 +447,30 @@ export default function EditStaff() {
                 helperText={errors.email}
                 sx={textFieldSx}
                 placeholder="e.g. sumanth.k@society.com"
+              />
+            </Grid>
+
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                label="Password"
+                type={showPassword ? "text" : "password"}
+                fullWidth
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                sx={textFieldSx}
+                placeholder="Password for staff login"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowPassword(!showPassword)}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
             </Grid>
 
