@@ -207,6 +207,7 @@ export default function GetProfile() {
           >
             <Avatar
               src={getFileUrl(user?.photoUrl || user?.profilePhotoUrl || user?.avatar)}
+              imgProps={{ crossOrigin: 'anonymous' }}
               sx={{
                 width: 120,
                 height: 120,
@@ -470,6 +471,7 @@ export default function GetProfile() {
             <Box sx={{ position: "relative", mb: 2 }}>
               <Avatar
                 src={getFileUrl(editForm.avatar)}
+                imgProps={{ crossOrigin: 'anonymous' }}
                 sx={{
                   width: 100,
                   height: 100,

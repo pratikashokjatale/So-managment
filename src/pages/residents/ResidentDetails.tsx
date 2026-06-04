@@ -390,6 +390,7 @@ export default function ResidentDetails() {
           <Box 
             component="img" 
             src={getFileUrl(docToShow.url)} 
+            crossOrigin="anonymous"
             sx={{ 
               maxWidth: '100%', 
               height: 'auto', 

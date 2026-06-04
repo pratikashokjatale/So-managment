@@ -80,7 +80,8 @@ export default function FacilityBasicInfo({ data, onChange, errors }: Props) {
         <Box sx={{ position: "relative", flexShrink: 0 }}>
           <Box
             component="img"
-            src={getFileUrl(data.imagePreview) || "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=800&auto=format&fit=crop"}
+            src={getFileUrl(data.imagePreview) || data.avatar}
+            crossOrigin="anonymous"
             sx={{
               width: 220, height: 140, borderRadius: "16px", objectFit: "cover",
               display: "block", border: "2px solid #EEF2F7",

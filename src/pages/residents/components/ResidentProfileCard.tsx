@@ -82,6 +82,7 @@ export default function ResidentProfileCard({ resident }: ResidentProfileCardPro
           {/* Circular Avatar overlapping banner */}
           <Avatar 
             src={getFileUrl(resident.photoUrl || resident.profilePhotoUrl || resident.avatar)} 
+            imgProps={{ crossOrigin: 'anonymous' }}
             sx={{ 
               width: { xs: 110, sm: 140 }, 
               height: { xs: 110, sm: 140 }, 

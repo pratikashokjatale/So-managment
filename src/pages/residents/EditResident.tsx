@@ -262,6 +262,7 @@ export default function EditResident() {
           <Box sx={{ position: "relative" }}>
             <Avatar
               src={getFileUrl(formData.avatar)}
+              imgProps={{ crossOrigin: 'anonymous' }}
               sx={{
                 width: 100,
                 height: 100,

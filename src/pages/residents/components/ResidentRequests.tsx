@@ -320,6 +320,7 @@ export default function ResidentRequests() {
                           request.avatar ? getFileUrl(request.avatar) :
                           `https://i.pravatar.cc/150?u=${request.id}`
                         }
+                        imgProps={{ crossOrigin: 'anonymous' }}
                         sx={{ width: 36, height: 36, borderRadius: "10px" }}
                       />
                       <Box>
@@ -478,6 +479,7 @@ export default function ResidentRequests() {
                     <Stack direction="row" spacing={3} alignItems="center">
                       <Avatar
                         src={kycDetails?.avatar || selectedRequest.avatar ? getFileUrl(kycDetails?.avatar || selectedRequest.avatar) : `https://i.pravatar.cc/150?u=${kycDetails?.id || selectedRequest.id}`}
+                        imgProps={{ crossOrigin: 'anonymous' }}
                         sx={{
                           width: 72,
                           height: 72,
@@ -1067,6 +1069,7 @@ export default function ResidentRequests() {
           <Box
             component="img"
             src={getFileUrl(docToShow.url)}
+            crossOrigin="anonymous"
             sx={{
               maxWidth: "100%",
               height: "auto",

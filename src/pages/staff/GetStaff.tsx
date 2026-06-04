@@ -238,6 +238,7 @@ export default function GetStaff() {
               >
                 <Avatar
                   src={getFileUrl(row.avatar)}
+                  imgProps={{ crossOrigin: "anonymous" }}
                   sx={{ width: 44, height: 44, border: "2px solid #f1f5f9" }}
                 />
                 <Typography

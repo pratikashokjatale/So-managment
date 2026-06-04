@@ -229,6 +229,7 @@ export default function AddMembership() {
                       src={getFileUrl(
                         option.photoUrl || option.profilePhotoUrl,
                       )}
+                      imgProps={{ crossOrigin: "anonymous" }}
                       sx={{ width: 28, height: 28 }}
                     />
                     <Box>

@@ -206,6 +206,7 @@ export default function StaffDetails() {
               <Box sx={{ display: 'inline-block', position: 'relative', mb: 3 }}>
                 <Avatar 
                   src={getFileUrl(staff.avatar)} 
+                  imgProps={{ crossOrigin: 'anonymous' }}
                   sx={{ 
                     width: 150, 
                     height: 150, 

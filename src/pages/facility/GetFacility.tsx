@@ -338,6 +338,7 @@ export default function GetFacility() {
                   >
                     <Avatar
                       src={getFileUrl(facility.images?.[0])}
+                      imgProps={{ crossOrigin: "anonymous" }}
                       sx={{
                         bgcolor: facility.color,
                         color: "white",

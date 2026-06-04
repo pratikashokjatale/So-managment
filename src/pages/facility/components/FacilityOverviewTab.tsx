@@ -1,4 +1,5 @@
 import { Box, Typography, Divider, Grid, Stack, Avatar, Chip } from '@mui/material';
+import { getFileUrl } from '@/utils/file';
 
 interface StaffMember {
   id?: string;
@@ -89,7 +90,7 @@ export default function FacilityOverviewTab({ facility }: FacilityOverviewTabPro
                 <Box key={staff.id || idx}>
                   <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between">
                     <Stack direction="row" spacing={2} alignItems="center">
-                      <Avatar src={staff.profilePhotoUrl || staff.avatar} sx={{ width: 38, height: 38 }} />
+                      <Avatar src={getFileUrl(staff.profilePhotoUrl || staff.avatar)} imgProps={{ crossOrigin: 'anonymous' }} sx={{ width: 38, height: 38 }} />
                       <Box>
                         <Typography variant="body2" fontWeight="800" color="#091542">{staff.name}</Typography>
                         <Typography variant="caption" color="text.secondary">{staff.designation || 'Staff'}</Typography>

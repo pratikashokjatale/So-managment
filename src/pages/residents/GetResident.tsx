@@ -279,7 +279,7 @@ export default function GetResident() {
                 label: 'Resident',
                 render: (row) => (
                   <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                    <Avatar src={getFileUrl(row.photoUrl || row.profilePhotoUrl || row.avatar)} sx={{ width: 32, height: 32 }} />
+                    <Avatar src={getFileUrl(row.photoUrl || row.profilePhotoUrl || row.avatar)} imgProps={{ crossOrigin: 'anonymous' }} sx={{ width: 32, height: 32 }} />
                     <Box>
                       <Typography variant="body2" fontWeight="700">{row.name}</Typography>
                       <Typography variant="caption" color="text.secondary">{row.phone || row.email}</Typography>

@@ -51,6 +51,7 @@ export default function FacilityHero({ facility }: FacilityHeroProps) {
       <Box 
         component="img"
         src={getFileUrl((facility.images && facility.images[0]) || 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop')}
+        crossOrigin="anonymous"
         onError={(e: any) => { e.target.src = 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop'; }}
         sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
       />

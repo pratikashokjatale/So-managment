@@ -315,6 +315,7 @@ export default function TopBar({
           >
             <Avatar
               src={getFileUrl(user?.photoUrl || user?.profilePhotoUrl || user?.avatar)}
+              imgProps={{ crossOrigin: 'anonymous' }}
               sx={{
                 width: 38,
                 height: 38,

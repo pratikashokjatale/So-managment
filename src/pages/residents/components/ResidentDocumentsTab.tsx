@@ -70,7 +70,7 @@ export default function ResidentDocumentsTab({
                   border: '1px solid rgba(226, 232, 240, 0.6)'
                 }}>
                   {doc.photoUrl && !isPdfFile(doc.photoUrl) ? (
-                    <Box component="img" src={getFileUrl(doc.photoUrl)} sx={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <Box component="img" src={getFileUrl(doc.photoUrl)} crossOrigin="anonymous" sx={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   ) : (
                     <FileIcon sx={{ fontSize: 48, color: '#091542' }} />
                   )}
@@ -156,7 +156,7 @@ export default function ResidentDocumentsTab({
                   border: '1px solid rgba(226, 232, 240, 0.6)'
                 }}>
                   {doc.photoUrl && !isPdfFile(doc.photoUrl) ? (
-                    <Box component="img" src={getFileUrl(doc.photoUrl)} sx={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <Box component="img" src={getFileUrl(doc.photoUrl)} crossOrigin="anonymous" sx={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   ) : (
                     <FileIcon sx={{ fontSize: 48, color: '#091542' }} />
                   )}

@@ -15,6 +15,7 @@ import StatusBadge from '../../components/StatusBadge';
 import Search from '@/components/Search';
 import { getSubscriptionsApi } from '@/apis/subscription';
 import MembershipDetailsDialog from './components/MembershipDetailsDialog';
+import { getFileUrl } from '@/utils/file';
 
 export default function GetMembership() {
   const navigate = useNavigate();
@@ -198,7 +199,7 @@ export default function GetMembership() {
                 <TableRow key={row.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                   <TableCell component="th" scope="row" sx={{ borderBottomColor: '#f0f0f0' }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                      <Avatar src={row.user?.profilePhotoUrl || ''} sx={{ width: 32, height: 32 }} />
+                      <Avatar src={getFileUrl(row.user?.profilePhotoUrl)} imgProps={{ crossOrigin: 'anonymous' }} sx={{ width: 32, height: 32 }} />
                       <Typography variant="body2" fontWeight="500" sx={{ color: '#091542' }}>{row.user?.name || 'Unknown'}</Typography>
                     </Box>
                   </TableCell>

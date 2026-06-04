@@ -331,6 +331,7 @@ export default function EditStaff() {
             <Box sx={{ position: "relative", display: "inline-block" }}>
               <Avatar
                 src={getFileUrl(avatarPreview || avatar)}
+                imgProps={{ crossOrigin: "anonymous" }}
                 sx={{
                   width: 120,
                   height: 120,

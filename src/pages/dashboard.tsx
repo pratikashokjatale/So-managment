@@ -213,6 +213,7 @@ export default function Dashboard() {
               <Stack direction="row" spacing={3} alignItems="center" sx={{ mb: 4 }}>
                 <Avatar
                   src={getFileUrl(user?.photoUrl || user?.profilePhotoUrl || user?.avatar)}
+                  imgProps={{ crossOrigin: 'anonymous' }}
                   sx={{
                     width: 70,
                     height: 70,

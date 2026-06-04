@@ -19,6 +19,7 @@ import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import StatusBadge from '@/components/StatusBadge';
 import { cancelSubscriptionApi, paySubscriptionFromWalletApi } from '@/apis/subscription';
 import { useState } from 'react';
+import { getFileUrl } from '@/utils/file';
 
 interface MembershipDetailsDialogProps {
   open: boolean;
@@ -88,7 +89,7 @@ export default function MembershipDetailsDialog({ open, onClose, membership, onR
         <Box sx={{ p: { xs: 2, md: 4 } }}>
           {/* User Section */}
           <Paper elevation={0} sx={{ p: 3, mb: 4, borderRadius: 3, border: '1px solid #e2e8f0', bgcolor: '#ffffff', display: 'flex', alignItems: 'center', gap: 3 }}>
-            <Avatar src={membership.user?.profilePhotoUrl || ''} sx={{ width: 80, height: 80, boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }} />
+            <Avatar src={getFileUrl(membership.user?.profilePhotoUrl)} imgProps={{ crossOrigin: 'anonymous' }} sx={{ width: 80, height: 80, boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }} />
             <Box>
               <Typography variant="h5" sx={{ color: '#091542', fontWeight: 800, mb: 0.5 }}>
                 {membership.user?.name || 'Unknown User'}

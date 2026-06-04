@@ -460,7 +460,7 @@ export default function CreateBookingDialog({ open, onClose, resident }: CreateB
                         bgcolor: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center'
                       }}>
                         {f.images?.[0] ? (
-                          <Box component="img" src={getFileUrl(f.images[0])} sx={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          <Box component="img" src={getFileUrl(f.images[0])} crossOrigin="anonymous" sx={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         ) : (
                           <SportsIcon sx={{ fontSize: 32, color: '#94a3b8' }} />
                         )}
@@ -500,7 +500,7 @@ export default function CreateBookingDialog({ open, onClose, resident }: CreateB
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2.5, p: 1.5, bgcolor: 'white', borderRadius: '12px', border: '1.5px solid #e2e8f0' }}>
               <Box sx={{ width: 44, height: 44, borderRadius: '10px', overflow: 'hidden', bgcolor: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 {selectedFacility.images?.[0] ? (
-                  <Box component="img" src={getFileUrl(selectedFacility.images[0])} sx={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <Box component="img" src={getFileUrl(selectedFacility.images[0])} crossOrigin="anonymous" sx={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
                   <SportsIcon sx={{ fontSize: 24, color: '#94a3b8' }} />
                 )}
