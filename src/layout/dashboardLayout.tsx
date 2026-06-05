@@ -159,15 +159,9 @@ export default function DashboardLayout() {
     setOpenMenus(prev => ({ ...prev, [text]: !prev[text] }));
   };
   const displayedMenuItems = isAdmin
-    ? [
-        ...menuItems,
-        { text: "Profile", icon: <ProfileIcon />, path: "/profile" },
-        { text: "Support", icon: <SupportIcon />, path: "/support" }
-      ]
+    ? menuItems
     : [
-        { text: "Dashboard", icon: <DashboardIcon />, path: "/" },
-        { text: "Profile", icon: <ProfileIcon />, path: "/profile" },
-        { text: "Support", icon: <SupportIcon />, path: "/support" }
+        { text: "Dashboard", icon: <DashboardIcon />, path: "/" }
       ];
 
   const isAllowedPath = 

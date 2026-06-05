@@ -40,6 +40,7 @@ import AddFlat from "@/pages/flat/AddFlat";
 import EditFlat from "@/pages/flat/EditFlat";
 import GetProfile from "@/pages/profile/GetProfile";
 import MyWallet from "@/pages/wallet/MyWallet";
+import GetIssues from "@/pages/issues/GetIssues";
 
 const DashboardRoutes = {
   path: "/",
@@ -92,6 +93,10 @@ const DashboardRoutes = {
     {
       path: "payment",
       element: <GetPayment />,
+    },
+    {
+      path: "issues",
+      element: <GetIssues />,
     },
     {
       path: "facility",

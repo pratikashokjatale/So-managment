@@ -16,6 +16,8 @@ import {
   DoorBackSharp as GateIcon,
   CampaignSharp as CampaignIcon,
   Assessment as ReportIcon,
+  ReportProblem as IssueIcon,
+  Groups as GroupsIcon,
 } from "@mui/icons-material";
 
 export const menuItems = [
@@ -31,10 +33,17 @@ export const menuItems = [
       { text: "Flats", icon: <FlatIcon />, path: "/flat" },
     ]
   },
-
-  { text: "Residents", icon: <ResidentsIcon />, path: "/residents" },
-  { text: "Guest", icon: <GuestIcon />, path: "/guest" },
   { text: "facility", icon: <FacilityIcon />, path: "/facility" },
+
+  { 
+    text: "User Management", 
+    icon: <ResidentsIcon />, 
+    path: "/residents",
+    children: [
+      { text: "Residents", icon: <ResidentsIcon />, path: "/residents" },
+      { text: "Guest", icon: <GuestIcon />, path: "/guest" }
+    ]
+  },
   
   { 
     text: "Staff", 
@@ -46,9 +55,17 @@ export const menuItems = [
     ]
   },
 
-  { text: "Membership", icon: <MembershipIcon />, path: "/membership" },
-  { text: "Booking", icon: <BookingIcon />, path: "/booking" },
-  { text: "Payment", icon: <PaymentIcon />, path: "/payment" },
+  { 
+    text: "Club Management", 
+    icon: <GroupsIcon />, 
+    path: "/membership",
+    children: [
+      { text: "All Memberships", icon: <MembershipIcon />, path: "/membership" },
+      { text: "Booking", icon: <BookingIcon />, path: "/booking" },
+      { text: "Payment", icon: <PaymentIcon />, path: "/payment" }
+    ]
+  },
+  { text: "Issues & Feedback", icon: <IssueIcon />, path: "/issues" },
   
   { text: "Gate Entry", icon: <GateIcon />, path: "/gate" },
   { text: "Announcements", icon: <CampaignIcon />, path: "/announcements" },
