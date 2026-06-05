@@ -41,6 +41,7 @@ import EditFlat from "@/pages/flat/EditFlat";
 import GetProfile from "@/pages/profile/GetProfile";
 import MyWallet from "@/pages/wallet/MyWallet";
 import GetIssues from "@/pages/issues/GetIssues";
+import GetEmergency from "@/pages/emergency/GetEmergency";
 
 const DashboardRoutes = {
   path: "/",
@@ -97,6 +98,10 @@ const DashboardRoutes = {
     {
       path: "issues",
       element: <GetIssues />,
+    },
+    {
+      path: "emergency",
+      element: <GetEmergency />,
     },
     {
       path: "facility",

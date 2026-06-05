@@ -18,6 +18,7 @@ import {
   Assessment as ReportIcon,
   ReportProblem as IssueIcon,
   Groups as GroupsIcon,
+  Emergency as EmergencyIcon,
 } from "@mui/icons-material";
 
 export const menuItems = [
@@ -64,6 +65,10 @@ export const menuItems = [
       { text: "Booking", icon: <BookingIcon />, path: "/booking" },
       { text: "Payment", icon: <PaymentIcon />, path: "/payment" }
     ]
+  },
+  {
+    text:"Emergency",
+    icon:<EmergencyIcon/>, path:"/emergency"
   },
   { text: "Issues & Feedback", icon: <IssueIcon />, path: "/issues" },
   
