@@ -112,13 +112,13 @@ const LoginPage = () => {
           <Typography
             variant="h3"
             sx={{
-              fontWeight: 900,
+              fontWeight: 600,
               mb: 2,
               background: "linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               lineHeight: 1.2,
-              fontSize: { xs: "1.85rem", sm: "2.25rem", md: "2.75rem", lg: "3rem" },
+              fontSize: { xs: "1.15rem", sm: "1.5rem", md: "1.75rem", lg: "2rem" },
             }}
           >
             Marbella Society Admin Portal
