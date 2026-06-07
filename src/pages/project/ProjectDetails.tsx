@@ -204,6 +204,43 @@ export default function ProjectDetails() {
                 <Divider sx={{ my: 1 }} />
               </Grid>
               <Grid size={{ xs: 12 }}>
+                <Typography variant="caption" color="text.secondary" fontWeight="600" display="block">GEOFENCING STATUS</Typography>
+                <Box 
+                  sx={{ 
+                    display: 'inline-flex', 
+                    px: 1.5, 
+                    py: 0.5, 
+                    borderRadius: '6px', 
+                    fontSize: '0.75rem', 
+                    fontWeight: 700,
+                    mt: 0.5,
+                    bgcolor: project.geofenceEnabled ? '#eff6ff' : '#f1f5f9',
+                    color: project.geofenceEnabled ? '#1d4ed8' : '#64748b'
+                  }}
+                >
+                  {project.geofenceEnabled ? 'Enabled' : 'Disabled'}
+                </Box>
+              </Grid>
+              {project.geofenceEnabled && (
+                <>
+                  <Grid size={{ xs: 12, sm: 4 }}>
+                    <Typography variant="caption" color="text.secondary" fontWeight="600" display="block">LATITUDE</Typography>
+                    <Typography variant="body2" fontWeight="700" color="#091542" sx={{ mt: 0.5 }}>{project.geofenceLatitude}</Typography>
+                  </Grid>
+                  <Grid size={{ xs: 12, sm: 4 }}>
+                    <Typography variant="caption" color="text.secondary" fontWeight="600" display="block">LONGITUDE</Typography>
+                    <Typography variant="body2" fontWeight="700" color="#091542" sx={{ mt: 0.5 }}>{project.geofenceLongitude}</Typography>
+                  </Grid>
+                  <Grid size={{ xs: 12, sm: 4 }}>
+                    <Typography variant="caption" color="text.secondary" fontWeight="600" display="block">RADIUS (METERS)</Typography>
+                    <Typography variant="body2" fontWeight="700" color="#091542" sx={{ mt: 0.5 }}>{project.geofenceRadiusMeters} m</Typography>
+                  </Grid>
+                </>
+              )}
+              <Grid size={{ xs: 12 }}>
+                <Divider sx={{ my: 1 }} />
+              </Grid>
+              <Grid size={{ xs: 12 }}>
                 <Typography variant="caption" color="text.secondary" fontWeight="600" display="block">DESCRIPTION</Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, lineHeight: 1.6 }}>
                   {project.description || 'No description provided for this project.'}

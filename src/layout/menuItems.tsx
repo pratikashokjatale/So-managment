@@ -72,7 +72,7 @@ export const menuItems = [
   },
   { text: "Issues & Feedback", icon: <IssueIcon />, path: "/issues" },
   
-  { text: "Gate Entry", icon: <GateIcon />, path: "/gate" },
+  // { text: "Gate Entry", icon: <GateIcon />, path: "/gate" },
   { text: "Announcements", icon: <CampaignIcon />, path: "/announcements" },
   { text: "Report", icon: <ReportIcon />, path: "/report" },
 ];

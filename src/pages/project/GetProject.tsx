@@ -16,6 +16,7 @@ import {
   DialogActions,
   Select,
   MenuItem,
+  Switch,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import {
@@ -30,9 +31,9 @@ import {
 
 import Search from "@/components/Search";
 import DataTable from "@/components/DataTable";
-import { getProjects, deleteProject } from "@/utils/setupStore";
+import { getProjects, deleteProject, saveProject } from "@/utils/setupStore";
 import type { Project } from "@/utils/setupStore";
-import { getProjectsApi, deleteProjectApi } from "@/apis/project";
+import { getProjectsApi, deleteProjectApi, updateProjectApi } from "@/apis/project";
 import toast from "react-hot-toast";
 
 export default function GetProject() {
@@ -136,6 +137,33 @@ export default function GetProject() {
         toast.error(err?.response?.data?.message || "Failed to delete project");
       }
       setDeleteId(null);
+    }
+  };
+
+  const handleStatusToggle = async (id: string, currentStatus: string) => {
+    const isCurrentlyActive = currentStatus?.toUpperCase() === "ACTIVE" || currentStatus === "Active";
+    const newApiStatus = isCurrentlyActive ? "INACTIVE" : "ACTIVE";
+    const newLocalStatus = isCurrentlyActive ? "Inactive" : "Active";
+
+    try {
+      if (isApiMode) {
+        await updateProjectApi(id, { status: newApiStatus });
+        toast.success(`Project status updated to ${newApiStatus}`);
+        fetchProjects();
+      } else {
+        const proj = projects.find((p) => p.id === id);
+        if (proj) {
+          saveProject({
+            ...proj,
+            status: newLocalStatus,
+          });
+          toast.success(`Project status updated to ${newLocalStatus} (offline)`);
+          setProjects(getProjects()); // Refresh
+        }
+      }
+    } catch (err: any) {
+      console.warn("Failed to toggle project status:", err);
+      toast.error(err?.response?.data?.message || "Failed to update project status");
     }
   };
 
@@ -384,28 +412,12 @@ export default function GetProject() {
             label: "Status",
             sortable: true,
             render: (row) => (
-              <Box
-                sx={{
-                  display: "inline-flex",
-                  px: 1.5,
-                  py: 0.5,
-                  borderRadius: "6px",
-                  fontSize: "0.75rem",
-                  fontWeight: 700,
-                  bgcolor:
-                    row.status?.toUpperCase() === "ACTIVE" ||
-                    row.status === "Active"
-                      ? "#ecfdf5"
-                      : "#fef2f2",
-                  color:
-                    row.status?.toUpperCase() === "ACTIVE" ||
-                    row.status === "Active"
-                      ? "#10b981"
-                      : "#ef4444",
-                }}
-              >
-                {row.status}
-              </Box>
+              <Switch
+                checked={row.status?.toUpperCase() === "ACTIVE" || row.status === "Active"}
+                onChange={() => handleStatusToggle(row.id, row.status)}
+                size="small"
+                color="success"
+              />
             ),
           },
           {

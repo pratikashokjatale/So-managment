@@ -6,6 +6,10 @@ export interface Project {
   status: 'Active' | 'Inactive';
   description: string;
   createdAt: string;
+  geofenceEnabled?: boolean;
+  geofenceLatitude?: number;
+  geofenceLongitude?: number;
+  geofenceRadiusMeters?: number;
 }
 
 export interface Tower {

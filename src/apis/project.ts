@@ -11,6 +11,10 @@ export interface CreateProjectPayload {
   code: string;
   description?: string;
   location?: string;
+  geofenceEnabled?: boolean;
+  geofenceLatitude?: number;
+  geofenceLongitude?: number;
+  geofenceRadiusMeters?: number;
 }
 
 export interface UpdateProjectPayload {
@@ -18,6 +22,10 @@ export interface UpdateProjectPayload {
   description?: string;
   location?: string;
   status?: string;
+  geofenceEnabled?: boolean;
+  geofenceLatitude?: number;
+  geofenceLongitude?: number;
+  geofenceRadiusMeters?: number;
 }
 
 export const getProjectsApi = async (params?: GetProjectsParams) => {
