@@ -268,7 +268,7 @@ export default function GetGuest() {
           },
           {
             id: 'stayUntil',
-            label: 'Stay Until / Access Status',
+            label: 'Stay Until & Access Status',
             render: (row) => (
               <Box>
                 <Typography variant="body2" fontWeight={700} color={row.isExpired ? '#ef4444' : '#091542'}>

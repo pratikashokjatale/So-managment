@@ -195,13 +195,13 @@ export default function GetPayment() {
             <MenuItem value="Refund">Refund</MenuItem>
             <MenuItem value="Adjustment">Adjustment</MenuItem>
           </Select>
-          <Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as string)} sx={filterSelectSx}>
+          {/* <Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as string)} sx={filterSelectSx}>
             <MenuItem value="All Status">All Status</MenuItem>
             <MenuItem value="Paid">Paid</MenuItem>
             <MenuItem value="Pending">Pending</MenuItem>
             <MenuItem value="Failed">Failed</MenuItem>
             <MenuItem value="Refunded">Refunded</MenuItem>
-          </Select>
+          </Select> */}
           <Search 
             placeholder="Search transactions..." 
             value={searchQuery}

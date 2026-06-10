@@ -150,7 +150,7 @@ export default function EmergencyFilters({
             </Select>
           </FormControl>
 
-          {showAdminFilters && (
+          {/* {showAdminFilters && (
             <>
               <TextField
                 label="User ID"
@@ -169,7 +169,7 @@ export default function EmergencyFilters({
                 sx={textInputSx}
               />
             </>
-          )}
+          )} */}
 
           <TextField
             type="date"

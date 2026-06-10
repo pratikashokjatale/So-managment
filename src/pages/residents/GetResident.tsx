@@ -247,29 +247,29 @@ export default function GetResident() {
             onAddClick={() => setIsAddModalOpen(true)}
             addButtonLabel="Add Resident"
             showExport={true}
-            filters={
-              <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", p: 1, bgcolor: "#f8fafc", borderRadius: "12px", width: "100%" }}>
-                <Select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value as string)} sx={filterSelectSx}>
-                  <MenuItem value="ALL">All Roles</MenuItem>
-                  <MenuItem value="RESIDENT">Resident</MenuItem>
-                  <MenuItem value="GUEST">Guest</MenuItem>
-                  <MenuItem value="STAFF">Staff</MenuItem>
-                  <MenuItem value="SECURITY">Security</MenuItem>
-                  <MenuItem value="MANAGER">Manager</MenuItem>
-                  <MenuItem value="ADMIN">Admin</MenuItem>
-                  <MenuItem value="SUPER_ADMIN">Super Admin</MenuItem>
-                </Select>
-                <Select value={aptFilter} onChange={(e) => setAptFilter(e.target.value as string)} sx={filterSelectSx}>
-                  <MenuItem value="All Apartments">All Apartments</MenuItem>
-                </Select>
-                <Select value={membershipFilter} onChange={(e) => setMembershipFilter(e.target.value as string)} sx={filterSelectSx}>
-                  <MenuItem value="All Memberships">All Memberships</MenuItem>
-                </Select>
-                <Select value={cardFilter} onChange={(e) => setCardFilter(e.target.value as string)} sx={filterSelectSx}>
-                  <MenuItem value="All Cards">All Cards</MenuItem>
-                </Select>
-              </Box>
-            }
+            // filters={
+            //   <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", p: 1, bgcolor: "#f8fafc", borderRadius: "12px", width: "100%" }}>
+            //     {/* <Select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value as string)} sx={filterSelectSx}>
+            //       <MenuItem value="ALL">All Roles</MenuItem>
+            //       <MenuItem value="RESIDENT">Resident</MenuItem>
+            //       <MenuItem value="GUEST">Guest</MenuItem>
+            //       <MenuItem value="STAFF">Staff</MenuItem>
+            //       <MenuItem value="SECURITY">Security</MenuItem>
+            //       <MenuItem value="MANAGER">Manager</MenuItem>
+            //       <MenuItem value="ADMIN">Admin</MenuItem>
+            //       <MenuItem value="SUPER_ADMIN">Super Admin</MenuItem>
+            //     </Select> */}
+            //     {/* <Select value={aptFilter} onChange={(e) => setAptFilter(e.target.value as string)} sx={filterSelectSx}>
+            //       <MenuItem value="All Apartments">All Apartments</MenuItem>
+            //     </Select> */}
+            //     <Select value={membershipFilter} onChange={(e) => setMembershipFilter(e.target.value as string)} sx={filterSelectSx}>
+            //       <MenuItem value="All Memberships">All Memberships</MenuItem>
+            //     </Select>
+            //     <Select value={cardFilter} onChange={(e) => setCardFilter(e.target.value as string)} sx={filterSelectSx}>
+            //       <MenuItem value="All Cards">All Cards</MenuItem>
+            //     </Select>
+            //   </Box>
+            // }
           />
 
           <DataTable

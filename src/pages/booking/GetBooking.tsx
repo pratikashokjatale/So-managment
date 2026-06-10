@@ -416,7 +416,7 @@ export default function GetBooking() {
             <Typography variant="caption" sx={{ fontWeight: 600, mb: 0.5, color: 'text.secondary' }}>Booking Status</Typography>
             <Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as string)} sx={filterSelectSx}>
               <MenuItem value="ALL">All Status</MenuItem>
-              <MenuItem value="PENDING">Pending</MenuItem>
+
               <MenuItem value="CONFIRMED">Confirmed</MenuItem>
               <MenuItem value="CANCELLED">Cancelled</MenuItem>
               <MenuItem value="REJECTED">Rejected</MenuItem>
