@@ -354,7 +354,7 @@ export default function GetBooking() {
             value="ALL" 
             sx={{ fontWeight: 600, textTransform: 'none' }} 
           />
-          <Tab 
+          {/* <Tab 
             label={
               <Stack direction="row" spacing={1} alignItems="center">
                 <span>Booking Requests</span>
@@ -367,7 +367,7 @@ export default function GetBooking() {
             } 
             value="REQUESTS" 
             sx={{ fontWeight: 600, textTransform: 'none' }} 
-          />
+          /> */}
         </Tabs>
       </Box>
 

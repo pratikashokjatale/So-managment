@@ -11,11 +11,12 @@ export interface GetStaffParams {
 }
 
 export interface CreateStaffPayload {
+  projectId?: string;
   name: string;
   phone: string;
   email?: string;
   department?: string;
-  facilityId?: string;
+  facilityId?: string | null;
   designation?: string;
   employmentType?: string;
   joiningDate: string;
@@ -32,8 +33,12 @@ export interface CreateStaffPayload {
   profilePhotoUrl?: string;
   idProofType?: string;
   idProofNumber?: string;
+  idProofUrl?: string;
   notes?: string;
   userId?: string;
+  createLogin?: boolean;
+  loginRole?: string;
+  loginPassword?: string;
 }
 
 export const getStaffListApi = async (params?: GetStaffParams) => {

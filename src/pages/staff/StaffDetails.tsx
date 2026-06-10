@@ -20,6 +20,8 @@ import { getStaffById } from '@/utils/staffStore';
 import { getStaffDetailsApi } from '@/apis/staff';
 import { getFileUrl } from '@/utils/file';
 import { getUserQrApi } from '@/apis/user';
+import { getCachedProjects } from '@/utils/apiCache';
+import { getProjects } from '@/utils/setupStore';
 
 export default function StaffDetails() {
   const { id } = useParams<{ id: string }>();
@@ -53,6 +55,13 @@ export default function StaffDetails() {
     const loadStaff = async () => {
       setLoading(true);
       if (id) {
+        let allProjects: any[] = [];
+        try {
+          allProjects = await getCachedProjects();
+        } catch (err) {
+          allProjects = getProjects();
+        }
+
         try {
           const res = await getStaffDetailsApi(id);
           const s = res?.data || res;
@@ -69,6 +78,9 @@ export default function StaffDetails() {
             let status = 'Inactive';
             if (s.status === 'ACTIVE') status = 'Active';
 
+            const proj = allProjects.find((p: any) => p.id === s.projectId);
+            const projectName = proj ? proj.name : '';
+
             setStaff({
               id: s.id,
               userId: s.userId || s.id,
@@ -84,7 +96,8 @@ export default function StaffDetails() {
               emergencyContact: s.emergencyContactPhone || s.emergencyContact || '',
               facilityId: s.facilityId || '',
               facilityName: s.facility ? s.facility.name : (s.facilityName || 'General Duty'),
-              
+              projectId: s.projectId || '',
+              projectName: projectName,
               designation: s.designation || '',
               shiftStart: s.shiftStart || '',
               shiftEnd: s.shiftEnd || '',
@@ -93,6 +106,7 @@ export default function StaffDetails() {
               attendanceMode: s.attendanceMode || '',
               idProofType: s.idProofType || '',
               idProofNumber: s.idProofNumber || '',
+              idProofUrl: s.idProofUrl || s.idProofDocumentUrl || '',
               employmentType: s.employmentType || ''
             } as any);
             setLoading(false);
@@ -104,7 +118,13 @@ export default function StaffDetails() {
 
         const found = getStaffById(id);
         if (found) {
-          setStaff(found);
+          const proj = allProjects.find((p: any) => p.id === found.projectId);
+          const projectName = proj ? proj.name : '';
+          setStaff({
+            ...found,
+            projectName,
+            idProofUrl: found.idProofUrl || ''
+          });
         }
       }
       setLoading(false);
@@ -354,6 +374,16 @@ export default function StaffDetails() {
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <Stack spacing={1}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                      <ApartmentIcon color="primary" fontSize="small" sx={{ color: '#1d4ed8' }} />
+                      <Typography variant="subtitle2" color="text.secondary" fontWeight="700">Project / Society</Typography>
+                    </Box>
+                    <Typography variant="body1" fontWeight="800" color="#1e293b">{staff.projectName || staff.projectId || 'N/A'}</Typography>
+                  </Stack>
+                </Grid>
+
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Stack spacing={1}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                       <PlaceIcon color="primary" fontSize="small" sx={{ color: '#16a34a' }} />
                       <Typography variant="subtitle2" color="text.secondary" fontWeight="700">Assigned Duty Facility</Typography>
                     </Box>
@@ -438,6 +468,25 @@ export default function StaffDetails() {
                   <Stack spacing={1}>
                     <Typography variant="subtitle2" color="text.secondary" fontWeight="700">ID Proof Provided</Typography>
                     <Typography variant="body1" fontWeight="800" color="#1e293b">{staff.idProofType} {staff.idProofNumber ? `(${staff.idProofNumber})` : ''}</Typography>
+                    {staff.idProofUrl && (
+                      <Button
+                        variant="text"
+                        size="small"
+                        href={getFileUrl(staff.idProofUrl)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        sx={{
+                          justifyContent: 'flex-start',
+                          p: 0,
+                          textTransform: 'none',
+                          fontWeight: 700,
+                          color: '#1d4ed8',
+                          '&:hover': { textDecoration: 'underline' }
+                        }}
+                      >
+                        View ID Proof Document
+                      </Button>
+                    )}
                   </Stack>
                 </Grid>
               </Grid>

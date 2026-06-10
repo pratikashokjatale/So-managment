@@ -14,6 +14,18 @@ export interface Staff {
   emergencyContact: string;
   facilityId: string;
   facilityName: string;
+  projectId?: string;
+  designation?: string;
+  employmentType?: string;
+  shiftStart?: string;
+  shiftEnd?: string;
+  workDays?: string[];
+  allowedZones?: string[];
+  accessLevel?: string;
+  attendanceMode?: string;
+  idProofType?: string;
+  idProofNumber?: string;
+  idProofUrl?: string;
 }
 
 const DEFAULT_STAFF: Staff[] = [

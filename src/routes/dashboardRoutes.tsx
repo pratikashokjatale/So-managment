@@ -18,6 +18,8 @@ import StaffDetails from "@/pages/staff/StaffDetails";
 import EditStaff from "@/pages/staff/EditStaff";
 import StaffAttendance from "@/pages/staff/StaffAttendance";
 import GetAnnouncement from "@/pages/announcement/GetAnnouncement";
+import AddAnnouncement from "@/pages/announcement/AddAnnouncement";
+import EditAnnouncement from "@/pages/announcement/EditAnnouncement";
 import GetReport from "@/pages/report/GetReport";
 import GetSettings from "@/pages/settings/GetSettings";
 import GetSupport from "@/pages/support/GetSupport";
@@ -162,6 +164,14 @@ const DashboardRoutes = {
     {
       path: "announcements",
       element: <GetAnnouncement />,
+    },
+    {
+      path: "announcements/add",
+      element: <AddAnnouncement />,
+    },
+    {
+      path: "announcements/edit/:id",
+      element: <EditAnnouncement />,
     },
     {
       path: "report",

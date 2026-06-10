@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Box, Typography, Button, TextField, MenuItem, Avatar, Grid,
-  InputAdornment, ToggleButton, ToggleButtonGroup, IconButton
+  InputAdornment, ToggleButton, ToggleButtonGroup, IconButton, LinearProgress
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import FormCard from "@/components/FormCard";
@@ -10,10 +10,15 @@ import EditIcon from "@mui/icons-material/Edit";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import CloudUploadOutlinedIcon from "@mui/icons-material/CloudUploadOutlined";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import toast from "react-hot-toast";
 import { getStaffById } from "@/utils/staffStore";
 import { getFacilities } from "@/utils/facilityStore";
 import { getFacilitiesApi } from "@/apis/facility";
+import { getCachedProjects } from "@/utils/apiCache";
+import { getProjects } from "@/utils/setupStore";
 import {
   getStaffDetailsApi,
   createStaffApi,
@@ -41,8 +46,11 @@ export default function EditStaff() {
   const [facilities, setFacilities] = useState<any[]>([]);
 
   // Form Fields State
+  const [projectId, setProjectId] = useState("");
+  const [projects, setProjects] = useState<any[]>([]);
   const [name, setName] = useState("");
   const [department, setDepartment] = useState("Security");
+  const [designation, setDesignation] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [joiningDate, setJoiningDate] = useState(
@@ -57,6 +65,9 @@ export default function EditStaff() {
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [idProofType, setIdProofType] = useState("AADHAAR");
   const [idProofNumber, setIdProofNumber] = useState("");
+  const [idProofFile, setIdProofFile] = useState<File | null>(null);
+  const [idProofUrl, setIdProofUrl] = useState("");
+  const [uploadingIdProof, setUploadingIdProof] = useState(false);
   const [notes, setNotes] = useState("");
   
   // New Fields
@@ -71,6 +82,7 @@ export default function EditStaff() {
   const [showPassword, setShowPassword] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const idProofInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -84,7 +96,7 @@ export default function EditStaff() {
     }
   };
 
-  // Load facilities and staff details if in edit mode
+  // Load facilities, projects and staff details if in edit mode
   useEffect(() => {
     const loadData = async () => {
       let activeFacilities: any[] = [];
@@ -116,12 +128,27 @@ export default function EditStaff() {
         setFacilityId(activeFacilities[0].id);
       }
 
+      // Fetch projects
+      let loadedProjects: any[] = [];
+      try {
+        loadedProjects = await getCachedProjects();
+      } catch (err) {
+        console.warn("Failed to fetch projects via API, falling back:", err);
+        loadedProjects = getProjects();
+      }
+      setProjects(loadedProjects);
+      if (loadedProjects.length > 0 && isAddMode) {
+        setProjectId(loadedProjects[0].id);
+      }
+
       if (!isAddMode && id) {
         try {
           const res = await getStaffDetailsApi(id);
           const staff = res?.data || res;
           if (staff) {
+            setProjectId(staff.projectId || "");
             setName(staff.name || "");
+            setDesignation(staff.designation || "");
 
             let dept = staff.department || "SECURITY";
             if (dept === "SECURITY") dept = "Security";
@@ -147,6 +174,7 @@ export default function EditStaff() {
             setAvatar(staff.photoUrl || staff.profilePhotoUrl || staff.avatar || "");
             setIdProofType(staff.idProofType || "AADHAAR");
             setIdProofNumber(staff.idProofNumber || "");
+            setIdProofUrl(staff.idProofUrl || staff.idProofDocumentUrl || "");
             setNotes(staff.notes || "");
             return;
           }
@@ -159,8 +187,10 @@ export default function EditStaff() {
 
         const staff = getStaffById(id);
         if (staff) {
+          setProjectId(staff.projectId || "");
           setName(staff.name);
           setDepartment(staff.department);
+          setDesignation(staff.designation || "");
           setPhone(staff.phone);
           setEmail(staff.email);
           setJoiningDate(staff.joiningDate);
@@ -172,6 +202,7 @@ export default function EditStaff() {
           setAvatarPreview((staff as any).photoUrl || (staff as any).profilePhotoUrl || staff.avatar || "");
           setIdProofType((staff as any).idProofType || "AADHAAR");
           setIdProofNumber((staff as any).idProofNumber || "");
+          setIdProofUrl((staff as any).idProofUrl || (staff as any).idProofDocumentUrl || "");
           setNotes((staff as any).notes || "");
 
           if ((staff as any).employmentType) setEmploymentType((staff as any).employmentType);
@@ -192,6 +223,7 @@ export default function EditStaff() {
 
   const validate = () => {
     const tempErrors: Record<string, string> = {};
+    if (!projectId) tempErrors.projectId = "Project selection is required";
     if (!name.trim()) tempErrors.name = "Full Name is required";
     if (!phone.trim()) tempErrors.phone = "Phone Number is required";
     if (!email.trim()) tempErrors.email = "Email Address is required";
@@ -217,6 +249,21 @@ export default function EditStaff() {
       }
     }
 
+    let finalIdProofUrl = idProofUrl;
+    if (idProofFile) {
+      try {
+        setUploadingIdProof(true);
+        finalIdProofUrl = await uploadDocumentApi(idProofFile);
+        setIdProofUrl(finalIdProofUrl);
+      } catch (err: any) {
+        toast.error("Failed to upload ID proof document");
+        setUploadingIdProof(false);
+        return;
+      } finally {
+        setUploadingIdProof(false);
+      }
+    }
+
     let apiDept = "SECURITY";
     if (department === "Housekeeping") apiDept = "HOUSEKEEPING";
     else if (department === "Maintenance") apiDept = "MAINTENANCE";
@@ -237,6 +284,7 @@ export default function EditStaff() {
     }
 
     const payload: any = {
+      projectId,
       name,
       phone: normalizedPhone,
       department: apiDept,
@@ -250,6 +298,9 @@ export default function EditStaff() {
       accessLevel,
       attendanceMode,
       profilePhotoUrl: finalAvatar,
+      idProofType,
+      idProofNumber,
+      idProofUrl: finalIdProofUrl,
     };
 
     if (email) payload.email = email;
@@ -268,14 +319,12 @@ export default function EditStaff() {
       payload.loginRole = apiDept === "SECURITY" ? "SECURITY" : "STAFF";
     }
 
-    if (department) payload.designation = department;
+    payload.designation = designation || department;
     if (normalizedEmergencyPhone) {
       payload.emergencyContactName = "Emergency Contact";
       payload.emergencyContactPhone = normalizedEmergencyPhone;
     }
     if (address) payload.address = address;
-    if (idProofType) payload.idProofType = idProofType;
-    if (idProofNumber) payload.idProofNumber = idProofNumber;
     if (notes) payload.notes = notes;
 
     let savedId = id;
@@ -373,6 +422,28 @@ export default function EditStaff() {
           <Grid container spacing={3}>
             <Grid size={{ xs: 12, md: 6 }}>
               <TextField
+                select
+                label="Project / Society"
+                fullWidth
+                value={projectId}
+                onChange={(e) => setProjectId(e.target.value)}
+                error={!!errors.projectId}
+                helperText={errors.projectId}
+                sx={textFieldSx}
+              >
+                {projects.map((p) => (
+                  <MenuItem key={p.id} value={p.id}>
+                    {p.name}
+                  </MenuItem>
+                ))}
+                {projects.length === 0 && (
+                  <MenuItem value="">No projects available</MenuItem>
+                )}
+              </TextField>
+            </Grid>
+
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
                 label="Full Name"
                 fullWidth
                 value={name}
@@ -399,6 +470,18 @@ export default function EditStaff() {
                   </MenuItem>
                 ))}
               </TextField>
+            </Grid>
+
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                label="Designation"
+                fullWidth
+                value={designation}
+                onChange={(e) => setDesignation(e.target.value)}
+                sx={textFieldSx}
+                placeholder="e.g. Security Guard"
+                helperText="Specific role title (defaults to department name)"
+              />
             </Grid>
 
             {/* Dynamic Facility Selection Dropdown */}
@@ -661,12 +744,121 @@ export default function EditStaff() {
                 }}
                 sx={textFieldSx}
               >
+                <MenuItem value="MAIN_GATE">Main Gate</MenuItem>
+                <MenuItem value="LOBBY">Lobby</MenuItem>
                 <MenuItem value="CLUBHOUSE">Clubhouse</MenuItem>
                 <MenuItem value="TOWER_A">Tower A</MenuItem>
                 <MenuItem value="TOWER_B">Tower B</MenuItem>
                 <MenuItem value="PARKING">Parking</MenuItem>
                 <MenuItem value="GARDEN">Garden</MenuItem>
               </TextField>
+            </Grid>
+
+            {/* ID Proof Fields */}
+            <Grid size={12}>
+              <Typography variant="body1" fontWeight="800" color="#091542" sx={{ mt: 2, mb: 1 }}>
+                Identity Verification Documents
+              </Typography>
+            </Grid>
+
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                select
+                label="ID Proof Type"
+                fullWidth
+                value={idProofType}
+                onChange={(e) => setIdProofType(e.target.value)}
+                sx={textFieldSx}
+              >
+                <MenuItem value="AADHAAR">Aadhaar Card</MenuItem>
+                <MenuItem value="PAN">PAN Card</MenuItem>
+                <MenuItem value="PASSPORT">Passport</MenuItem>
+                <MenuItem value="VOTER_ID">Voter ID</MenuItem>
+                <MenuItem value="DRIVING_LICENSE">Driving License</MenuItem>
+              </TextField>
+            </Grid>
+
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                label="ID Proof Number"
+                fullWidth
+                value={idProofNumber}
+                onChange={(e) => setIdProofNumber(e.target.value)}
+                sx={textFieldSx}
+                placeholder="e.g. 1234 5678 9012"
+              />
+            </Grid>
+
+            <Grid size={12}>
+              <Typography variant="body2" fontWeight={700} color="text.secondary" sx={{ mb: 1 }}>
+                Upload ID Proof Document (PDF, PNG, JPG)
+              </Typography>
+              {idProofUrl ? (
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1.5,
+                    p: 2,
+                    bgcolor: "#f0fdf4",
+                    border: "1px solid #bbf7d0",
+                    borderRadius: "16px",
+                  }}
+                >
+                  <CheckCircleIcon sx={{ color: "#10b981", flexShrink: 0 }} />
+                  <Box sx={{ flex: 1, overflow: "hidden" }}>
+                    <Typography variant="body2" fontWeight={700} color="#091542" noWrap>
+                      Document uploaded successfully
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary" noWrap>
+                      {idProofUrl.split("/").pop()}
+                    </Typography>
+                  </Box>
+                  <IconButton
+                    size="small"
+                    onClick={() => {
+                      setIdProofUrl("");
+                      setIdProofFile(null);
+                    }}
+                    sx={{ color: "#ef4444" }}
+                  >
+                    <DeleteOutlineIcon fontSize="small" />
+                  </IconButton>
+                </Box>
+              ) : (
+                <Box
+                  onClick={() => !uploadingIdProof && idProofInputRef.current?.click()}
+                  sx={{
+                    border: "2px dashed #cbd5e1",
+                    borderRadius: "16px",
+                    bgcolor: "#f8fafc",
+                    p: 3,
+                    textAlign: "center",
+                    cursor: uploadingIdProof ? "wait" : "pointer",
+                    transition: "all 0.2s",
+                    "&:hover": !uploadingIdProof ? { borderColor: "#091542", bgcolor: "#f1f5f9" } : {},
+                  }}
+                >
+                  <input
+                    ref={idProofInputRef}
+                    type="file"
+                    accept=".png,.jpg,.jpeg,.pdf"
+                    style={{ display: "none" }}
+                    onChange={(e) => {
+                      const f = e.target.files?.[0];
+                      if (f) setIdProofFile(f);
+                    }}
+                  />
+                  <CloudUploadOutlinedIcon sx={{ fontSize: 32, color: "#94a3b8", mb: 1 }} />
+                  <Typography variant="body2" fontWeight={700} color="#091542">
+                    {uploadingIdProof ? "Uploading..." : idProofFile ? `Selected: ${idProofFile.name}` : "Click to upload ID Proof file"}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    PNG, JPG, PDF — max 5 MB
+                  </Typography>
+                  {uploadingIdProof && <LinearProgress sx={{ mt: 1.5, borderRadius: 4 }} />}
+                </Box>
+              )}
             </Grid>
 
           </Grid>
