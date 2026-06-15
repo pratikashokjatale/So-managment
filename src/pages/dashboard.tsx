@@ -59,6 +59,7 @@ import {
   getPaymentMethodsStatsApi,
   getStaffAttendanceStatsApi,
 } from "@/apis/dashboard";
+import { getStaffAttendanceStatsApi as getActivityLogsApi } from "@/apis/logdasboard";
 
 const lineData = [
   { name: "Mon", total: 30, confirmed: 15, cancelled: 5 },
@@ -160,6 +161,98 @@ const systemLogs = [
     type: "Success",
   },
 ];
+
+function formatTimeAgo(date: Date) {
+  const now = new Date();
+  const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+  if (seconds < 60) return "Just now";
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes} min${minutes > 1 ? "s" : ""} ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} hour${hours > 1 ? "s" : ""} ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 30) return `${days} day${days > 1 ? "s" : ""} ago`;
+  return date.toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+const mapBackendLog = (backendLog: any) => {
+  const event =
+    backendLog.event ||
+    backendLog.action ||
+    backendLog.activity ||
+    backendLog.details ||
+    "Activity Event";
+
+  let user = "System";
+  if (backendLog.actor && typeof backendLog.actor === "object") {
+    user = backendLog.actor.name || backendLog.actor.username || "User";
+  } else if (backendLog.user && typeof backendLog.user === "object") {
+    user = backendLog.user.name || backendLog.user.username || "User";
+  } else if (typeof backendLog.user === "string") {
+    user = backendLog.user;
+  } else if (typeof backendLog.actorUser === "object" && backendLog.actorUser) {
+    user = backendLog.actorUser.name || "User";
+  } else if (backendLog.actorUserId) {
+    user = `User (${backendLog.actorUserId.substring(0, 8)})`;
+  } else if (backendLog.userId) {
+    user = `User (${backendLog.userId.substring(0, 8)})`;
+  }
+
+  let time = "Just now";
+  const timestampStr =
+    backendLog.createdAt || backendLog.timestamp || backendLog.time;
+  if (timestampStr) {
+    const date = new Date(timestampStr);
+    if (!isNaN(date.getTime())) {
+      time = formatTimeAgo(date);
+    }
+  }
+
+  let type = "Info";
+  const status = backendLog.status || backendLog.type;
+  if (status) {
+    const s = String(status).toLowerCase();
+    if (s.includes("success") || s === "active" || s === "present") {
+      type = "Success";
+    } else if (
+      s.includes("fail") ||
+      s.includes("error") ||
+      s === "alert" ||
+      s === "denied"
+    ) {
+      type = "Error";
+    } else if (s.includes("warn") || s === "warning" || s === "late") {
+      type = "Warning";
+    } else {
+      type = "Info";
+    }
+  }
+
+  return {
+    id: backendLog.id || Math.random(),
+    event,
+    user,
+    time,
+    type,
+  };
+};
+
+const getLogsList = (raw: any) => {
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw;
+  const d = raw?.data ?? raw;
+  if (Array.isArray(d)) return d;
+  if (d?.items && Array.isArray(d.items)) return d.items;
+  if (d?.data && Array.isArray(d.data)) return d.data;
+  if (d?.logs && Array.isArray(d.logs)) return d.logs;
+  if (d?.results && Array.isArray(d.results)) return d.results;
+  return [];
+};
 
 function StatCard({ title, value, trend, trendValue, isPositive }: any) {
   return (
@@ -297,6 +390,7 @@ export default function Dashboard() {
   const [paymentStats, setPaymentStats] = useState<any[]>([]);
   const [attendanceStats, setAttendanceStats] = useState<any[]>([]);
   const [loadingStats, setLoadingStats] = useState(false);
+  const [logs, setLogs] = useState<any[]>(systemLogs);
 
   const LogItemLocal = ({ log }: any) => <LogItem log={log} />;
 
@@ -360,6 +454,16 @@ export default function Dashboard() {
 
           const att = await getStaffAttendanceStatsApi({ days });
           setAttendanceStats(att?.data || att || []);
+
+          try {
+            const logsRes = await getActivityLogsApi();
+            const fetchedLogs = getLogsList(logsRes);
+            if (fetchedLogs && fetchedLogs.length > 0) {
+              setLogs(fetchedLogs.map(mapBackendLog));
+            }
+          } catch (err) {
+            console.warn("Failed to fetch activity logs, using fallback:", err);
+          }
         } catch (err) {
           console.warn("Failed to load admin stats:", err);
         } finally {
@@ -1765,18 +1869,39 @@ export default function Dashboard() {
           </Box>
           <Box
             sx={{
-              display: "grid",
-              gridTemplateColumns: {
-                xs: "1fr",
-                md: "1fr 1fr",
-                xl: "1fr 1fr 1fr",
+              maxHeight: "380px",
+              overflowY: "auto",
+              pr: 1.5,
+              "&::-webkit-scrollbar": {
+                width: "6px",
               },
-              gap: 2.5,
+              "&::-webkit-scrollbar-track": {
+                background: "transparent",
+              },
+              "&::-webkit-scrollbar-thumb": {
+                background: "#cbd5e1",
+                borderRadius: "10px",
+              },
+              "&::-webkit-scrollbar-thumb:hover": {
+                background: "#94a3b8",
+              },
             }}
           >
-            {systemLogs.map((log) => (
-              <LogItemLocal key={log.id} log={log} />
-            ))}
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: {
+                  xs: "1fr",
+                  md: "1fr 1fr",
+                  xl: "1fr 1fr 1fr",
+                },
+                gap: 2.5,
+              }}
+            >
+              {logs.map((log) => (
+                <LogItemLocal key={log.id} log={log} />
+              ))}
+            </Box>
           </Box>
         </Paper>
       </Box>
@@ -1826,7 +1951,7 @@ export default function Dashboard() {
         </DialogTitle>
         <DialogContent sx={{ mt: 2 }}>
           <Stack>
-            {systemLogs.map((log) => (
+            {logs.map((log) => (
               <LogItemLocal key={log.id} log={log} />
             ))}
           </Stack>

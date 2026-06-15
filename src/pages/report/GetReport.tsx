@@ -375,7 +375,29 @@ export default function GetReport() {
                   <Typography variant="h6" fontWeight="900" color="#091542" sx={{ mb: 4 }}>
                     Facility Capacity Load Status
                   </Typography>
-                  <Box sx={{ display: "flex", flexDirection: "column", gap: 3.5 }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 3.5,
+                      maxHeight: "280px",
+                      overflowY: "auto",
+                      pr: 1.5,
+                      "&::-webkit-scrollbar": {
+                        width: "6px",
+                      },
+                      "&::-webkit-scrollbar-track": {
+                        background: "transparent",
+                      },
+                      "&::-webkit-scrollbar-thumb": {
+                        background: "#cbd5e1",
+                        borderRadius: "10px",
+                      },
+                      "&::-webkit-scrollbar-thumb:hover": {
+                        background: "#94a3b8",
+                      },
+                    }}
+                  >
                     {facilityStats.map((fac) => {
                       const percentage = Math.min(100, Math.max(15, fac.totalAccess > 0 ? (fac.confirmedBookings / fac.totalAccess) * 100 : 35));
                       return (

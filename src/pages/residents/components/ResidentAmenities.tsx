@@ -155,11 +155,26 @@ export default function ResidentAmenities({ userId }: AmenitiesProps) {
             borderRadius: '20px',
             border: '1px solid rgba(226,232,240,0.8)',
             mb: 5,
-            boxShadow: '0 4px 20px rgba(9,21,66,0.01)'
+            boxShadow: '0 4px 20px rgba(9,21,66,0.01)',
+            maxHeight: '380px',
+            overflowY: 'auto',
+            '&::-webkit-scrollbar': {
+              width: '6px',
+            },
+            '&::-webkit-scrollbar-track': {
+              background: 'transparent',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              background: '#cbd5e1',
+              borderRadius: '10px',
+            },
+            '&::-webkit-scrollbar-thumb:hover': {
+              background: '#94a3b8',
+            },
           }}
         >
-          <Table>
-            <TableHead sx={{ bgcolor: '#f8fafc' }}>
+          <Table stickyHeader>
+            <TableHead>
               <TableRow>
                 {['ACTIVITY', 'BOOKING CODE', 'SLOTS', 'DATE', 'AMOUNT', 'STATUS'].map((col, i) => (
                   <TableCell
@@ -171,7 +186,8 @@ export default function ResidentAmenities({ userId }: AmenitiesProps) {
                       letterSpacing: '0.5px',
                       py: 1.8,
                       textAlign: i >= 4 ? (i === 4 ? 'right' : 'left') : 'left',
-                      pl: i === 5 ? 3 : undefined
+                      pl: i === 5 ? 3 : undefined,
+                      bgcolor: '#f8fafc',
                     }}
                   >
                     {col}

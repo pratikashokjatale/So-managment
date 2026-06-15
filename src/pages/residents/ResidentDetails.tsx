@@ -24,6 +24,7 @@ import ResidentProfileCard from './components/ResidentProfileCard';
 import ResidentOverviewTab from './components/ResidentOverviewTab';
 import ResidentDependentsTab from './components/ResidentDependentsTab';
 import ResidentDocumentsTab from './components/ResidentDocumentsTab';
+import ResidentActivityTimeline from './components/ResidentActivityTimeline';
 import FamilyMemberDialog from './components/FamilyMemberDialog';
 
 const isPdfFile = (urlOrName: string) => {
@@ -328,6 +329,7 @@ export default function ResidentDetails() {
           <Tab label="Amenity Usage" />
           <Tab label="Family Directory" />
           <Tab label="KYC Documents" />
+          <Tab label="Activity History" />
         </Tabs>
 
         {/* Dynamic Tab Content Area */}
@@ -368,6 +370,10 @@ export default function ResidentDetails() {
               family={family}
               onViewDocument={handleOpenDoc}
             />
+          )}
+
+          {activeTab === 5 && (
+            <ResidentActivityTimeline userId={resident.id} />
           )}
         </Box>
       </Stack>
