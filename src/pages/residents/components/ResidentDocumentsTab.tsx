@@ -200,7 +200,7 @@ export default function ResidentDocumentsTab({
 function StackHeader() {
   return (
     <Box sx={{ display: 'flex', justifyContent: 'end', alignItems: 'center', mb: 4 }}>
-      <Button 
+      {/* <Button 
         variant="outlined" 
         startIcon={<UploadIcon />} 
         sx={{ 
@@ -215,7 +215,7 @@ function StackHeader() {
         }}
       >
         Upload New Document
-      </Button>
+      </Button> */}
     </Box>
   );
 }
