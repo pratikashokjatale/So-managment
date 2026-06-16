@@ -83,19 +83,17 @@ export default function ResidentDashboard({
         </Box>
 
         {/* Right Column (Sidebar) */}
-        <Box sx={{ display: "flex", flexDirection: "column" }}>
-          <DashboardSidebar
-            sidebarTab={sidebarTab}
-            setSidebarTab={setSidebarTab}
-            loadingSidebar={loadingSidebar}
-            dbBookings={dbBookings}
-            dbFacilities={dbFacilities}
-            isAdmin={isAdmin}
-            user={user}
-            handleBookClick={handleBookClick}
-            navigate={navigate}
-          />
-        </Box>
+        <DashboardSidebar
+          sidebarTab={sidebarTab}
+          setSidebarTab={setSidebarTab}
+          loadingSidebar={loadingSidebar}
+          dbBookings={dbBookings}
+          dbFacilities={dbFacilities}
+          isAdmin={isAdmin}
+          user={user}
+          handleBookClick={handleBookClick}
+          navigate={navigate}
+        />
       </Box>
     </Box>
   );

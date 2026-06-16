@@ -191,19 +191,17 @@ export default function AdminDashboard({
         />
 
         {/* Right Column: Sidebar (Activities & Bookings) */}
-        <Box sx={{ display: "flex", flexDirection: "column" }}>
-          <DashboardSidebar
-            sidebarTab={sidebarTab}
-            setSidebarTab={setSidebarTab}
-            loadingSidebar={loadingSidebar}
-            dbBookings={dbBookings}
-            dbFacilities={dbFacilities}
-            isAdmin={isAdmin}
-            user={user}
-            handleBookClick={handleBookClick}
-            navigate={navigate}
-          />
-        </Box>
+        <DashboardSidebar
+          sidebarTab={sidebarTab}
+          setSidebarTab={setSidebarTab}
+          loadingSidebar={loadingSidebar}
+          dbBookings={dbBookings}
+          dbFacilities={dbFacilities}
+          isAdmin={isAdmin}
+          user={user}
+          handleBookClick={handleBookClick}
+          navigate={navigate}
+        />
       </Box>
 
       {/* Operational & Financial Insights */}

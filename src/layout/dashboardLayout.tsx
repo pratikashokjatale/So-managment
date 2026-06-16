@@ -31,7 +31,7 @@ import { useConfig } from "@/contexts/ConfigContext";
 import { menuItems } from "./menuItems";
 import TopBar from "./TopBar";
 import Loader from "@/components/Loader";
-import logoImg from "@/assets/logo.png";
+import logoImg from "@/assets/logo.jpeg";
 import PageNotFound from "@/pages/PageNotFound";
 
 const MarbellaLogo = ({ collapsed }: { collapsed?: boolean }) => (
@@ -203,7 +203,7 @@ export default function DashboardLayout() {
         </Box>
         {(desktopOpen || isMobile) && (
           <Box sx={{ textAlign: "center", mt: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 0.5 }}>
-            <Typography
+            {/* <Typography
               variant="h5"
               sx={{ 
                 color: "#f0f0efff", 
@@ -216,7 +216,7 @@ export default function DashboardLayout() {
               }}
             >
              - Marbella -
-            </Typography>
+            </Typography> */}
           
             <Box 
               sx={{ 

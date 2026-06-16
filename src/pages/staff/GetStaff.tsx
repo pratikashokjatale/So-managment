@@ -27,7 +27,7 @@ import PageToolbar from "@/components/PageToolbar";
 import DataTable from "@/components/DataTable";
 import Pagination from "@/components/Pagination";
 import { QRCodeSVG } from "qrcode.react";
-import logoImg from "@/assets/logo.png";
+import logoImg from "@/assets/logo.jpeg";
 
 import type { Staff } from "@/utils/staffStore";
 import { getStaffListApi, updateStaffApi, deleteStaffApi } from "@/apis/staff";

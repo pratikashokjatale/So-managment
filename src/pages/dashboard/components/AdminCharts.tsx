@@ -162,29 +162,31 @@ export default function AdminCharts({
         >
           <Box
             sx={{
-              height: "100%",
-              width: { xs: "100%", md: 240 },
+              height: 240,
+              width: 240,
+              flexShrink: 0,
               position: "relative",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={finalPieData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={70}
-                  outerRadius={100}
-                  paddingAngle={4}
-                  dataKey="value"
-                >
-                  {finalPieData.map((entry: any, index: number) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
+            <PieChart width={240} height={240}>
+              <Pie
+                data={finalPieData}
+                cx="50%"
+                cy="50%"
+                innerRadius={70}
+                outerRadius={100}
+                paddingAngle={4}
+                dataKey="value"
+              >
+                {finalPieData.map((entry: any, index: number) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
             <Box
               sx={{
                 position: "absolute",
@@ -194,13 +196,13 @@ export default function AdminCharts({
                 textAlign: "center",
               }}
             >
-              <Typography variant="h4" fontWeight="950" color="#091542">
+              <Typography variant="h4" fontWeight="550" color="#091542">
                 {totalPieAccess}
               </Typography>
               <Typography
                 variant="caption"
                 color="text.secondary"
-                fontWeight="800"
+                fontWeight="700"
                 sx={{ letterSpacing: 0.5 }}
               >
                 VISITS/BOOKINGS
