@@ -11,19 +11,21 @@ export const getFileUrl = (url?: string | null): string => {
   const uploadIndex = url.indexOf("/upload/");
   const pathIndex = uploadsIndex !== -1 ? uploadsIndex : uploadIndex;
 
+  // Resolve base URL from VITE_BASE_URL or fallback
+  let baseUrl = import.meta.env.VITE_BASE_URL || "http://72.62.227.125:3002";
+  
+  // Clean /api/v1 or /v1 from the end of the base URL if it's there
+  if (baseUrl.endsWith("/api/v1")) {
+    baseUrl = baseUrl.substring(0, baseUrl.length - 3); // keeps /api
+  } else if (baseUrl.endsWith("/v1")) {
+    baseUrl = baseUrl.substring(0, baseUrl.length - 3);
+  }
+
   if (url.startsWith("http://") || url.startsWith("https://")) {
     if (pathIndex !== -1) {
       const relativePath = url.substring(pathIndex);
       if (import.meta.env.DEV) {
         return relativePath; 
-      }
-      
-      let baseUrl = import.meta.env.VITE_BASE_URL || "http://72.62.227.125:3002";
-      try {
-        const urlObj = new URL(baseUrl);
-        baseUrl = urlObj.origin;
-      } catch (e) {
-        baseUrl = baseUrl.replace(/\/api.*$/, '');
       }
       return `${baseUrl}${relativePath}`;
     }
@@ -34,23 +36,12 @@ export const getFileUrl = (url?: string | null): string => {
     if (import.meta.env.DEV) {
       return url.startsWith("/") ? url : `/${url}`;
     }
-    let baseUrl = import.meta.env.VITE_BASE_URL || "http://72.62.227.125:3002";
-    try {
-      const urlObj = new URL(baseUrl);
-      baseUrl = urlObj.origin;
-    } catch (e) {
-      baseUrl = baseUrl.replace(/\/api.*$/, '');
-    }
     const cleanPath = url.startsWith("/") ? url : `/${url}`;
     return `${baseUrl}${cleanPath}`;
   }
 
-  let baseUrl = import.meta.env.VITE_BASE_URL || "http://72.62.227.125:3002";
-  try {
-    const urlObj = new URL(baseUrl);
-    baseUrl = urlObj.origin;
-  } catch (e) {
-    baseUrl = baseUrl.replace(/\/api.*$/, '');
+  if (import.meta.env.DEV) {
+    return url.startsWith("/") ? url : `/${url}`;
   }
   const cleanPath = url.startsWith("/") ? url : `/${url}`;
   return `${baseUrl}${cleanPath}`;

@@ -251,7 +251,7 @@ export default function DashboardLayout() {
               />
             </Box>
             
-            {/* <Box 
+            <Box 
               sx={{ 
                 border: "1.5px solid #d99a2b", 
                 px: 2.5, 
@@ -284,7 +284,7 @@ export default function DashboardLayout() {
               >
                 {isAdmin ? "Admin Panel" : `${user?.role || "User"} Portal`}
               </Typography>
-            </Box> */}
+            </Box>
           </Box>
         ) : (
           <Box 

@@ -20,13 +20,15 @@ export default defineConfig({
       //   target: "http://72.62.227.125:3002",
       //   changeOrigin: true,
 
-          "/upload": {
-        target: "https://marbellasociety.4tech.in/api",
+      "/upload": {
+        target: "https://marbellasociety.4tech.in",
         changeOrigin: true,
+        rewrite: (path) => `/api${path}`,
       },
       "/uploads": {
-        target: "https://marbellasociety.4tech.in/api",
+        target: "https://marbellasociety.4tech.in",
         changeOrigin: true,
+        rewrite: (path) => `/api${path}`,
       },
     },
   },
