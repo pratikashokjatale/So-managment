@@ -186,62 +186,120 @@ export default function DashboardLayout() {
     >
       <Box
         sx={{ 
-          px: desktopOpen || isMobile ? 3 : 2, 
+          px: desktopOpen || isMobile ? 2.5 : 2, 
           pt: 3,
           pb: 2.5,
           display: "flex", 
           flexDirection: "column",
           alignItems: "center", 
-          gap: 1.5,
           borderBottom: "1px solid rgba(255, 255, 255, 0.06)",
           mb: 2,
-          justifyContent: "center"
+          justifyContent: "center",
+          width: "100%"
         }}
       >
-        <Box sx={{ display: "flex", justifyContent: "center" }}>
-          <MarbellaLogo collapsed={!(desktopOpen || isMobile)} />
-        </Box>
-        {(desktopOpen || isMobile) && (
-          <Box sx={{ textAlign: "center", mt: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 0.5 }}>
-            {/* <Typography
-              variant="h5"
-              sx={{ 
-                color: "#f0f0efff", 
-                fontWeight: 900, 
-                letterSpacing: "4px", 
-                fontFamily: "'Georgia', serif",
-                textTransform: "uppercase",
-                fontSize: "1.1rem",
-                lineHeight: 1.2
-              }}
-            >
-             - Marbella -
-            </Typography> */}
-          
+        {desktopOpen || isMobile ? (
+          <Box
+            sx={{
+              width: "100%",
+              p: 2,
+              borderRadius: "16px",
+              background: "linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.07) 100%)",
+              border: "1px solid rgba(255, 255, 255, 0.08)",
+              boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.25)",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 2,
+              transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+              "&:hover": {
+                transform: "translateY(-4px)",
+                borderColor: "rgba(217, 154, 43, 0.35)",
+                boxShadow: "0 12px 30px rgba(217, 154, 43, 0.15)",
+                "& .logo-img": {
+                  transform: "scale(1.04)",
+                }
+              }
+            }}
+          >
             <Box 
               sx={{ 
-                border: "1px solid #dfb76c", 
-                px: 1.5, 
-                py: 0.25, 
-                borderRadius: "4px",
-                mt: 0.75,
-                display: "inline-block"
+                width: "100%",
+                height: 110,
+                borderRadius: "12px",
+                overflow: "hidden",
+                bgcolor: "white",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                p: 1.5,
+                boxShadow: "inset 0 0 10px rgba(0,0,0,0.05)",
+                transition: "all 0.3s ease"
+              }}
+            >
+              <Box
+                className="logo-img"
+                component="img"
+                src={logoImg}
+                alt="Marbella Logo"
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "contain",
+                  transition: "transform 0.3s ease"
+                }}
+              />
+            </Box>
+            
+            {/* <Box 
+              sx={{ 
+                border: "1.5px solid #d99a2b", 
+                px: 2.5, 
+                py: 0.75, 
+                borderRadius: "8px",
+                bgcolor: "rgba(217, 154, 43, 0.05)",
+                display: "inline-block",
+                transition: "all 0.2s ease",
+                cursor: "default",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+                "&:hover": {
+                  bgcolor: "rgba(217, 154, 43, 0.12)",
+                  boxShadow: "0 0 12px rgba(217, 154, 43, 0.3)",
+                  borderColor: "#d99a2b"
+                }
               }}
             >
               <Typography
                 variant="caption"
                 sx={{ 
-                  color: "#dfb76c", 
+                  color: "#d99a2b", 
                   fontWeight: 900, 
-                  letterSpacing: "2px", 
+                  letterSpacing: "2.5px", 
                   textTransform: "uppercase",
-                  fontSize: "0.6rem",
-                  display: "block"
+                  fontSize: "0.65rem",
+                  display: "block",
+                  textAlign: "center",
+                  fontFamily: "Outfit, Roboto, sans-serif"
                 }}
               >
                 {isAdmin ? "Admin Panel" : `${user?.role || "User"} Portal`}
               </Typography>
-            </Box>
+            </Box> */}
+          </Box>
+        ) : (
+          <Box 
+            sx={{ 
+              display: "flex", 
+              justifyContent: "center", 
+              width: "100%",
+              py: 1,
+              transition: "all 0.2s ease",
+              "&:hover": {
+                transform: "scale(1.05)"
+              }
+            }}
+          >
+            <MarbellaLogo collapsed={true} />
           </Box>
         )}
       </Box>
@@ -272,19 +330,19 @@ export default function DashboardLayout() {
                     justifyContent: desktopOpen || isMobile ? "initial" : "center",
                     transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
                     color: active ? "#ffffff" : "#94a3b8",
-                    borderLeft: active && (desktopOpen || isMobile) ? "4px solid #dfb76c" : "4px solid transparent",
+                    borderLeft: active && (desktopOpen || isMobile) ? "4px solid #d99a2b" : "4px solid transparent",
                     pl: active && (desktopOpen || isMobile) ? "12px" : (desktopOpen || isMobile ? "16px" : "12px"),
                     bgcolor: active ? "rgba(255, 255, 255, 0.08)" : "transparent",
                     "&.Mui-selected": {
                       bgcolor: "rgba(255, 255, 255, 0.08)",
                       color: "white",
-                      "& .MuiListItemIcon-root": { color: "#dfb76c" },
+                      "& .MuiListItemIcon-root": { color: "#d99a2b" },
                       "&:hover": { bgcolor: "rgba(255, 255, 255, 0.12)" },
                     },
                     "&:hover": {
                       bgcolor: "rgba(255, 255, 255, 0.04)",
                       color: "white",
-                      "& .MuiListItemIcon-root": { color: "#dfb76c" },
+                      "& .MuiListItemIcon-root": { color: "#d99a2b" },
                       transform: (desktopOpen || isMobile) && !hasChildren ? "translateX(4px)" : "none",
                     },
                   }}
@@ -294,7 +352,7 @@ export default function DashboardLayout() {
                       minWidth: desktopOpen || isMobile ? 42 : 0,
                       mr: desktopOpen || isMobile ? 1 : 0,
                       justifyContent: "center",
-                      color: active ? "#dfb76c" : "#94a3b8",
+                      color: active ? "#d99a2b" : "#94a3b8",
                     }}
                   >
                     {item.icon}
@@ -343,7 +401,7 @@ export default function DashboardLayout() {
                                 minWidth: 32,
                                 mr: 0.5,
                                 justifyContent: "center",
-                                color: childActive ? "#dfb76c" : "inherit",
+                                color: childActive ? "#d99a2b" : "inherit",
                               }}
                             >
                               {child.icon}
