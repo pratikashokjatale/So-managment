@@ -376,9 +376,9 @@ export default function AddProject() {
                       borderRadius: "8px",
                       textTransform: "none",
                       fontWeight: 600,
-                      borderColor: "#0047b3",
-                      color: "#0047b3",
-                      "&:hover": { borderColor: "#003380", bgcolor: "#eff6ff" },
+                      borderColor: "#2c4d93",
+                      color: "#2c4d93",
+                      "&:hover": { borderColor: "#2c4d93", bgcolor: "#eff6ff" },
                     }}
                   >
                     {geocodingLoading ? "Searching..." : "Search"}
@@ -488,8 +488,8 @@ export default function AddProject() {
                 px: 4,
                 fontWeight: 600,
                 boxShadow: "none",
-                bgcolor: "#0047b3",
-                "&:hover": { bgcolor: "#003380" },
+                bgcolor: "#2c4d93",
+                "&:hover": { bgcolor: "#2c4d93" },
               }}
             >
               {loading ? "Saving..." : "Save Project"}

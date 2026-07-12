@@ -146,7 +146,7 @@ export default function GetMembership() {
             color="primary" 
             startIcon={<PersonAddIcon />}
             onClick={() => navigate('/membership/add')}
-            sx={{ borderRadius: '8px', textTransform: 'none', px: 3, fontWeight: 600, boxShadow: 'none', bgcolor: '#0047b3', '&:hover': { bgcolor: '#003380' } }}
+            sx={{ borderRadius: '8px', textTransform: 'none', px: 3, fontWeight: 600, boxShadow: 'none', bgcolor: '#2c4d93', '&:hover': { bgcolor: '#2c4d93' } }}
           >
             Add Membership
           </Button>

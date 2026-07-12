@@ -18,7 +18,7 @@ export const fieldSx = {
     pointerEvents: "auto",
   },
   "& .MuiInputLabel-root.Mui-focused": {
-    color: "#2563EB",
+    color: "#2c4d93",
   },
   "& .MuiInputLabel-root.Mui-error": { color: "#EF4444" },
   "& .MuiOutlinedInput-root": {
@@ -58,7 +58,7 @@ export const fieldSx = {
       border: "1.5px solid #CBD5E1",
     },
     "&.Mui-focused": {
-      border: "1.5px solid #2563EB",
+      border: "1.5px solid #2c4d93",
       boxShadow: "0 0 0 3px rgba(37,99,235,0.12)",
     },
     "&.Mui-disabled": {

@@ -340,7 +340,7 @@ export default function GetEmergency() {
                   textTransform: "none",
                   fontWeight: 800,
                   fontSize: "0.75rem",
-                  bgcolor: severityColors[row.severity]?.color || "#0047b3",
+                  bgcolor: severityColors[row.severity]?.color || "#2c4d93",
                   color: "#ffffff",
                   boxShadow: "none",
                   "&:hover": {

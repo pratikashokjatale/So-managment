@@ -90,7 +90,7 @@ export default function EmergencyStats({
             },
           }}
         >
-          <Avatar sx={{ bgcolor: "#dbeafe", color: "#2563eb", width: 54, height: 54 }}>
+          <Avatar sx={{ bgcolor: "#dbeafe", color: "#2c4d93", width: 54, height: 54 }}>
             <AcknowledgedIcon sx={{ fontSize: 28 }} />
           </Avatar>
           <Box>

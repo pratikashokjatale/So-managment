@@ -242,7 +242,7 @@ export default function GetTower() {
     ".MuiOutlinedInput-notchedOutline": { borderColor: "#e2e8f0" },
     "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#cbd5e1" },
     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#0047b3",
+      borderColor: "#2c4d93",
     },
   };
 
@@ -277,8 +277,8 @@ export default function GetTower() {
             px: 3,
             fontWeight: 600,
             boxShadow: "none",
-            bgcolor: "#0047b3",
-            "&:hover": { bgcolor: "#003380" },
+            bgcolor: "#2c4d93",
+            "&:hover": { bgcolor: "#2c4d93" },
           }}
         >
           Add Tower
@@ -380,7 +380,7 @@ export default function GetTower() {
               <Box
                 sx={{
                   p: 1.5,
-                  bgcolor: "#0047b3",
+                  bgcolor: "#2c4d93",
                   color: "#ffffff",
                   borderRadius: "8px",
                   display: "flex",
@@ -611,7 +611,7 @@ export default function GetTower() {
                       <IconButton
                         size="small"
                         sx={{
-                          color: "#0047b3",
+                          color: "#2c4d93",
                           bgcolor: "#eff6ff",
                           mr: 1,
                           "&:hover": { bgcolor: "#d0e1fd" },

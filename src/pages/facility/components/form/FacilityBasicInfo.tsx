@@ -117,7 +117,7 @@ export default function FacilityBasicInfo({ data, onChange, errors }: Props) {
               borderRadius: "10px", fontWeight: 600, textTransform: "none",
               borderColor: "#E2E8F0", color: "#475569", fontSize: "0.8125rem",
               fontFamily: "'Inter', sans-serif", px: 2.5, py: 1,
-              "&:hover": { borderColor: "#2563EB", color: "#2563EB", bgcolor: "#EFF6FF" },
+              "&:hover": { borderColor: "#2c4d93", color: "#2c4d93", bgcolor: "#EFF6FF" },
             }}
           >
             Choose Image
@@ -128,7 +128,7 @@ export default function FacilityBasicInfo({ data, onChange, errors }: Props) {
       {/* ── Facility Identity ────────────────────── */}
       <SectionHeader
         icon={<InfoOutlinedIcon fontSize="small" />}
-        color="#2563eb" bgColor="#eff6ff"
+        color="#2c4d93" bgColor="#eff6ff"
         title="Facility Identity"
         subtitle="Name, unique code, category and display icon"
       />

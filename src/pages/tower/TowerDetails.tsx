@@ -287,7 +287,7 @@ export default function TowerDetails() {
                 >
                   PROJECT NAME
                 </Typography>
-                <Typography variant="body1" fontWeight="700" color="#0047b3">
+                <Typography variant="body1" fontWeight="700" color="#2c4d93">
                   {tower.projectName}
                 </Typography>
               </Grid>
@@ -548,7 +548,7 @@ export default function TowerDetails() {
                       sx={{
                         py: 2,
                         fontWeight: 700,
-                        color: "#0047b3",
+                        color: "#2c4d93",
                         borderBottomColor: "#f0f0f0",
                       }}
                     >

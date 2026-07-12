@@ -274,7 +274,7 @@ export default function EditGuest() {
                   cursor: 'pointer',
                   transition: 'all 0.2s',
                   '&:hover': {
-                    borderColor: '#0047b3',
+                    borderColor: '#2c4d93',
                     bgcolor: '#f1f5f9'
                   }
                 }}
@@ -353,7 +353,7 @@ export default function EditGuest() {
           <Button 
             variant="contained" 
             onClick={handleSubmit}
-            sx={{ borderRadius: '10px', textTransform: 'none', fontWeight: 600, px: 4, bgcolor: '#0047b3', '&:hover': { bgcolor: '#003380' } }}
+            sx={{ borderRadius: '10px', textTransform: 'none', fontWeight: 600, px: 4, bgcolor: '#2c4d93', '&:hover': { bgcolor: '#2c4d93' } }}
           >
             Save Guest Pass
           </Button>

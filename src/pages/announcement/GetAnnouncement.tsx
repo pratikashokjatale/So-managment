@@ -159,7 +159,7 @@ export default function GetAnnouncement() {
           variant="contained" 
           color="primary" 
           onClick={() => navigate('/announcements/add')}
-          sx={{ borderRadius: '10px', textTransform: 'none', px: 3, fontWeight: 600, bgcolor: '#0047b3', '&:hover': { bgcolor: '#003380' }, boxShadow: 'none' }}
+          sx={{ borderRadius: '10px', textTransform: 'none', px: 3, fontWeight: 600, bgcolor: '#2c4d93', '&:hover': { bgcolor: '#2c4d93' }, boxShadow: 'none' }}
         >
           Create Announcement
         </Button>
@@ -189,7 +189,7 @@ export default function GetAnnouncement() {
                 <TableRow key={row.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                   <TableCell sx={{ borderBottomColor: '#f0f0f0', py: 2.5 }}>
                     <Stack direction="row" alignItems="center" spacing={1}>
-                      {row.pinned && <PushPinIcon fontSize="small" sx={{ color: '#0047b3', transform: 'rotate(45deg)' }} />}
+                      {row.pinned && <PushPinIcon fontSize="small" sx={{ color: '#2c4d93', transform: 'rotate(45deg)' }} />}
                       <Typography variant="body2" sx={{ color: '#091542', fontWeight: 600 }}>{row.title}</Typography>
                     </Stack>
                   </TableCell>

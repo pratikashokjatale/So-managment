@@ -265,7 +265,7 @@ export default function GetPayment() {
                     <StatusBadge status={row.type} variantType="text" />
                   </TableCell>
                   <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                    <Typography variant="body2" sx={{ color: '#0047b3', fontWeight: 600 }}>
+                    <Typography variant="body2" sx={{ color: '#2c4d93', fontWeight: 600 }}>
                       #{row.id.substring(0,8).toUpperCase()}
                     </Typography>
                   </TableCell>

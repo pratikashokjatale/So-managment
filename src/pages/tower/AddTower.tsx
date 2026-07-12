@@ -217,8 +217,8 @@ export default function AddTower() {
                 px: 4, 
                 fontWeight: 600, 
                 boxShadow: 'none',
-                bgcolor: '#0047b3',
-                '&:hover': { bgcolor: '#003380' }
+                bgcolor: '#2c4d93',
+                '&:hover': { bgcolor: '#2c4d93' }
               }}
             >
               {loading ? 'Saving...' : 'Save Tower'}

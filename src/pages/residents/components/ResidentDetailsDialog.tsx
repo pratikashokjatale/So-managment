@@ -146,7 +146,7 @@ export default function ResidentDetailsDialog({ open, onClose, resident }: Resid
                 </Box>
               </Stack>
             </Box>
-            <Button fullWidth variant="contained" sx={{ mt: 3, borderRadius: '12px', height: 48, fontWeight: 900, textTransform: 'none', bgcolor: '#0047b3' }}>
+            <Button fullWidth variant="contained" sx={{ mt: 3, borderRadius: '12px', height: 48, fontWeight: 900, textTransform: 'none', bgcolor: '#2c4d93' }}>
               Complete Checkout
             </Button>
           </Paper>

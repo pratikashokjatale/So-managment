@@ -500,7 +500,7 @@ export default function GetBooking() {
               filteredBookings.map((row) => (
                 <TableRow key={row.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                   <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
-                    <Typography variant="body2" sx={{ color: '#0047b3', fontWeight: 600 }}>{row.bookingCode}</Typography>
+                    <Typography variant="body2" sx={{ color: '#2c4d93', fontWeight: 600 }}>{row.bookingCode}</Typography>
                   </TableCell>
                   <TableCell sx={{ borderBottomColor: '#f0f0f0' }}>
                     <Typography variant="body2" sx={{ color: '#091542', fontWeight: 500 }}>

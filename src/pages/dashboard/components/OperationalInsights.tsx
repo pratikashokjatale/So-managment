@@ -73,7 +73,7 @@ export default function OperationalInsights({
                   p: 1,
                   bgcolor: "#eff6ff",
                   borderRadius: "10px",
-                  color: "#0047b3",
+                  color: "#2c4d93",
                   display: "flex",
                 }}
               >
@@ -127,7 +127,7 @@ export default function OperationalInsights({
                         "& .MuiLinearProgress-bar": {
                           bgcolor:
                             summary.role === "RESIDENT"
-                              ? "#0047b3"
+                              ? "#2c4d93"
                               : summary.role === "STAFF"
                               ? "#10b981"
                               : "#ff9800",
@@ -221,7 +221,7 @@ export default function OperationalInsights({
               <Typography
                 variant="h5"
                 fontWeight="950"
-                color="#0047b3"
+                color="#2c4d93"
                 sx={{ letterSpacing: "-0.5px" }}
               >
                 ₹

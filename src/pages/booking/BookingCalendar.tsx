@@ -455,7 +455,7 @@ export default function BookingCalendar() {
                 ) : (
                   selectedDateBookings.map((row) => (
                     <TableRow key={row.id} hover>
-                      <TableCell sx={{ fontWeight: 600, color: '#0047b3' }}>{row.bookingCode}</TableCell>
+                      <TableCell sx={{ fontWeight: 600, color: '#2c4d93' }}>{row.bookingCode}</TableCell>
                       <TableCell sx={{ fontWeight: 500 }}>
                         {row.startTime?.substring(0, 5)} - {row.endTime?.substring(0, 5)}
                       </TableCell>

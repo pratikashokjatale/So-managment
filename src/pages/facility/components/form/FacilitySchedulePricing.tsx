@@ -58,7 +58,7 @@ export default function FacilitySchedulePricing({ data, onChange, errors }: Prop
         icon={<AccessTimeOutlinedIcon fontSize="small" />}
         title="Operating Hours"
         subtitle="Set the daily opening and closing times for this facility"
-        color="#2563eb" bgColor="#eff6ff"
+        color="#2c4d93" bgColor="#eff6ff"
       />
       <Box sx={{ px: 4, py: 3.5 }}>
         <Grid container spacing={3}>
@@ -97,7 +97,7 @@ export default function FacilitySchedulePricing({ data, onChange, errors }: Prop
                   <Checkbox
                     checked={data.allDay}
                     onChange={(e) => onChange("allDay", e.target.checked)}
-                    sx={{ color: "#E2E8F0", "&.Mui-checked": { color: "#2563EB" }, p: 1 }}
+                    sx={{ color: "#E2E8F0", "&.Mui-checked": { color: "#2c4d93" }, p: 1 }}
                   />
                 }
                 label={<Typography variant="body2" fontWeight={600} sx={{ color: "#374151", fontFamily: "'Inter', sans-serif" }}>Open All Day (24hrs)</Typography>}
@@ -142,9 +142,9 @@ export default function FacilitySchedulePricing({ data, onChange, errors }: Prop
               transition: "all 0.18s ease",
               boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
               "&.Mui-selected": {
-                bgcolor: "#2563EB",
+                bgcolor: "#2c4d93",
                 color: "white",
-                borderColor: "#2563EB !important",
+                borderColor: "#2c4d93 !important",
                 boxShadow: "0 4px 12px rgba(37,99,235,0.2)",
               },
               "&:hover:not(.Mui-selected)": {

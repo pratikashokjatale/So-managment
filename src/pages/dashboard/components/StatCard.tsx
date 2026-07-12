@@ -23,10 +23,10 @@ export default function StatCard({
     <Paper
       elevation={0}
       sx={{
-        p: 2.5,
+        p: 1.75,
         border: "1px solid #f1f5f9",
         borderLeft: isPositive ? "4px solid #10b981" : "4px solid #ef4444",
-        borderRadius: "16px",
+        borderRadius: "12px",
         bgcolor: "#ffffff",
         boxShadow:
           "0 4px 6px -1px rgba(0,0,0,0.01), 0 2px 4px -1px rgba(0,0,0,0.01)",
@@ -43,7 +43,7 @@ export default function StatCard({
         color="text.secondary"
         fontWeight="700"
         sx={{
-          mb: 1,
+          mb: 0.5,
           display: "block",
           textTransform: "uppercase",
           letterSpacing: 0.5,
@@ -52,10 +52,10 @@ export default function StatCard({
         {title}
       </Typography>
       <Typography
-        variant="h4"
+        variant="h5"
         fontWeight="800"
         color="#091542"
-        sx={{ mb: 1, letterSpacing: "-0.5px" }}
+        sx={{ mb: 0.5, letterSpacing: "-0.5px" }}
       >
         {value}
       </Typography>

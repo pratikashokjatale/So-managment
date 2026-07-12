@@ -308,7 +308,7 @@ export default function GetFlat() {
     ".MuiOutlinedInput-notchedOutline": { borderColor: "#e2e8f0" },
     "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#cbd5e1" },
     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#0047b3",
+      borderColor: "#2c4d93",
     },
   };
 
@@ -344,8 +344,8 @@ export default function GetFlat() {
             px: 3,
             fontWeight: 600,
             boxShadow: "none",
-            bgcolor: "#0047b3",
-            "&:hover": { bgcolor: "#003380" },
+            bgcolor: "#2c4d93",
+            "&:hover": { bgcolor: "#2c4d93" },
           }}
         >
           Add Flat
@@ -686,7 +686,7 @@ export default function GetFlat() {
                       sx={{
                         py: 2,
                         fontWeight: 700,
-                        color: "#0047b3",
+                        color: "#2c4d93",
                         borderBottomColor: "#f0f0f0",
                       }}
                     >

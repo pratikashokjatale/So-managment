@@ -41,7 +41,7 @@ const switchSx = {
     "&.Mui-checked": {
       transform: "translateX(20px)",
       color: "white",
-      "& + .MuiSwitch-track": { bgcolor: "#2563EB", opacity: 1, border: 0 },
+      "& + .MuiSwitch-track": { bgcolor: "#2c4d93", opacity: 1, border: 0 },
     },
   },
   "& .MuiSwitch-thumb": { width: 18, height: 18, boxShadow: "0 1px 4px rgba(0,0,0,0.2)" },
@@ -49,7 +49,7 @@ const switchSx = {
 };
 
 const ACCESS_TYPE_INFO: Record<string, { label: string; description: string; color: string }> = {
-  SLOT_BOOKING: { label: "Slot Booking Only", description: "Residents pay per slot — no subscription needed.", color: "#2563eb" },
+  SLOT_BOOKING: { label: "Slot Booking Only", description: "Residents pay per slot — no subscription needed.", color: "#2c4d93" },
   SUBSCRIPTION: { label: "Subscription Only", description: "Residents pay a monthly plan for open access.", color: "#16a34a" },
   MIXED: { label: "Subscription + Slot", description: "Subscription required, then resident reserves a slot.", color: "#ea580c" },
   EVENT_SHOW: { label: "Event / Show", description: "Fixed session or show-based access.", color: "#9333ea" },

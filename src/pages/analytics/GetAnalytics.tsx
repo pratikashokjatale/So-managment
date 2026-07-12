@@ -58,7 +58,7 @@ import type {
 import { getProjectsApi } from "@/apis/project";
 
 const COLORS = [
-  "#0047b3",
+  "#2c4d93",
   "#10b981",
   "#ea580c",
   "#db2777",
@@ -621,7 +621,7 @@ export default function GetAnalytics() {
                       p: 1.5,
                       bgcolor: "#eff6ff",
                       borderRadius: "12px",
-                      color: "#2563eb",
+                      color: "#2c4d93",
                       display: "flex",
                     }}
                   >
@@ -875,7 +875,7 @@ export default function GetAnalytics() {
                     <TableCell sx={{ fontWeight: 700, fontSize: "0.85rem", color: "#475569" }}>
                       {log.accessZone}
                     </TableCell>
-                    <TableCell sx={{ fontWeight: 700, fontSize: "0.85rem", color: "#0047b3" }}>
+                    <TableCell sx={{ fontWeight: 700, fontSize: "0.85rem", color: "#2c4d93" }}>
                       {log.facilityName}
                     </TableCell>
                     <TableCell sx={{ fontWeight: 700, fontSize: "0.85rem", color: "#091542" }}>

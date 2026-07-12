@@ -195,10 +195,10 @@ export default function CreateDemoDialog({ open, onClose }: CreateDemoDialogProp
               <Box sx={{ p: 2, bgcolor: "#eff6ff", borderRadius: "12px", border: "1px solid #bfdbfe" }}>
                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                   <Box>
-                    <Typography variant="caption" fontWeight="800" color="#2563eb">
+                    <Typography variant="caption" fontWeight="800" color="#2c4d93">
                       EMAIL / USERNAME
                     </Typography>
-                    <Typography variant="body1" fontWeight="700" color="#0047b3">
+                    <Typography variant="body1" fontWeight="700" color="#2c4d93">
                       {credentials.credentials?.identifier || credentials.email}
                     </Typography>
                   </Box>
@@ -206,7 +206,7 @@ export default function CreateDemoDialog({ open, onClose }: CreateDemoDialogProp
                     size="small"
                     onClick={() => handleCopy(credentials.credentials?.identifier || credentials.email, "Email")}
                   >
-                    <CopyIcon fontSize="small" sx={{ color: "#2563eb" }} />
+                    <CopyIcon fontSize="small" sx={{ color: "#2c4d93" }} />
                   </IconButton>
                 </Stack>
               </Box>
@@ -214,10 +214,10 @@ export default function CreateDemoDialog({ open, onClose }: CreateDemoDialogProp
               <Box sx={{ p: 2, bgcolor: "#eff6ff", borderRadius: "12px", border: "1px solid #bfdbfe" }}>
                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                   <Box>
-                    <Typography variant="caption" fontWeight="800" color="#2563eb">
+                    <Typography variant="caption" fontWeight="800" color="#2c4d93">
                       PASSWORD
                     </Typography>
-                    <Typography variant="body1" fontWeight="700" color="#0047b3">
+                    <Typography variant="body1" fontWeight="700" color="#2c4d93">
                       {credentials.credentials?.password || password}
                     </Typography>
                   </Box>
@@ -225,7 +225,7 @@ export default function CreateDemoDialog({ open, onClose }: CreateDemoDialogProp
                     size="small"
                     onClick={() => handleCopy(credentials.credentials?.password || password, "Password")}
                   >
-                    <CopyIcon fontSize="small" sx={{ color: "#2563eb" }} />
+                    <CopyIcon fontSize="small" sx={{ color: "#2c4d93" }} />
                   </IconButton>
                 </Stack>
               </Box>
@@ -239,7 +239,7 @@ export default function CreateDemoDialog({ open, onClose }: CreateDemoDialogProp
                 borderRadius: "12px",
                 textTransform: "none",
                 fontWeight: 800,
-                bgcolor: "#0047b3",
+                bgcolor: "#2c4d93",
                 py: 1.5,
               }}
             >
@@ -408,7 +408,7 @@ export default function CreateDemoDialog({ open, onClose }: CreateDemoDialogProp
                   textTransform: "none",
                   fontWeight: 800,
                   px: 4,
-                  bgcolor: "#0047b3",
+                  bgcolor: "#2c4d93",
                 }}
               >
                 {submitting ? <CircularProgress size={20} color="inherit" /> : "Create"}

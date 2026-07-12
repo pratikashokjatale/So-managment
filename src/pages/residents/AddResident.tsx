@@ -748,8 +748,8 @@ export default function AddResident({
                   px: 3,
                   py: 1,
                   fontWeight: 700,
-                  bgcolor: "#0047b3",
-                  "&:hover": { bgcolor: "#003380" },
+                  bgcolor: "#2c4d93",
+                  "&:hover": { bgcolor: "#2c4d93" },
                 }}
               >
                 Add Family Member
@@ -789,7 +789,7 @@ export default function AddResident({
                         size="small"
                         sx={{
                           bgcolor: "#eff6ff",
-                          color: "#0047b3",
+                          color: "#2c4d93",
                           fontWeight: 700,
                           borderRadius: "6px",
                         }}
@@ -1136,7 +1136,7 @@ export default function AddResident({
                         size="small"
                         sx={{
                           bgcolor: "#eff6ff",
-                          color: "#0047b3",
+                          color: "#2c4d93",
                           fontWeight: 700,
                           borderRadius: "6px",
                         }}
@@ -1267,7 +1267,7 @@ export default function AddResident({
                   fontWeight: 800,
                   textTransform: "none",
                   px: 4,
-                  bgcolor: "#0047b3",
+                  bgcolor: "#2c4d93",
                 }}
               >
                 {submitting ? (
@@ -1286,7 +1286,7 @@ export default function AddResident({
                   fontWeight: 800,
                   textTransform: "none",
                   px: 4,
-                  bgcolor: "#0047b3",
+                  bgcolor: "#2c4d93",
                 }}
               >
                 Continue
@@ -1511,8 +1511,8 @@ export default function AddResident({
               textTransform: "none",
               px: 3,
               fontWeight: 700,
-              bgcolor: "#0047b3",
-              "&:hover": { bgcolor: "#003380" },
+              bgcolor: "#2c4d93",
+              "&:hover": { bgcolor: "#2c4d93" },
             }}
           >
             Add Member

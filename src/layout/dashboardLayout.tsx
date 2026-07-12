@@ -404,7 +404,7 @@ export default function DashboardLayout() {
               width: 280,
               backgroundImage: "none",
               border: "none",
-              background: "#091542ff",
+              background: "rgba(19, 104, 179, 0.6)",
               borderRadius: 0,
             },
           }}
@@ -420,7 +420,7 @@ export default function DashboardLayout() {
               width: currentDrawerWidth,
               borderRight: "none",
               backgroundImage: "none",
-              background: "#091542ff",
+              background: "rgb(7, 43, 74)",
               borderRadius: 0,
               transition: theme.transitions.create("width", { easing: theme.transitions.easing.sharp, duration: theme.transitions.duration.enteringScreen }),
               overflowX: "hidden"

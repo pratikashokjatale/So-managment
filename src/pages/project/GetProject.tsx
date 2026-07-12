@@ -228,8 +228,8 @@ export default function GetProject() {
             px: 3,
             fontWeight: 600,
             boxShadow: "none",
-            bgcolor: "#0047b3",
-            "&:hover": { bgcolor: "#003380" },
+            bgcolor: "#2c4d93",
+            "&:hover": { bgcolor: "#2c4d93" },
           }}
         >
           Add Project
@@ -251,7 +251,7 @@ export default function GetProject() {
               <Box
                 sx={{
                   p: 1.5,
-                  bgcolor: "#0047b3",
+                  bgcolor: "#2c4d93",
                   color: "#ffffff",
                   borderRadius: "8px",
                   display: "flex",
@@ -366,7 +366,7 @@ export default function GetProject() {
             label: "Project Code",
             sortable: true,
             render: (row) => (
-              <Typography variant="body2" fontWeight={700} color="#0047b3">
+              <Typography variant="body2" fontWeight={700} color="#2c4d93">
                 {row.code}
               </Typography>
             ),
@@ -429,7 +429,7 @@ export default function GetProject() {
                 <IconButton
                   size="small"
                   sx={{
-                    color: "#0047b3",
+                    color: "#2c4d93",
                     bgcolor: "#eff6ff",
                     mr: 1,
                     "&:hover": { bgcolor: "#d0e1fd" },

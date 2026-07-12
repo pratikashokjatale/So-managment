@@ -209,7 +209,7 @@ export default function UserProfileCard({
             borderRadius: "12px",
             textTransform: "none",
             fontWeight: 800,
-            bgcolor: "#0047b3",
+            bgcolor: "#2c4d93",
             boxShadow: "none",
             px: 4,
             py: 1.25,

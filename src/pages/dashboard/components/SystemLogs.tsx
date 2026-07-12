@@ -48,7 +48,7 @@ export default function SystemLogs({ logs, navigate }: SystemLogsProps) {
             }}
           >
             <Stack direction="row" spacing={1.5} alignItems="center">
-              <LogsIcon sx={{ color: "#0047b3" }} />
+              <LogsIcon sx={{ color: "#2c4d93" }} />
               <Typography variant="subtitle1" fontWeight="800" color="#091542">
                 System Activity Logs (Recent)
               </Typography>
@@ -132,7 +132,7 @@ export default function SystemLogs({ logs, navigate }: SystemLogsProps) {
           }}
         >
           <Stack direction="row" spacing={1.5} alignItems="center">
-            <LogsIcon sx={{ color: "#0047b3" }} />
+            <LogsIcon sx={{ color: "#2c4d93" }} />
             <Typography variant="h6" fontWeight="900" color="#091542">
               All System Logs
             </Typography>

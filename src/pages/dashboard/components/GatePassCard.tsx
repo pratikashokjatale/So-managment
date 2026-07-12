@@ -42,7 +42,7 @@ export default function GatePassCard({
           left: 0,
           width: "100%",
           height: "6px",
-          background: "linear-gradient(90deg, #0047b3 0%, #3b82f6 100%)",
+          background: "linear-gradient(90deg, #2c4d93 0%, #3b82f6 100%)",
         },
       }}
     >
@@ -59,7 +59,7 @@ export default function GatePassCard({
 
       {qrLoading ? (
         <Box sx={{ py: 6 }}>
-          <CircularProgress size={50} sx={{ color: "#0047b3" }} />
+          <CircularProgress size={50} sx={{ color: "#2c4d93" }} />
         </Box>
       ) : qrCodeData ? (
         <Box
@@ -92,8 +92,8 @@ export default function GatePassCard({
               width: "calc(100% - 24px)",
               height: "2px",
               background:
-                "linear-gradient(90deg, transparent 0%, #0047b3 50%, transparent 100%)",
-              boxShadow: "0 0 8px #0047b3",
+                "linear-gradient(90deg, transparent 0%, #2c4d93 50%, transparent 100%)",
+              boxShadow: "0 0 8px #2c4d93",
               zIndex: 10,
               animation: "radarSweep 4s infinite linear",
             }}

@@ -69,7 +69,7 @@ export default function LogItem({ log }: LogItemProps) {
         <Box>
           <Typography variant="body2" fontWeight="800" color="#1e293b">{log.event}</Typography>
           <Typography variant="caption" color="text.secondary" fontWeight="600">
-            Performed by <Box component="span" sx={{ fontWeight: 800, color: '#0047b3' }}>{log.user}</Box>
+            Performed by <Box component="span" sx={{ fontWeight: 800, color: '#2c4d93' }}>{log.user}</Box>
           </Typography>
         </Box>
       </Stack>

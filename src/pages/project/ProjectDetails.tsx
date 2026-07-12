@@ -148,7 +148,7 @@ export default function ProjectDetails() {
             variant="contained" 
             startIcon={<AddIcon />}
             onClick={() => navigate(`/tower/add?projectId=${project.id}`)}
-            sx={{ borderRadius: '8px', textTransform: 'none', px: 2.5, fontWeight: 600, boxShadow: 'none', bgcolor: '#0047b3', '&:hover': { bgcolor: '#003380' } }}
+            sx={{ borderRadius: '8px', textTransform: 'none', px: 2.5, fontWeight: 600, boxShadow: 'none', bgcolor: '#2c4d93', '&:hover': { bgcolor: '#2c4d93' } }}
           >
             Add Tower
           </Button>
@@ -173,7 +173,7 @@ export default function ProjectDetails() {
               </Grid>
               <Grid size={{ xs: 12, sm: 6 }}>
                 <Typography variant="caption" color="text.secondary" fontWeight="600" display="block">PROJECT CODE</Typography>
-                <Typography variant="body1" fontWeight="700" color="#0047b3">{project.code}</Typography>
+                <Typography variant="body1" fontWeight="700" color="#2c4d93">{project.code}</Typography>
               </Grid>
               <Grid size={{ xs: 12, sm: 6 }}>
                 <Typography variant="caption" color="text.secondary" fontWeight="600" display="block">LOCATION</Typography>
@@ -320,7 +320,7 @@ export default function ProjectDetails() {
                       <Typography variant="body2" fontWeight="600">{tower.totalFloors !== undefined ? tower.totalFloors : tower.floorsCount} Floors</Typography>
                     </TableCell>
                     <TableCell sx={{ py: 2, borderBottomColor: '#f0f0f0' }}>
-                      <Typography variant="body2" fontWeight="600" color="#0047b3">{towerFlatsCount} Flats</Typography>
+                      <Typography variant="body2" fontWeight="600" color="#2c4d93">{towerFlatsCount} Flats</Typography>
                     </TableCell>
                     <TableCell sx={{ py: 2, borderBottomColor: '#f0f0f0' }}>
                       <Box 
@@ -341,7 +341,7 @@ export default function ProjectDetails() {
                     <TableCell align="right" sx={{ py: 2, borderBottomColor: '#f0f0f0' }}>
                       <IconButton 
                         size="small" 
-                        sx={{ color: '#0047b3', bgcolor: '#eff6ff', mr: 1, '&:hover': { bgcolor: '#d0e1fd' } }} 
+                        sx={{ color: '#2c4d93', bgcolor: '#eff6ff', mr: 1, '&:hover': { bgcolor: '#d0e1fd' } }} 
                         onClick={() => navigate(`/tower/${tower.id}`)}
                       >
                         <VisibilityOutlinedIcon fontSize="small" />

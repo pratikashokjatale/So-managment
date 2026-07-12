@@ -37,7 +37,7 @@ interface DashboardSidebarProps {
 function getFacilityIcon(iconName: string) {
   switch (iconName) {
     case "SportsTennis":
-      return <TennisIcon sx={{ color: "#0047b3" }} />;
+      return <TennisIcon sx={{ color: "#2c4d93" }} />;
     case "FitnessCenter":
       return <GymIcon sx={{ color: "#ea580c" }} />;
     case "Movie":
@@ -101,8 +101,8 @@ export default function DashboardSidebar({
             minWidth: "auto",
             flex: 1,
           },
-          "& .Mui-selected": { color: "#0047b3 !important" },
-          "& .MuiTabs-indicator": { backgroundColor: "#0047b3" },
+          "& .Mui-selected": { color: "#2c4d93 !important" },
+          "& .MuiTabs-indicator": { backgroundColor: "#2c4d93" },
         }}
       >
         <Tab label="Upcoming Bookings" />
@@ -127,7 +127,7 @@ export default function DashboardSidebar({
               alignItems: "center",
             }}
           >
-            <CircularProgress size={30} sx={{ color: "#0047b3" }} />
+            <CircularProgress size={30} sx={{ color: "#2c4d93" }} />
           </Box>
         ) : sidebarTab === 0 ? (
           /* Bookings Tab */
@@ -169,7 +169,7 @@ export default function DashboardSidebar({
                     textTransform: "none",
                     fontWeight: 800,
                     mt: 1,
-                    color: "#0047b3",
+                    color: "#2c4d93",
                   }}
                 >
                   Book a Facility
@@ -242,7 +242,7 @@ export default function DashboardSidebar({
                       {isAdmin && (
                         <Typography
                           variant="caption"
-                          color="#0047b3"
+                          color="#2c4d93"
                           fontWeight="700"
                           display="block"
                         >
@@ -375,7 +375,7 @@ export default function DashboardSidebar({
                         fontWeight: 800,
                         fontSize: "0.75rem",
                         borderColor: "#e2e8f0",
-                        color: "#0047b3",
+                        color: "#2c4d93",
                         minWidth: 60,
                         transition: "all 0.2s",
                         "&:hover": {
@@ -404,7 +404,7 @@ export default function DashboardSidebar({
             py: 1.25,
             fontWeight: 800,
             textTransform: "none",
-            bgcolor: "#0047b3",
+            bgcolor: "#2c4d93",
             color: "white",
             boxShadow: "none",
             transition: "all 0.2s",

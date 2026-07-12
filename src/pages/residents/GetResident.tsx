@@ -215,8 +215,8 @@ export default function GetResident() {
             fontSize: '0.95rem',
             minWidth: 120,
           },
-          '& .Mui-selected': { color: '#0047b3 !important' },
-          '& .MuiTabs-indicator': { backgroundColor: '#0047b3', height: 3 },
+          '& .Mui-selected': { color: '#2c4d93 !important' },
+          '& .MuiTabs-indicator': { backgroundColor: '#2c4d93', height: 3 },
         }}
       >
         <Tab label={(

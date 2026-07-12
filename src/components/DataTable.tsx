@@ -55,7 +55,7 @@ export default function DataTable<T extends { id?: string | number }>({
     <Box sx={{ width: '100%' }}>
       {loading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 10 }}>
-          <CircularProgress size={40} sx={{ color: '#0047b3' }} />
+          <CircularProgress size={40} sx={{ color: '#133859ff' }} />
         </Box>
       ) : (
         <TableContainer 

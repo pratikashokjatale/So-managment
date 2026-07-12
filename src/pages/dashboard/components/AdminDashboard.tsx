@@ -70,19 +70,19 @@ export default function AdminDashboard({
   logs,
 }: AdminDashboardProps) {
   return (
-    <Box sx={{ mt: 2, bgcolor: "#f8fafc", minHeight: "100vh" }}>
+    <Box sx={{ mt: 1, bgcolor: "#f8fafc", minHeight: "100vh" }}>
       {/* Top Header Row */}
       <Box
         sx={{
-          mb: 4,
+          mb: 2,
           display: "flex",
           justifyContent: "end",
           alignItems: "center",
           flexWrap: "wrap",
-          gap: 2,
+          gap: 1.5,
         }}
       >
-        <Stack direction="row" spacing={2} alignItems="center">
+        <Stack direction="row" spacing={1.5} alignItems="center">
           <Select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
@@ -90,7 +90,7 @@ export default function AdminDashboard({
             sx={{
               borderRadius: "8px",
               bgcolor: "white",
-              minWidth: 140,
+              minWidth: 130,
               fontWeight: 700,
               "& fieldset": { border: "1px solid #e2e8f0" },
             }}
@@ -106,9 +106,9 @@ export default function AdminDashboard({
             sx={{
               borderRadius: "8px",
               textTransform: "none",
-              px: 3,
+              px: 2.5,
               fontWeight: 700,
-              bgcolor: "#0047b3",
+              bgcolor: "#2c4d93",
               boxShadow: "none",
             }}
           >
@@ -119,7 +119,7 @@ export default function AdminDashboard({
 
       {/* Stats Row */}
       {loadingStats ? (
-        <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+        <Box sx={{ display: "flex", justifyContent: "center", py: 3 }}>
           <CircularProgress />
         </Box>
       ) : (
@@ -131,8 +131,8 @@ export default function AdminDashboard({
               md: "repeat(3, 1fr)",
               lg: "repeat(5, 1fr)",
             },
-            gap: 3,
-            mb: 5,
+            gap: 2,
+            mb: 3.5,
           }}
         >
           <StatCard
@@ -178,7 +178,7 @@ export default function AdminDashboard({
         sx={{
           display: "grid",
           gridTemplateColumns: { xs: "1fr", lg: "1fr 380px" },
-          gap: 4,
+          gap: 2,
           alignItems: "stretch",
         }}
       >

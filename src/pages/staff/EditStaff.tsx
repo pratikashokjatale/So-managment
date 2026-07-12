@@ -698,7 +698,7 @@ export default function EditStaff() {
                       bgcolor: '#3b82f6',
                       color: 'white',
                       '&:hover': {
-                        bgcolor: '#2563eb',
+                        bgcolor: '#2c4d93',
                       }
                     }
                   }

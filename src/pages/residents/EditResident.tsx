@@ -534,7 +534,7 @@ export default function EditResident() {
               px: 4,
               fontWeight: 600,
               boxShadow: "none",
-              bgcolor: "#0047b3",
+              bgcolor: "#2c4d93",
             }}
           >
             {submitting ? (

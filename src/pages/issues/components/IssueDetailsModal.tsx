@@ -341,7 +341,7 @@ export default function IssueDetailsModal({
                       REPORTER RESIDENT
                     </Typography>
                     <Stack direction="row" spacing={2} alignItems="center">
-                      <Avatar sx={{ bgcolor: "#0047b3", width: 44, height: 44 }}>
+                      <Avatar sx={{ bgcolor: "#2c4d93", width: 44, height: 44 }}>
                         <PersonIcon />
                       </Avatar>
                       <Box>

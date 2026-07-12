@@ -344,9 +344,9 @@ export default function GetIssues() {
                   textTransform: "none",
                   fontWeight: 700,
                   fontSize: "0.75rem",
-                  borderColor: "#0047b3",
-                  color: "#0047b3",
-                  "&:hover": { bgcolor: "#eff6ff", borderColor: "#003380" },
+                  borderColor: "#2c4d93",
+                  color: "#2c4d93",
+                  "&:hover": { bgcolor: "#eff6ff", borderColor: "#2c4d93" },
                 }}
               >
                 Manage

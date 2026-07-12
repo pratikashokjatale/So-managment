@@ -414,7 +414,7 @@ export default function GetStaff() {
         <Box sx={{ width: "100%" }}>
           {loading ? (
             <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", py: 10 }}>
-              <CircularProgress size={40} sx={{ color: "#0047b3" }} />
+              <CircularProgress size={40} sx={{ color: "#2c4d93" }} />
             </Box>
           ) : paginatedStaff.length === 0 ? (
             <Box
@@ -559,7 +559,7 @@ export default function GetStaff() {
                       </Box>
 
                       {/* Name & Rank */}
-                      <Typography variant="body1" fontWeight="900" color="#0047b3" noWrap sx={{ maxWidth: "100%" }}>
+                      <Typography variant="body1" fontWeight="900" color="#2c4d93" noWrap sx={{ maxWidth: "100%" }}>
                         {row.name}
                       </Typography>
                       <Typography
