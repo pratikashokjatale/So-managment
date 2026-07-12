@@ -19,6 +19,7 @@ import {
   ReportProblem as IssueIcon,
   Groups as GroupsIcon,
   Emergency as EmergencyIcon,
+  BarChart as AnalyticsIcon,
 } from "@mui/icons-material";
 
 export const menuItems = [
@@ -42,7 +43,8 @@ export const menuItems = [
     path: "/residents",
     children: [
       { text: "Residents", icon: <ResidentsIcon />, path: "/residents" },
-      { text: "Guest", icon: <GuestIcon />, path: "/guest" }
+      { text: "Guest", icon: <GuestIcon />, path: "/guest" },
+      { text: "Demo Accounts", icon: <ResidentsIcon />, path: "/demo-accounts" }
     ]
   },
   
@@ -75,4 +77,5 @@ export const menuItems = [
   // { text: "Gate Entry", icon: <GateIcon />, path: "/gate" },
   { text: "Announcements", icon: <CampaignIcon />, path: "/announcements" },
   { text: "Report", icon: <ReportIcon />, path: "/report" },
+  { text: "Analytics", icon: <AnalyticsIcon />, path: "/analytics" },
 ];

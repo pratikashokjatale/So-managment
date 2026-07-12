@@ -14,6 +14,7 @@ import {
   ListItemText,
   Tabs,
   Tab,
+  Button,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
@@ -31,7 +32,6 @@ import { getTowers, getFlats } from "@/utils/setupStore";
 import { toast } from "react-hot-toast";
 import AddResident from "./AddResident";
 import { getFileUrl } from "@/utils/file";
-import AccessStatusBadge from "@/components/AccessStatusBadge";
 import CreateBookingDialog from "./components/CreateBookingDialog";
 
 
@@ -326,10 +326,17 @@ export default function GetResident() {
               {
                 id: 'cardType',
                 label: 'Card Type',
-                render: () => (
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <Box sx={{ width: 12, height: 12, borderRadius: "50%", bgcolor: "#1d4ed8", border: "1px solid #cbd5e1" }} />
-                    <Typography variant="body2" fontWeight="600">Blue Card</Typography>
+                render: (row) => (
+                  <Box>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <Box sx={{ width: 12, height: 12, borderRadius: "50%", bgcolor: "#1d4ed8", border: "1px solid #cbd5e1" }} />
+                      <Typography variant="body2" fontWeight="600">Blue Card</Typography>
+                    </Box>
+                    {(row.cardNumber || row.cardNo) && (
+                      <Typography variant="caption" color="text.secondary" fontWeight="700" sx={{ mt: 0.5, display: "block" }}>
+                        No: {row.cardNumber || row.cardNo}
+                      </Typography>
+                    )}
                   </Box>
                 )
               },
@@ -384,6 +391,8 @@ export default function GetResident() {
       {tabValue === 1 && <ResidentRequests />}
 
       {tabValue === 2 && <RejectedRequests />}
+
+
 
       {isAddModalOpen && (
         <AddResident 

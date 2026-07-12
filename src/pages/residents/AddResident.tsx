@@ -92,6 +92,7 @@ export default function AddResident({
     photo: null as string | null,
     role: "RESIDENT",
     stayEndsAt: "",
+    cardNumber: "",
   });
 
   const [aadhaarFile, setAadhaarFile] = useState<File | null>(null);
@@ -235,6 +236,16 @@ export default function AddResident({
       toast.error("Stay ends date (expiry date) is required for Tenants");
       return false;
     }
+    if (residentData.cardNumber) {
+      if (residentData.cardNumber.length > 8) {
+        toast.error("Card number must be max 8 characters");
+        return false;
+      }
+      if (!/^[A-Z0-9]+$/.test(residentData.cardNumber)) {
+        toast.error("Card number must contain only uppercase letters and numbers");
+        return false;
+      }
+    }
     return true;
   };
 
@@ -322,6 +333,7 @@ export default function AddResident({
         flatType: selectedFlat?.type || selectedFlat?.flatType || "2BHK",
         stayEndsAt: stayEndsAtVal,
         profilePhotoUrl: uploadedProfileUrl,
+        cardNumber: residentData.cardNumber.trim() || undefined,
         aadhaarNumber: residentData.aadhaar.trim() || undefined,
         aadhaarDocumentUrl: residentData.aadhaar.trim()
           ? uploadedAadhaarUrl
@@ -527,6 +539,18 @@ export default function AddResident({
                 onChange={(e) =>
                   setResidentData({ ...residentData, password: e.target.value })
                 }
+                sx={{ "& fieldset": { borderRadius: "12px" } }}
+              />
+              <TextField
+                fullWidth
+                label="Card Number (Optional)"
+                placeholder="MB1042"
+                variant="outlined"
+                value={residentData.cardNumber}
+                onChange={(e) =>
+                  setResidentData({ ...residentData, cardNumber: e.target.value.toUpperCase() })
+                }
+                helperText="Max 8 alphanumeric uppercase characters"
                 sx={{ "& fieldset": { borderRadius: "12px" } }}
               />
               <TextField
@@ -966,6 +990,23 @@ export default function AddResident({
                     {projectId
                       ? `${selectedProjectName} • ${selectedTowerName} • Flat ${selectedFlatNumber}`
                       : "Not Assigned"}
+                  </Typography>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    fontWeight="700"
+                  >
+                    CARD NUMBER
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    fontWeight="800"
+                    color="#091542"
+                    sx={{ mt: 0.5 }}
+                  >
+                    {residentData.cardNumber || "Auto-Generated"}
                   </Typography>
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6, md: 4 }}>

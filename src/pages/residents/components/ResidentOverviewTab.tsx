@@ -49,7 +49,7 @@ export default function ResidentOverviewTab({ resident }: ResidentOverviewTabPro
     ? `Flat ${flatObj.flatNumber} • Floor ${flatObj.floorNumber} • ${flatObj.flatType || ''} (${flatObj.occupancyType || ''})`
     : (resident?.apartment || (resident?.flatId ? `Flat ID: ${resident.flatId}` : 'N/A'));
 
-  const cardNo = resident.cardNo || `CMR-${resident.id?.substring(0, 6).toUpperCase()}`;
+  const cardNo = resident.cardNumber || resident.cardNo || `CMR-${resident.id?.substring(0, 6).toUpperCase()}`;
 
   // Aadhaar/PAN status checks
   const aadhaarStatus = identityProofs.find((d: any) => d.documentType === 'AADHAR_CARD')?.isVerified;

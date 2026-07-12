@@ -120,7 +120,7 @@ export default function DashboardLayout() {
 
   const breadcrumbs = getBreadcrumbs();
 
-  const currentDrawerWidth = isMobile ? 280 : (desktopOpen ? 280 : 88);
+  const currentDrawerWidth = isMobile ? 260 : (desktopOpen ? 260 : 80);
 
   useEffect(() => {
     document.body.style.setProperty("--sidebar-width", `${currentDrawerWidth}px`);
@@ -175,7 +175,7 @@ export default function DashboardLayout() {
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        background: "#091542ff",
+        background: "rgb(7, 43, 74)", // Premium blue-slate background
         color: "rgba(255, 255, 255, 0.9)",
         overflowX: "hidden",
         transition: theme.transitions.create("width", {
@@ -184,127 +184,47 @@ export default function DashboardLayout() {
         }),
       }}
     >
+      {/* Sidebar Header Branding */}
       <Box
         sx={{ 
-          px: desktopOpen || isMobile ? 2.5 : 2, 
-          pt: 3,
-          pb: 2.5,
+          px: 2.5, 
+          py: 3,
           display: "flex", 
-          flexDirection: "column",
-          alignItems: "center", 
-          borderBottom: "1px solid rgba(255, 255, 255, 0.06)",
+          alignItems: "center",
+          gap: 2,
+          borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
           mb: 2,
-          justifyContent: "center",
           width: "100%"
         }}
       >
-        {desktopOpen || isMobile ? (
-          <Box
-            sx={{
-              width: "100%",
-              p: 2,
-              borderRadius: "16px",
-              background: "linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.07) 100%)",
-              border: "1px solid rgba(255, 255, 255, 0.08)",
-              boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.25)",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: 2,
-              transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-              "&:hover": {
-                transform: "translateY(-4px)",
-                borderColor: "rgba(217, 154, 43, 0.35)",
-                boxShadow: "0 12px 30px rgba(217, 154, 43, 0.15)",
-                "& .logo-img": {
-                  transform: "scale(1.04)",
-                }
-              }
-            }}
-          >
-            <Box 
-              sx={{ 
-                width: "100%",
-                height: 110,
-                borderRadius: "12px",
-                overflow: "hidden",
-                bgcolor: "white",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                p: 1.5,
-                boxShadow: "inset 0 0 10px rgba(0,0,0,0.05)",
-                transition: "all 0.3s ease"
-              }}
-            >
-              <Box
-                className="logo-img"
-                component="img"
-                src={logoImg}
-                alt="Marbella Logo"
-                sx={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "contain",
-                  transition: "transform 0.3s ease"
-                }}
-              />
-            </Box>
-            
-            <Box 
-              sx={{ 
-                border: "1.5px solid #d99a2b", 
-                px: 2.5, 
-                py: 0.75, 
-                borderRadius: "8px",
-                bgcolor: "rgba(217, 154, 43, 0.05)",
-                display: "inline-block",
-                transition: "all 0.2s ease",
-                cursor: "default",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
-                "&:hover": {
-                  bgcolor: "rgba(217, 154, 43, 0.12)",
-                  boxShadow: "0 0 12px rgba(217, 154, 43, 0.3)",
-                  borderColor: "#d99a2b"
-                }
-              }}
-            >
-              <Typography
-                variant="caption"
-                sx={{ 
-                  color: "#d99a2b", 
-                  fontWeight: 900, 
-                  letterSpacing: "2.5px", 
-                  textTransform: "uppercase",
-                  fontSize: "0.65rem",
-                  display: "block",
-                  textAlign: "center",
-                  fontFamily: "Outfit, Roboto, sans-serif"
-                }}
-              >
-                {isAdmin ? "Admin Panel" : `${user?.role || "User"} Portal`}
-              </Typography>
-            </Box>
-          </Box>
-        ) : (
-          <Box 
+        <Box 
+          component="img"
+          src={logoImg}
+          alt="Logo"
+          sx={{
+            width: 34,
+            height: 34,
+            borderRadius: "8px",
+            objectFit: "cover",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.15)"
+          }}
+        />
+        {(desktopOpen || isMobile) && (
+          <Typography
+            variant="h6"
             sx={{ 
-              display: "flex", 
-              justifyContent: "center", 
-              width: "100%",
-              py: 1,
-              transition: "all 0.2s ease",
-              "&:hover": {
-                transform: "scale(1.05)"
-              }
+              color: "white", 
+              fontWeight: 900, 
+              fontSize: "1.25rem",
+              letterSpacing: "-0.5px"
             }}
           >
-            <MarbellaLogo collapsed={true} />
-          </Box>
+           Marbella Grand
+          </Typography>
         )}
       </Box>
 
-      <List sx={{ px: desktopOpen || isMobile ? 2 : 1.5, flexGrow: 1 }}>
+      <List sx={{ px: 2, flexGrow: 1 }}>
         {displayedMenuItems.map((item) => {
           const hasChildren = item.children && item.children.length > 0;
           const isMenuOpen = openMenus[item.text] || false;
@@ -324,35 +244,32 @@ export default function DashboardLayout() {
                   }}
                   selected={active && !hasChildren}
                   sx={{
-                    borderRadius: "12px",
-                    py: 1.25,
+                    borderRadius: "10px",
+                    py: 0.75, // Smaller padding
                     px: desktopOpen || isMobile ? 2 : 1.5,
                     justifyContent: desktopOpen || isMobile ? "initial" : "center",
-                    transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+                    transition: "all 0.15s ease-in-out",
                     color: active ? "#ffffff" : "#94a3b8",
-                    borderLeft: active && (desktopOpen || isMobile) ? "4px solid #d99a2b" : "4px solid transparent",
-                    pl: active && (desktopOpen || isMobile) ? "12px" : (desktopOpen || isMobile ? "16px" : "12px"),
-                    bgcolor: active ? "rgba(255, 255, 255, 0.08)" : "transparent",
+                    bgcolor: active ? "rgba(255, 255, 255, 0.15)" : "transparent",
                     "&.Mui-selected": {
-                      bgcolor: "rgba(255, 255, 255, 0.08)",
+                      bgcolor: "rgba(255, 255, 255, 0.15)",
                       color: "white",
-                      "& .MuiListItemIcon-root": { color: "#d99a2b" },
-                      "&:hover": { bgcolor: "rgba(255, 255, 255, 0.12)" },
+                      "& .MuiListItemIcon-root": { color: "#ffffff" },
+                      "&:hover": { bgcolor: "rgba(255, 255, 255, 0.22)" },
                     },
                     "&:hover": {
-                      bgcolor: "rgba(255, 255, 255, 0.04)",
+                      bgcolor: active ? "rgba(255, 255, 255, 0.22)" : "rgba(255, 255, 255, 0.05)",
                       color: "white",
-                      "& .MuiListItemIcon-root": { color: "#d99a2b" },
-                      transform: (desktopOpen || isMobile) && !hasChildren ? "translateX(4px)" : "none",
+                      "& .MuiListItemIcon-root": { color: "#ffffff" },
                     },
                   }}
                 >
                   <ListItemIcon
                     sx={{
-                      minWidth: desktopOpen || isMobile ? 42 : 0,
-                      mr: desktopOpen || isMobile ? 1 : 0,
+                      minWidth: desktopOpen || isMobile ? 32 : 0, // Narrower icon container
+                      mr: desktopOpen || isMobile ? 1 : 0, // Reduced margin
                       justifyContent: "center",
-                      color: active ? "#d99a2b" : "#94a3b8",
+                      color: active ? "#ffffff" : "#94a3b8",
                     }}
                   >
                     {item.icon}
@@ -361,9 +278,9 @@ export default function DashboardLayout() {
                     <>
                       <ListItemText
                         primary={item.text}
-                        primaryTypographyProps={{ fontSize: "0.925rem", fontWeight: active ? 700 : 500 }}
+                        primaryTypographyProps={{ fontSize: "0.85rem", fontWeight: active ? 700 : 500 }} // Smaller font size
                       />
-                      {hasChildren && (isMenuOpen ? <ExpandLessIcon sx={{ fontSize: 18 }} /> : <ExpandMoreIcon sx={{ fontSize: 18 }} />)}
+                      {hasChildren && (isMenuOpen ? <ExpandLessIcon sx={{ fontSize: 16 }} /> : <ExpandMoreIcon sx={{ fontSize: 16 }} />)}
                     </>
                   )}
                 </ListItemButton>
@@ -371,7 +288,7 @@ export default function DashboardLayout() {
 
               {hasChildren && (desktopOpen || isMobile) && (
                 <Collapse in={isMenuOpen} timeout="auto" unmountOnExit>
-                  <List component="div" disablePadding sx={{ ml: 3 }}>
+                  <List component="div" disablePadding sx={{ ml: 2.5 }}>
                     {item.children?.map((child: any) => {
                       const childActive = location.pathname === child.path;
                       return (
@@ -383,10 +300,11 @@ export default function DashboardLayout() {
                           }}
                           selected={childActive}
                           sx={{
-                            borderRadius: "10px",
-                            py: 1,
+                            borderRadius: "8px",
+                            py: 0.5, // Smaller padding
                             mb: 0.5,
                             color: childActive ? "#ffffff" : "#94a3b8",
+                            bgcolor: childActive ? "rgba(255, 255, 255, 0.05)" : "transparent",
                             "&.Mui-selected": {
                               bgcolor: "rgba(255, 255, 255, 0.08)",
                               color: "white",
@@ -398,10 +316,10 @@ export default function DashboardLayout() {
                           {child.icon && (
                             <ListItemIcon
                               sx={{
-                                minWidth: 32,
-                                mr: 0.5,
+                                minWidth: 24, // Narrower icon container
+                                mr: 0.75, // Reduced margin
                                 justifyContent: "center",
-                                color: childActive ? "#d99a2b" : "inherit",
+                                color: childActive ? "#ffffff" : "#94a3b8",
                               }}
                             >
                               {child.icon}
@@ -409,7 +327,7 @@ export default function DashboardLayout() {
                           )}
                           <ListItemText
                             primary={child.text}
-                            primaryTypographyProps={{ fontSize: "0.85rem", fontWeight: childActive ? 700 : 500 }}
+                            primaryTypographyProps={{ fontSize: "0.8rem", fontWeight: childActive ? 700 : 500 }} // Smaller font size
                           />
                         </ListItemButton>
                       );
@@ -422,29 +340,28 @@ export default function DashboardLayout() {
         })}
       </List>
 
-      <Box sx={{ p: 2, borderTop: "1px solid rgba(255, 255, 255, 0.06)" }}>
+      <Box sx={{ p: 2, borderTop: "1px solid rgba(255, 255, 255, 0.05)" }}>
         {(desktopOpen || isMobile) ? (
           <ListItemButton
             onClick={logout}
             sx={{
-              borderRadius: "16px",
+              borderRadius: "12px",
               color: "#ef4444",
-              px: 2.5,
-              py: 1.5,
+              px: 2,
+              py: 1.25,
               "&:hover": {
                 bgcolor: "rgba(239, 68, 68, 0.08)",
               }
             }}
           >
-            <ListItemIcon sx={{ color: "#ef4444", minWidth: 40 }}>
+            <ListItemIcon sx={{ color: "#ef4444", minWidth: 36 }}>
               <LogoutIcon />
             </ListItemIcon>
             <ListItemText
-              primary="Logout"
+              primary="Log out"
               primaryTypographyProps={{
-                fontSize: "0.95rem",
-                fontWeight: 900,
-                letterSpacing: 0.5,
+                fontSize: "0.9rem",
+                fontWeight: 700,
               }}
             />
           </ListItemButton>

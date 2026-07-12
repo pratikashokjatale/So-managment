@@ -28,6 +28,7 @@ export interface CreateUserPayload {
   role?: string;
   accountRole?: string;
   flatId?: string | null;
+  cardNumber?: string;
 }
 
 export interface UpdateUserPayload {
@@ -40,6 +41,7 @@ export interface UpdateUserPayload {
   status?: string;
   flatId?: string | null;
   profilePhotoUrl?: string | null;
+  cardNumber?: string;
 }
 
 export const getUsersApi = async (params?: ListUsersParams) => {
@@ -99,6 +101,28 @@ export const getUserQrApi = async (userId: string) => {
 export const getMyQrApi = async () => {
   try {
     const res = await api.get("access/my-qr");
+    return res?.data;
+  } catch (error) {
+    throw handleApiError(error);
+  }
+};
+
+export interface CreateDemoAccountPayload {
+  name: string;
+  email: string;
+  phone: string;
+  password?: string;
+  role: string;
+  projectId?: string;
+  flatId?: string;
+  roleProfileId?: string;
+  accountRole?: string;
+  expiresAt?: string;
+}
+
+export const createDemoAccountApi = async (data: CreateDemoAccountPayload) => {
+  try {
+    const res = await api.post("demo-accounts", data);
     return res?.data;
   } catch (error) {
     throw handleApiError(error);

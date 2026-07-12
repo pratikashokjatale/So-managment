@@ -13,6 +13,7 @@ export interface PageToolbarProps {
   showExport?: boolean;
   filters?: React.ReactNode;
   hideSearch?: boolean;
+  extraActions?: React.ReactNode;
 }
 
 export default function PageToolbar({
@@ -25,6 +26,7 @@ export default function PageToolbar({
   showExport = false,
   filters,
   hideSearch = false,
+  extraActions,
 }: PageToolbarProps) {
   return (
     <Box sx={{ mb: 3 }}>
@@ -61,7 +63,8 @@ export default function PageToolbar({
           <Box />
         )}
 
-        <Box sx={{ display: "flex", gap: 2 }}>
+        <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+          {extraActions}
           {showExport && (
             <Button
               variant="text"

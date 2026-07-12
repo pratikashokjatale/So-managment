@@ -21,6 +21,8 @@ import GetAnnouncement from "@/pages/announcement/GetAnnouncement";
 import AddAnnouncement from "@/pages/announcement/AddAnnouncement";
 import EditAnnouncement from "@/pages/announcement/EditAnnouncement";
 import GetReport from "@/pages/report/GetReport";
+import GetAnalytics from "@/pages/analytics/GetAnalytics";
+import GetDemoAccounts from "@/pages/residents/GetDemoAccounts";
 import GetSettings from "@/pages/settings/GetSettings";
 import GetSupport from "@/pages/support/GetSupport";
 import GetLogs from "@/pages/logs/GetLogs";
@@ -176,6 +178,14 @@ const DashboardRoutes = {
     {
       path: "report",
       element: <GetReport />,
+    },
+    {
+      path: "analytics",
+      element: <GetAnalytics />,
+    },
+    {
+      path: "demo-accounts",
+      element: <GetDemoAccounts />,
     },
     {
       path: "settings",

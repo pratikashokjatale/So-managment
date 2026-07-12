@@ -37,6 +37,7 @@ export default function EditResident() {
     avatar: "",
     category: "Owner",
     stayEndsAt: "",
+    cardNumber: "",
   });
 
   // Cascading states
@@ -108,6 +109,7 @@ export default function EditResident() {
         avatar: user.photoUrl || user.profilePhotoUrl || user.avatar || "",
         category: user.accountRole === "TENANT" ? "Tenant" : "Owner",
         stayEndsAt: user.stayEndsAt ? user.stayEndsAt.split("T")[0] : "",
+        cardNumber: user.cardNumber || "",
       });
 
       if (user.flat) {
@@ -205,6 +207,16 @@ export default function EditResident() {
       toast.error("Stay ends date (expiry date) is required for Tenants");
       return;
     }
+    if (formData.cardNumber) {
+      if (formData.cardNumber.length > 8) {
+        toast.error("Card number must be max 8 characters");
+        return;
+      }
+      if (!/^[A-Z0-9]+$/.test(formData.cardNumber)) {
+        toast.error("Card number must contain only uppercase letters and numbers");
+        return;
+      }
+    }
     setSubmitting(true);
     try {
       const accountRole = formData.category.toUpperCase() === "TENANT" ? "TENANT" : "OWNER";
@@ -219,6 +231,7 @@ export default function EditResident() {
         profilePhotoUrl: formData.avatar || undefined,
         accountRole,
         stayEndsAt: stayEndsAtVal,
+        cardNumber: formData.cardNumber ? formData.cardNumber.trim() : undefined,
       });
       toast.success("Resident details updated successfully");
       navigate("/residents");
@@ -349,6 +362,18 @@ export default function EditResident() {
               setFormData({ ...formData, phone: e.target.value })
             }
             variant="outlined"
+            sx={{ "& fieldset": { borderRadius: "12px" } }}
+          />
+          <TextField
+            fullWidth
+            label="Card Number"
+            placeholder="MB1042"
+            value={formData.cardNumber}
+            onChange={(e) =>
+              setFormData({ ...formData, cardNumber: e.target.value.toUpperCase() })
+            }
+            variant="outlined"
+            helperText="Max 8 alphanumeric uppercase characters"
             sx={{ "& fieldset": { borderRadius: "12px" } }}
           />
           <TextField
