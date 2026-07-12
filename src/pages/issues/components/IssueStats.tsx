@@ -19,33 +19,33 @@ export default function IssueStats({
   onStatusClick,
 }: IssueStatsProps) {
   return (
-    <Grid container spacing={4} sx={{ mb: 4 }}>
+    <Grid container spacing={2} sx={{ mb: 3 }}>
       <Grid size={{ xs: 12, sm: 4 }}>
         <Paper
           elevation={0}
           onClick={() => onStatusClick && onStatusClick("OPEN")}
           sx={{
-            p: 3,
-            borderRadius: "24px",
+            p: 2,
+            borderRadius: "12px",
             border: "1px solid #e2e8f0",
             bgcolor: "white",
             display: "flex",
             alignItems: "center",
-            gap: 2.5,
+            gap: 2,
             cursor: onStatusClick ? "pointer" : "default",
             userSelect: "none",
             transition: "transform 0.2s ease",
             "&:hover": { transform: "translateY(-2px)" },
           }}
         >
-          <Avatar sx={{ bgcolor: "#fff7ed", color: "#ea580c", width: 52, height: 52 }}>
-            <OpenIcon />
+          <Avatar sx={{ bgcolor: "#fff7ed", color: "#ea580c", width: 44, height: 44 }}>
+            <OpenIcon sx={{ fontSize: 22 }} />
           </Avatar>
           <Box>
-            <Typography variant="body2" color="text.secondary" fontWeight="700">
+            <Typography variant="caption" color="text.secondary" fontWeight="700">
               OPEN TICKETS
             </Typography>
-            <Typography variant="h4" fontWeight="900" color="#091542">
+            <Typography variant="h5" fontWeight="900" color="#091542" sx={{ lineHeight: 1.2 }}>
               {openCount}
             </Typography>
           </Box>
@@ -57,27 +57,27 @@ export default function IssueStats({
           elevation={0}
           onClick={() => onStatusClick && onStatusClick("IN_PROGRESS")}
           sx={{
-            p: 3,
-            borderRadius: "24px",
+            p: 2,
+            borderRadius: "12px",
             border: "1px solid #e2e8f0",
             bgcolor: "white",
             display: "flex",
             alignItems: "center",
-            gap: 2.5,
+            gap: 2,
             cursor: onStatusClick ? "pointer" : "default",
             userSelect: "none",
             transition: "transform 0.2s ease",
             "&:hover": { transform: "translateY(-2px)" },
           }}
         >
-          <Avatar sx={{ bgcolor: "#eff6ff", color: "#1d4ed8", width: 52, height: 52 }}>
-            <InProgressIcon />
+          <Avatar sx={{ bgcolor: "#eff6ff", color: "#1d4ed8", width: 44, height: 44 }}>
+            <InProgressIcon sx={{ fontSize: 22 }} />
           </Avatar>
           <Box>
-            <Typography variant="body2" color="text.secondary" fontWeight="700">
+            <Typography variant="caption" color="text.secondary" fontWeight="700">
               IN PROGRESS
             </Typography>
-            <Typography variant="h4" fontWeight="900" color="#091542">
+            <Typography variant="h5" fontWeight="900" color="#091542" sx={{ lineHeight: 1.2 }}>
               {inProgressCount}
             </Typography>
           </Box>
@@ -89,27 +89,27 @@ export default function IssueStats({
           elevation={0}
           onClick={() => onStatusClick && onStatusClick("RESOLVED")}
           sx={{
-            p: 3,
-            borderRadius: "24px",
+            p: 2,
+            borderRadius: "12px",
             border: "1px solid #e2e8f0",
             bgcolor: "white",
             display: "flex",
             alignItems: "center",
-            gap: 2.5,
+            gap: 2,
             cursor: onStatusClick ? "pointer" : "default",
             userSelect: "none",
             transition: "transform 0.2s ease",
             "&:hover": { transform: "translateY(-2px)" },
           }}
         >
-          <Avatar sx={{ bgcolor: "#f0fdf4", color: "#16a34a", width: 52, height: 52 }}>
-            <ResolvedIcon />
+          <Avatar sx={{ bgcolor: "#f0fdf4", color: "#16a34a", width: 44, height: 44 }}>
+            <ResolvedIcon sx={{ fontSize: 22 }} />
           </Avatar>
           <Box>
-            <Typography variant="body2" color="text.secondary" fontWeight="700">
+            <Typography variant="caption" color="text.secondary" fontWeight="700">
               RESOLVED TICKETS
             </Typography>
-            <Typography variant="h4" fontWeight="900" color="#091542">
+            <Typography variant="h5" fontWeight="900" color="#091542" sx={{ lineHeight: 1.2 }}>
               {resolvedCount}
             </Typography>
           </Box>

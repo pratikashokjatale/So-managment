@@ -432,11 +432,11 @@ export default function DashboardLayout() {
         </Drawer>
       </Box>
 
-      <Box component="main" sx={{ flexGrow: 1, pt: { xs: "98px", md: "114px" }, pb: { xs: 3, md: 5 }, px: { xs: 2, md: 4 }, width: { md: `calc(100% - ${currentDrawerWidth}px)` }, transition: theme.transitions.create(["width", "margin"], { easing: theme.transitions.easing.sharp, duration: theme.transitions.duration.enteringScreen }) }}>
+      <Box component="main" sx={{ flexGrow: 1, pt: { xs: "84px", md: "92px" }, pb: { xs: 3, md: 5 }, px: { xs: 2, md: 4 }, width: { md: `calc(100% - ${currentDrawerWidth}px)` }, transition: theme.transitions.create(["width", "margin"], { easing: theme.transitions.easing.sharp, duration: theme.transitions.duration.enteringScreen }) }}>
         <Breadcrumbs 
           separator={<NavigateNextIcon fontSize="small" sx={{ color: "#94a3b8" }} />} 
           aria-label="breadcrumb"
-          sx={{ mb: 3 }}
+          sx={{ mb: 1.5 }}
         >
           {breadcrumbs.map((item, idx) => {
             const isLast = idx === breadcrumbs.length - 1;

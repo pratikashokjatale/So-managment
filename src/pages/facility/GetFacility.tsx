@@ -231,8 +231,7 @@ export default function GetFacility() {
   };
 
   return (
-    <Box sx={{ p: { xs: 2, md: 5 }, bgcolor: "#f8fafc", minHeight: "100vh" }}>
-
+    <Box sx={{ p: { xs: 2, md: 3 }, bgcolor: "#f8fafc", minHeight: "100vh" }}>
 
       <PageToolbar
         hideSearch={true}
@@ -240,27 +239,27 @@ export default function GetFacility() {
         addButtonLabel="Add Facility"
       />
 
-      <Grid container spacing={4}>
+      <Grid container spacing={2} sx={{ mb: 3 }}>
         {/* Analytics Summary */}
         <Grid size={{ xs: 12, md: 4 }}>
           <Paper
             elevation={0}
             sx={{
-              p: 4,
-              borderRadius: "32px",
+              p: 2,
+              borderRadius: "12px",
               border: "1px solid #e2e8f0",
               bgcolor: "white",
             }}
           >
             <Typography
-              variant="h6"
-              fontWeight="900"
-              color="#091542"
-              sx={{ mb: 1 }}
+              variant="caption"
+              fontWeight="700"
+              color="text.secondary"
+              sx={{ mb: 0.5, display: "block", textTransform: "uppercase", letterSpacing: 0.5 }}
             >
               Total Units
             </Typography>
-            <Typography variant="h3" fontWeight="900" color="#1d4ed8">
+            <Typography variant="h5" fontWeight="800" color="#1d4ed8" sx={{ mb: 0.5 }}>
               {totalUnits}
             </Typography>
             <Typography variant="caption" color="#64748b" fontWeight="800">
@@ -272,21 +271,21 @@ export default function GetFacility() {
           <Paper
             elevation={0}
             sx={{
-              p: 4,
-              borderRadius: "32px",
+              p: 2,
+              borderRadius: "12px",
               border: "1px solid #e2e8f0",
               bgcolor: "white",
             }}
           >
             <Typography
-              variant="h6"
-              fontWeight="900"
-              color="#091542"
-              sx={{ mb: 1 }}
+              variant="caption"
+              fontWeight="700"
+              color="text.secondary"
+              sx={{ mb: 0.5, display: "block", textTransform: "uppercase", letterSpacing: 0.5 }}
             >
               Active Bookings
             </Typography>
-            <Typography variant="h3" fontWeight="900" color="#10b981">
+            <Typography variant="h5" fontWeight="800" color="#10b981" sx={{ mb: 0.5 }}>
               {activeOccupancy}
             </Typography>
             <Typography variant="caption" color="#64748b" fontWeight="800">
@@ -298,21 +297,21 @@ export default function GetFacility() {
           <Paper
             elevation={0}
             sx={{
-              p: 4,
-              borderRadius: "32px",
+              p: 2,
+              borderRadius: "12px",
               border: "1px solid #e2e8f0",
               bgcolor: "white",
             }}
           >
             <Typography
-              variant="h6"
-              fontWeight="900"
-              color="#091542"
-              sx={{ mb: 1 }}
+              variant="caption"
+              fontWeight="700"
+              color="text.secondary"
+              sx={{ mb: 0.5, display: "block", textTransform: "uppercase", letterSpacing: 0.5 }}
             >
               Maintenance
             </Typography>
-            <Typography variant="h3" fontWeight="900" color="#ef4444">
+            <Typography variant="h5" fontWeight="800" color="#ef4444" sx={{ mb: 0.5 }}>
               {String(maintenanceCount).padStart(2, "0")}
             </Typography>
             <Typography variant="caption" color="#64748b" fontWeight="800">

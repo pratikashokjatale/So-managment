@@ -82,11 +82,11 @@ export default function EmergencyFilters({
         <Box
           sx={{
             display: "flex",
-            gap: 2,
+            gap: 1.5,
             flexWrap: "wrap",
-            p: 2,
+            p: 1.5,
             bgcolor: "#f1f5f9",
-            borderRadius: "16px",
+            borderRadius: "12px",
             width: "100%",
             alignItems: "center",
           }}

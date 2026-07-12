@@ -29,13 +29,13 @@ export default function PageToolbar({
   extraActions,
 }: PageToolbarProps) {
   return (
-    <Box sx={{ mb: 3 }}>
+    <Box sx={{ mb: 1.5 }}>
       <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          mb: filters ? 3 : 0,
+          mb: filters ? 1.5 : 0,
           flexWrap: "wrap",
           gap: 2,
         }}

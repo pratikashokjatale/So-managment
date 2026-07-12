@@ -72,24 +72,24 @@ interface StatCardProps {
 const StatCard = ({ label, value, total, color }: StatCardProps) => {
   const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
   return (
-    <Paper elevation={0} sx={{ p: 3, borderRadius: '24px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
-      <Stack direction="row" spacing={3} alignItems="center">
+    <Paper elevation={0} sx={{ p: 2, borderRadius: '12px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
+      <Stack direction="row" spacing={2} alignItems="center">
         <Box sx={{ position: 'relative', display: 'inline-flex' }}>
-          <CircularProgress variant="determinate" value={100} size={60} thickness={4} sx={{ color: '#f1f5f9' }} />
+          <CircularProgress variant="determinate" value={100} size={48} thickness={4} sx={{ color: '#f1f5f9' }} />
           <CircularProgress 
             variant="determinate" 
             value={percentage} 
-            size={60} 
+            size={48} 
             thickness={4} 
             sx={{ color: color, position: 'absolute', left: 0, strokeLinecap: 'round' }} 
           />
           <Box sx={{ top: 0, left: 0, bottom: 0, right: 0, position: 'absolute', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Typography variant="caption" fontWeight="950" color="text.primary">{percentage}%</Typography>
+            <Typography variant="caption" fontWeight="950" color="text.primary" fontSize="0.65rem">{percentage}%</Typography>
           </Box>
         </Box>
         <Box>
-          <Typography variant="subtitle2" fontWeight="700" color="#64748b">{label}</Typography>
-          <Typography variant="h5" fontWeight="900" color="#091542">{value}</Typography>
+          <Typography variant="caption" fontWeight="700" color="#64748b">{label}</Typography>
+          <Typography variant="h5" fontWeight="900" color="#091542" sx={{ lineHeight: 1.2 }}>{value}</Typography>
         </Box>
       </Stack>
     </Paper>
@@ -228,15 +228,15 @@ export default function StaffAttendance() {
   };
 
   return (
-    <Box sx={{ p: { xs: 2, md: 5 }, bgcolor: '#f8fafc', minHeight: '100vh' }}>
+    <Box sx={{ p: { xs: 2, md: 3 }, bgcolor: '#f8fafc', minHeight: '100vh' }}>
       
       {/* Header section */}
-      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 6, flexWrap: 'wrap', gap: 2 }}>
+      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3, flexWrap: 'wrap', gap: 2 }}>
         <Box>
-          <Typography variant="h3" fontWeight="900" color="#091542">Staff Attendance</Typography>
-          <Typography variant="subtitle1" color="text.secondary" fontWeight="700">Real-time Clubhouse crew duty tracking & activity timeline logs</Typography>
+          <Typography variant="h5" fontWeight="900" color="#091542">Staff Attendance</Typography>
+          <Typography variant="body2" color="text.secondary" fontWeight="700">Real-time Clubhouse crew duty tracking & activity timeline logs</Typography>
         </Box>
-        <Stack direction="row" spacing={2} sx={{ width: { xs: '100%', md: 'auto' } }}>
+        <Stack direction="row" spacing={1.5} sx={{ width: { xs: '100%', md: 'auto' } }}>
           <TextField 
             size="small"
             placeholder="Search directory by crew..."
@@ -251,16 +251,16 @@ export default function StaffAttendance() {
                 ),
               }
             }}
-            sx={{ width: { xs: '100%', md: 350 }, '& .MuiOutlinedInput-root': { borderRadius: '16px', bgcolor: 'white' } }}
+            sx={{ width: { xs: '100%', md: 350 }, '& .MuiOutlinedInput-root': { borderRadius: '12px', bgcolor: 'white' } }}
           />
-          <IconButton sx={{ bgcolor: 'white', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+          <IconButton sx={{ bgcolor: 'white', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
             <FilterIcon />
           </IconButton>
         </Stack>
       </Stack>
 
       {/* Stats cards */}
-      <Grid container spacing={3} sx={{ mb: 6 }}>
+      <Grid container spacing={2} sx={{ mb: 3 }}>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}><StatCard label="Present Today" value={presentCount} total={totalCount} color="#3b82f6" /></Grid>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}><StatCard label="Absent" value={absentCount} total={totalCount} color="#ef4444" /></Grid>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}><StatCard label="On Time" value={onTimeCount} total={presentCount} color="#10b981" /></Grid>
@@ -268,24 +268,24 @@ export default function StaffAttendance() {
       </Grid>
 
       {/* Main Table */}
-      <Paper elevation={0} sx={{ borderRadius: '32px', border: '1px solid #e2e8f0', overflow: 'hidden', bgcolor: 'white' }}>
+      <Paper elevation={0} sx={{ borderRadius: '16px', border: '1px solid #e2e8f0', overflow: 'hidden', bgcolor: 'white' }}>
         <TableContainer>
           <Table>
             <TableHead sx={{ bgcolor: '#f8fafc' }}>
               <TableRow>
-                <TableCell sx={{ fontWeight: 800, py: 3, pl: 4 }}>STAFF MEMBER</TableCell>
-                <TableCell sx={{ fontWeight: 800 }}>ROLE & DEPARTMENT</TableCell>
-                <TableCell sx={{ fontWeight: 800 }}>ASSIGNED SHIFT</TableCell>
-                <TableCell sx={{ fontWeight: 800 }}>CHECK-IN TIME</TableCell>
-                <TableCell sx={{ fontWeight: 800 }}>CHECK-OUT TIME</TableCell>
-                <TableCell sx={{ fontWeight: 800 }}>STATUS</TableCell>
-                <TableCell sx={{ fontWeight: 800 }} align="right">DUTY ACTIONS</TableCell>
+                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px', py: 1, pl: 3, color: '#64748b' }}>STAFF MEMBER</TableCell>
+                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px', py: 1, color: '#64748b' }}>ROLE & DEPARTMENT</TableCell>
+                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px', py: 1, color: '#64748b' }}>ASSIGNED SHIFT</TableCell>
+                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px', py: 1, color: '#64748b' }}>CHECK-IN TIME</TableCell>
+                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px', py: 1, color: '#64748b' }}>CHECK-OUT TIME</TableCell>
+                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px', py: 1, color: '#64748b' }}>STATUS</TableCell>
+                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px', py: 1, color: '#64748b' }} align="right">DUTY ACTIONS</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {paginatedAttendance.map((row) => (
                 <TableRow key={row.id} hover>
-                  <TableCell sx={{ py: 2.5, pl: 4 }}>
+                  <TableCell sx={{ py: 1.5, pl: 3 }}>
                     <Stack direction="row" spacing={2} alignItems="center">
                       <Avatar src={getFileUrl(row.avatar)} imgProps={{ crossOrigin: 'anonymous' }} sx={{ width: 44, height: 44, border: '2px solid #f1f5f9' }} />
                       <Box>

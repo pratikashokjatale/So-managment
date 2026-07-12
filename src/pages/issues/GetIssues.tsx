@@ -144,7 +144,7 @@ export default function GetIssues() {
   };
 
   return (
-    <Box sx={{ p: { xs: 2, md: 5 }, bgcolor: "#f8fafc", minHeight: "100vh" }}>
+    <Box sx={{ p: { xs: 2, md: 3 }, bgcolor: "#f8fafc", minHeight: "100vh" }}>
       {/* Analytics Summary */}
       <IssueStats
         openCount={openCount}

@@ -161,44 +161,45 @@ export default function GetReport() {
   };
 
   const statCardSx = (color: string) => ({
-    p: 3.5,
-    borderRadius: "24px",
+    p: 2,
+    borderRadius: "12px",
     border: "1px solid #f1f5f9",
     borderLeft: `4px solid ${color}`,
     bgcolor: "white",
     boxShadow: "0 4px 6px -1px rgba(0,0,0,0.01), 0 2px 4px -1px rgba(0,0,0,0.01)",
     transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
     "&:hover": {
-      transform: "translateY(-4px)",
+      transform: "translateY(-2px)",
       boxShadow: "0 16px 24px -10px rgba(9, 21, 66, 0.06)",
       borderColor: "#e2e8f0"
     }
   });
 
   const mainCardSx = {
-    p: 4,
-    borderRadius: "24px",
+    p: 3,
+    borderRadius: "16px",
     border: "1px solid #f1f5f9",
     bgcolor: "white",
     boxShadow: "0 4px 20px rgba(9, 21, 66, 0.02)"
   };
 
   const selectSx = {
-    height: 48,
-    borderRadius: "12px",
+    height: 38,
+    fontSize: "0.875rem",
+    borderRadius: "10px",
     bgcolor: "#f8fafc",
-    "& .MuiOutlinedInput-notchedOutline": { borderRadius: "12px", borderColor: "#e2e8f0" }
+    "& .MuiOutlinedInput-notchedOutline": { borderRadius: "10px", borderColor: "#e2e8f0" }
   };
 
   return (
-    <Box sx={{ p: { xs: 2, md: 5 }, bgcolor: "#f8fafc", minHeight: "100vh" }}>
+    <Box sx={{ p: { xs: 2, md: 3 }, bgcolor: "#f8fafc", minHeight: "100vh" }}>
       {/* Header */}
-      <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems="start" sx={{ mb: 4 }} spacing={2}>
+      <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems="start" sx={{ mb: 3 }} spacing={2}>
         <Box>
-          <Typography variant="h3" fontWeight="900" color="#091542" sx={{ letterSpacing: "-1px" }}>
+          <Typography variant="h5" fontWeight="900" color="#091542" sx={{ letterSpacing: "-1px" }}>
             AI Operational Insights
           </Typography>
-          <Typography variant="subtitle1" color="text.secondary" fontWeight="700">
+          <Typography variant="body2" color="text.secondary" fontWeight="700">
             Real-time occupancy auditing, predictive usage insights & report center
           </Typography>
         </Box>
@@ -252,7 +253,7 @@ export default function GetReport() {
               <CircularProgress />
             </Box>
           ) : (
-            <Grid container spacing={4}>
+            <Grid container spacing={2}>
               {/* Monthly Revenue */}
               <Grid size={{ xs: 12, md: 3 }}>
                 <Paper elevation={0} sx={statCardSx("#1d4ed8")}>
@@ -264,7 +265,7 @@ export default function GetReport() {
                       MONTHLY REVENUE
                     </Typography>
                   </Stack>
-                  <Typography variant="h4" fontWeight="900" color="#091542" sx={{ letterSpacing: "-0.5px" }}>
+                  <Typography variant="h5" fontWeight="900" color="#091542" sx={{ letterSpacing: "-0.5px" }}>
                     ₹{overview?.revenue?.monthly?.toLocaleString("en-IN") || "0.00"}
                   </Typography>
                   <Typography variant="caption" sx={{ color: "#10b981", fontWeight: 800 }}>
@@ -284,7 +285,7 @@ export default function GetReport() {
                       ACTIVE USERS
                     </Typography>
                   </Stack>
-                  <Typography variant="h4" fontWeight="900" color="#091542" sx={{ letterSpacing: "-0.5px" }}>
+                  <Typography variant="h5" fontWeight="900" color="#091542" sx={{ letterSpacing: "-0.5px" }}>
                     {overview?.users?.active || 0}
                   </Typography>
                   <Typography variant="caption" sx={{ color: "#64748b", fontWeight: 800 }}>
@@ -304,7 +305,7 @@ export default function GetReport() {
                       TODAY'S BOOKINGS
                     </Typography>
                   </Stack>
-                  <Typography variant="h4" fontWeight="900" color="#091542" sx={{ letterSpacing: "-0.5px" }}>
+                  <Typography variant="h5" fontWeight="900" color="#091542" sx={{ letterSpacing: "-0.5px" }}>
                     {overview?.bookings?.today || 0}
                   </Typography>
                   <Typography variant="caption" sx={{ color: "#ea580c", fontWeight: 800 }}>
@@ -324,7 +325,7 @@ export default function GetReport() {
                       SECURITY ALERTS
                     </Typography>
                   </Stack>
-                  <Typography variant="h4" fontWeight="900" color="#ef4444" sx={{ letterSpacing: "-0.5px" }}>
+                  <Typography variant="h5" fontWeight="900" color="#ef4444" sx={{ letterSpacing: "-0.5px" }}>
                     {overview?.alerts?.emergency || 0}
                   </Typography>
                   <Typography variant="caption" sx={{ color: "#ef4444", fontWeight: 800 }}>
@@ -338,8 +339,8 @@ export default function GetReport() {
                 <Paper
                   elevation={0}
                   sx={{
-                    p: 4,
-                    borderRadius: "24px",
+                    p: 3,
+                    borderRadius: "16px",
                     background: "linear-gradient(135deg, #091542 0%, #1e3a8a 50%, #3b82f6 100%)",
                     color: "white",
                     boxShadow: "0 10px 25px -5px rgba(29, 78, 216, 0.25)",
@@ -462,15 +463,15 @@ export default function GetReport() {
       {/* Report Center & Data Export Tab */}
       {tabValue === 1 && (
         <Box>
-          <Paper elevation={0} sx={{ ...mainCardSx, p: 5 }}>
-            <Typography variant="h5" fontWeight="900" color="#091542" sx={{ mb: 1 }}>
+          <Paper elevation={0} sx={{ ...mainCardSx, p: 3 }}>
+            <Typography variant="h6" fontWeight="900" color="#091542" sx={{ mb: 1 }}>
               Data Export Console
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 4, fontWeight: 600 }}>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 3, fontWeight: 600 }}>
               Filter and extract database logs to JSON tables or formal Microsoft Excel spreadsheet formats
             </Typography>
 
-            <Grid container spacing={3}>
+            <Grid container spacing={2}>
               {/* Select Report Type */}
               <Grid size={{ xs: 12, md: 4 }}>
                 <Typography variant="body2" fontWeight={800} color="#091542" sx={{ mb: 1 }}>
@@ -661,8 +662,8 @@ export default function GetReport() {
 
           {/* Preview Panel */}
           {previewData !== null && (
-            <Paper elevation={0} sx={{ ...mainCardSx, mt: 4, p: 4 }}>
-              <Typography variant="h6" fontWeight="900" color="#091542" sx={{ mb: 3 }}>
+            <Paper elevation={0} sx={{ ...mainCardSx, mt: 3, p: 3 }}>
+              <Typography variant="h6" fontWeight="900" color="#091542" sx={{ mb: 2 }}>
                 Data Preview (Total Records: {previewData.length})
               </Typography>
               <TableContainer sx={{ maxHeight: 350, overflowY: "auto", border: "1px solid #f1f5f9", borderRadius: "12px" }}>
@@ -671,7 +672,7 @@ export default function GetReport() {
                     <TableRow>
                       {previewData.length > 0 ? (
                         Object.keys(previewData[0]).slice(0, 7).map((key) => (
-                          <TableCell key={key} sx={{ fontWeight: 800, bgcolor: "#f8fafc", color: "#64748b", py: 1.75, borderBottom: "2px solid #f1f5f9" }}>
+                          <TableCell key={key} sx={{ fontWeight: 800, bgcolor: "#f8fafc", color: "#64748b", py: 1.25, borderBottom: "2px solid #f1f5f9" }}>
                             {key.toUpperCase()}
                           </TableCell>
                         ))
@@ -684,7 +685,7 @@ export default function GetReport() {
                     {previewData.map((row, index) => (
                       <TableRow key={index} hover sx={{ "&:nth-of-type(even)": { bgcolor: "#f8fafc" } }}>
                         {Object.values(row).slice(0, 7).map((val: any, idx) => (
-                          <TableCell key={idx} sx={{ fontWeight: 600, color: "#1e293b", py: 1.5, borderBottom: "1px solid #f1f5f9" }}>
+                          <TableCell key={idx} sx={{ fontWeight: 600, color: "#1e293b", py: 1, borderBottom: "1px solid #f1f5f9" }}>
                             {typeof val === "boolean" ? (val ? "Yes" : "No") : (val?.toString() || "—")}
                           </TableCell>
                         ))}
@@ -692,7 +693,7 @@ export default function GetReport() {
                     ))}
                     {previewData.length === 0 && (
                       <TableRow>
-                        <TableCell align="center" sx={{ py: 4, fontWeight: 700, color: "text.secondary" }}>
+                        <TableCell align="center" sx={{ py: 3, fontWeight: 700, color: "text.secondary" }}>
                           No logs found matching selection filters.
                         </TableCell>
                       </TableRow>

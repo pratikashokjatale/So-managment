@@ -169,7 +169,7 @@ export default function GetEmergency() {
     : alerts;
 
   return (
-    <Box sx={{ p: { xs: 2, md: 5 }, bgcolor: "#f8fafc", minHeight: "100vh" }}>
+    <Box sx={{ p: { xs: 2, md: 3 }, bgcolor: "#f8fafc", minHeight: "100vh" }}>
       {/* Title */}
       <PageHeader title="Emergency Alerts Ledger" />
       <Typography variant="body2" color="text.secondary" sx={{ mb: 4, mt: -3, fontWeight: 500 }}>
