@@ -146,6 +146,7 @@ export default function EditResident() {
         avatar: "",
         category: "Owner",
         stayEndsAt: "",
+        cardNumber: "",
       });
     } finally {
       setLoading(false);

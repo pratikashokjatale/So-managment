@@ -122,7 +122,7 @@ export default function GetAnalytics() {
         projectId: projectId || undefined,
         dateFrom: dateFrom || undefined,
         dateTo: dateTo || undefined,
-      });
+      }) as any;
       setTotals(res?.data?.totals || res?.totals || null);
     } catch (err: any) {
       toast.error(err?.message || "Failed to load overview analytics");

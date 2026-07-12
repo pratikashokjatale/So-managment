@@ -32,6 +32,7 @@ import { getTowers, getFlats } from "@/utils/setupStore";
 import { toast } from "react-hot-toast";
 import AddResident from "./AddResident";
 import { getFileUrl } from "@/utils/file";
+import AccessStatusBadge from "@/components/AccessStatusBadge";
 import CreateBookingDialog from "./components/CreateBookingDialog";
 
 

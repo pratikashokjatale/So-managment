@@ -346,7 +346,7 @@ export default function CreateDemoDialog({ open, onClose }: CreateDemoDialogProp
                 onChange={(e) => setFlatId(e.target.value)}
                 sx={{ "& fieldset": { borderRadius: "12px" } }}
               >
-                {flats.map((f) => (
+                {flats.map((f: any) => (
                   <MenuItem key={f.id} value={f.id}>
                     Flat {f.flatNumber || f.number}
                   </MenuItem>
