@@ -10,7 +10,7 @@ export interface UsersReportParams {
 
 export interface BookingsReportParams {
   format?: 'json' | 'excel';
-  bookingStatus?: 'CONFIRMED' | 'PENDING_APPROVAL' | 'CANCELLED' | 'CHECKED_IN' | 'NO_SHOW';
+  bookingStatus?: 'CONFIRMED' | 'PENDING_APPROVAL' | 'REJECTED' | 'CANCELLED' | 'CHECKED_IN' | 'COMPLETED' | 'NO_SHOW';
   paymentStatus?: 'PENDING' | 'PAID' | 'FAILED' | 'REFUNDED' | 'NOT_REQUIRED';
   facilityId?: string;
   projectId?: string;
@@ -22,7 +22,8 @@ export interface BookingsReportParams {
 
 export interface PaymentsReportParams {
   format?: 'json' | 'excel';
-  paymentStatus?: 'SUCCESS' | 'FAILED' | 'PENDING';
+  paymentStatus?: 'SUCCESS' | 'FAILED' | 'PENDING' | 'CANCELLED' | 'REFUNDED';
+  status?: 'SUCCESS' | 'FAILED' | 'PENDING' | 'CANCELLED' | 'REFUNDED';
   userId?: string;
   fromDate?: string;
   toDate?: string;
@@ -30,8 +31,8 @@ export interface PaymentsReportParams {
 
 export interface SubscriptionsReportParams {
   format?: 'json' | 'excel';
-  subscriptionStatus?: 'ACTIVE' | 'PENDING_APPROVAL' | 'CANCELLED' | 'EXPIRED';
-  paymentStatus?: 'PENDING' | 'PAID' | 'FAILED' | 'REFUNDED';
+  subscriptionStatus?: 'PENDING_PAYMENT' | 'PENDING_APPROVAL' | 'ACTIVE' | 'EXPIRED' | 'CANCELLED' | 'REJECTED';
+  paymentStatus?: 'PENDING' | 'PAID' | 'FAILED' | 'REFUNDED' | 'NOT_REQUIRED';
   facilityId?: string;
   userId?: string;
   fromDate?: string;
@@ -42,6 +43,7 @@ export interface StaffReportParams {
   format?: 'json' | 'excel';
   status?: 'ACTIVE' | 'INACTIVE' | 'ON_LEAVE' | 'SUSPENDED' | 'TERMINATED';
   projectId?: string;
+  facilityId?: string;
   fromDate?: string;
   toDate?: string;
 }
@@ -50,6 +52,7 @@ export interface StaffAttendanceReportParams {
   format?: 'json' | 'excel';
   status?: 'PRESENT' | 'ABSENT' | 'LATE' | 'HALF_DAY' | 'ON_LEAVE';
   staffId?: string;
+  facilityId?: string;
   fromDate?: string;
   toDate?: string;
 }
@@ -57,20 +60,24 @@ export interface StaffAttendanceReportParams {
 export interface FacilityAccessReportParams {
   format?: 'json' | 'excel';
   facilityId?: string;
+  userId?: string;
   fromDate?: string;
   toDate?: string;
 }
 
 export interface EmergencyAlertsReportParams {
   format?: 'json' | 'excel';
-  status?: 'PENDING' | 'RESPONDED' | 'RESOLVED';
+  status?: 'OPEN' | 'ACKNOWLEDGED' | 'RESOLVED' | 'CANCELLED' | 'FALSE_ALARM';
+  userId?: string;
+  projectId?: string;
   fromDate?: string;
   toDate?: string;
 }
 
 export interface IssuesReportParams {
   format?: 'json' | 'excel';
-  status?: 'OPEN' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED';
+  status?: 'OPEN' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED' | 'REJECTED' | 'CANCELLED';
+  userId?: string;
   fromDate?: string;
   toDate?: string;
 }

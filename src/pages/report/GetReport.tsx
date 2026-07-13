@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import {
-  Box, Typography, Paper, Grid, Stack, Chip, Button, Avatar,
+  Box, Typography, Paper, Grid, Stack, Chip, Button,
   Tabs, Tab, Select, MenuItem, TextField, Table, TableBody,
   TableCell, TableContainer, TableHead, TableRow, CircularProgress
 } from "@mui/material";
@@ -26,7 +26,9 @@ import {
   getEmergencyAlertsReportApi,
   getIssuesReportApi
 } from "@/apis/reports";
-import { getFileUrl } from "@/utils/file";
+import { getFacilitiesApi } from "@/apis/facility";
+import { getUsersApi } from "@/apis/user";
+import { getProjectsApi } from "@/apis/project";
 
 export default function GetReport() {
   const [tabValue, setTabValue] = useState(0);
@@ -36,10 +38,19 @@ export default function GetReport() {
   const [facilityStats, setFacilityStats] = useState<any[]>([]);
   const [loadingDashboard, setLoadingDashboard] = useState(true);
 
+  // Filter Data Source State
+  const [facilities, setFacilities] = useState<any[]>([]);
+  const [users, setUsers] = useState<any[]>([]);
+  const [projects, setProjects] = useState<any[]>([]);
+
   // Report Export Form State
   const [reportType, setReportType] = useState("users");
   const [statusFilter, setStatusFilter] = useState("all");
   const [roleFilter, setRoleFilter] = useState("all");
+  const [facilityFilter, setFacilityFilter] = useState("all");
+  const [userFilter, setUserFilter] = useState("all");
+  const [projectFilter, setProjectFilter] = useState("all");
+  const [paymentStatusFilter, setPaymentStatusFilter] = useState("all");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [previewData, setPreviewData] = useState<any[] | null>(null);
@@ -61,9 +72,41 @@ export default function GetReport() {
     }
   };
 
+  // Fetch filter items for dynamic dropdowns
+  const loadFilterData = async () => {
+    try {
+      const facRes = await getFacilitiesApi({ limit: 100 });
+      const facD = facRes?.data || facRes;
+      const facList = facD?.items || facD?.facilities || (Array.isArray(facD) ? facD : []);
+      setFacilities(facList);
+    } catch (err) {
+      console.warn("Failed to load facilities for filters:", err);
+    }
+
+    try {
+      const usersRes = await getUsersApi({ limit: 100 });
+      const usersD = usersRes?.data || usersRes;
+      const usersList = usersD?.items || usersD?.users || (Array.isArray(usersD) ? usersD : []);
+      setUsers(usersList);
+    } catch (err) {
+      console.warn("Failed to load users for filters:", err);
+    }
+
+    try {
+      const projRes = await getProjectsApi({ limit: 100 });
+      const projD = projRes?.data || projRes;
+      const projList = projD?.items || projD?.projects || (Array.isArray(projD) ? projD : []);
+      setProjects(projList);
+    } catch (err) {
+      console.warn("Failed to load projects for filters:", err);
+    }
+  };
+
   useEffect(() => {
     if (tabValue === 0) {
       loadDashboard();
+    } else if (tabValue === 1) {
+      loadFilterData();
     }
   }, [tabValue]);
 
@@ -83,39 +126,57 @@ export default function GetReport() {
       case "bookings":
         return getBookingsReportApi({
           ...commonParams,
-          ...(statusFilter !== "all" ? { bookingStatus: statusFilter as any } : {})
+          ...(statusFilter !== "all" ? { bookingStatus: statusFilter as any } : {}),
+          ...(paymentStatusFilter !== "all" ? { paymentStatus: paymentStatusFilter as any } : {}),
+          ...(facilityFilter !== "all" ? { facilityId: facilityFilter } : {}),
+          ...(userFilter !== "all" ? { userId: userFilter } : {})
         });
       case "payments":
         return getPaymentsReportApi({
           ...commonParams,
-          ...(statusFilter !== "all" ? { paymentStatus: statusFilter as any } : {})
+          ...(statusFilter !== "all" ? { paymentStatus: statusFilter as any } : {}),
+          ...(userFilter !== "all" ? { userId: userFilter } : {})
         });
       case "subscriptions":
         return getSubscriptionsReportApi({
           ...commonParams,
-          ...(statusFilter !== "all" ? { subscriptionStatus: statusFilter as any } : {})
+          ...(statusFilter !== "all" ? { subscriptionStatus: statusFilter as any } : {}),
+          ...(paymentStatusFilter !== "all" ? { paymentStatus: paymentStatusFilter as any } : {}),
+          ...(facilityFilter !== "all" ? { facilityId: facilityFilter } : {}),
+          ...(userFilter !== "all" ? { userId: userFilter } : {})
         });
       case "staff":
         return getStaffReportApi({
           ...commonParams,
-          ...(statusFilter !== "all" ? { status: statusFilter as any } : {})
+          ...(statusFilter !== "all" ? { status: statusFilter as any } : {}),
+          ...(projectFilter !== "all" ? { projectId: projectFilter } : {}),
+          ...(facilityFilter !== "all" ? { facilityId: facilityFilter } : {})
         });
       case "staff-attendance":
         return getStaffAttendanceReportApi({
           ...commonParams,
-          ...(statusFilter !== "all" ? { status: statusFilter as any } : {})
+          ...(statusFilter !== "all" ? { status: statusFilter as any } : {}),
+          ...(userFilter !== "all" ? { staffId: userFilter } : {}),
+          ...(facilityFilter !== "all" ? { facilityId: facilityFilter } : {})
         });
       case "facility-access":
-        return getFacilityAccessReportApi(commonParams);
+        return getFacilityAccessReportApi({
+          ...commonParams,
+          ...(facilityFilter !== "all" ? { facilityId: facilityFilter } : {}),
+          ...(userFilter !== "all" ? { userId: userFilter } : {})
+        });
       case "emergency-alerts":
         return getEmergencyAlertsReportApi({
           ...commonParams,
-          ...(statusFilter !== "all" ? { status: statusFilter as any } : {})
+          ...(statusFilter !== "all" ? { status: statusFilter as any } : {}),
+          ...(userFilter !== "all" ? { userId: userFilter } : {}),
+          ...(projectFilter !== "all" ? { projectId: projectFilter } : {})
         });
       case "issues":
         return getIssuesReportApi({
           ...commonParams,
-          ...(statusFilter !== "all" ? { status: statusFilter as any } : {})
+          ...(statusFilter !== "all" ? { status: statusFilter as any } : {}),
+          ...(userFilter !== "all" ? { userId: userFilter } : {})
         });
       default:
         throw new Error("Invalid report type selection");
@@ -483,6 +544,10 @@ export default function GetReport() {
                     setReportType(e.target.value);
                     setStatusFilter("all");
                     setRoleFilter("all");
+                    setFacilityFilter("all");
+                    setUserFilter("all");
+                    setProjectFilter("all");
+                    setPaymentStatusFilter("all");
                     setPreviewData(null);
                   }}
                   fullWidth
@@ -520,22 +585,28 @@ export default function GetReport() {
                       <MenuItem key="ina" value="INACTIVE">Inactive</MenuItem>
                     ]}
                     {reportType === "bookings" && [
-                      <MenuItem key="cf" value="CONFIRMED">Confirmed</MenuItem>,
                       <MenuItem key="pe" value="PENDING_APPROVAL">Pending Approval</MenuItem>,
+                      <MenuItem key="cf" value="CONFIRMED">Confirmed</MenuItem>,
+                      <MenuItem key="rj" value="REJECTED">Rejected</MenuItem>,
                       <MenuItem key="cx" value="CANCELLED">Cancelled</MenuItem>,
                       <MenuItem key="in" value="CHECKED_IN">Checked In</MenuItem>,
+                      <MenuItem key="co" value="COMPLETED">Completed</MenuItem>,
                       <MenuItem key="ns" value="NO_SHOW">No Show</MenuItem>
                     ]}
                     {reportType === "payments" && [
+                      <MenuItem key="pe" value="PENDING">Pending</MenuItem>,
                       <MenuItem key="su" value="SUCCESS">Success</MenuItem>,
                       <MenuItem key="fa" value="FAILED">Failed</MenuItem>,
-                      <MenuItem key="pe" value="PENDING">Pending</MenuItem>
+                      <MenuItem key="cx" value="CANCELLED">Cancelled</MenuItem>,
+                      <MenuItem key="re" value="REFUNDED">Refunded</MenuItem>
                     ]}
                     {reportType === "subscriptions" && [
-                      <MenuItem key="ac" value="ACTIVE">Active</MenuItem>,
+                      <MenuItem key="pp" value="PENDING_PAYMENT">Pending Payment</MenuItem>,
                       <MenuItem key="pe" value="PENDING_APPROVAL">Pending Approval</MenuItem>,
+                      <MenuItem key="ac" value="ACTIVE">Active</MenuItem>,
+                      <MenuItem key="ex" value="EXPIRED">Expired</MenuItem>,
                       <MenuItem key="ca" value="CANCELLED">Cancelled</MenuItem>,
-                      <MenuItem key="ex" value="EXPIRED">Expired</MenuItem>
+                      <MenuItem key="rj" value="REJECTED">Rejected</MenuItem>
                     ]}
                     {reportType === "staff" && [
                       <MenuItem key="ac" value="ACTIVE">Active</MenuItem>,
@@ -552,15 +623,19 @@ export default function GetReport() {
                       <MenuItem key="ol" value="ON_LEAVE">On Leave</MenuItem>
                     ]}
                     {reportType === "emergency-alerts" && [
-                      <MenuItem key="pe" value="PENDING">Pending</MenuItem>,
-                      <MenuItem key="re" value="RESPONDED">Responded</MenuItem>,
-                      <MenuItem key="rs" value="RESOLVED">Resolved</MenuItem>
+                      <MenuItem key="op" value="OPEN">Open</MenuItem>,
+                      <MenuItem key="ak" value="ACKNOWLEDGED">Acknowledged</MenuItem>,
+                      <MenuItem key="rs" value="RESOLVED">Resolved</MenuItem>,
+                      <MenuItem key="cx" value="CANCELLED">Cancelled</MenuItem>,
+                      <MenuItem key="fa" value="FALSE_ALARM">False Alarm</MenuItem>
                     ]}
                     {reportType === "issues" && [
                       <MenuItem key="op" value="OPEN">Open</MenuItem>,
                       <MenuItem key="ip" value="IN_PROGRESS">In Progress</MenuItem>,
                       <MenuItem key="rs" value="RESOLVED">Resolved</MenuItem>,
-                      <MenuItem key="cl" value="CLOSED">Closed</MenuItem>
+                      <MenuItem key="cl" value="CLOSED">Closed</MenuItem>,
+                      <MenuItem key="rj" value="REJECTED">Rejected</MenuItem>,
+                      <MenuItem key="cx" value="CANCELLED">Cancelled</MenuItem>
                     ]}
                   </Select>
                 </Grid>
@@ -583,12 +658,105 @@ export default function GetReport() {
                     <MenuItem value="GUEST">Guest</MenuItem>
                     <MenuItem value="STAFF">Staff</MenuItem>
                     <MenuItem value="ADMIN">Admin</MenuItem>
+                    <MenuItem value="SUPER_ADMIN">Super Admin</MenuItem>
+                  </Select>
+                </Grid>
+              )}
+
+              {/* Payment Status Filter (Bookings and Subscriptions only) */}
+              {(reportType === "bookings" || reportType === "subscriptions") && (
+                <Grid size={{ xs: 12, md: 4 }}>
+                  <Typography variant="body2" fontWeight={800} color="#091542" sx={{ mb: 1 }}>
+                    Payment Status Filter
+                  </Typography>
+                  <Select
+                    value={paymentStatusFilter}
+                    onChange={(e) => setPaymentStatusFilter(e.target.value)}
+                    fullWidth
+                    sx={selectSx}
+                  >
+                    <MenuItem value="all">All Payment Statuses</MenuItem>
+                    <MenuItem value="PENDING">Pending</MenuItem>
+                    <MenuItem value="PAID">Paid / Success</MenuItem>
+                    <MenuItem value="FAILED">Failed</MenuItem>
+                    <MenuItem value="REFUNDED">Refunded</MenuItem>
+                    {reportType === "bookings" && <MenuItem value="NOT_REQUIRED">Not Required</MenuItem>}
+                  </Select>
+                </Grid>
+              )}
+
+              {/* Facility Filter */}
+              {(reportType === "bookings" || reportType === "subscriptions" || reportType === "staff" || reportType === "staff-attendance" || reportType === "facility-access") && (
+                <Grid size={{ xs: 12, md: 4 }}>
+                  <Typography variant="body2" fontWeight={800} color="#091542" sx={{ mb: 1 }}>
+                    Facility Filter
+                  </Typography>
+                  <Select
+                    value={facilityFilter}
+                    onChange={(e) => setFacilityFilter(e.target.value)}
+                    fullWidth
+                    sx={selectSx}
+                  >
+                    <MenuItem value="all">All Facilities</MenuItem>
+                    {facilities.map((fac) => (
+                      <MenuItem key={fac.id} value={fac.id}>
+                        {fac.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </Grid>
+              )}
+
+              {/* User Filter */}
+              {(reportType === "bookings" || reportType === "payments" || reportType === "subscriptions" || reportType === "staff-attendance" || reportType === "facility-access" || reportType === "emergency-alerts" || reportType === "issues") && (
+                <Grid size={{ xs: 12, md: 4 }}>
+                  <Typography variant="body2" fontWeight={800} color="#091542" sx={{ mb: 1 }}>
+                    {reportType === "staff-attendance" ? "Staff Member Filter" : "User Filter"}
+                  </Typography>
+                  <Select
+                    value={userFilter}
+                    onChange={(e) => setUserFilter(e.target.value)}
+                    fullWidth
+                    sx={selectSx}
+                  >
+                    <MenuItem value="all">
+                      {reportType === "staff-attendance" ? "All Staff" : "All Users"}
+                    </MenuItem>
+                    {users
+                      .filter((u) => reportType !== "staff-attendance" || u.role === "STAFF")
+                      .map((u) => (
+                        <MenuItem key={u.id} value={u.id}>
+                          {u.name} ({u.email || u.phone})
+                        </MenuItem>
+                      ))}
+                  </Select>
+                </Grid>
+              )}
+
+              {/* Project Filter */}
+              {(reportType === "staff" || reportType === "emergency-alerts") && (
+                <Grid size={{ xs: 12, md: 4 }}>
+                  <Typography variant="body2" fontWeight={800} color="#091542" sx={{ mb: 1 }}>
+                    Project Filter
+                  </Typography>
+                  <Select
+                    value={projectFilter}
+                    onChange={(e) => setProjectFilter(e.target.value)}
+                    fullWidth
+                    sx={selectSx}
+                  >
+                    <MenuItem value="all">All Projects</MenuItem>
+                    {projects.map((proj) => (
+                      <MenuItem key={proj.id} value={proj.id}>
+                        {proj.name}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </Grid>
               )}
 
               {/* From Date */}
-              <Grid size={{ xs: 12, md: reportType === "facility-access" ? 6 : 4 }}>
+              <Grid size={{ xs: 12, md: 4 }}>
                 <Typography variant="body2" fontWeight={800} color="#091542" sx={{ mb: 1 }}>
                   From Date
                 </Typography>
@@ -598,12 +766,12 @@ export default function GetReport() {
                   value={fromDate}
                   onChange={(e) => setFromDate(e.target.value)}
                   InputLabelProps={{ shrink: true }}
-                  sx={{ "& .MuiOutlinedInput-root": { borderRadius: "16px", height: 48, bgcolor: "#f8fafc" } }}
+                  sx={{ "& .MuiOutlinedInput-root": { borderRadius: "10px", height: 38, bgcolor: "#f8fafc" } }}
                 />
               </Grid>
 
               {/* To Date */}
-              <Grid size={{ xs: 12, md: reportType === "facility-access" ? 6 : 4 }}>
+              <Grid size={{ xs: 12, md: 4 }}>
                 <Typography variant="body2" fontWeight={800} color="#091542" sx={{ mb: 1 }}>
                   To Date
                 </Typography>
@@ -613,7 +781,7 @@ export default function GetReport() {
                   value={toDate}
                   onChange={(e) => setToDate(e.target.value)}
                   InputLabelProps={{ shrink: true }}
-                  sx={{ "& .MuiOutlinedInput-root": { borderRadius: "16px", height: 48, bgcolor: "#f8fafc" } }}
+                  sx={{ "& .MuiOutlinedInput-root": { borderRadius: "10px", height: 38, bgcolor: "#f8fafc" } }}
                 />
               </Grid>
             </Grid>

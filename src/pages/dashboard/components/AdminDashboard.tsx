@@ -5,6 +5,7 @@ import {
   MenuItem,
   Button,
   CircularProgress,
+  TextField,
 } from "@mui/material";
 import StatCard from "./StatCard";
 import AdminCharts from "./AdminCharts";
@@ -15,6 +16,10 @@ import SystemLogs from "./SystemLogs";
 interface AdminDashboardProps {
   filterType: string;
   setFilterType: (val: string) => void;
+  customFromDate: string;
+  setCustomFromDate: (val: string) => void;
+  customToDate: string;
+  setCustomToDate: (val: string) => void;
   navigate: (path: string) => void;
   loadingStats: boolean;
   overview: any;
@@ -44,6 +49,10 @@ interface AdminDashboardProps {
 export default function AdminDashboard({
   filterType,
   setFilterType,
+  customFromDate,
+  setCustomFromDate,
+  customToDate,
+  setCustomToDate,
   navigate,
   loadingStats,
   overview,
@@ -82,7 +91,7 @@ export default function AdminDashboard({
           gap: 1.5,
         }}
       >
-        <Stack direction="row" spacing={1.5} alignItems="center">
+        <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems="center">
           <Select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
@@ -99,7 +108,47 @@ export default function AdminDashboard({
             <MenuItem value="Week">This Week</MenuItem>
             <MenuItem value="This Month">This Month</MenuItem>
             <MenuItem value="Year">This Year</MenuItem>
+            <MenuItem value="Custom">Custom Range</MenuItem>
           </Select>
+
+          {filterType === "Custom" && (
+            <Stack direction="row" spacing={1} alignItems="center">
+              <TextField
+                type="date"
+                size="small"
+                value={customFromDate}
+                onChange={(e) => setCustomFromDate(e.target.value)}
+                sx={{
+                  width: 130,
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "8px",
+                    bgcolor: "white",
+                    height: 38,
+                    fontSize: "0.85rem",
+                    fontWeight: 600,
+                  },
+                }}
+              />
+              <Box sx={{ fontSize: "0.85rem", fontWeight: 700, color: "#64748b" }}>to</Box>
+              <TextField
+                type="date"
+                size="small"
+                value={customToDate}
+                onChange={(e) => setCustomToDate(e.target.value)}
+                sx={{
+                  width: 130,
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "8px",
+                    bgcolor: "white",
+                    height: 38,
+                    fontSize: "0.85rem",
+                    fontWeight: 600,
+                  },
+                }}
+              />
+            </Stack>
+          )}
+
           <Button
             variant="contained"
             onClick={() => navigate("/report")}

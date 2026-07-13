@@ -154,8 +154,21 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const { isAdmin, user } = useAuth();
   const [filterType, setFilterType] = useState("This Month");
+  const [customFromDate, setCustomFromDate] = useState("");
+  const [customToDate, setCustomToDate] = useState("");
   const [qrCodeData, setQrCodeData] = useState<string | null>(null);
   const [qrLoading, setQrLoading] = useState(false);
+
+  // Default custom range dates
+  useEffect(() => {
+    if (filterType === "Custom" && !customFromDate && !customToDate) {
+      const today = new Date();
+      const last30 = new Date();
+      last30.setDate(today.getDate() - 30);
+      setCustomFromDate(last30.toISOString().split("T")[0]);
+      setCustomToDate(today.toISOString().split("T")[0]);
+    }
+  }, [filterType, customFromDate, customToDate]);
 
   // Admin Dashboard Statistics State
   const [overview, setOverview] = useState<any>(null);
@@ -239,28 +252,36 @@ export default function Dashboard() {
       const loadAdminData = async () => {
         setLoadingStats(true);
         try {
-          const ov = await getDashboardApi();
+          const params: any = {};
+          if (filterType === "Day") {
+            params.days = 2;
+          } else if (filterType === "Week") {
+            params.days = 7;
+          } else if (filterType === "This Month") {
+            params.days = 30;
+          } else if (filterType === "Year") {
+            params.days = 365;
+          } else if (filterType === "Custom") {
+            if (customFromDate) params.fromDate = customFromDate;
+            if (customToDate) params.toDate = customToDate;
+          }
+
+          const ov = await getDashboardApi(params);
           setOverview(ov?.data || ov);
 
-          let days = 30;
-          if (filterType === "Day") days = 2;
-          else if (filterType === "Week") days = 7;
-          else if (filterType === "This Month") days = 30;
-          else if (filterType === "Year") days = 365;
-
-          const rev = await getDashbordRevenue({ days });
+          const rev = await getDashbordRevenue(params);
           setRevenueTrends(rev?.data || rev || []);
 
-          const fac = await getDashbordFacility();
+          const fac = await getDashbordFacility(params);
           setFacilityStats(fac?.data || fac || []);
 
-          const demo = await getUserDemographicsApi();
+          const demo = await getUserDemographicsApi(params);
           setDemographics(demo?.data || demo || []);
 
-          const pay = await getPaymentMethodsStatsApi({ days });
+          const pay = await getPaymentMethodsStatsApi(params);
           setPaymentStats(pay?.data || pay || []);
 
-          const att = await getStaffAttendanceStatsApi({ days });
+          const att = await getStaffAttendanceStatsApi(params);
           setAttendanceStats(att?.data || att || []);
 
           try {
@@ -280,7 +301,7 @@ export default function Dashboard() {
       };
       loadAdminData();
     }
-  }, [isAdmin, filterType]);
+  }, [isAdmin, filterType, customFromDate, customToDate]);
 
   const handleBookClick = (facility: any) => {
     setSelectedFacilityForBooking(facility);
@@ -402,6 +423,10 @@ export default function Dashboard() {
       <AdminDashboard
         filterType={filterType}
         setFilterType={setFilterType}
+        customFromDate={customFromDate}
+        setCustomFromDate={setCustomFromDate}
+        customToDate={customToDate}
+        setCustomToDate={setCustomToDate}
         navigate={navigate}
         loadingStats={loadingStats}
         overview={overview}
