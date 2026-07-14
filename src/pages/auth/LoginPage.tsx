@@ -54,9 +54,9 @@ const GoogleIcon = () => (
   </svg>
 );
 
-// Custom Pixel-Perfect SVGs for Bottom features matching the mockup exactly
+// Custom Pixel-Perfect SVGs (Larger viewBox matching mockup details)
 const ResidentIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     {/* House Roof */}
     <path d="M12 3L3 11H21L12 3Z" fill="#FFFFFF" />
     {/* Left Wall */}
@@ -73,7 +73,7 @@ const ResidentIcon = () => (
 );
 
 const SecurityIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     {/* Shield Outline (stroke is white, center is transparent) */}
     <path d="M12 4C8 5.3 6 8 6 12C6 16.8 9.2 20 12 21C14.8 20 18 16.8 18 12C18 8 16 5.3 12 4Z" stroke="#FFFFFF" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
     {/* White Checkmark inside */}
@@ -82,7 +82,7 @@ const SecurityIcon = () => (
 );
 
 const MaintenanceIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     {/* White Key with transparent ring hole */}
     <path fillRule="evenodd" clipRule="evenodd" d="M6 7C3.23858 7 1 9.23858 1 12C1 14.7614 3.23858 17 6 17C8.16226 17 9.9934 15.6322 10.6865 13.7222H14.5V16.5H17.25V13.7222H19.0833V16.5H21.8333V10.2778H10.6865C9.9934 8.36782 8.16226 7 6 7ZM3.75 12C3.75 10.7574 4.75736 9.75 6 9.75C7.24264 9.75 8.25 10.7574 8.25 12C8.25 13.2426 7.24264 14.25 6 14.25C4.75736 14.25 3.75 13.2426 3.75 12Z" fill="#FFFFFF" />
   </svg>
@@ -219,7 +219,7 @@ const LoginPage = () => {
               fontWeight: 500,
               fontSize: { xs: "0.9rem", md: "1rem" },
               lineHeight: 1.6,
-              maxWidth: "580px",
+              maxWidth: "680px",
               textAlign: "center",
             }}
           >
@@ -236,10 +236,10 @@ const LoginPage = () => {
             flexDirection: { xs: "column", lg: "row" },
             justifyContent: "center", // Center horizontally
             alignItems: "center",
-            gap: 4,
+            gap: 5, // Increased gap for a cleaner and more premium layout
             mt: { xs: 4, md: "auto" },
             width: "100%",
-            maxWidth: "1100px",
+            maxWidth: "1200px",
           }}
         >
           {/* Feature 1 */}
@@ -248,21 +248,22 @@ const LoginPage = () => {
               flex: 1,
               display: "flex",
               alignItems: "center",
-              gap: 1.8,
+              gap: 2, // Larger gap between icon and text
               width: "100%",
-              maxWidth: { xs: "100%", lg: "300px" },
+              maxWidth: { xs: "100%", lg: "340px" }, // Increased width for better text spacing
             }}
           >
             <Box
               sx={{
-                width: 44,
-                height: 44,
-                borderRadius: "10px", // Gold-brown rounded square container
+                width: 52, // Increased icon container size
+                height: 52,
+                borderRadius: "12px",
                 bgcolor: "#b28243",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 flexShrink: 0,
+                boxShadow: "0 4px 10px rgba(178, 130, 67, 0.2)",
               }}
             >
               <ResidentIcon />
@@ -272,9 +273,9 @@ const LoginPage = () => {
                 variant="subtitle2"
                 sx={{
                   fontWeight: 700,
-                  color: "#b28243", // Gold-brown header color matching the icon
-                  fontSize: "0.9rem",
-                  mb: 0.2,
+                  color: "#b28243",
+                  fontSize: "1rem", // Larger font size for headers
+                  mb: 0.3,
                   fontFamily: "'Satoshi', sans-serif",
                 }}
               >
@@ -284,12 +285,12 @@ const LoginPage = () => {
                 variant="caption"
                 sx={{
                   color: "#475569",
-                  fontSize: "0.75rem",
+                  fontSize: "0.82rem", // Larger description font size
                   display: "-webkit-box",
                   WebkitLineClamp: 2,
                   WebkitBoxOrient: "vertical",
                   overflow: "hidden",
-                  lineHeight: 1.3,
+                  lineHeight: 1.35,
                   fontWeight: 500,
                 }}
               >
@@ -304,21 +305,22 @@ const LoginPage = () => {
               flex: 1,
               display: "flex",
               alignItems: "center",
-              gap: 1.8,
+              gap: 2,
               width: "100%",
-              maxWidth: { xs: "100%", lg: "300px" },
+              maxWidth: { xs: "100%", lg: "340px" },
             }}
           >
             <Box
               sx={{
-                width: 44,
-                height: 44,
-                borderRadius: "10px",
+                width: 52,
+                height: 52,
+                borderRadius: "12px",
                 bgcolor: "#b28243",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 flexShrink: 0,
+                boxShadow: "0 4px 10px rgba(178, 130, 67, 0.2)",
               }}
             >
               <SecurityIcon />
@@ -329,8 +331,8 @@ const LoginPage = () => {
                 sx={{
                   fontWeight: 700,
                   color: "#b28243",
-                  fontSize: "0.9rem",
-                  mb: 0.2,
+                  fontSize: "1rem",
+                  mb: 0.3,
                   fontFamily: "'Satoshi', sans-serif",
                 }}
               >
@@ -340,12 +342,12 @@ const LoginPage = () => {
                 variant="caption"
                 sx={{
                   color: "#475569",
-                  fontSize: "0.75rem",
+                  fontSize: "0.82rem",
                   display: "-webkit-box",
                   WebkitLineClamp: 2,
                   WebkitBoxOrient: "vertical",
                   overflow: "hidden",
-                  lineHeight: 1.3,
+                  lineHeight: 1.35,
                   fontWeight: 500,
                 }}
               >
@@ -360,21 +362,22 @@ const LoginPage = () => {
               flex: 1,
               display: "flex",
               alignItems: "center",
-              gap: 1.8,
+              gap: 2,
               width: "100%",
-              maxWidth: { xs: "100%", lg: "300px" },
+              maxWidth: { xs: "100%", lg: "340px" },
             }}
           >
             <Box
               sx={{
-                width: 44,
-                height: 44,
-                borderRadius: "10px",
+                width: 52,
+                height: 52,
+                borderRadius: "12px",
                 bgcolor: "#b28243",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 flexShrink: 0,
+                boxShadow: "0 4px 10px rgba(178, 130, 67, 0.2)",
               }}
             >
               <MaintenanceIcon />
@@ -385,8 +388,8 @@ const LoginPage = () => {
                 sx={{
                   fontWeight: 700,
                   color: "#b28243",
-                  fontSize: "0.9rem",
-                  mb: 0.2,
+                  fontSize: "1rem",
+                  mb: 0.3,
                   fontFamily: "'Satoshi', sans-serif",
                 }}
               >
@@ -396,12 +399,12 @@ const LoginPage = () => {
                 variant="caption"
                 sx={{
                   color: "#475569",
-                  fontSize: "0.75rem",
+                  fontSize: "0.82rem",
                   display: "-webkit-box",
                   WebkitLineClamp: 2,
                   WebkitBoxOrient: "vertical",
                   overflow: "hidden",
-                  lineHeight: 1.3,
+                  lineHeight: 1.35,
                   fontWeight: 500,
                 }}
               >
