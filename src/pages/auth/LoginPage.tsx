@@ -15,16 +15,78 @@ import {
   Visibility,
   VisibilityOff,
   MailOutline as MailIcon,
-  People as PeopleIcon,
-  ShieldOutlined as ShieldIcon,
-  VpnKeyOutlined as KeyIcon,
+  LockOutlined as LockIcon,
 } from "@mui/icons-material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useTranslation } from "@/i18n/translations";
 import { useAuth } from "@/contexts/AuthContext";
 import toast from "react-hot-toast";
-import bgImage from "@/assets/test.png";
+import bgImage from "@/assets/bglogin.png";
+import logoImg from "@/assets/logo.jpeg";
+
+// Custom Google Icon SVG
+const GoogleIcon = () => (
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{ marginRight: "8px" }}
+  >
+    <path
+      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+      fill="#4285F4"
+    />
+    <path
+      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+      fill="#34A853"
+    />
+    <path
+      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+      fill="#FBBC05"
+    />
+    <path
+      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+      fill="#EA4335"
+    />
+  </svg>
+);
+
+// Custom Pixel-Perfect SVGs for Bottom features matching the mockup exactly
+const ResidentIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    {/* House Roof */}
+    <path d="M12 3L3 11H21L12 3Z" fill="#FFFFFF" />
+    {/* Left Wall */}
+    <path d="M6 11H9.5V21H6V11Z" fill="#FFFFFF" />
+    {/* Right Wall */}
+    <path d="M14.5 11H18V21H14.5V11Z" fill="#FFFFFF" />
+    {/* Lintell above door */}
+    <path d="M9.5 11H14.5V14H9.5V11Z" fill="#FFFFFF" />
+    
+    {/* White Person inside the transparent door cutout */}
+    <circle cx="12" cy="16.2" r="1.4" fill="#FFFFFF" />
+    <path d="M10.2 20C10.2 18.8 11 18 12 18C13 18 13.8 18.8 13.8 20V21H10.2V20Z" fill="#FFFFFF" />
+  </svg>
+);
+
+const SecurityIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    {/* Shield Outline (stroke is white, center is transparent) */}
+    <path d="M12 4C8 5.3 6 8 6 12C6 16.8 9.2 20 12 21C14.8 20 18 16.8 18 12C18 8 16 5.3 12 4Z" stroke="#FFFFFF" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+    {/* White Checkmark inside */}
+    <path d="M9.5 12.5L11 14L14.5 10.5" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const MaintenanceIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    {/* White Key with transparent ring hole */}
+    <path fillRule="evenodd" clipRule="evenodd" d="M6 7C3.23858 7 1 9.23858 1 12C1 14.7614 3.23858 17 6 17C8.16226 17 9.9934 15.6322 10.6865 13.7222H14.5V16.5H17.25V13.7222H19.0833V16.5H21.8333V10.2778H10.6865C9.9934 8.36782 8.16226 7 6 7ZM3.75 12C3.75 10.7574 4.75736 9.75 6 9.75C7.24264 9.75 8.25 10.7574 8.25 12C8.25 13.2426 7.24264 14.25 6 14.25C4.75736 14.25 3.75 13.2426 3.75 12Z" fill="#FFFFFF" />
+  </svg>
+);
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -59,330 +121,534 @@ const LoginPage = () => {
         navigate("/");
       } catch (error: any) {
         console.error("Login error:", error);
-        const errorMsg = error?.response?.data?.message || error?.message || "Invalid credentials. Please try again.";
+        const errorMsg =
+          error?.response?.data?.message ||
+          error?.message ||
+          "Invalid credentials. Please try again.";
         toast.error(errorMsg);
       }
     },
   });
+
+  const handleForgotPassword = () => {
+    if (formik.values.email) {
+      toast.promise(
+        new Promise((resolve) => setTimeout(resolve, 1200)),
+        {
+          loading: "Sending password reset email...",
+          success: "Password reset link sent to your email!",
+          error: "Failed to send password reset link.",
+        }
+      );
+    } else {
+      toast.error("Please enter your email address first.");
+    }
+  };
+
+  const handleGoogleSignIn = () => {
+    toast.success("Google Sign-In demo: Logging in with test credentials...");
+    formik.setFieldValue("email", "admin@marbella.com");
+    formik.setFieldValue("password", "admin123");
+    setTimeout(() => {
+      formik.handleSubmit();
+    }, 1000);
+  };
 
   return (
     <Box
       className="login-page-container"
       sx={{
         minHeight: "100dvh",
-        height: "auto",
+        height: { xs: "auto", md: "100vh" },
         width: "100vw",
         display: "flex",
         flexDirection: { xs: "column", md: "row" },
-        gap: { xs: 3, md: 0 },
-        backgroundImage: `linear-gradient(to bottom, rgba(15, 23, 42, 0.3), rgba(15, 23, 42, 0.75)), url(${bgImage})`,
+        backgroundImage: `linear-gradient(to bottom, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.75) 90%), url(${bgImage})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundAttachment: "fixed",
+        overflowY: { xs: "auto", md: "hidden" },
         overflowX: "hidden",
+        "@keyframes fadeIn": {
+          "0%": { opacity: 0 },
+          "100%": { opacity: 1 },
+        },
+        animation: "fadeIn 1s ease-out forwards",
       }}
     >
-      {/* Left side: branding info */}
+      {/* Left side: branding info and bottom features */}
       <Box
         sx={{
-          flex: { xs: "none", md: 1.2 },
+          flex: { xs: "none", md: 6.5 }, // 65% width
           width: "100%",
           display: "flex",
           flexDirection: "column",
-          alignItems: { xs: "center", md: "flex-start" },
-          justifyContent: "flex-start",
-          color: "#ffffff",
-          p: { xs: 2.5, sm: 4, md: 6, lg: 10 },
-          pt: { xs: 5, sm: 8, md: 10, lg: 14 },
+          justifyContent: "space-between",
+          alignItems: "center", // Center horizontally
+          color: "#0f172a",
+          p: { xs: 3, sm: 4, md: 5, lg: 6 },
+          pt: { xs: 5, sm: 6, md: 8, lg: 10 },
+          pb: { xs: 3, md: 5 },
+          height: { xs: "auto", md: "100%" },
         }}
       >
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
+          <Typography
+            variant="h2"
+            sx={{
+              fontWeight: 700,
+              fontFamily: "'Playfair Display', 'Cinzel', serif",
+              lineHeight: 1.15,
+              fontSize: { xs: "2rem", sm: "2.4rem", md: "2.8rem", lg: "3.5rem" },
+              letterSpacing: "-0.5px",
+              mb: { xs: 1.5, md: 2 },
+              textAlign: "center",
+            }}
+          >
+            <Box component="span" sx={{ color: "#183A6B", mr: 1.5 }}>
+              Marbella Society
+            </Box>
+            <Box component="span" sx={{ color: "#C89A3D" }}>
+              Admin Portal
+            </Box>
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{
+              color: "#475569",
+              fontWeight: 500,
+              fontSize: { xs: "0.9rem", md: "1rem" },
+              lineHeight: 1.6,
+              maxWidth: "580px",
+              textAlign: "center",
+            }}
+          >
+            Manage your entire residential community from one secure platform.
+            Streamline resident management, visitor approvals, maintenance requests,
+            amenities, and society operations with an intuitive dashboard.
+          </Typography>
+        </Box>
+
+        {/* Feature highlighted elements at the bottom (Inline, no card backgrounds, matching mockup exactly) */}
         <Box
           sx={{
-            bgcolor: "rgba(15, 23, 42, 0.65)",
-            backdropFilter: "blur(24px)",
-            border: "1px solid rgba(255, 255, 255, 0.12)",
-            p: { xs: 3.5, sm: 4, md: 5 },
-            borderRadius: "16px",
-            maxWidth: "540px",
+            display: "flex",
+            flexDirection: { xs: "column", lg: "row" },
+            justifyContent: "center", // Center horizontally
+            alignItems: "center",
+            gap: 4,
+            mt: { xs: 4, md: "auto" },
             width: "100%",
-            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.4)",
-            textAlign: { xs: "center", md: "left" },
+            maxWidth: "1100px",
           }}
         >
-          <Typography
-            variant="h3"
+          {/* Feature 1 */}
+          <Box
             sx={{
-              fontWeight: 600,
-              mb: 2,
-              background: "linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              lineHeight: 1.2,
-              fontSize: { xs: "1.15rem", sm: "1.5rem", md: "1.75rem", lg: "2rem" },
+              flex: 1,
+              display: "flex",
+              alignItems: "center",
+              gap: 1.8,
+              width: "100%",
+              maxWidth: { xs: "100%", lg: "300px" },
             }}
           >
-            Marbella Society Admin Portal
-          </Typography>
-          <Typography 
-            variant="body1" 
-            sx={{ 
-              color: "#e2e8f0", 
-              mb: { xs: 2.5, md: 4 }, 
-              fontWeight: 500, 
-              fontSize: { xs: "0.95rem", md: "1.05rem" }, 
-              lineHeight: 1.6 
+            <Box
+              sx={{
+                width: 44,
+                height: 44,
+                borderRadius: "10px", // Gold-brown rounded square container
+                bgcolor: "#b28243",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexShrink: 0,
+              }}
+            >
+              <ResidentIcon />
+            </Box>
+            <Box sx={{ textAlign: "left" }}>
+              <Typography
+                variant="subtitle2"
+                sx={{
+                  fontWeight: 700,
+                  color: "#b28243", // Gold-brown header color matching the icon
+                  fontSize: "0.9rem",
+                  mb: 0.2,
+                  fontFamily: "'Satoshi', sans-serif",
+                }}
+              >
+                Resident Management
+              </Typography>
+              <Typography
+                variant="caption"
+                sx={{
+                  color: "#475569",
+                  fontSize: "0.75rem",
+                  display: "-webkit-box",
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
+                  lineHeight: 1.3,
+                  fontWeight: 500,
+                }}
+              >
+                Manage resident profiles, approvals, and occupancy records.
+              </Typography>
+            </Box>
+          </Box>
+
+          {/* Feature 2 */}
+          <Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              alignItems: "center",
+              gap: 1.8,
+              width: "100%",
+              maxWidth: { xs: "100%", lg: "300px" },
             }}
           >
-            Manage bookings, monitor visitor entries, handle resident issues, and oversee community operations all from a single dashboard.
-          </Typography>
-
-          <Box sx={{ display: { xs: "none", md: "flex" }, flexDirection: "column", gap: 3 }}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-              <Box sx={{ bgcolor: "rgba(56, 189, 248, 0.15)", p: 1.2, borderRadius: "12px", display: "flex" }}>
-                <PeopleIcon sx={{ fontSize: 20, color: "#38bdf8" }} />
-              </Box>
-              <Box>
-                <Typography variant="subtitle2" sx={{ fontWeight: 800, color: "#ffffff" }}>
-                  Resident Relations
-                </Typography>
-                <Typography variant="caption" sx={{ color: "#cbd5e1", fontWeight: 500 }}>
-                  Approve enrollments and maintain resident ledgers.
-                </Typography>
-              </Box>
+            <Box
+              sx={{
+                width: 44,
+                height: 44,
+                borderRadius: "10px",
+                bgcolor: "#b28243",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexShrink: 0,
+              }}
+            >
+              <SecurityIcon />
             </Box>
-
-            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-              <Box sx={{ bgcolor: "rgba(52, 211, 153, 0.15)", p: 1.2, borderRadius: "12px", display: "flex" }}>
-                <ShieldIcon sx={{ fontSize: 20, color: "#34d399" }} />
-              </Box>
-              <Box>
-                <Typography variant="subtitle2" sx={{ fontWeight: 800, color: "#ffffff" }}>
-                  Smart Gate & Security
-                </Typography>
-                <Typography variant="caption" sx={{ color: "#cbd5e1", fontWeight: 500 }}>
-                  Track entries, visitor passes, and security checklists.
-                </Typography>
-              </Box>
+            <Box sx={{ textAlign: "left" }}>
+              <Typography
+                variant="subtitle2"
+                sx={{
+                  fontWeight: 700,
+                  color: "#b28243",
+                  fontSize: "0.9rem",
+                  mb: 0.2,
+                  fontFamily: "'Satoshi', sans-serif",
+                }}
+              >
+                Visitor & Security
+              </Typography>
+              <Typography
+                variant="caption"
+                sx={{
+                  color: "#475569",
+                  fontSize: "0.75rem",
+                  display: "-webkit-box",
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
+                  lineHeight: 1.3,
+                  fontWeight: 500,
+                }}
+              >
+                Approve visitors, monitor gate entries, and control access.
+              </Typography>
             </Box>
+          </Box>
 
-            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-              <Box sx={{ bgcolor: "rgba(251, 113, 133, 0.15)", p: 1.2, borderRadius: "12px", display: "flex" }}>
-                <KeyIcon sx={{ fontSize: 20, color: "#fb7185" }} />
-              </Box>
-              <Box>
-                <Typography variant="subtitle2" sx={{ fontWeight: 800, color: "#ffffff" }}>
-                  Issue Resolution Hub
-                </Typography>
-                <Typography variant="caption" sx={{ color: "#cbd5e1", fontWeight: 500 }}>
-                  Dispatch maintenance and resolve complaints in real-time.
-                </Typography>
-              </Box>
+          {/* Feature 3 */}
+          <Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              alignItems: "center",
+              gap: 1.8,
+              width: "100%",
+              maxWidth: { xs: "100%", lg: "300px" },
+            }}
+          >
+            <Box
+              sx={{
+                width: 44,
+                height: 44,
+                borderRadius: "10px",
+                bgcolor: "#b28243",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexShrink: 0,
+              }}
+            >
+              <MaintenanceIcon />
+            </Box>
+            <Box sx={{ textAlign: "left" }}>
+              <Typography
+                variant="subtitle2"
+                sx={{
+                  fontWeight: 700,
+                  color: "#b28243",
+                  fontSize: "0.9rem",
+                  mb: 0.2,
+                  fontFamily: "'Satoshi', sans-serif",
+                }}
+              >
+                Maintenance Hub
+              </Typography>
+              <Typography
+                variant="caption"
+                sx={{
+                  color: "#475569",
+                  fontSize: "0.75rem",
+                  display: "-webkit-box",
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
+                  lineHeight: 1.3,
+                  fontWeight: 500,
+                }}
+              >
+                Track complaints, assign staff, and resolve issues faster.
+              </Typography>
             </Box>
           </Box>
         </Box>
       </Box>
 
-      {/* Right side: Login Form Card container */}
+      {/* Right side: Login Form Card */}
       <Box
         sx={{
-          flex: { xs: "none", md: 0.8 },
+          flex: { xs: "none", md: 3.5 }, // 35% width
           width: "100%",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          bgcolor: "transparent",
-          p: { xs: 2.5, sm: 4, md: 6 },
-          pt: { xs: 0, md: 6 },
-          pb: { xs: 5, md: 6 },
+          p: { xs: 2, sm: 3, md: 4 },
+          pb: { xs: 4, md: 4 },
+          height: { xs: "auto", md: "100%" },
+          zIndex: 1,
         }}
       >
         <Paper
           elevation={0}
           sx={{
             width: "100%",
-            maxWidth: "480px",
-            p: { xs: 4, sm: 5, md: 6 },
+            maxWidth: "370px", // Narrower card width to match mockup exactly
+            p: { xs: 3, sm: 4, md: 4.5 },
             borderRadius: "32px",
-            bgcolor: "rgba(15, 23, 42, 0.65)",
-            backdropFilter: "blur(24px)",
-            border: "1px solid rgba(255, 255, 255, 0.12)",
-            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.4)",
+            bgcolor: "#FFFFFF",
+            border: "1px solid rgba(200, 154, 61, 0.22)",
+            boxShadow: "0 20px 50px -10px rgba(24, 58, 107, 0.15)",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            "@keyframes float": {
+              "0%": { transform: "translateY(0px)" },
+              "50%": { transform: "translateY(-10px)" },
+              "100%": { transform: "translateY(0px)" },
+            },
+            animation: "float 8s ease-in-out infinite", // Floating animation
           }}
         >
-          {/* Top user icon */}
-          <Box
-            sx={{
-              width: 70,
-              height: 70,
-              bgcolor: "rgba(56, 189, 248, 0.1)",
-              border: "1px solid rgba(56, 189, 248, 0.35)",
-              boxShadow: "0 0 20px rgba(56, 189, 248, 0.15)",
-              borderRadius: "50%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              mb: 3,
-            }}
-          >
-            <PeopleIcon sx={{ fontSize: 32, color: "#38bdf8" }} />
+          {/* Marbella Crest Logo Header */}
+          <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", mb: 1.5 }}>
+            <Box
+              component="img"
+              src={logoImg}
+              alt="Marbella Logo"
+              sx={{
+                height: 90,
+                width: "auto",
+                objectFit: "contain",
+                mb: 0.5,
+              }}
+            />
           </Box>
 
-          <Typography
-            variant="h4"
-            sx={{
-              fontWeight: 800,
-              color: "#ffffff",
-              textAlign: "center",
-              mb: 1,
-            }}
-          >
-            {t("welcomeBack") || "Welcome Back!"}
-          </Typography>
-          <Typography
-            variant="body2"
-            sx={{
-              color: "#cbd5e1",
-              textAlign: "center",
-              mb: 4,
-            }}
-          >
-            Login to your account
-          </Typography>
+          {/* Gold divider lines */}
+          <Box sx={{ display: "flex", alignItems: "center", width: "100%", mb: 3, mt: 0.5 }}>
+            <Box
+              sx={{
+                flex: 1,
+                height: "1px",
+                background:
+                  "linear-gradient(90deg, transparent, rgba(200, 154, 61, 0.25) 50%, rgba(200, 154, 61, 0.6))",
+              }}
+            />
+            <Typography
+              sx={{
+                mx: 1.5,
+                color: "#C89A3D", // Gold
+                fontSize: "0.78rem",
+                fontWeight: 600,
+                fontFamily: "'Cinzel', serif",
+                letterSpacing: "1.5px",
+                whiteSpace: "nowrap",
+              }}
+            >
+              Sign in to continue
+            </Typography>
+            <Box
+              sx={{
+                flex: 1,
+                height: "1px",
+                background:
+                  "linear-gradient(90deg, rgba(200, 154, 61, 0.6), rgba(200, 154, 61, 0.25) 50%, transparent)",
+              }}
+            />
+          </Box>
 
+          {/* Form */}
           <form onSubmit={formik.handleSubmit} style={{ width: "100%" }}>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-              <TextField
-                fullWidth
-                id="email"
-                name="email"
-                label={t("email") || "Email Address"}
-                placeholder="hello@example.com"
-                value={formik.values.email}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={formik.touched.email && Boolean(formik.errors.email)}
-                helperText={formik.touched.email && formik.errors.email}
-                variant="outlined"
-                InputLabelProps={{
-                  sx: {
-                    color: "#94a3b8",
-                    "&.Mui-focused": {
-                      color: "#38bdf8",
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              {/* Email field */}
+              <Box sx={{ width: "100%", mb: 2.2 }}>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontWeight: 700,
+                    color: "#334155",
+                    mb: 0.8,
+                    fontSize: "0.82rem",
+                    fontFamily: "'Satoshi', sans-serif",
+                  }}
+                >
+                  Email Address
+                </Typography>
+                <TextField
+                  fullWidth
+                  id="email"
+                  name="email"
+                  placeholder="Enter your email"
+                  value={formik.values.email}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  error={formik.touched.email && Boolean(formik.errors.email)}
+                  helperText={formik.touched.email && formik.errors.email}
+                  variant="outlined"
+                  size="small"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <MailIcon sx={{ color: "#94a3b8", fontSize: 18 }} />
+                      </InputAdornment>
+                    ),
+                    sx: {
+                      borderRadius: "10px",
+                      bgcolor: "#ffffff",
+                      color: "#0f172a",
+                      fontFamily: "'Satoshi', sans-serif",
+                      fontSize: "0.88rem",
+                      "& fieldset": {
+                        borderColor: "#C89A3D", // Gold border
+                        borderWidth: "1.2px",
+                      },
+                      "&:hover fieldset": {
+                        borderColor: "#183A6B !important", // Navy hover
+                      },
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#183A6B !important", // Navy focus
+                        borderWidth: "1.5px",
+                      },
                     },
-                  },
-                }}
-                InputProps={{
-                  style: { color: "#ffffff" },
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <MailIcon sx={{ color: "#94a3b8" }} />
-                    </InputAdornment>
-                  ),
-                }}
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "16px",
-                    bgcolor: "rgba(15, 23, 42, 0.6)",
-                    transition: "all 0.2s ease-in-out",
-                    "& fieldset": {
-                      borderColor: "rgba(255, 255, 255, 0.15)",
-                      transition: "all 0.2s ease-in-out",
+                  }}
+                  sx={{
+                    "& .MuiFormHelperText-root": {
+                      color: "#b45309",
+                      fontWeight: 600,
+                      mx: 0.5,
+                      mt: 0.3,
                     },
-                    "&:hover fieldset": {
-                      borderColor: "rgba(255, 255, 255, 0.35)",
-                    },
-                    "&.Mui-focused": {
-                      boxShadow: "0 0 0 4px rgba(56, 189, 248, 0.25)",
-                    },
-                    "&.Mui-focused fieldset": {
-                      borderColor: "#38bdf8",
-                    },
-                    "& input:-webkit-autofill": {
-                      WebkitBoxShadow: "0 0 0 1000px #0f172a inset !important",
-                      WebkitTextFillColor: "#ffffff !important",
-                    },
-                  },
-                  "& .MuiFormHelperText-root": {
-                    color: "#fca5a5",
-                  },
-                }}
-              />
+                  }}
+                />
+              </Box>
 
-              <TextField
-                fullWidth
-                id="password"
-                name="password"
-                label={t("password") || "Password"}
-                placeholder="••••••••"
-                type={showPassword ? "text" : "password"}
-                value={formik.values.password}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={
-                  formik.touched.password && Boolean(formik.errors.password)
-                }
-                helperText={formik.touched.password && formik.errors.password}
-                InputLabelProps={{
-                  sx: {
-                    color: "#94a3b8",
-                    "&.Mui-focused": {
-                      color: "#38bdf8",
+              {/* Password field */}
+              <Box sx={{ width: "100%", mb: 2.2 }}>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontWeight: 700,
+                    color: "#334155",
+                    mb: 0.8,
+                    fontSize: "0.82rem",
+                    fontFamily: "'Satoshi', sans-serif",
+                  }}
+                >
+                  Password
+                </Typography>
+                <TextField
+                  fullWidth
+                  id="password"
+                  name="password"
+                  placeholder="Enter your password"
+                  type={showPassword ? "text" : "password"}
+                  value={formik.values.password}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  error={
+                    formik.touched.password && Boolean(formik.errors.password)
+                  }
+                  helperText={formik.touched.password && formik.errors.password}
+                  variant="outlined"
+                  size="small"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <LockIcon sx={{ color: "#94a3b8", fontSize: 18 }} />
+                      </InputAdornment>
+                    ),
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={handleTogglePassword}
+                          edge="end"
+                          sx={{ color: "#94a3b8", p: 0.25 }}
+                        >
+                          {showPassword ? (
+                            <VisibilityOff sx={{ fontSize: 18 }} />
+                          ) : (
+                            <Visibility sx={{ fontSize: 18 }} />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                    sx: {
+                      borderRadius: "10px",
+                      bgcolor: "#ffffff",
+                      color: "#0f172a",
+                      fontFamily: "'Satoshi', sans-serif",
+                      fontSize: "0.88rem",
+                      "& fieldset": {
+                        borderColor: "#C89A3D",
+                        borderWidth: "1.2px",
+                      },
+                      "&:hover fieldset": {
+                        borderColor: "#183A6B !important",
+                      },
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#183A6B !important",
+                        borderWidth: "1.5px",
+                      },
                     },
-                  },
-                }}
-                InputProps={{
-                  style: { color: "#ffffff" },
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <KeyIcon sx={{ color: "#94a3b8" }} />
-                    </InputAdornment>
-                  ),
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={handleTogglePassword} edge="end" sx={{ color: "#94a3b8" }}>
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "16px",
-                    bgcolor: "rgba(15, 23, 42, 0.6)",
-                    transition: "all 0.2s ease-in-out",
-                    "& fieldset": {
-                      borderColor: "rgba(255, 255, 255, 0.15)",
-                      transition: "all 0.2s ease-in-out",
+                  }}
+                  sx={{
+                    "& .MuiFormHelperText-root": {
+                      color: "#b45309",
+                      fontWeight: 600,
+                      mx: 0.5,
+                      mt: 0.3,
                     },
-                    "&:hover fieldset": {
-                      borderColor: "rgba(255, 255, 255, 0.35)",
-                    },
-                    "&.Mui-focused": {
-                      boxShadow: "0 0 0 4px rgba(56, 189, 248, 0.25)",
-                    },
-                    "&.Mui-focused fieldset": {
-                      borderColor: "#38bdf8",
-                    },
-                    "& input:-webkit-autofill": {
-                      WebkitBoxShadow: "0 0 0 1000px #0f172a inset !important",
-                      WebkitTextFillColor: "#ffffff !important",
-                    },
-                  },
-                  "& .MuiFormHelperText-root": {
-                    color: "#fca5a5",
-                  },
-                }}
-              />
+                  }}
+                />
+              </Box>
 
+              {/* Remember me & Forgot password */}
               <Box
                 sx={{
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  mt: -1,
+                  width: "100%",
+                  mb: 3,
+                  mt: -0.5,
                 }}
               >
                 <FormControlLabel
@@ -391,9 +657,11 @@ const LoginPage = () => {
                       checked={rememberMe}
                       onChange={(e) => setRememberMe(e.target.checked)}
                       sx={{
-                        color: "rgba(255, 255, 255, 0.5)",
+                        color: "rgba(24, 58, 107, 0.2)",
+                        p: 0.25,
+                        mr: 0.25,
                         "&.Mui-checked": {
-                          color: "#38bdf8",
+                          color: "#183A6B", // Navy
                         },
                       }}
                       size="small"
@@ -402,14 +670,36 @@ const LoginPage = () => {
                   label={
                     <Typography
                       variant="body2"
-                      sx={{ fontWeight: 600, color: "#cbd5e1" }}
+                      sx={{
+                        fontWeight: 600,
+                        color: "#475569",
+                        fontFamily: "'Satoshi', sans-serif",
+                        fontSize: "0.82rem",
+                      }}
                     >
-                      Remember me
+                      Remember Me
                     </Typography>
                   }
                 />
+                <Typography
+                  variant="body2"
+                  onClick={handleForgotPassword}
+                  sx={{
+                    fontWeight: 600,
+                    color: "#C89A3D", // Gold
+                    cursor: "pointer",
+                    fontFamily: "'Satoshi', sans-serif",
+                    fontSize: "0.82rem",
+                    "&:hover": {
+                      textDecoration: "underline",
+                    },
+                  }}
+                >
+                  Forgot Password?
+                </Typography>
               </Box>
 
+              {/* Sign In button */}
               <Button
                 type="submit"
                 variant="contained"
@@ -417,44 +707,104 @@ const LoginPage = () => {
                 size="large"
                 disabled={isLoginLoading}
                 sx={{
-                  py: 1.8,
-                  borderRadius: "16px",
-                  fontWeight: 800,
-                  textTransform: "none",
-                  fontSize: "1.05rem",
-                  background: "linear-gradient(135deg, #38bdf8 0%, #1d4ed8 100%)",
-                  boxShadow: "0 4px 20px rgba(29, 78, 216, 0.35)",
+                  py: 1.5,
+                  borderRadius: "10px",
+                  fontWeight: 700,
+                  textTransform: "uppercase",
+                  fontSize: "0.92rem",
+                  letterSpacing: "1px",
+                  fontFamily: "'Satoshi', sans-serif",
+                  background: "linear-gradient(135deg, #183A6B 0%, #254F85 100%)", // Navy
+                  boxShadow: "0 4px 15px rgba(24, 58, 107, 0.2)",
                   transition: "all 0.2s ease-in-out",
                   "&:hover": {
-                    background: "linear-gradient(135deg, #0ea5e9 0%, #1e40af 100%)",
-                    boxShadow: "0 6px 24px rgba(29, 78, 216, 0.5)",
-                    transform: "translateY(-2px)",
+                    background: "linear-gradient(135deg, #122b51 0%, #1e416d 100%)",
+                    boxShadow: "0 6px 18px rgba(24, 58, 107, 0.28)",
+                    transform: "translateY(-1.5px)", // hover lift
                   },
                   "&:active": {
                     transform: "translateY(0)",
                   },
                 }}
               >
-                {isLoginLoading ? "Logging in..." : "Login"}
+                {isLoginLoading ? "Logging in..." : "SIGN IN"}
               </Button>
             </Box>
           </form>
 
-          <Box
+          {/* OR Divider */}
+          <Box sx={{ display: "flex", alignItems: "center", width: "100%", my: 2.2 }}>
+            <Box sx={{ flex: 1, height: "1px", bgcolor: "#f1f5f9" }} />
+            <Typography
+              sx={{
+                mx: 1.5,
+                color: "#94a3b8",
+                fontSize: "0.75rem",
+                fontWeight: 700,
+                fontFamily: "'Satoshi', sans-serif",
+              }}
+            >
+              OR
+            </Typography>
+            <Box sx={{ flex: 1, height: "1px", bgcolor: "#f1f5f9" }} />
+          </Box>
+
+          {/* Google Sign In button */}
+          <Button
+            variant="outlined"
+            fullWidth
+            size="large"
+            onClick={handleGoogleSignIn}
             sx={{
-              mt: 4,
+              py: 1.3,
+              borderRadius: "10px",
+              fontWeight: 600,
+              textTransform: "none",
+              fontSize: "0.85rem",
+              fontFamily: "'Satoshi', sans-serif",
+              color: "#334155",
+              borderColor: "#C89A3D", // Gold border
+              borderWidth: "1.2px",
+              bgcolor: "#FFFFFF",
               display: "flex",
               alignItems: "center",
-              gap: 1,
-              color: "#38bdf8",
+              justifyContent: "center",
+              transition: "all 0.2s ease-in-out",
+              "&:hover": {
+                borderColor: "#183A6B", // Navy hover border
+                borderWidth: "1.2px",
+                bgcolor: "rgba(200, 154, 61, 0.05)",
+                transform: "translateY(-1.5px)", // hover lift
+              },
             }}
           >
-            <ShieldIcon sx={{ fontSize: 18 }} />
+            <GoogleIcon />
+            Continue with Google
+          </Button>
+
+          {/* Footer link */}
+          <Box sx={{ mt: 3, display: "flex", justifyContent: "center", gap: 0.5 }}>
             <Typography
-              variant="caption"
-              sx={{ fontWeight: 800, letterSpacing: "0.5px" }}
+              variant="body2"
+              sx={{ color: "#64748b", fontFamily: "'Satoshi', sans-serif", fontSize: "0.82rem" }}
             >
-              Secure. Simple. Smart.
+              Don't have an account?
+            </Typography>
+            <Typography
+              variant="body2"
+              onClick={() => navigate("/register")}
+              sx={{
+                fontWeight: 700,
+                color: "#C89A3D", // Gold
+                cursor: "pointer",
+                fontFamily: "'Satoshi', sans-serif",
+                fontSize: "0.82rem",
+                "&:hover": {
+                  textDecoration: "underline",
+                },
+              }}
+            >
+              Sign up
             </Typography>
           </Box>
         </Paper>
