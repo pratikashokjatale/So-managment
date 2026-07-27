@@ -13,226 +13,149 @@ import {
   useTheme,
   useMediaQuery,
   Collapse,
-  IconButton,
   Breadcrumbs,
   Link,
+  Paper,
 } from "@mui/material";
 import { 
   ExpandLess as ExpandLessIcon, 
   ExpandMore as ExpandMoreIcon,
-  Logout as LogoutIcon,
   Dashboard as DashboardIcon,
-  PersonOutline as ProfileIcon,
-  HelpOutline as SupportIcon,
   NavigateNext as NavigateNextIcon,
+  Business as ProjectIcon,
+  VerifiedUser as AdminIcon,
+  Wifi as WifiIcon,
 } from "@mui/icons-material";
 import { useAuth } from "@/contexts/AuthContext";
 import { useConfig } from "@/contexts/ConfigContext";
 import { menuItems } from "./menuItems";
 import TopBar from "./TopBar";
 import Loader from "@/components/Loader";
-import logoImg from "@/assets/logo.jpeg";
 import PageNotFound from "@/pages/PageNotFound";
-
-const MarbellaLogo = ({ collapsed }: { collapsed?: boolean }) => (
-  <Box
-    sx={{
-      width: collapsed ? 50 : 180,
-      height: collapsed ? 32 : 120,
-      overflow: "hidden",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      transition: "all 0.2s ease-in-out"
-    }}
-  >
-    <Box
-      component="img"
-      src={logoImg}
-      alt="Marbella Logo"
-      sx={{
-        width: "100%",
-        height: "100%",
-        objectFit: "contain"
-      }}
-    />
-  </Box>
-);
 
 export default function DashboardLayout() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [desktopOpen, setDesktopOpen] = useState(true);
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
   const navigate = useNavigate();
   const location = useLocation();
   const { navType } = useConfig();
-  const { isLoggedIn, isAdmin, isAuthLoading, logout, user } = useAuth();
+  const { isLoggedIn, isAdmin, isAuthLoading } = useAuth();
 
   const getBreadcrumbs = () => {
     const paths = location.pathname.split("/").filter(Boolean);
-    if (paths.length === 0) {
-      return [{ text: "Dashboard", href: "/" }];
-    }
-
-    const items = [{ text: "Dashboard", href: "/" }];
-
-    // If it's one of the setup items
-    const firstSegment = paths[0];
-    if (["project", "tower", "flat"].includes(firstSegment)) {
-      items.push({ text: "Setup", href: "#" });
-    }
-
+    if (paths.length === 0) return [];
+    const items = [];
     let currentPath = "";
     paths.forEach((segment, index) => {
       currentPath += `/${segment}`;
-      
       let text = segment.charAt(0).toUpperCase() + segment.slice(1);
       if (segment === "tower") text = "Towers";
       if (segment === "flat") text = "Flats";
-      if (segment === "residents") text = "Residents";
-      if (segment === "membership") text = "Membership";
-      if (segment === "booking") text = "Booking";
-      if (segment === "payment") text = "Payment";
-      if (segment === "facility") text = "Facility";
-      if (segment === "gate") text = "Gate Entry";
-      if (segment === "guest") text = "Guest";
-      if (segment === "staff") text = "Staff";
-      if (segment === "announcements") text = "Announcements";
-      if (segment === "report") text = "Report";
-      if (segment === "profile") text = "Profile";
-      if (segment === "support") text = "Support";
-      
-      // If it's numeric or has uuid format, show "Details"
-      if (!isNaN(Number(segment)) || segment.length > 15) {
-        text = "Details";
-      }
-
-      items.push({
-        text,
-        href: index === paths.length - 1 ? "" : currentPath
-      });
+      if (!isNaN(Number(segment)) || segment.length > 15) text = "Details";
+      items.push({ text, href: index === paths.length - 1 ? "" : currentPath });
     });
-
     return items;
   };
 
   const breadcrumbs = getBreadcrumbs();
+  const currentDrawerWidth = 260; // minimized size
 
-  const currentDrawerWidth = isMobile ? 260 : (desktopOpen ? 260 : 80);
-
-  useEffect(() => {
-    document.body.style.setProperty("--sidebar-width", `${currentDrawerWidth}px`);
-    return () => {
-      document.body.style.removeProperty("--sidebar-width");
-    };
-  }, [currentDrawerWidth]);
-
-  useEffect(() => {
-    const handleSetSidebar = (e: any) => {
-      if (typeof e.detail === 'boolean') {
-        setDesktopOpen(e.detail);
-      }
-    };
-    window.addEventListener('set-sidebar', handleSetSidebar);
-    return () => window.removeEventListener('set-sidebar', handleSetSidebar);
-  }, []);
-
-  if (isAuthLoading) {
-    return <Loader />;
-  }
-
-  if (!isLoggedIn) {
-    return <Navigate to="/login" replace />;
-  }
+  if (isAuthLoading) return <Loader />;
+  if (!isLoggedIn) return <Navigate to="/login" replace />;
 
   const handleDrawerToggle = () => {
-    if (isMobile) {
-      setMobileOpen(!mobileOpen);
-    } else {
-      setDesktopOpen(!desktopOpen);
-    }
+    setMobileOpen(!mobileOpen);
   };
 
   const handleMenuToggle = (text: string) => {
     setOpenMenus(prev => ({ ...prev, [text]: !prev[text] }));
   };
+
   const displayedMenuItems = isAdmin
     ? menuItems
-    : [
-        { text: "Dashboard", icon: <DashboardIcon />, path: "/" }
-      ];
+    : [{ text: "Dashboard", icon: <DashboardIcon />, path: "/" }];
 
   const isAllowedPath = 
     location.pathname === "/" || 
     location.pathname === "/profile" || 
     location.pathname === "/support";
 
-  const drawer = (
+  // Sidebar Component rendered inside a floating card
+  const sidebarContent = (
     <Box
       sx={{
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        background: "rgb(7, 43, 74)", // Premium blue-slate background
-        color: "rgba(255, 255, 255, 0.9)",
+        background: "transparent",
+        color: "#1e293b",
         overflowX: "hidden",
-        transition: theme.transitions.create("width", {
-          easing: theme.transitions.easing.sharp,
-          duration: theme.transitions.duration.enteringScreen,
-        }),
+        pt: 2.5,
       }}
     >
-      {/* Sidebar Header Branding */}
-      <Box
-        sx={{ 
-          px: 2.5, 
-          py: 3,
-          display: "flex", 
-          alignItems: "center",
-          gap: 2,
-          borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
-          mb: 2,
-          width: "100%"
-        }}
-      >
-        <Box 
-          component="img"
-          src={logoImg}
-          alt="Logo"
+      {/* Selectors matching exactly the image */}
+      <Box sx={{ px: 2, mb: 2 }}>
+        <Box
           sx={{
-            width: 34,
-            height: 34,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            bgcolor: "#ffffff",
+            border: "1px solid #e2e8f0",
             borderRadius: "8px",
-            objectFit: "cover",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.15)"
+            p: "8px 12px",
+            mb: 2,
+            cursor: "pointer",
+            transition: "all 0.2s",
+            "&:hover": { bgcolor: "#f8fafc" },
           }}
-        />
-        {(desktopOpen || isMobile) && (
-          <Typography
-            variant="h6"
-            sx={{ 
-              color: "white", 
-              fontWeight: 900, 
-              fontSize: "1.25rem",
-              letterSpacing: "-0.5px"
-            }}
-          >
-           Marbella Grand
-          </Typography>
-        )}
+        >
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+            <ProjectIcon sx={{ color: "#d97706", fontSize: 16 }} />
+            <Typography sx={{ fontSize: "0.8rem", fontWeight: 700, color: "#1e293b" }}>All Projects</Typography>
+          </Box>
+          <ExpandMoreIcon sx={{ color: "#64748b", fontSize: 16 }} />
+        </Box>
+
+        <Typography variant="overline" sx={{ color: "#94a3b8", fontWeight: 700, fontSize: "0.6rem", letterSpacing: "0.5px", mb: 0.5, display: "block", textTransform: "uppercase" }}>
+          VIEW AS
+        </Typography>
+
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            bgcolor: "transparent",
+            border: "1px solid #cbd5e1",
+            borderRadius: "8px",
+            p: "8px 12px",
+            cursor: "pointer",
+            transition: "all 0.2s",
+            "&:hover": { bgcolor: "#f1f5f9" }
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+            <AdminIcon sx={{ color: "#3b82f6", fontSize: 16 }} />
+            <Typography sx={{ fontSize: "0.8rem", fontWeight: 700, color: "#1e293b" }}>Admin (you)</Typography>
+          </Box>
+          <ExpandMoreIcon sx={{ color: "#64748b", fontSize: 16 }} />
+        </Box>
       </Box>
 
-      <List sx={{ px: 2, flexGrow: 1 }}>
+      {/* Navigation List styled exactly like the image */}
+      <List sx={{ px: 1.5, flexGrow: 1, overflowY: "auto", overflowX: "hidden" }}>
         {displayedMenuItems.map((item) => {
           const hasChildren = item.children && item.children.length > 0;
           const isMenuOpen = openMenus[item.text] || false;
+          // Check if parent or child is active
           const active = location.pathname === item.path || (hasChildren && item.children?.some(child => location.pathname === child.path));
 
           return (
             <Box key={item.text}>
-              <ListItem disablePadding sx={{ mb: 0.5 }}>
+              <ListItem disablePadding sx={{ mb: 0.25 }}>
                 <ListItemButton
                   onClick={() => {
                     if (hasChildren) {
@@ -244,51 +167,47 @@ export default function DashboardLayout() {
                   }}
                   selected={active && !hasChildren}
                   sx={{
-                    borderRadius: "10px",
-                    py: 0.75, // Smaller padding
-                    px: desktopOpen || isMobile ? 2 : 1.5,
-                    justifyContent: desktopOpen || isMobile ? "initial" : "center",
+                    borderRadius: "8px",
+                    py: 1,
+                    px: 1.5,
                     transition: "all 0.15s ease-in-out",
-                    color: active ? "#ffffff" : "#94a3b8",
-                    bgcolor: active ? "rgba(255, 255, 255, 0.15)" : "transparent",
+                    color: active ? "#0f172a" : "#64748b",
+                    bgcolor: active ? "#eff6ff" : "transparent",
                     "&.Mui-selected": {
-                      bgcolor: "rgba(255, 255, 255, 0.15)",
-                      color: "white",
-                      "& .MuiListItemIcon-root": { color: "#ffffff" },
-                      "&:hover": { bgcolor: "rgba(255, 255, 255, 0.22)" },
+                      bgcolor: "#eff6ff",
+                      color: "#0f172a",
+                      "& .MuiListItemIcon-root": { color: "#3b82f6" },
+                      "&:hover": { bgcolor: "#e2e8f0" },
                     },
                     "&:hover": {
-                      bgcolor: active ? "rgba(255, 255, 255, 0.22)" : "rgba(255, 255, 255, 0.05)",
-                      color: "white",
-                      "& .MuiListItemIcon-root": { color: "#ffffff" },
+                      bgcolor: active ? "#e2e8f0" : "rgba(0,0,0,0.04)",
+                      color: "#0f172a",
+                      "& .MuiListItemIcon-root": { color: "#3b82f6" },
                     },
                   }}
                 >
                   <ListItemIcon
                     sx={{
-                      minWidth: desktopOpen || isMobile ? 32 : 0, // Narrower icon container
-                      mr: desktopOpen || isMobile ? 1 : 0, // Reduced margin
-                      justifyContent: "center",
-                      color: active ? "#ffffff" : "#94a3b8",
+                      minWidth: 32, 
+                      justifyContent: "flex-start",
+                      color: active ? "#3b82f6" : "#94a3b8",
+                      "& svg": { fontSize: 20 }
                     }}
                   >
                     {item.icon}
                   </ListItemIcon>
-                  {(desktopOpen || isMobile) && (
-                    <>
-                      <ListItemText
-                        primary={item.text}
-                        primaryTypographyProps={{ fontSize: "0.85rem", fontWeight: active ? 700 : 500 }} // Smaller font size
-                      />
-                      {hasChildren && (isMenuOpen ? <ExpandLessIcon sx={{ fontSize: 16 }} /> : <ExpandMoreIcon sx={{ fontSize: 16 }} />)}
-                    </>
-                  )}
+                  <ListItemText
+                    primary={item.text}
+                    primaryTypographyProps={{ fontSize: "0.85rem", fontWeight: active ? 700 : 500, letterSpacing: "-0.1px" }} 
+                  />
+                  {hasChildren && (isMenuOpen ? <ExpandLessIcon sx={{ fontSize: 16 }} /> : <ExpandMoreIcon sx={{ fontSize: 16 }} />)}
                 </ListItemButton>
               </ListItem>
 
-              {hasChildren && (desktopOpen || isMobile) && (
+              {/* Nested Sub-menus matching the style */}
+              {hasChildren && (
                 <Collapse in={isMenuOpen} timeout="auto" unmountOnExit>
-                  <List component="div" disablePadding sx={{ ml: 2.5 }}>
+                  <List component="div" disablePadding sx={{ ml: 1.5 }}>
                     {item.children?.map((child: any) => {
                       const childActive = location.pathname === child.path;
                       return (
@@ -301,25 +220,27 @@ export default function DashboardLayout() {
                           selected={childActive}
                           sx={{
                             borderRadius: "8px",
-                            py: 0.5, // Smaller padding
-                            mb: 0.5,
-                            color: childActive ? "#ffffff" : "#94a3b8",
-                            bgcolor: childActive ? "rgba(255, 255, 255, 0.05)" : "transparent",
+                            py: 0.75, 
+                            mb: 0.25,
+                            pl: 2,
+                            color: childActive ? "#0f172a" : "#64748b",
+                            bgcolor: childActive ? "#eff6ff" : "transparent",
                             "&.Mui-selected": {
-                              bgcolor: "rgba(255, 255, 255, 0.08)",
-                              color: "white",
-                              "&:hover": { bgcolor: "rgba(255, 255, 255, 0.12)" },
+                              bgcolor: "#eff6ff",
+                              color: "#0f172a",
+                              "& .MuiListItemIcon-root": { color: "#3b82f6" },
+                              "&:hover": { bgcolor: "#e2e8f0" },
                             },
-                            "&:hover": { bgcolor: "rgba(255, 255, 255, 0.04)", color: "white" },
+                            "&:hover": { bgcolor: "rgba(0,0,0,0.04)", color: "#0f172a" },
                           }}
                         >
                           {child.icon && (
                             <ListItemIcon
                               sx={{
-                                minWidth: 24, // Narrower icon container
-                                mr: 0.75, // Reduced margin
-                                justifyContent: "center",
-                                color: childActive ? "#ffffff" : "#94a3b8",
+                                minWidth: 28, 
+                                justifyContent: "flex-start",
+                                color: childActive ? "#3b82f6" : "#94a3b8",
+                                "& svg": { fontSize: 18 }
                               }}
                             >
                               {child.icon}
@@ -327,7 +248,7 @@ export default function DashboardLayout() {
                           )}
                           <ListItemText
                             primary={child.text}
-                            primaryTypographyProps={{ fontSize: "0.8rem", fontWeight: childActive ? 700 : 500 }} // Smaller font size
+                            primaryTypographyProps={{ fontSize: "0.8rem", fontWeight: childActive ? 600 : 500 }}
                           />
                         </ListItemButton>
                       );
@@ -340,150 +261,127 @@ export default function DashboardLayout() {
         })}
       </List>
 
-      <Box sx={{ p: 2, borderTop: "1px solid rgba(255, 255, 255, 0.05)" }}>
-        {(desktopOpen || isMobile) ? (
-          <ListItemButton
-            onClick={logout}
-            sx={{
-              borderRadius: "12px",
-              color: "#ef4444",
-              px: 2,
-              py: 1.25,
-              "&:hover": {
-                bgcolor: "rgba(239, 68, 68, 0.08)",
-              }
-            }}
-          >
-            <ListItemIcon sx={{ color: "#ef4444", minWidth: 36 }}>
-              <LogoutIcon />
-            </ListItemIcon>
-            <ListItemText
-              primary="Log out"
-              primaryTypographyProps={{
-                fontSize: "0.9rem",
-                fontWeight: 700,
-              }}
-            />
-          </ListItemButton>
-        ) : (
-          <Box sx={{ display: "flex", justifyContent: "center" }}>
-            <IconButton
-              onClick={logout}
-              sx={{
-                bgcolor: "rgba(239, 68, 68, 0.08)",
-                color: "#ef4444",
-                "&:hover": {
-                  bgcolor: "rgba(239, 68, 68, 0.2)",
-                },
-              }}
-            >
-              <LogoutIcon />
-            </IconButton>
-          </Box>
-        )}
+      <Box sx={{ p: 2, display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
+         <WifiIcon sx={{ fontSize: 14, color: "#10b981" }} />
+         <Typography sx={{ fontSize: "0.75rem", color: "#10b981", fontWeight: 700 }}>All gates online</Typography>
       </Box>
     </Box>
   );
 
   return (
-    <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: navType === "light" ? "#f8fafc" : "background.default" }}>
+    <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "#f4f7f9" }}>
       <Loader />
       <CssBaseline />
       <TopBar handleDrawerToggle={handleDrawerToggle} drawerWidth={currentDrawerWidth} />
 
-      <Box component="nav" sx={{ width: { md: currentDrawerWidth }, flexShrink: { md: 0 }, transition: theme.transitions.create("width", { easing: theme.transitions.easing.sharp, duration: theme.transitions.duration.enteringScreen }) }}>
-        <Drawer
-          variant="temporary"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
-          ModalProps={{ keepMounted: true }}
+      {/* Main container holding the single combined white card */}
+      <Box 
+        sx={{ 
+          width: "100%",
+          p: { xs: 0, md: 3 }, 
+          pt: { xs: "74px", md: "calc(74px + 24px)" }, // TopBar height + spacing
+          height: "100vh",
+          boxSizing: "border-box"
+        }}
+      >
+        <Paper 
+          elevation={0}
           sx={{
-            display: { xs: "block", md: "none" },
-            "& .MuiDrawer-paper": {
-              boxSizing: "border-box",
-              width: 280,
-              backgroundImage: "none",
-              border: "none",
-              background: "rgba(19, 104, 179, 0.6)",
-              borderRadius: 0,
-            },
+            display: "flex",
+            width: "100%",
+            height: "100%",
+            bgcolor: "#ffffff",
+            borderRadius: { xs: 0, md: "24px" },
+            border: { xs: "none", md: "1px solid #e2e8f0" },
+            overflow: "hidden",
+            boxShadow: { xs: "none", md: "0 4px 20px rgba(0,0,0,0.02)" }
           }}
         >
-          {drawer}
-        </Drawer>
-        <Drawer
-          variant="permanent"
-          sx={{
-            display: { xs: "none", md: "block" },
-            "& .MuiDrawer-paper": {
-              boxSizing: "border-box",
+          {/* Left Sidebar embedded directly inside the card */}
+          <Box
+            sx={{
+              display: { xs: "none", md: "block" },
               width: currentDrawerWidth,
-              borderRight: "none",
-              backgroundImage: "none",
-              background: "rgb(7, 43, 74)",
-              borderRadius: 0,
-              transition: theme.transitions.create("width", { easing: theme.transitions.easing.sharp, duration: theme.transitions.duration.enteringScreen }),
-              overflowX: "hidden"
-            },
-          }}
-          open
-        >
-          {drawer}
-        </Drawer>
-      </Box>
+              flexShrink: 0,
+              borderRight: "1px solid #f1f5f9",
+              bgcolor: "transparent",
+            }}
+          >
+            {sidebarContent}
+          </Box>
 
-      <Box component="main" sx={{ flexGrow: 1, pt: { xs: "84px", md: "92px" }, pb: { xs: 3, md: 5 }, px: { xs: 2, md: 4 }, width: { md: `calc(100% - ${currentDrawerWidth}px)` }, transition: theme.transitions.create(["width", "margin"], { easing: theme.transitions.easing.sharp, duration: theme.transitions.duration.enteringScreen }) }}>
-        <Breadcrumbs 
-          separator={<NavigateNextIcon fontSize="small" sx={{ color: "#94a3b8" }} />} 
-          aria-label="breadcrumb"
-          sx={{ mb: 1.5 }}
-        >
-          {breadcrumbs.map((item, idx) => {
-            const isLast = idx === breadcrumbs.length - 1;
-            return isLast ? (
-              <Typography 
-                key={idx} 
-                sx={{ 
-                  color: "#0f172a", 
-                  fontWeight: 600,
-                  fontSize: "0.875rem"
-                }}
+          {/* Mobile Drawer (Hidden on Desktop) */}
+          <Drawer
+            variant="temporary"
+            open={mobileOpen}
+            onClose={handleDrawerToggle}
+            ModalProps={{ keepMounted: true }}
+            sx={{
+              display: { xs: "block", md: "none" },
+              "& .MuiDrawer-paper": {
+                boxSizing: "border-box",
+                width: 280,
+                bgcolor: "#ffffff",
+              },
+            }}
+          >
+            {sidebarContent}
+          </Drawer>
+
+          {/* Right Main Content Area embedded in the same card */}
+          <Box 
+            sx={{ 
+              flexGrow: 1, 
+              bgcolor: "transparent", 
+              overflow: "auto",
+              p: { xs: 2, md: 4 }, 
+            }}
+          >
+            {breadcrumbs.length > 0 && (
+              <Breadcrumbs 
+                separator={<NavigateNextIcon fontSize="small" sx={{ color: "#94a3b8" }} />} 
+                aria-label="breadcrumb"
+                sx={{ mb: 2 }} 
               >
-                {item.text}
-              </Typography>
+                {breadcrumbs.map((item, idx) => {
+                  const isLast = idx === breadcrumbs.length - 1;
+                  return isLast ? (
+                    <Typography 
+                      key={idx} 
+                      sx={{ color: "#0f172a", fontWeight: 600, fontSize: "0.875rem" }}
+                    >
+                      {item.text}
+                    </Typography>
+                  ) : (
+                    <Link
+                      key={idx}
+                      underline="hover"
+                      sx={{ 
+                        color: "#64748b", fontWeight: 500, fontSize: "0.875rem",
+                        cursor: item.href === "#" ? "default" : "pointer", display: "flex", alignItems: "center"
+                      }}
+                      onClick={() => {
+                        if (item.href && item.href !== "#") navigate(item.href);
+                      }}
+                    >
+                      {item.text}
+                    </Link>
+                  );
+                })}
+              </Breadcrumbs>
+            )}
+
+            {!isAdmin && !isAllowedPath ? (
+              <PageNotFound 
+                title="Permission Denied" 
+                message="You do not have permission to view this page."
+                showBackButton={true}
+              />
             ) : (
-              <Link
-                key={idx}
-                underline="hover"
-                sx={{ 
-                  color: "#64748b", 
-                  fontWeight: 500,
-                  fontSize: "0.875rem",
-                  cursor: item.href === "#" ? "default" : "pointer",
-                  display: "flex",
-                  alignItems: "center"
-                }}
-                onClick={() => {
-                  if (item.href && item.href !== "#") {
-                    navigate(item.href);
-                  }
-                }}
-              >
-                {item.text}
-              </Link>
-            );
-          })}
-        </Breadcrumbs>
-
-        {!isAdmin && !isAllowedPath ? (
-          <PageNotFound 
-            title="Permission Denied" 
-            message="You do not have permission to view this page. Please contact your administrator if you believe this is an error."
-            showBackButton={true}
-          />
-        ) : (
-          <Outlet />
-        )}
+              <Outlet />
+            )}
+          </Box>
+        </Paper>
       </Box>
     </Box>
   );
