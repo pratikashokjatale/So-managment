@@ -9,11 +9,16 @@ import {
   ToggleButton,
   Paper,
   Divider,
+  InputAdornment
 } from "@mui/material";
 import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 import AttachMoneyOutlinedIcon from "@mui/icons-material/AttachMoneyOutlined";
 import EventRepeatOutlinedIcon from "@mui/icons-material/EventRepeatOutlined";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import SettingsIcon from "@mui/icons-material/Settings";
+import RuleIcon from "@mui/icons-material/Rule";
+import HistoryToggleOffIcon from "@mui/icons-material/HistoryToggleOff";
 import { fieldSx, sectionCardSx, sectionHeaderIconSx } from "./formStyles";
 
 const DAYS = [
@@ -72,6 +77,15 @@ export default function FacilitySchedulePricing({ data, onChange, errors }: Prop
               helperText="24-hour format, e.g. 06:00"
               sx={fieldSx}
               InputLabelProps={{ shrink: true }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                      <AccessTimeIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                    </Box>
+                  </InputAdornment>
+                ),
+              }}
             />
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
@@ -84,6 +98,15 @@ export default function FacilitySchedulePricing({ data, onChange, errors }: Prop
               helperText="24-hour format, e.g. 22:00"
               sx={fieldSx}
               InputLabelProps={{ shrink: true }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                      <AccessTimeIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                    </Box>
+                  </InputAdornment>
+                ),
+              }}
             />
           </Grid>
           <Grid size={{ xs: 12, md: 6 }} sx={{ display: "flex", alignItems: "center" }}>
@@ -185,6 +208,15 @@ export default function FacilitySchedulePricing({ data, onChange, errors }: Prop
                   required
                   sx={fieldSx}
                   InputLabelProps={{ shrink: true }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                          <AttachMoneyOutlinedIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                        </Box>
+                      </InputAdornment>
+                    ),
+                  }}
                 />
               </Grid>
             </Grid>
@@ -211,6 +243,15 @@ export default function FacilitySchedulePricing({ data, onChange, errors }: Prop
                   helperText="How many days in advance can residents book?"
                   sx={fieldSx}
                   InputLabelProps={{ shrink: true }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                          <HistoryToggleOffIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                        </Box>
+                      </InputAdornment>
+                    ),
+                  }}
                 />
               </Grid>
               <Grid size={{ xs: 12, md: 6 }}>
@@ -221,6 +262,15 @@ export default function FacilitySchedulePricing({ data, onChange, errors }: Prop
                   helperText="Min hours before slot to cancel without penalty"
                   sx={fieldSx}
                   InputLabelProps={{ shrink: true }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                          <SettingsIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                        </Box>
+                      </InputAdornment>
+                    ),
+                  }}
                 />
               </Grid>
               <Grid size={{ xs: 12 }}>
@@ -232,6 +282,15 @@ export default function FacilitySchedulePricing({ data, onChange, errors }: Prop
                   helperText="Optional usage rules shown to residents on the booking page"
                   sx={fieldSx}
                   InputLabelProps={{ shrink: true }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start" sx={{ alignSelf: 'flex-start', mt: 1 }}>
+                        <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                          <RuleIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                        </Box>
+                      </InputAdornment>
+                    ),
+                  }}
                 />
               </Grid>
             </Grid>

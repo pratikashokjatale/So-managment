@@ -23,6 +23,7 @@ import EditAnnouncement from "@/pages/announcement/EditAnnouncement";
 import GetReport from "@/pages/report/GetReport";
 import GetAnalytics from "@/pages/analytics/GetAnalytics";
 import GetDemoAccounts from "@/pages/residents/GetDemoAccounts";
+import AddDemoAccount from "@/pages/residents/AddDemoAccount";
 import GetSettings from "@/pages/settings/GetSettings";
 import GetSupport from "@/pages/support/GetSupport";
 import GetLogs from "@/pages/logs/GetLogs";
@@ -47,6 +48,7 @@ import MyWallet from "@/pages/wallet/MyWallet";
 import GetIssues from "@/pages/issues/GetIssues";
 import GetEmergency from "@/pages/emergency/GetEmergency";
 import GetRoles from "@/pages/roles/GetRoles";
+import AddRole from "@/pages/roles/AddRole";
 
 const DashboardRoutes = {
   path: "/",
@@ -189,6 +191,10 @@ const DashboardRoutes = {
       element: <GetDemoAccounts />,
     },
     {
+      path: "demo-accounts/add",
+      element: <AddDemoAccount />,
+    },
+    {
       path: "settings",
       element: <GetSettings />,
     },
@@ -247,6 +253,14 @@ const DashboardRoutes = {
     {
       path: "setup/roles",
       element: <GetRoles />,
+    },
+    {
+      path: "setup/roles/add",
+      element: <AddRole />,
+    },
+    {
+      path: "setup/roles/edit",
+      element: <AddRole />,
     },
   ],
 };

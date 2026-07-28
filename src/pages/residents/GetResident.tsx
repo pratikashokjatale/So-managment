@@ -49,7 +49,6 @@ export default function GetResident() {
   const [membershipFilter, setMembershipFilter] = useState("All Memberships");
   const [cardFilter, setCardFilter] = useState("All Cards");
   const [tabValue, setTabValue] = useState(0);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   // Three-dot menu state
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
@@ -245,7 +244,7 @@ export default function GetResident() {
             searchPlaceholder="Search by name, phone, email..."
             searchValue={searchQuery}
             onSearchChange={setSearchQuery}
-            onAddClick={() => setIsAddModalOpen(true)}
+            onAddClick={() => navigate("/residents/add")}
             addButtonLabel="Add Resident"
             showExport={true}
             // filters={
@@ -392,24 +391,6 @@ export default function GetResident() {
       {tabValue === 1 && <ResidentRequests />}
 
       {tabValue === 2 && <RejectedRequests />}
-
-
-
-      {isAddModalOpen && (
-        <AddResident 
-          open={isAddModalOpen} 
-          onClose={(success?: boolean) => {
-            setIsAddModalOpen(false);
-            if (success) {
-              setTabValue(1); // Switch to Enrollment Requests tab
-              setSearchQuery(""); // Clear search so they can see the new list
-            }
-            setTimeout(() => {
-              fetchResidents();
-            }, 500);
-          }} 
-        />
-      )}
 
       {/* Three-dot context menu */}
       <Menu

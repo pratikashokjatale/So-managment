@@ -18,7 +18,6 @@ import { toast } from "react-hot-toast";
 
 import PageToolbar from "@/components/PageToolbar";
 import DataTable from "@/components/DataTable";
-import CreateDemoDialog from "./components/CreateDemoDialog";
 import { getUsersApi, deleteUserApi } from "@/apis/user";
 import { getFileUrl } from "@/utils/file";
 
@@ -30,7 +29,6 @@ export default function GetDemoAccounts() {
   const [loading, setLoading] = useState(true);
   const [demoAccounts, setDemoAccounts] = useState<any[]>([]);
   const [totalCount, setTotalCount] = useState(0);
-  const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
 
   // Three-dot menu state
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
@@ -117,7 +115,7 @@ export default function GetDemoAccounts() {
         searchPlaceholder="Search by name, email..."
         searchValue={searchQuery}
         onSearchChange={setSearchQuery}
-        onAddClick={() => setIsDemoModalOpen(true)}
+        onAddClick={() => navigate("/demo-accounts/add")}
         addButtonLabel="Create Demo Account"
         showExport={false}
       />
@@ -224,19 +222,6 @@ export default function GetDemoAccounts() {
         emptyMessage="No demo accounts found."
       />
 
-      {isDemoModalOpen && (
-        <CreateDemoDialog
-          open={isDemoModalOpen}
-          onClose={(success?: boolean) => {
-            setIsDemoModalOpen(false);
-            if (success) {
-              fetchDemoAccounts();
-            }
-          }}
-        />
-      )}
-
-      {/* Action Menu */}
       <Menu
         anchorEl={menuAnchor}
         open={Boolean(menuAnchor)}

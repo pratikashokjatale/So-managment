@@ -79,7 +79,9 @@ export default function GetAnalytics() {
 
   // Analytics Data
   const [totals, setTotals] = useState<any>(null);
-  const [bookingsData, setBookingsData] = useState<BookingsByActivityItem[]>([]);
+  const [bookingsData, setBookingsData] = useState<BookingsByActivityItem[]>(
+    [],
+  );
   const [revenueData, setRevenueData] = useState<RevenueByActivityItem[]>([]);
   const [accessEvents, setAccessEvents] = useState<AccessEventItem[]>([]);
 
@@ -105,7 +107,12 @@ export default function GetAnalytics() {
     const fetchProjects = async () => {
       try {
         const res = await getProjectsApi({ limit: 100 });
-        const list = res?.data?.data || res?.data?.projects || res?.projects || res?.data || [];
+        const list =
+          res?.data?.data ||
+          res?.data?.projects ||
+          res?.projects ||
+          res?.data ||
+          [];
         setProjects(Array.isArray(list) ? list : []);
       } catch (err) {
         console.error("Failed to fetch projects list:", err);
@@ -118,11 +125,11 @@ export default function GetAnalytics() {
   const fetchOverview = async () => {
     setLoadingOverview(true);
     try {
-      const res = await getAnalyticsOverviewApi({
+      const res = (await getAnalyticsOverviewApi({
         projectId: projectId || undefined,
         dateFrom: dateFrom || undefined,
         dateTo: dateTo || undefined,
-      }) as any;
+      })) as any;
       setTotals(res?.data?.totals || res?.totals || null);
     } catch (err: any) {
       toast.error(err?.message || "Failed to load overview analytics");
@@ -144,7 +151,9 @@ export default function GetAnalytics() {
       });
       setBookingsData(res?.items || []);
       // Calculate total pages (mocking pagination total if backend doesn't return count, otherwise default limit)
-      setBookingsTotalPages(res?.items?.length < limit ? bookingsPage : bookingsPage + 1);
+      setBookingsTotalPages(
+        res?.items?.length < limit ? bookingsPage : bookingsPage + 1,
+      );
     } catch (err: any) {
       console.error(err);
     } finally {
@@ -164,7 +173,9 @@ export default function GetAnalytics() {
         limit,
       });
       setRevenueData(res?.items || []);
-      setRevenueTotalPages(res?.items?.length < limit ? revenuePage : revenuePage + 1);
+      setRevenueTotalPages(
+        res?.items?.length < limit ? revenuePage : revenuePage + 1,
+      );
     } catch (err: any) {
       console.error(err);
     } finally {
@@ -184,7 +195,9 @@ export default function GetAnalytics() {
         limit: 10, // Larger page size for tables
       });
       setAccessEvents(res?.items || []);
-      setAccessTotalPages(res?.items?.length < 10 ? accessPage : accessPage + 1);
+      setAccessTotalPages(
+        res?.items?.length < 10 ? accessPage : accessPage + 1,
+      );
     } catch (err: any) {
       console.error(err);
     } finally {
@@ -275,105 +288,6 @@ export default function GetAnalytics() {
         </Stack>
       </Stack>
 
-      {/* Filters Box */}
-      <Paper
-        elevation={0}
-        sx={{
-          p: 3,
-          borderRadius: "20px",
-          border: "1px solid #f1f5f9",
-          bgcolor: "white",
-          mb: 4,
-          boxShadow: "0 4px 20px rgba(9, 21, 66, 0.01)",
-        }}
-      >
-        <Grid container spacing={3} alignItems="center">
-          <Grid size={{ xs: 12, md: 3 }}>
-            <Typography variant="caption" fontWeight="800" color="#64748b">
-              PROJECT / CLUB SCOPE
-            </Typography>
-            <Select
-              value={projectId}
-              onChange={(e) => setProjectId(e.target.value)}
-              displayEmpty
-              fullWidth
-              size="small"
-              sx={{
-                mt: 0.5,
-                borderRadius: "12px",
-                bgcolor: "#f8fafc",
-                "& fieldset": { borderColor: "#e2e8f0" },
-              }}
-            >
-              <MenuItem value="">All Projects</MenuItem>
-              {Array.isArray(projects) && projects.map((proj) => (
-                <MenuItem key={proj.id} value={proj.id}>
-                  {proj.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </Grid>
-          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-            <Typography variant="caption" fontWeight="800" color="#64748b">
-              DATE FROM
-            </Typography>
-            <TextField
-              type="date"
-              value={dateFrom}
-              onChange={(e) => setDateFrom(e.target.value)}
-              fullWidth
-              size="small"
-              InputLabelProps={{ shrink: true }}
-              sx={{
-                mt: 0.5,
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: "12px",
-                  bgcolor: "#f8fafc",
-                },
-                "& fieldset": { borderColor: "#e2e8f0" },
-              }}
-            />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-            <Typography variant="caption" fontWeight="800" color="#64748b">
-              DATE TO
-            </Typography>
-            <TextField
-              type="date"
-              value={dateTo}
-              onChange={(e) => setDateTo(e.target.value)}
-              fullWidth
-              size="small"
-              InputLabelProps={{ shrink: true }}
-              sx={{
-                mt: 0.5,
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: "12px",
-                  bgcolor: "#f8fafc",
-                },
-                "& fieldset": { borderColor: "#e2e8f0" },
-              }}
-            />
-          </Grid>
-          <Grid size={{ xs: 12, md: 3 }}>
-            <Box sx={{ pt: 2 }}>
-              <Button
-                variant="text"
-                onClick={handleResetFilters}
-                sx={{
-                  textTransform: "none",
-                  fontWeight: 800,
-                  color: "#64748b",
-                  "&:hover": { color: "#091542" },
-                }}
-              >
-                Reset Filters
-              </Button>
-            </Box>
-          </Grid>
-        </Grid>
-      </Paper>
-
       {/* KPI Cards Row */}
       {loadingOverview ? (
         <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
@@ -406,7 +320,11 @@ export default function GetAnalytics() {
                     <ProjectIcon />
                   </Box>
                   <Box>
-                    <Typography variant="caption" fontWeight="800" color="#64748b">
+                    <Typography
+                      variant="caption"
+                      fontWeight="800"
+                      color="#64748b"
+                    >
                       TOTAL PROJECTS
                     </Typography>
                     <Typography variant="h5" fontWeight="900" color="#091542">
@@ -443,7 +361,11 @@ export default function GetAnalytics() {
                     <FlatIcon />
                   </Box>
                   <Box>
-                    <Typography variant="caption" fontWeight="800" color="#64748b">
+                    <Typography
+                      variant="caption"
+                      fontWeight="800"
+                      color="#64748b"
+                    >
                       FLATS (OCCUPIED)
                     </Typography>
                     <Typography variant="h5" fontWeight="900" color="#091542">
@@ -480,7 +402,11 @@ export default function GetAnalytics() {
                     <RateIcon />
                   </Box>
                   <Box>
-                    <Typography variant="caption" fontWeight="800" color="#64748b">
+                    <Typography
+                      variant="caption"
+                      fontWeight="800"
+                      color="#64748b"
+                    >
                       OCCUPANCY RATE
                     </Typography>
                     <Typography variant="h5" fontWeight="900" color="#091542">
@@ -517,7 +443,11 @@ export default function GetAnalytics() {
                     <MembersIcon />
                   </Box>
                   <Box>
-                    <Typography variant="caption" fontWeight="800" color="#64748b">
+                    <Typography
+                      variant="caption"
+                      fontWeight="800"
+                      color="#64748b"
+                    >
                       ACTIVE MEMBERS
                     </Typography>
                     <Typography variant="h5" fontWeight="900" color="#091542">
@@ -554,7 +484,11 @@ export default function GetAnalytics() {
                     <BookingIcon />
                   </Box>
                   <Box>
-                    <Typography variant="caption" fontWeight="800" color="#64748b">
+                    <Typography
+                      variant="caption"
+                      fontWeight="800"
+                      color="#64748b"
+                    >
                       BOOKINGS
                     </Typography>
                     <Typography variant="h5" fontWeight="900" color="#091542">
@@ -591,7 +525,11 @@ export default function GetAnalytics() {
                     <MembersIcon />
                   </Box>
                   <Box>
-                    <Typography variant="caption" fontWeight="800" color="#64748b">
+                    <Typography
+                      variant="caption"
+                      fontWeight="800"
+                      color="#64748b"
+                    >
                       ACTIVE SUBSCRIPTIONS
                     </Typography>
                     <Typography variant="h5" fontWeight="900" color="#091542">
@@ -628,7 +566,11 @@ export default function GetAnalytics() {
                     <RevenueIcon />
                   </Box>
                   <Box>
-                    <Typography variant="caption" fontWeight="800" color="#64748b">
+                    <Typography
+                      variant="caption"
+                      fontWeight="800"
+                      color="#64748b"
+                    >
                       TOTAL REVENUE
                     </Typography>
                     <Typography variant="h5" fontWeight="900" color="#091542">
@@ -665,7 +607,11 @@ export default function GetAnalytics() {
                     <AccessIcon />
                   </Box>
                   <Box>
-                    <Typography variant="caption" fontWeight="800" color="#64748b">
+                    <Typography
+                      variant="caption"
+                      fontWeight="800"
+                      color="#64748b"
+                    >
                       ACCESS EVENTS
                     </Typography>
                     <Typography variant="h5" fontWeight="900" color="#091542">
@@ -695,32 +641,65 @@ export default function GetAnalytics() {
               flexDirection: "column",
             }}
           >
-            <Typography variant="h6" fontWeight="900" color="#091542" sx={{ mb: 1 }}>
+            <Typography
+              variant="h6"
+              fontWeight="900"
+              color="#091542"
+              sx={{ mb: 1 }}
+            >
               Bookings by Activity
             </Typography>
-            <Typography variant="caption" color="text.secondary" sx={{ mb: 3, fontWeight: 700 }}>
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{ mb: 3, fontWeight: 700 }}
+            >
               Shows number of bookings per clubhouse facility
             </Typography>
 
             <Box sx={{ flexGrow: 1, minHeight: 0, position: "relative" }}>
               {loadingBookings ? (
-                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100%",
+                  }}
+                >
                   <CircularProgress />
                 </Box>
               ) : bookingsData.length === 0 ? (
-                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
-                  <Typography variant="body2" color="text.secondary">No booking activity recorded</Typography>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100%",
+                  }}
+                >
+                  <Typography variant="body2" color="text.secondary">
+                    No booking activity recorded
+                  </Typography>
                 </Box>
               ) : (
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={bookingsData}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="facilityName" tick={{ fill: "#64748b", fontWeight: 700, fontSize: 11 }} />
-                    <YAxis tick={{ fill: "#64748b", fontWeight: 700, fontSize: 11 }} />
+                    <XAxis
+                      dataKey="facilityName"
+                      tick={{ fill: "#64748b", fontWeight: 700, fontSize: 11 }}
+                    />
+                    <YAxis
+                      tick={{ fill: "#64748b", fontWeight: 700, fontSize: 11 }}
+                    />
                     <Tooltip cursor={{ fill: "rgba(0,0,0,0.02)" }} />
                     <Bar dataKey="bookings" radius={[8, 8, 0, 0]}>
                       {bookingsData.map((_, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
                       ))}
                     </Bar>
                   </BarChart>
@@ -728,7 +707,12 @@ export default function GetAnalytics() {
               )}
             </Box>
 
-            <Stack direction="row" justifyContent="flex-end" spacing={1} sx={{ mt: 2 }}>
+            <Stack
+              direction="row"
+              justifyContent="flex-end"
+              spacing={1}
+              sx={{ mt: 2 }}
+            >
               <IconButton
                 size="small"
                 onClick={() => setBookingsPage((p) => Math.max(1, p - 1))}
@@ -736,7 +720,10 @@ export default function GetAnalytics() {
               >
                 <PrevIcon fontSize="small" />
               </IconButton>
-              <Typography variant="caption" sx={{ alignSelf: "center", fontWeight: 800, px: 1 }}>
+              <Typography
+                variant="caption"
+                sx={{ alignSelf: "center", fontWeight: 800, px: 1 }}
+              >
                 Page {bookingsPage}
               </Typography>
               <IconButton
@@ -764,32 +751,65 @@ export default function GetAnalytics() {
               flexDirection: "column",
             }}
           >
-            <Typography variant="h6" fontWeight="900" color="#091542" sx={{ mb: 1 }}>
+            <Typography
+              variant="h6"
+              fontWeight="900"
+              color="#091542"
+              sx={{ mb: 1 }}
+            >
               Revenue by Activity
             </Typography>
-            <Typography variant="caption" color="text.secondary" sx={{ mb: 3, fontWeight: 700 }}>
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{ mb: 3, fontWeight: 700 }}
+            >
               Breakdown of total facility booking & subscription fees generated
             </Typography>
 
             <Box sx={{ flexGrow: 1, minHeight: 0, position: "relative" }}>
               {loadingRevenue ? (
-                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100%",
+                  }}
+                >
                   <CircularProgress />
                 </Box>
               ) : revenueData.length === 0 ? (
-                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
-                  <Typography variant="body2" color="text.secondary">No revenue details recorded</Typography>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100%",
+                  }}
+                >
+                  <Typography variant="body2" color="text.secondary">
+                    No revenue details recorded
+                  </Typography>
                 </Box>
               ) : (
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={revenueData}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="facilityName" tick={{ fill: "#64748b", fontWeight: 700, fontSize: 11 }} />
-                    <YAxis tick={{ fill: "#64748b", fontWeight: 700, fontSize: 11 }} />
+                    <XAxis
+                      dataKey="facilityName"
+                      tick={{ fill: "#64748b", fontWeight: 700, fontSize: 11 }}
+                    />
+                    <YAxis
+                      tick={{ fill: "#64748b", fontWeight: 700, fontSize: 11 }}
+                    />
                     <Tooltip cursor={{ fill: "rgba(0,0,0,0.02)" }} />
                     <Bar dataKey="revenue" radius={[8, 8, 0, 0]}>
                       {revenueData.map((_, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[(index + 2) % COLORS.length]} />
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[(index + 2) % COLORS.length]}
+                        />
                       ))}
                     </Bar>
                   </BarChart>
@@ -797,7 +817,12 @@ export default function GetAnalytics() {
               )}
             </Box>
 
-            <Stack direction="row" justifyContent="flex-end" spacing={1} sx={{ mt: 2 }}>
+            <Stack
+              direction="row"
+              justifyContent="flex-end"
+              spacing={1}
+              sx={{ mt: 2 }}
+            >
               <IconButton
                 size="small"
                 onClick={() => setRevenuePage((p) => Math.max(1, p - 1))}
@@ -805,7 +830,10 @@ export default function GetAnalytics() {
               >
                 <PrevIcon fontSize="small" />
               </IconButton>
-              <Typography variant="caption" sx={{ alignSelf: "center", fontWeight: 800, px: 1 }}>
+              <Typography
+                variant="caption"
+                sx={{ alignSelf: "center", fontWeight: 800, px: 1 }}
+              >
                 Page {revenuePage}
               </Typography>
               <IconButton
@@ -830,24 +858,62 @@ export default function GetAnalytics() {
           bgcolor: "white",
         }}
       >
-        <Typography variant="h6" fontWeight="900" color="#091542" sx={{ mb: 1 }}>
+        <Typography
+          variant="h6"
+          fontWeight="900"
+          color="#091542"
+          sx={{ mb: 1 }}
+        >
           Clubhouse Gate Access Events
         </Typography>
-        <Typography variant="caption" color="text.secondary" sx={{ mb: 4, display: "block", fontWeight: 700 }}>
-          Realtime gate entry logs showing system subscription and barcode validations
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          sx={{ mb: 4, display: "block", fontWeight: 700 }}
+        >
+          Realtime gate entry logs showing system subscription and barcode
+          validations
         </Typography>
 
         <TableContainer>
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell sx={{ fontWeight: 800, color: "#64748b", fontSize: "0.8rem" }}>ACCESS AT</TableCell>
-                <TableCell sx={{ fontWeight: 800, color: "#64748b", fontSize: "0.8rem" }}>TYPE</TableCell>
-                <TableCell sx={{ fontWeight: 800, color: "#64748b", fontSize: "0.8rem" }}>ZONE</TableCell>
-                <TableCell sx={{ fontWeight: 800, color: "#64748b", fontSize: "0.8rem" }}>FACILITY</TableCell>
-                <TableCell sx={{ fontWeight: 800, color: "#64748b", fontSize: "0.8rem" }}>USER / MEMBER</TableCell>
-                <TableCell sx={{ fontWeight: 800, color: "#64748b", fontSize: "0.8rem" }}>ROLE</TableCell>
-                <TableCell sx={{ fontWeight: 800, color: "#64748b", fontSize: "0.8rem" }}>CARD NUMBER</TableCell>
+                <TableCell
+                  sx={{ fontWeight: 800, color: "#64748b", fontSize: "0.8rem" }}
+                >
+                  ACCESS AT
+                </TableCell>
+                <TableCell
+                  sx={{ fontWeight: 800, color: "#64748b", fontSize: "0.8rem" }}
+                >
+                  TYPE
+                </TableCell>
+                <TableCell
+                  sx={{ fontWeight: 800, color: "#64748b", fontSize: "0.8rem" }}
+                >
+                  ZONE
+                </TableCell>
+                <TableCell
+                  sx={{ fontWeight: 800, color: "#64748b", fontSize: "0.8rem" }}
+                >
+                  FACILITY
+                </TableCell>
+                <TableCell
+                  sx={{ fontWeight: 800, color: "#64748b", fontSize: "0.8rem" }}
+                >
+                  USER / MEMBER
+                </TableCell>
+                <TableCell
+                  sx={{ fontWeight: 800, color: "#64748b", fontSize: "0.8rem" }}
+                >
+                  ROLE
+                </TableCell>
+                <TableCell
+                  sx={{ fontWeight: 800, color: "#64748b", fontSize: "0.8rem" }}
+                >
+                  CARD NUMBER
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -860,31 +926,75 @@ export default function GetAnalytics() {
               ) : accessEvents.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} align="center" sx={{ py: 6 }}>
-                    <Typography variant="body2" color="text.secondary">No access logs found</Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      No access logs found
+                    </Typography>
                   </TableCell>
                 </TableRow>
               ) : (
                 accessEvents.map((log) => (
                   <TableRow key={log.id} hover>
-                    <TableCell sx={{ fontWeight: 700, fontSize: "0.85rem", color: "#091542" }}>
+                    <TableCell
+                      sx={{
+                        fontWeight: 700,
+                        fontSize: "0.85rem",
+                        color: "#091542",
+                      }}
+                    >
                       {new Date(log.accessAt).toLocaleString()}
                     </TableCell>
-                    <TableCell sx={{ fontWeight: 700, fontSize: "0.85rem", color: "#475569" }}>
+                    <TableCell
+                      sx={{
+                        fontWeight: 700,
+                        fontSize: "0.85rem",
+                        color: "#475569",
+                      }}
+                    >
                       {log.accessType}
                     </TableCell>
-                    <TableCell sx={{ fontWeight: 700, fontSize: "0.85rem", color: "#475569" }}>
+                    <TableCell
+                      sx={{
+                        fontWeight: 700,
+                        fontSize: "0.85rem",
+                        color: "#475569",
+                      }}
+                    >
                       {log.accessZone}
                     </TableCell>
-                    <TableCell sx={{ fontWeight: 700, fontSize: "0.85rem", color: "#2c4d93" }}>
+                    <TableCell
+                      sx={{
+                        fontWeight: 700,
+                        fontSize: "0.85rem",
+                        color: "#2c4d93",
+                      }}
+                    >
                       {log.facilityName}
                     </TableCell>
-                    <TableCell sx={{ fontWeight: 700, fontSize: "0.85rem", color: "#091542" }}>
+                    <TableCell
+                      sx={{
+                        fontWeight: 700,
+                        fontSize: "0.85rem",
+                        color: "#091542",
+                      }}
+                    >
                       {log.userName}
                     </TableCell>
-                    <TableCell sx={{ fontWeight: 700, fontSize: "0.85rem", color: "#475569" }}>
+                    <TableCell
+                      sx={{
+                        fontWeight: 700,
+                        fontSize: "0.85rem",
+                        color: "#475569",
+                      }}
+                    >
                       {log.userRole}
                     </TableCell>
-                    <TableCell sx={{ fontWeight: 700, fontSize: "0.85rem", color: "#64748b" }}>
+                    <TableCell
+                      sx={{
+                        fontWeight: 700,
+                        fontSize: "0.85rem",
+                        color: "#64748b",
+                      }}
+                    >
                       {log.cardNumber || "N/A"}
                     </TableCell>
                   </TableRow>
@@ -894,7 +1004,12 @@ export default function GetAnalytics() {
           </Table>
         </TableContainer>
 
-        <Stack direction="row" justifyContent="flex-end" spacing={1} sx={{ mt: 3 }}>
+        <Stack
+          direction="row"
+          justifyContent="flex-end"
+          spacing={1}
+          sx={{ mt: 3 }}
+        >
           <IconButton
             size="small"
             onClick={() => setAccessPage((p) => Math.max(1, p - 1))}
@@ -902,7 +1017,10 @@ export default function GetAnalytics() {
           >
             <PrevIcon fontSize="small" />
           </IconButton>
-          <Typography variant="caption" sx={{ alignSelf: "center", fontWeight: 800, px: 1 }}>
+          <Typography
+            variant="caption"
+            sx={{ alignSelf: "center", fontWeight: 800, px: 1 }}
+          >
             Page {accessPage}
           </Typography>
           <IconButton

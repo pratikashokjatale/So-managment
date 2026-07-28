@@ -9,10 +9,15 @@ import {
   Chip,
   Switch,
   Stack,
+  InputAdornment
 } from "@mui/material";
 import GppGoodOutlinedIcon from "@mui/icons-material/GppGoodOutlined";
 import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
 import ToggleOnOutlinedIcon from "@mui/icons-material/ToggleOnOutlined";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import SettingsIcon from "@mui/icons-material/Settings";
+import EventAvailableIcon from "@mui/icons-material/EventAvailable";
+import GroupIcon from "@mui/icons-material/Group";
 import { fieldSx, sectionCardSx, sectionHeaderIconSx } from "./formStyles";
 
 function SectionHeader({ icon, title, subtitle, color, bgColor }: any) {
@@ -89,6 +94,15 @@ export default function FacilityAccessRules({ data, onChange, errors }: Props) {
               helperText=" "
               sx={fieldSx}
               InputLabelProps={{ shrink: true }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                      <SettingsIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                    </Box>
+                  </InputAdornment>
+                ),
+              }}
             >
               {Object.entries(ACCESS_TYPE_INFO).map(([val, info]) => (
                 <MenuItem key={val} value={val} sx={{ fontFamily: "'Inter', sans-serif" }}>{info.label}</MenuItem>
@@ -104,6 +118,15 @@ export default function FacilityAccessRules({ data, onChange, errors }: Props) {
               helperText={data.accessType === "SUBSCRIPTION" ? "Not applicable" : "How time slots are structured"}
               sx={fieldSx}
               InputLabelProps={{ shrink: true }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                      <EventAvailableIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                    </Box>
+                  </InputAdornment>
+                ),
+              }}
             >
               <MenuItem value="SLOT" sx={{ fontFamily: "'Inter', sans-serif" }}>Slot Booking</MenuItem>
               <MenuItem value="CAPACITY" sx={{ fontFamily: "'Inter', sans-serif" }}>Capacity-based</MenuItem>
@@ -171,6 +194,15 @@ export default function FacilityAccessRules({ data, onChange, errors }: Props) {
                   helperText={errors.capacity || "Max people at once"}
                   sx={fieldSx}
                   InputLabelProps={{ shrink: true }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                          <GroupIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                        </Box>
+                      </InputAdornment>
+                    ),
+                  }}
                 />
               </Grid>
               <Grid size={{ xs: 12, md: 6 }}>
@@ -182,6 +214,15 @@ export default function FacilityAccessRules({ data, onChange, errors }: Props) {
                   helperText="Parallel bookings / courts"
                   sx={fieldSx}
                   InputLabelProps={{ shrink: true }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                          <AccessTimeIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                        </Box>
+                      </InputAdornment>
+                    ),
+                  }}
                 />
               </Grid>
               <Grid size={{ xs: 12, md: 6 }}>
@@ -205,6 +246,15 @@ export default function FacilityAccessRules({ data, onChange, errors }: Props) {
                 helperText={errors.capacity || "Max people allowed in the facility at once"}
                 sx={fieldSx}
                 InputLabelProps={{ shrink: true }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                        <GroupIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
               />
             </Grid>
           )}

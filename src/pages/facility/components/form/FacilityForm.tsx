@@ -50,28 +50,7 @@ export default function FacilityForm({ data, onChange, onSubmit, errors, isLoadi
         mb: 3,
       }}>
         {/* Progress bar */}
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-          <Typography variant="body2" color="text.secondary" fontWeight={700}>
-            Step {activeStep + 1} of {STEPS.length}
-          </Typography>
-          <Typography variant="body2" color="text.secondary" fontWeight={700}>
-            {Math.round(progress)}% complete
-          </Typography>
-        </Box>
-        <LinearProgress
-          variant="determinate"
-          value={progress}
-          sx={{
-            height: 6,
-            borderRadius: 99,
-            bgcolor: "#f1f5f9",
-            mb: 3,
-            "& .MuiLinearProgress-bar": {
-              bgcolor: "#091542",
-              borderRadius: 99,
-            },
-          }}
-        />
+        
 
         {/* Step indicators */}
         <Stack direction="row" spacing={0} sx={{ position: "relative" }}>

@@ -221,27 +221,32 @@ export default function GetReport() {
     }
   };
 
-  const statCardSx = (color: string) => ({
-    p: 2,
-    borderRadius: "12px",
-    border: "1px solid #f1f5f9",
-    borderLeft: `4px solid ${color}`,
+  const statCardSx = (color: string, delay: string = "0s") => ({
+    p: 2.5,
+    borderRadius: "16px",
+    border: `1px solid ${color}20`,
     bgcolor: "white",
-    boxShadow: "0 4px 6px -1px rgba(0,0,0,0.01), 0 2px 4px -1px rgba(0,0,0,0.01)",
+    position: "relative",
+    overflow: "hidden",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.02), 0 2px 4px rgba(0,0,0,0.02)",
     transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+    animation: `fadeInUp 0.6s ease-out ${delay} forwards`,
+    opacity: 0,
     "&:hover": {
-      transform: "translateY(-2px)",
-      boxShadow: "0 16px 24px -10px rgba(9, 21, 66, 0.06)",
-      borderColor: "#e2e8f0"
+      transform: "translateY(-4px)",
+      boxShadow: `0 12px 24px -8px ${color}40`,
+      borderColor: `${color}40`
     }
   });
 
   const mainCardSx = {
     p: 3,
-    borderRadius: "16px",
+    borderRadius: "20px",
     border: "1px solid #f1f5f9",
     bgcolor: "white",
-    boxShadow: "0 4px 20px rgba(9, 21, 66, 0.02)"
+    boxShadow: "0 8px 32px rgba(9, 21, 66, 0.04)",
+    animation: "fadeInUp 0.6s ease-out forwards",
+    opacity: 0,
   };
 
   const selectSx = {
@@ -254,6 +259,27 @@ export default function GetReport() {
 
   return (
     <Box sx={{ p: { xs: 2, md: 3 }, bgcolor: "#f8fafc", minHeight: "100vh" }}>
+      <style>{`
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulseGlow {
+          0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); transform: scale(1); }
+          70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); transform: scale(1.05); }
+          100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); transform: scale(1); }
+        }
+        @keyframes gradientShift {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        @keyframes progressFlow {
+          0% { background-position: 100% 0; }
+          100% { background-position: -100% 0; }
+        }
+      `}</style>
+
       {/* Header */}
       <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems="start" sx={{ mb: 3 }} spacing={2}>
         <Box>
@@ -278,12 +304,7 @@ export default function GetReport() {
           display: "inline-flex",
           minHeight: 48,
           "& .MuiTabs-indicator": {
-            bgcolor: "white",
-            borderRadius: "10px",
-            height: "calc(100% - 8px)",
-            top: 4,
-            zIndex: 0,
-            boxShadow: "0 4px 12px rgba(0,0,0,0.05)"
+            display: "none"
           },
           "& .MuiTab-root": {
             textTransform: "none",
@@ -295,9 +316,11 @@ export default function GetReport() {
             minHeight: 40,
             py: 1,
             px: 3,
-            transition: "color 0.2s",
+            transition: "all 0.2s ease-in-out",
             "&.Mui-selected": {
-              color: "#091542"
+              color: "#091542",
+              bgcolor: "white",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.05)"
             }
           }
         }}
@@ -317,9 +340,9 @@ export default function GetReport() {
             <Grid container spacing={2}>
               {/* Monthly Revenue */}
               <Grid size={{ xs: 12, md: 3 }}>
-                <Paper elevation={0} sx={statCardSx("#1d4ed8")}>
+                <Paper elevation={0} sx={statCardSx("#1d4ed8", "0.1s")}>
                   <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
-                    <Box sx={{ p: 1, bgcolor: "#eff6ff", borderRadius: "12px", color: "#1d4ed8", display: "flex" }}>
+                    <Box sx={{ p: 1.2, bgcolor: "#eff6ff", borderRadius: "50%", color: "#1d4ed8", display: "flex" }}>
                       <RevenueIcon />
                     </Box>
                     <Typography variant="caption" fontWeight="900" color="#64748b">
@@ -337,9 +360,9 @@ export default function GetReport() {
 
               {/* Active Users */}
               <Grid size={{ xs: 12, md: 3 }}>
-                <Paper elevation={0} sx={statCardSx("#10b981")}>
+                <Paper elevation={0} sx={statCardSx("#10b981", "0.2s")}>
                   <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
-                    <Box sx={{ p: 1, bgcolor: "#f0fdf4", borderRadius: "12px", color: "#10b981", display: "flex" }}>
+                    <Box sx={{ p: 1.2, bgcolor: "#f0fdf4", borderRadius: "50%", color: "#10b981", display: "flex" }}>
                       <TrafficIcon />
                     </Box>
                     <Typography variant="caption" fontWeight="900" color="#64748b">
@@ -357,9 +380,9 @@ export default function GetReport() {
 
               {/* Booking Statistics */}
               <Grid size={{ xs: 12, md: 3 }}>
-                <Paper elevation={0} sx={statCardSx("#ea580c")}>
+                <Paper elevation={0} sx={statCardSx("#ea580c", "0.3s")}>
                   <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
-                    <Box sx={{ p: 1, bgcolor: "#fff7ed", borderRadius: "12px", color: "#ea580c", display: "flex" }}>
+                    <Box sx={{ p: 1.2, bgcolor: "#fff7ed", borderRadius: "50%", color: "#ea580c", display: "flex" }}>
                       <FileIcon />
                     </Box>
                     <Typography variant="caption" fontWeight="900" color="#64748b">
@@ -377,9 +400,9 @@ export default function GetReport() {
 
               {/* Emergency Alerts */}
               <Grid size={{ xs: 12, md: 3 }}>
-                <Paper elevation={0} sx={statCardSx("#ef4444")}>
+                <Paper elevation={0} sx={statCardSx("#ef4444", "0.4s")}>
                   <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
-                    <Box sx={{ p: 1, bgcolor: "#fef2f2", borderRadius: "12px", color: "#ef4444", display: "flex" }}>
+                    <Box sx={{ p: 1.2, bgcolor: "#fef2f2", borderRadius: "50%", color: "#ef4444", display: "flex" }}>
                       <AlertIcon />
                     </Box>
                     <Typography variant="caption" fontWeight="900" color="#64748b">
@@ -400,14 +423,16 @@ export default function GetReport() {
                 <Paper
                   elevation={0}
                   sx={{
-                    p: 3,
-                    borderRadius: "16px",
-                    background: "linear-gradient(135deg, #091542 0%, #1e3a8a 50%, #3b82f6 100%)",
+                    borderRadius: "20px",
+                    background: "linear-gradient(135deg, #091542 0%, #1e3a8a 40%, #3b82f6 100%)",
+                    backgroundSize: "200% 200%",
                     color: "white",
-                    boxShadow: "0 10px 25px -5px rgba(29, 78, 216, 0.25)",
+                    boxShadow: "0 10px 30px -5px rgba(29, 78, 216, 0.3)",
                     position: "relative",
                     overflow: "hidden",
                     border: "none",
+                    animation: "gradientShift 8s ease infinite, fadeInUp 0.6s ease-out 0.5s forwards",
+                    opacity: 0,
                     "&::after": {
                       content: '""',
                       position: "absolute",
@@ -415,19 +440,21 @@ export default function GetReport() {
                       left: 0,
                       width: "100%",
                       height: "100%",
-                      background: "radial-gradient(circle at 80% 20%, rgba(255,255,255,0.12) 0%, transparent 60%)",
+                      background: "radial-gradient(circle at 80% 20%, rgba(255,255,255,0.15) 0%, transparent 60%)",
                       pointerEvents: "none"
                     }
                   }}
                 >
-                  <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
-                    <Box sx={{ p: 1, bgcolor: "rgba(255,255,255,0.1)", borderRadius: "12px", color: "white", display: "flex" }}><AIIcon /></Box>
-                    <Typography variant="caption" fontWeight="900" color="rgba(255,255,255,0.8)" sx={{ letterSpacing: 0.5 }}>AI OPERATIONAL SYSTEM SUGGESTION</Typography>
-                  </Stack>
-                  <Typography variant="body1" fontWeight="700" sx={{ mb: 1.5, fontSize: "1.05rem", lineHeight: 1.6 }}>
-                    Allocate additional housekeeping staff on weekends based on high confirmed booking counts. Average active wallet balance is ₹{Number(overview?.wallet?.averageBalance || 0).toLocaleString("en-IN")}.
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.6)", fontWeight: 800, letterSpacing: 0.5 }}>DASHBOARD COMPILED REALTIME</Typography>
+                  <Box sx={{ p: 4, position: "relative", zIndex: 1, display: "flex", flexDirection: "column", gap: 2, background: "rgba(255, 255, 255, 0.03)", backdropFilter: "blur(12px)" }}>
+                    <Stack direction="row" spacing={2} alignItems="center">
+                      <Box sx={{ p: 1.2, bgcolor: "rgba(255,255,255,0.15)", borderRadius: "50%", color: "white", display: "flex", animation: "pulseGlow 2s infinite" }}><AIIcon /></Box>
+                      <Typography variant="caption" fontWeight="900" color="rgba(255,255,255,0.9)" sx={{ letterSpacing: 0.8 }}>AI OPERATIONAL SYSTEM SUGGESTION</Typography>
+                    </Stack>
+                    <Typography variant="h6" fontWeight="800" sx={{ mb: 1, fontSize: "1.1rem", lineHeight: 1.6, color: "white" }}>
+                      Allocate additional housekeeping staff on weekends based on high confirmed booking counts. Average active wallet balance is ₹{Number(overview?.wallet?.averageBalance || 0).toLocaleString("en-IN")}.
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.7)", fontWeight: 800, letterSpacing: 0.5, display: "inline-block", py: 0.5, px: 1.5, bgcolor: "rgba(0,0,0,0.2)", borderRadius: "8px", width: "fit-content" }}>DASHBOARD COMPILED REALTIME</Typography>
+                  </Box>
                 </Paper>
               </Grid>
 
@@ -472,8 +499,8 @@ export default function GetReport() {
                               Total Accesses: {fac.totalAccess}
                             </Typography>
                           </Box>
-                          <Box sx={{ height: 10, bgcolor: "#f1f5f9", borderRadius: "5px", overflow: "hidden", border: "1px solid #e2e8f0" }}>
-                            <Box sx={{ height: "100%", width: `${percentage}%`, background: "linear-gradient(90deg, #1d4ed8 0%, #3b82f6 100%)", borderRadius: "5px" }} />
+                          <Box sx={{ height: 10, bgcolor: "#f1f5f9", borderRadius: "8px", overflow: "hidden", border: "1px solid #e2e8f0" }}>
+                            <Box sx={{ height: "100%", width: `${percentage}%`, background: "linear-gradient(90deg, #1d4ed8 0%, #60a5fa 50%, #1d4ed8 100%)", backgroundSize: "200% 100%", animation: "progressFlow 3s linear infinite", borderRadius: "8px" }} />
                           </Box>
                           <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: "block", fontWeight: 700 }}>
                             {fac.confirmedBookings} Bookings · {fac.activeSubscriptions} Active Subscriptions
@@ -499,19 +526,19 @@ export default function GetReport() {
                   <Stack spacing={3}>
                     <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                       <Typography variant="body2" fontWeight="800" color="#091542">Residents</Typography>
-                      <Chip label={overview?.users?.byRole?.RESIDENT || 0} size="small" sx={{ fontWeight: 900, bgcolor: "#eff6ff", color: "#1d4ed8" }} />
+                      <Chip label={overview?.users?.byRole?.RESIDENT || 0} size="small" sx={{ fontWeight: 900, bgcolor: "#eff6ff", color: "#1d4ed8", borderRadius: "8px", px: 1 }} />
                     </Box>
                     <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                       <Typography variant="body2" fontWeight="800" color="#091542">Guests</Typography>
-                      <Chip label={overview?.users?.byRole?.GUEST || 0} size="small" sx={{ fontWeight: 900, bgcolor: "#fdf2f8", color: "#db2777" }} />
+                      <Chip label={overview?.users?.byRole?.GUEST || 0} size="small" sx={{ fontWeight: 900, bgcolor: "#fdf2f8", color: "#db2777", borderRadius: "8px", px: 1 }} />
                     </Box>
                     <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                       <Typography variant="body2" fontWeight="800" color="#091542">Staff Crew</Typography>
-                      <Chip label={overview?.users?.byRole?.STAFF || 0} size="small" sx={{ fontWeight: 900, bgcolor: "#f0fdf4", color: "#16a34a" }} />
+                      <Chip label={overview?.users?.byRole?.STAFF || 0} size="small" sx={{ fontWeight: 900, bgcolor: "#f0fdf4", color: "#16a34a", borderRadius: "8px", px: 1 }} />
                     </Box>
                     <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                       <Typography variant="body2" fontWeight="800" color="#091542">System Admins</Typography>
-                      <Chip label={overview?.users?.byRole?.ADMIN || 0} size="small" sx={{ fontWeight: 900, bgcolor: "#faf5ff", color: "#7c3aed" }} />
+                      <Chip label={overview?.users?.byRole?.ADMIN || 0} size="small" sx={{ fontWeight: 900, bgcolor: "#faf5ff", color: "#7c3aed", borderRadius: "8px", px: 1 }} />
                     </Box>
                   </Stack>
                 </Paper>

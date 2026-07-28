@@ -21,6 +21,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  InputAdornment,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import BackButton from "@/components/BackButton";
@@ -35,6 +36,13 @@ import {
   CheckCircle as SuccessIcon,
   CloudUpload as UploadIcon,
   Close as CloseIcon,
+  PersonOutline as PersonOutlineIcon,
+  PhoneOutlined as PhoneOutlinedIcon,
+  EmailOutlined as EmailOutlinedIcon,
+  LockOutlined as LockOutlinedIcon,
+  BadgeOutlined as BadgeOutlinedIcon,
+  EventOutlined as EventOutlinedIcon,
+  CreditCardOutlined as CreditCardOutlinedIcon,
 } from "@mui/icons-material";
 import {
   getCachedProjects,
@@ -66,15 +74,7 @@ interface FamilyMember {
 const AADHAAR_URL = "";
 const PAN_URL = "";
 
-interface AddResidentProps {
-  open?: boolean;
-  onClose?: (success?: boolean) => void;
-}
-
-export default function AddResident({
-  open,
-  onClose,
-}: AddResidentProps = {}) {
+export default function AddResident() {
   const navigate = useNavigate();
   const [activeStep, setActiveStep] = useState(0);
 
@@ -425,11 +425,7 @@ export default function AddResident({
       }
 
       toast.success("Resident enrolled successfully");
-      if (onClose) {
-        onClose(true);
-      } else {
-        navigate("/residents");
-      }
+      navigate('/residents');
     } catch (error: any) {
       toast.error(error?.message || "Failed to enroll resident");
     } finally {
@@ -506,6 +502,15 @@ export default function AddResident({
                   setResidentData({ ...residentData, fullName: e.target.value })
                 }
                 sx={{ "& fieldset": { borderRadius: "12px" } }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <PersonOutlineIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
               />
               <TextField
                 fullWidth
@@ -517,6 +522,15 @@ export default function AddResident({
                   setResidentData({ ...residentData, mobile: e.target.value })
                 }
                 sx={{ "& fieldset": { borderRadius: "12px" } }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <PhoneOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
               />
               <TextField
                 fullWidth
@@ -528,6 +542,15 @@ export default function AddResident({
                   setResidentData({ ...residentData, email: e.target.value })
                 }
                 sx={{ "& fieldset": { borderRadius: "12px" } }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <EmailOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
               />
               <TextField
                 fullWidth
@@ -540,6 +563,15 @@ export default function AddResident({
                   setResidentData({ ...residentData, password: e.target.value })
                 }
                 sx={{ "& fieldset": { borderRadius: "12px" } }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <LockOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
               />
               <TextField
                 fullWidth
@@ -552,6 +584,15 @@ export default function AddResident({
                 }
                 helperText="Max 8 alphanumeric uppercase characters"
                 sx={{ "& fieldset": { borderRadius: "12px" } }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <CreditCardOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
               />
               <TextField
                 fullWidth
@@ -562,6 +603,15 @@ export default function AddResident({
                   setProjectId(e.target.value);
                 }}
                 sx={{ "& fieldset": { borderRadius: "12px" } }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
               >
                 {projects.map((p) => (
                   <MenuItem key={p.id} value={p.id}>
@@ -579,6 +629,15 @@ export default function AddResident({
                   setTowerId(e.target.value);
                 }}
                 sx={{ "& fieldset": { borderRadius: "12px" } }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
               >
                 {towers.map((t) => (
                   <MenuItem key={t.id} value={t.id}>
@@ -594,6 +653,15 @@ export default function AddResident({
                 disabled={!towerId}
                 onChange={(e) => handleFlatChange(e.target.value)}
                 sx={{ "& fieldset": { borderRadius: "12px" } }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
               >
                 {flats.map((f) => (
                   <MenuItem key={f.id} value={f.id}>
@@ -616,6 +684,15 @@ export default function AddResident({
                   });
                 }}
                 sx={{ "& fieldset": { borderRadius: "12px" } }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <BadgeOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
               >
                 <MenuItem value="Owner">Owner</MenuItem>
                 <MenuItem value="Tenant">Tenant</MenuItem>
@@ -632,6 +709,15 @@ export default function AddResident({
                   }
                   InputLabelProps={{ shrink: true }}
                   sx={{ "& fieldset": { borderRadius: "12px" } }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                          <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                        </Box>
+                      </InputAdornment>
+                    ),
+                  }}
                 />
               )}
 
@@ -649,6 +735,13 @@ export default function AddResident({
                 }
                 sx={{ "& fieldset": { borderRadius: "12px" } }}
                 InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <CreditCardOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
                   endAdornment: (
                     <IconButton
                       color={aadhaarFile ? "success" : "primary"}
@@ -690,6 +783,13 @@ export default function AddResident({
                 }
                 sx={{ "& fieldset": { borderRadius: "12px" } }}
                 InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <CreditCardOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
                   endAdornment: (
                     <IconButton
                       color={panFile ? "success" : "primary"}
@@ -1193,20 +1293,17 @@ export default function AddResident({
   };
 
   const formContent = (
-    <Box sx={{ maxWidth: 800, mx: "auto", pt: open ? 2 : 0 }}>
-      {!open && (
-        <Box
-          sx={{
-            mb: 5,
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          
-          <BackButton to="/residents" label="Back to Residents" />
-        </Box>
-      )}
+    <Box sx={{ maxWidth: 800, mx: "auto", pt: 0 }}>
+      <Box
+        sx={{
+          mb: 5,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <BackButton to="/residents" label="Back to Residents" />
+      </Box>
 
       <Box sx={{ maxWidth: 800, mx: "auto" }}>
         <Stepper activeStep={activeStep} sx={{ mb: 6 }}>
@@ -1227,16 +1324,12 @@ export default function AddResident({
         </Stepper>
 
         <Box
-          sx={
-            open
-              ? { p: { xs: 1, md: 2 } }
-              : {
-                  border: "1px solid #f1f5f9",
-                  borderRadius: "24px",
-                  p: { xs: 3, md: 5 },
-                  bgcolor: "white",
-                }
-          }
+          sx={{
+            border: "1px solid #f1f5f9",
+            borderRadius: "24px",
+            p: { xs: 3, md: 5 },
+            bgcolor: "white",
+          }}
         >
           {renderStepContent(activeStep)}
 
@@ -1300,35 +1393,16 @@ export default function AddResident({
 
   return (
     <>
-      {open ? (
-        <Dialog
-          open={open}
-          onClose={() => onClose && onClose()}
-          maxWidth="md"
-          fullWidth
-          sx={{ "& .MuiDialog-container": { pl: { md: "var(--sidebar-width, 280px)" } } }}
-          PaperProps={{ sx: { borderRadius: "24px", p: 2 } }}
-        >
-          <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 2, borderBottom: '1px solid #f1f5f9', mb: 2 }}>
-            <Typography variant="h5" fontWeight="900" color="#091542">Resident Enrollment</Typography>
-            <IconButton onClick={() => onClose && onClose()} size="small" edge="end">
-              <CloseIcon />
-            </IconButton>
-          </DialogTitle>
-          <DialogContent sx={{ p: 0 }}>{formContent}</DialogContent>
-        </Dialog>
-      ) : (
-        <Box
-          sx={{
-            p: { xs: 2, md: 4 },
-            bgcolor: "#ffffff",
-            minHeight: "100vh",
-            borderRadius: 2,
-          }}
-        >
-          {formContent}
-        </Box>
-      )}
+      <Box
+        sx={{
+          p: { xs: 2, md: 4 },
+          bgcolor: "#ffffff",
+          minHeight: "100vh",
+          borderRadius: 2,
+        }}
+      >
+        {formContent}
+      </Box>
 
       <Dialog
         open={isFamilyDialogOpen}
@@ -1358,6 +1432,15 @@ export default function AddResident({
                 setNewMember({ ...newMember, name: e.target.value })
               }
               sx={{ "& fieldset": { borderRadius: "10px" } }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                      <PersonOutlineIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                    </Box>
+                  </InputAdornment>
+                ),
+              }}
             />
             <TextField
               fullWidth
@@ -1368,6 +1451,15 @@ export default function AddResident({
                 setNewMember({ ...newMember, relationship: e.target.value })
               }
               sx={{ "& fieldset": { borderRadius: "10px" } }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                      <BadgeOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                    </Box>
+                  </InputAdornment>
+                ),
+              }}
             >
               <MenuItem value="Spouse">Spouse</MenuItem>
               <MenuItem value="Child">Child</MenuItem>
@@ -1382,6 +1474,15 @@ export default function AddResident({
                 setNewMember({ ...newMember, mobile: e.target.value })
               }
               sx={{ "& fieldset": { borderRadius: "10px" } }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                      <PhoneOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                    </Box>
+                  </InputAdornment>
+                ),
+              }}
             />
             <TextField
               fullWidth
@@ -1391,6 +1492,15 @@ export default function AddResident({
                 setNewMember({ ...newMember, email: e.target.value })
               }
               sx={{ "& fieldset": { borderRadius: "10px" } }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                      <EmailOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                    </Box>
+                  </InputAdornment>
+                ),
+              }}
             />
             <TextField
               fullWidth
@@ -1402,6 +1512,15 @@ export default function AddResident({
                 setNewMember({ ...newMember, dateOfBirth: e.target.value })
               }
               sx={{ "& fieldset": { borderRadius: "10px" } }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                      <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                    </Box>
+                  </InputAdornment>
+                ),
+              }}
             />
             <TextField
               fullWidth
@@ -1412,6 +1531,15 @@ export default function AddResident({
                 setNewMember({ ...newMember, gender: e.target.value })
               }
               sx={{ "& fieldset": { borderRadius: "10px" } }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                      <PersonOutlineIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                    </Box>
+                  </InputAdornment>
+                ),
+              }}
             >
               <MenuItem value="Male">Male</MenuItem>
               <MenuItem value="Female">Female</MenuItem>
@@ -1426,6 +1554,15 @@ export default function AddResident({
                 setNewMember({ ...newMember, aadhaar: e.target.value })
               }
               sx={{ "& fieldset": { borderRadius: "10px" } }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                      <CreditCardOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                    </Box>
+                  </InputAdornment>
+                ),
+              }}
             />
             <TextField
               fullWidth
@@ -1436,6 +1573,15 @@ export default function AddResident({
                 setNewMember({ ...newMember, pan: e.target.value })
               }
               sx={{ "& fieldset": { borderRadius: "10px" } }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                      <CreditCardOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                    </Box>
+                  </InputAdornment>
+                ),
+              }}
             />
             <TextField
               fullWidth
@@ -1446,6 +1592,15 @@ export default function AddResident({
                 setNewMember({ ...newMember, vcard: e.target.value })
               }
               sx={{ "& fieldset": { borderRadius: "10px" } }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                      <CreditCardOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                    </Box>
+                  </InputAdornment>
+                ),
+              }}
             />
             <Box sx={{ gridColumn: "1 / -1", mt: 1 }}>
               <Typography variant="caption" fontWeight="800" color="text.secondary" sx={{ display: 'block', mb: 1 }}>

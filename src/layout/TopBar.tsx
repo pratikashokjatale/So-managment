@@ -7,10 +7,7 @@ import {
   useTheme,
   Button,
 } from "@mui/material";
-import { 
-  Menu as MenuIcon, 
-  Logout as LogoutIcon,
-} from "@mui/icons-material";
+import { Menu as MenuIcon, Logout as LogoutIcon } from "@mui/icons-material";
 import { useAuth } from "@/contexts/AuthContext";
 import logoImg from "@/assets/logo.jpeg";
 
@@ -19,9 +16,7 @@ interface TopBarProps {
   drawerWidth: number;
 }
 
-export default function TopBar({
-  handleDrawerToggle,
-}: TopBarProps) {
+export default function TopBar({ handleDrawerToggle }: TopBarProps) {
   const theme = useTheme();
   const { logout } = useAuth();
 
@@ -40,14 +35,14 @@ export default function TopBar({
         borderBottom: `1px solid ${theme.palette.divider}`,
       }}
     >
-      <Toolbar 
-        sx={{ 
-          justifyContent: "space-between", 
-          minHeight: 50, 
+      <Toolbar
+        sx={{
+          justifyContent: "space-between",
+          minHeight: 50,
           width: "100%",
           maxWidth: "1350px",
           margin: "0 auto",
-          px: { xs: 2, md: 4, lg: 8 } 
+          px: { xs: 2, md: 4, lg: 8 },
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -59,9 +54,9 @@ export default function TopBar({
           >
             <MenuIcon />
           </IconButton>
-          
+
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Box 
+            <Box
               component="img"
               src={logoImg}
               alt="Logo"
@@ -70,18 +65,18 @@ export default function TopBar({
                 height: 34,
                 borderRadius: "8px",
                 objectFit: "cover",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.1)"
+                boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
               }}
             />
             <Typography
               variant="h6"
-              sx={{ 
-                color: "#0f172a", 
+              sx={{
+                color: "#0f172a",
                 fontFamily: '"Playfair Display", serif',
-                fontWeight: 700, 
+                fontWeight: 700,
                 fontSize: "1.25rem",
                 letterSpacing: "-0.5px",
-                display: { xs: "none", sm: "block" }
+                display: { xs: "none", sm: "block" },
               }}
             >
               Club Marbella
@@ -103,7 +98,7 @@ export default function TopBar({
               textTransform: "none",
               "&:hover": {
                 bgcolor: "#f1f5f9",
-              }
+              },
             }}
           >
             Admin

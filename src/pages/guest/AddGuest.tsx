@@ -10,6 +10,12 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import EventOutlinedIcon from '@mui/icons-material/EventOutlined';
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import BackButton from '@/components/BackButton';
 import { addGuestApi, uploadDocumentApi } from '@/apis/guest';
 import { getAllFlatsApi } from '@/apis/flat';
@@ -241,19 +247,46 @@ export default function AddGuest() {
               <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField label="Full Name" fullWidth required value={name}
                   onChange={(e) => { setName(e.target.value); setErrors(p => ({ ...p, name: '' })); }}
-                  error={!!errors.name} helperText={errors.name} placeholder="e.g. Alice Walker" sx={inputSx} />
+                  error={!!errors.name} helperText={errors.name} placeholder="e.g. Alice Walker" sx={inputSx}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                          <PersonOutlineIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                        </Box>
+                      </InputAdornment>
+                    ),
+                  }} />
               </Grid>
 
               <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField label="Phone Number" fullWidth required value={phone}
                   onChange={(e) => { setPhone(e.target.value); setErrors(p => ({ ...p, phone: '' })); }}
-                  error={!!errors.phone} helperText={errors.phone} placeholder="+919999999998" sx={inputSx} />
+                  error={!!errors.phone} helperText={errors.phone} placeholder="+919999999998" sx={inputSx}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                          <PhoneOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                        </Box>
+                      </InputAdornment>
+                    ),
+                  }} />
               </Grid>
 
               <Grid size={{ xs: 12 }}>
                 <TextField label="Email Address" type="email" fullWidth required value={email}
                   onChange={(e) => { setEmail(e.target.value); setErrors(p => ({ ...p, email: '' })); }}
-                  error={!!errors.email} helperText={errors.email} placeholder="guest@example.com" sx={inputSx} />
+                  error={!!errors.email} helperText={errors.email} placeholder="guest@example.com" sx={inputSx}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                          <EmailOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                        </Box>
+                      </InputAdornment>
+                    ),
+                  }} />
               </Grid>
 
               <Grid size={{ xs: 12, sm: 6 }}>
@@ -261,6 +294,13 @@ export default function AddGuest() {
                   onChange={(e) => { setPassword(e.target.value); setErrors(p => ({ ...p, password: '' })); }}
                   error={!!errors.password} helperText={errors.password} placeholder="Min. 6 characters" sx={inputSx}
                   InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                          <LockOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                        </Box>
+                      </InputAdornment>
+                    ),
                     endAdornment: (
                       <InputAdornment position="end">
                         <MuiIconButton onClick={() => setShowPwd(v => !v)} edge="end">
@@ -276,7 +316,16 @@ export default function AddGuest() {
                   InputLabelProps={{ shrink: true }} value={stayEndsAt}
                   onChange={(e) => { setStayEndsAt(e.target.value); setErrors(p => ({ ...p, stayEndsAt: '' })); }}
                   error={!!errors.stayEndsAt} helperText={errors.stayEndsAt || 'Date when guest stay expires'}
-                  inputProps={{ min: new Date().toISOString().split('T')[0] }} sx={inputSx} />
+                  inputProps={{ min: new Date().toISOString().split('T')[0] }} sx={inputSx}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                          <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                        </Box>
+                      </InputAdornment>
+                    ),
+                  }} />
               </Grid>
 
               {/* Flat picker */}
@@ -285,7 +334,16 @@ export default function AddGuest() {
                   Assign Flat <Typography component="span" variant="caption" color="text.disabled">(optional)</Typography>
                 </Typography>
                 <TextField label="Search flat by number…" fullWidth value={flatSearch}
-                  onChange={(e) => setFlatSearch(e.target.value)} sx={{ ...inputSx, mb: 1.5 }} />
+                  onChange={(e) => setFlatSearch(e.target.value)} sx={{ ...inputSx, mb: 1.5 }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                          <SearchOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                        </Box>
+                      </InputAdornment>
+                    ),
+                  }} />
                 <Box sx={{ maxHeight: 170, overflowY: 'auto', border: '1px solid #e2e8f0', borderRadius: '12px' }}>
                   {filteredFlats.length === 0 ? (
                     <Box sx={{ p: 2 }}>

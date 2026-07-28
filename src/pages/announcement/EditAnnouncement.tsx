@@ -9,6 +9,13 @@ import CloudUploadOutlinedIcon from "@mui/icons-material/CloudUploadOutlined";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import EventOutlinedIcon from "@mui/icons-material/EventOutlined";
+import BadgeOutlinedIcon from "@mui/icons-material/BadgeOutlined";
+import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
+import SubjectOutlinedIcon from "@mui/icons-material/SubjectOutlined";
+import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
+import NotificationsActiveOutlinedIcon from "@mui/icons-material/NotificationsActiveOutlined";
+import PriorityHighOutlinedIcon from "@mui/icons-material/PriorityHighOutlined";
 import toast from "react-hot-toast";
 
 import FormCard from "@/components/FormCard";
@@ -242,6 +249,15 @@ export default function EditAnnouncement() {
                 value={projectId}
                 onChange={(e) => setProjectId(e.target.value)}
                 sx={textFieldSx}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
               >
                 <MenuItem value="all">All Projects (Global Broadcast)</MenuItem>
                 {projects.map((p) => (
@@ -261,6 +277,15 @@ export default function EditAnnouncement() {
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 sx={textFieldSx}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <BadgeOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
               >
                 {CATEGORIES.map((c) => (
                   <MenuItem key={c.value} value={c.value}>
@@ -280,6 +305,15 @@ export default function EditAnnouncement() {
                 error={!!errors.title}
                 helperText={errors.title}
                 sx={textFieldSx}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <NotificationsActiveOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
                 placeholder="e.g. Swimming Pool Maintenance on Sunday"
               />
             </Grid>
@@ -296,6 +330,15 @@ export default function EditAnnouncement() {
                 error={!!errors.body}
                 helperText={errors.body}
                 sx={textFieldSx}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <SubjectOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
                 placeholder="Enter details of the announcement..."
               />
             </Grid>
@@ -311,6 +354,15 @@ export default function EditAnnouncement() {
                 error={!!errors.priority}
                 helperText={errors.priority}
                 sx={textFieldSx}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <PriorityHighOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
               >
                 {PRIORITIES.map((p) => (
                   <MenuItem key={p.value} value={p.value}>
@@ -337,6 +389,15 @@ export default function EditAnnouncement() {
                 error={!!errors.audienceRoles}
                 helperText={errors.audienceRoles}
                 sx={textFieldSx}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <GroupsOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
               >
                 {AUDIENCE_ROLES.map((r) => (
                   <MenuItem key={r.value} value={r.value}>
@@ -358,6 +419,13 @@ export default function EditAnnouncement() {
                 disabled={publishNow}
                 sx={textFieldSx}
                 InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
                   endAdornment: (
                     <InputAdornment position="end">
                       <AccessTimeIcon />
@@ -380,6 +448,13 @@ export default function EditAnnouncement() {
                 helperText={errors.expiresAt}
                 sx={textFieldSx}
                 InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
                   endAdornment: (
                     <InputAdornment position="end">
                       <AccessTimeIcon />

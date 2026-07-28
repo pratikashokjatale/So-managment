@@ -13,6 +13,13 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import CloudUploadOutlinedIcon from "@mui/icons-material/CloudUploadOutlined";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
+import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
+import BadgeOutlinedIcon from "@mui/icons-material/BadgeOutlined";
+import CreditCardOutlinedIcon from "@mui/icons-material/CreditCardOutlined";
+import EventOutlinedIcon from "@mui/icons-material/EventOutlined";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import toast from "react-hot-toast";
 import { getStaffById } from "@/utils/staffStore";
 import { getFacilities } from "@/utils/facilityStore";
@@ -430,6 +437,15 @@ export default function EditStaff() {
                 error={!!errors.projectId}
                 helperText={errors.projectId}
                 sx={textFieldSx}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
               >
                 {projects.map((p) => (
                   <MenuItem key={p.id} value={p.id}>
@@ -451,6 +467,15 @@ export default function EditStaff() {
                 error={!!errors.name}
                 helperText={errors.name}
                 sx={textFieldSx}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <PersonOutlineIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
                 placeholder="e.g. Sumanth Kumar"
               />
             </Grid>
@@ -463,6 +488,15 @@ export default function EditStaff() {
                 value={department}
                 onChange={(e) => setDepartment(e.target.value)}
                 sx={textFieldSx}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <BadgeOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
               >
                 {DEPARTMENTS.map((dept) => (
                   <MenuItem key={dept} value={dept}>
@@ -479,6 +513,15 @@ export default function EditStaff() {
                 value={designation}
                 onChange={(e) => setDesignation(e.target.value)}
                 sx={textFieldSx}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <BadgeOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
                 placeholder="e.g. Security Guard"
                 helperText="Specific role title (defaults to department name)"
               />
@@ -494,6 +537,15 @@ export default function EditStaff() {
                   value={facilityId}
                   onChange={(e) => setFacilityId(e.target.value)}
                   sx={textFieldSx}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                          <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                        </Box>
+                      </InputAdornment>
+                    ),
+                  }}
                   helperText="Assign the staff member to manage an active society facility"
                 >
                   {facilities.map((fac) => (
@@ -517,6 +569,15 @@ export default function EditStaff() {
                 error={!!errors.phone}
                 helperText={errors.phone}
                 sx={textFieldSx}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <PhoneOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
                 placeholder="e.g. 98765 00001"
               />
             </Grid>
@@ -530,6 +591,15 @@ export default function EditStaff() {
                 error={!!errors.email}
                 helperText={errors.email}
                 sx={textFieldSx}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <EmailOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
                 placeholder="e.g. sumanth.k@society.com"
               />
             </Grid>
@@ -544,6 +614,13 @@ export default function EditStaff() {
                 sx={textFieldSx}
                 placeholder="Password for staff login"
                 InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <LockOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton
@@ -567,6 +644,15 @@ export default function EditStaff() {
                 value={joiningDate}
                 onChange={(e) => setJoiningDate(e.target.value)}
                 sx={textFieldSx}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
               />
             </Grid>
 
@@ -579,6 +665,15 @@ export default function EditStaff() {
                 error={!!errors.emergencyContact}
                 helperText={errors.emergencyContact}
                 sx={textFieldSx}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <PhoneOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
                 placeholder="e.g. 98765 11111"
               />
             </Grid>
@@ -593,6 +688,15 @@ export default function EditStaff() {
                   setStatus(e.target.value as "Active" | "Inactive")
                 }
                 sx={textFieldSx}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <BadgeOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
               >
                 <MenuItem value="Active">Active</MenuItem>
                 <MenuItem value="Inactive">Inactive</MenuItem>
@@ -610,6 +714,15 @@ export default function EditStaff() {
                 error={!!errors.address}
                 helperText={errors.address}
                 sx={textFieldSx}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <PersonOutlineIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
                 placeholder="Street, City, State, ZIP..."
               />
             </Grid>
@@ -623,6 +736,15 @@ export default function EditStaff() {
                 value={employmentType}
                 onChange={(e) => setEmploymentType(e.target.value)}
                 sx={textFieldSx}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <BadgeOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
               >
                 <MenuItem value="FULL_TIME">Full Time</MenuItem>
                 <MenuItem value="PART_TIME">Part Time</MenuItem>
@@ -639,6 +761,15 @@ export default function EditStaff() {
                 value={attendanceMode}
                 onChange={(e) => setAttendanceMode(e.target.value)}
                 sx={textFieldSx}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <BadgeOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
               >
                 <MenuItem value="RFID">RFID Card</MenuItem>
                 <MenuItem value="BIOMETRIC">Biometric</MenuItem>
@@ -654,6 +785,13 @@ export default function EditStaff() {
                 onChange={(e) => setShiftStart(e.target.value)}
                 sx={textFieldSx}
                 InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
                   endAdornment: <InputAdornment position="end"><AccessTimeIcon /></InputAdornment>,
                 }}
                 placeholder="HH:mm"
@@ -668,6 +806,13 @@ export default function EditStaff() {
                 onChange={(e) => setShiftEnd(e.target.value)}
                 sx={textFieldSx}
                 InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
                   endAdornment: <InputAdornment position="end"><AccessTimeIcon /></InputAdornment>,
                 }}
                 placeholder="HH:mm"
@@ -722,6 +867,15 @@ export default function EditStaff() {
                 value={accessLevel}
                 onChange={(e) => setAccessLevel(e.target.value)}
                 sx={textFieldSx}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <LockOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
               >
                 <MenuItem value="FACILITY_ONLY">Facility Only</MenuItem>
                 <MenuItem value="ALL_AREAS">All Areas</MenuItem>
@@ -743,6 +897,15 @@ export default function EditStaff() {
                   setAllowedZones(typeof val === 'string' ? val.split(',') : (val as string[]));
                 }}
                 sx={textFieldSx}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <LockOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
               >
                 <MenuItem value="MAIN_GATE">Main Gate</MenuItem>
                 <MenuItem value="LOBBY">Lobby</MenuItem>
@@ -769,6 +932,15 @@ export default function EditStaff() {
                 value={idProofType}
                 onChange={(e) => setIdProofType(e.target.value)}
                 sx={textFieldSx}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <CreditCardOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
               >
                 <MenuItem value="AADHAAR">Aadhaar Card</MenuItem>
                 <MenuItem value="PAN">PAN Card</MenuItem>
@@ -785,6 +957,15 @@ export default function EditStaff() {
                 value={idProofNumber}
                 onChange={(e) => setIdProofNumber(e.target.value)}
                 sx={textFieldSx}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <CreditCardOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
                 placeholder="e.g. 1234 5678 9012"
               />
             </Grid>

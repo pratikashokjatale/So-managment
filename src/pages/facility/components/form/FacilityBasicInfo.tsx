@@ -8,12 +8,22 @@ import {
   Button,
   Paper,
   Divider,
+  InputAdornment
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import BadgeOutlinedIcon from "@mui/icons-material/BadgeOutlined";
+import TitleIcon from "@mui/icons-material/Title";
+import CodeIcon from "@mui/icons-material/Code";
+import CategoryIcon from "@mui/icons-material/Category";
+import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions";
+import LocationCityIcon from "@mui/icons-material/LocationCity";
+import LayersIcon from "@mui/icons-material/Layers";
+import PersonIcon from "@mui/icons-material/Person";
+import PhoneIcon from "@mui/icons-material/Phone";
+import DescriptionIcon from "@mui/icons-material/Description";
 import { getFileUrl } from "@/utils/file";
 import { fieldSx, sectionCardSx, sectionHeaderIconSx } from "./formStyles";
 
@@ -145,6 +155,15 @@ export default function FacilityBasicInfo({ data, onChange, errors }: Props) {
               required
               sx={fieldSx}
               InputLabelProps={{ shrink: true }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                      <CodeIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                    </Box>
+                  </InputAdornment>
+                ),
+              }}
             />
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
@@ -156,6 +175,15 @@ export default function FacilityBasicInfo({ data, onChange, errors }: Props) {
               placeholder="e.g. GYM-001"
               sx={fieldSx}
               InputLabelProps={{ shrink: true }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                      <CodeIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                    </Box>
+                  </InputAdornment>
+                ),
+              }}
             />
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
@@ -166,6 +194,15 @@ export default function FacilityBasicInfo({ data, onChange, errors }: Props) {
               helperText=" "
               sx={fieldSx}
               InputLabelProps={{ shrink: true }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                      <CategoryIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                    </Box>
+                  </InputAdornment>
+                ),
+              }}
             >
               {CATEGORIES.map((c) => <MenuItem key={c} value={c} sx={{ fontFamily: "'Inter', sans-serif" }}>{c}</MenuItem>)}
             </TextField>
@@ -178,6 +215,15 @@ export default function FacilityBasicInfo({ data, onChange, errors }: Props) {
               helperText="Displayed on the card"
               sx={fieldSx}
               InputLabelProps={{ shrink: true }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                      <EmojiEmotionsIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                    </Box>
+                  </InputAdornment>
+                ),
+              }}
             >
               {ICONS.map((icon) => (
                 <MenuItem key={icon.value} value={icon.value} sx={{ fontFamily: "'Inter', sans-serif", fontSize: "0.9rem" }}>
@@ -207,6 +253,15 @@ export default function FacilityBasicInfo({ data, onChange, errors }: Props) {
               helperText=" "
               sx={fieldSx}
               InputLabelProps={{ shrink: true }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                      <LocationCityIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                    </Box>
+                  </InputAdornment>
+                ),
+              }}
             />
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
@@ -218,6 +273,15 @@ export default function FacilityBasicInfo({ data, onChange, errors }: Props) {
               helperText=" "
               sx={fieldSx}
               InputLabelProps={{ shrink: true }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                      <LayersIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                    </Box>
+                  </InputAdornment>
+                ),
+              }}
             />
           </Grid>
         </Grid>
@@ -243,6 +307,15 @@ export default function FacilityBasicInfo({ data, onChange, errors }: Props) {
               required
               sx={fieldSx}
               InputLabelProps={{ shrink: true }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                      <PersonIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                    </Box>
+                  </InputAdornment>
+                ),
+              }}
             />
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
@@ -256,6 +329,15 @@ export default function FacilityBasicInfo({ data, onChange, errors }: Props) {
               required
               sx={fieldSx}
               InputLabelProps={{ shrink: true }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                      <PhoneIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                    </Box>
+                  </InputAdornment>
+                ),
+              }}
             />
           </Grid>
           <Grid size={{ xs: 12 }}>
@@ -269,6 +351,15 @@ export default function FacilityBasicInfo({ data, onChange, errors }: Props) {
               required
               sx={fieldSx}
               InputLabelProps={{ shrink: true }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start" sx={{ alignSelf: 'flex-start', mt: 1 }}>
+                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                      <DescriptionIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                    </Box>
+                  </InputAdornment>
+                ),
+              }}
             />
           </Grid>
         </Grid>

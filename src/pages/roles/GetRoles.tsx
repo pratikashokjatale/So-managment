@@ -13,7 +13,7 @@ import PageToolbar from "@/components/PageToolbar";
 import DataTable from "@/components/DataTable";
 import { getRolesApi } from "@/apis/roles";
 import { toast } from "react-hot-toast";
-import RoleModal from "./components/RoleModal";
+import { useNavigate } from "react-router-dom";
 
 export default function GetRoles() {
   const [page, setPage] = useState(1);
@@ -24,8 +24,7 @@ export default function GetRoles() {
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedRole, setSelectedRole] = useState<any>(null);
+  const navigate = useNavigate();
 
   const fetchRoles = async () => {
     setLoading(true);
@@ -76,13 +75,11 @@ export default function GetRoles() {
   };
 
   const handleEditClick = (role: any) => {
-    setSelectedRole(role);
-    setIsModalOpen(true);
+    navigate('/setup/roles/edit', { state: { role } });
   };
 
   const handleAddClick = () => {
-    setSelectedRole(null);
-    setIsModalOpen(true);
+    navigate('/setup/roles/add');
   };
 
   const permissionColumns = [
@@ -186,19 +183,6 @@ export default function GetRoles() {
         onRowsPerPageChange={handleRowsPerPageChange}
         emptyMessage="No roles found. Create one to get started."
       />
-
-      {isModalOpen && (
-        <RoleModal
-          open={isModalOpen}
-          onClose={(success?: boolean) => {
-            setIsModalOpen(false);
-            if (success) {
-              fetchRoles();
-            }
-          }}
-          role={selectedRole}
-        />
-      )}
     </Box>
   );
 }

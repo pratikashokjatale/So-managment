@@ -1,11 +1,17 @@
 import { useState, useEffect } from 'react';
 import { 
   Box, Typography, Button, TextField, Breadcrumbs, Link, 
-  Paper, MenuItem, Divider 
+  Paper, MenuItem, Divider, InputAdornment 
 } from '@mui/material';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
-  Save as SaveIcon
+  Save as SaveIcon,
+  Business as BusinessIcon,
+  Description as DescriptionIcon,
+  Apartment as ApartmentIcon,
+  Layers as LayersIcon,
+  Close as CloseIcon,
+  Circle as CircleIcon
 } from '@mui/icons-material';
 
 import BackButton from '@/components/BackButton';
@@ -99,25 +105,62 @@ export default function AddTower() {
   };
 
   return (
-    <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: '#ffffff', minHeight: '100vh', borderRadius: '12px' }}>
+    <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: '#f9fafc', minHeight: '100vh' }}>
       
-      {/* Header */}
-      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
-        
-        <BackButton 
-          to={queryProjectId ? `/project/${queryProjectId}` : '/tower'} 
-          label={queryProjectId ? 'Back to Project' : 'Back to Towers'} 
-        />
+      {/* Header section */}
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Box>
+          <Typography variant="h5" fontWeight="bold" color="#091542" sx={{ mb: 0.5 }}>
+            Create New Tower
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Add tower details and configurations
+          </Typography>
+        </Box>
+        <Box
+          sx={{
+            width: 48,
+            height: 48,
+            borderRadius: '50%',
+            bgcolor: '#e8effc',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >
+          <ApartmentIcon sx={{ color: '#2c4d93' }} />
+        </Box>
       </Box>
 
-      {/* Form Container */}
-      <Paper elevation={0} sx={{ border: '1px solid #f0f0f0', borderRadius: '16px', p: { xs: 3, md: 5 } }}>
-        <Typography variant="h6" fontWeight="bold" color="#091542" sx={{ mb: 3 }}>
-          Tower Details
-        </Typography>
-        
-        <form onSubmit={handleSubmit}>
-          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 3, mb: 4 }}>
+      <form onSubmit={handleSubmit}>
+        {/* Tower Details */}
+        <Paper elevation={0} sx={{ border: '1px solid #e0e0e0', borderRadius: '12px', p: { xs: 3, md: 4 }, mb: 3 }}>
+          <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 4 }}>
+            <Box
+              sx={{
+                width: 40,
+                height: 40,
+                borderRadius: '8px',
+                bgcolor: '#e8effc',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                mr: 2
+              }}
+            >
+              <DescriptionIcon sx={{ color: '#2c4d93' }} />
+            </Box>
+            <Box>
+              <Typography variant="subtitle1" fontWeight="bold" color="#091542">
+                Tower Details
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Enter basic information about the tower
+              </Typography>
+            </Box>
+          </Box>
+
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 3 }}>
             
             <TextField 
               fullWidth 
@@ -129,6 +172,15 @@ export default function AddTower() {
               helperText={errors.projectId}
               disabled={!!queryProjectId}
               sx={{ '& fieldset': { borderRadius: '8px' } }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex' }}>
+                      <BusinessIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                    </Box>
+                  </InputAdornment>
+                ),
+              }}
             >
               {projects.map(p => (
                 <MenuItem key={p.id} value={p.id}>{p.name} ({p.code})</MenuItem>
@@ -145,6 +197,15 @@ export default function AddTower() {
               error={!!errors.name}
               helperText={errors.name}
               sx={{ '& fieldset': { borderRadius: '8px' } }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex' }}>
+                      <ApartmentIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                    </Box>
+                  </InputAdornment>
+                ),
+              }}
             />
 
             <TextField 
@@ -158,6 +219,15 @@ export default function AddTower() {
               error={!!errors.floorsCount}
               helperText={errors.floorsCount}
               sx={{ '& fieldset': { borderRadius: '8px' } }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex' }}>
+                      <LayersIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                    </Box>
+                  </InputAdornment>
+                ),
+              }}
             />
 
             <TextField 
@@ -167,6 +237,13 @@ export default function AddTower() {
               value={formData.status}
               onChange={(e) => setFormData({ ...formData, status: e.target.value as 'Active' | 'Inactive' })}
               sx={{ '& fieldset': { borderRadius: '8px' } }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <CircleIcon sx={{ color: formData.status === 'Active' ? '#10b981' : '#ef4444', fontSize: 14, ml: 1 }} />
+                  </InputAdornment>
+                ),
+              }}
             >
               <MenuItem value="Active">Active</MenuItem>
               <MenuItem value="Inactive">Inactive</MenuItem>
@@ -178,54 +255,64 @@ export default function AddTower() {
                 multiline 
                 rows={4} 
                 label="Description" 
-                placeholder="Brief description about the tower wings, entries, structure, etc." 
+                placeholder="Enter tower description (optional)" 
                 variant="outlined" 
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 sx={{ '& fieldset': { borderRadius: '8px' } }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start" sx={{ alignSelf: 'flex-start', mt: 1 }}>
+                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex' }}>
+                        <DescriptionIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
               />
             </Box>
           </Box>
+        </Paper>
 
-          <Divider sx={{ my: 3 }} />
-
-          {/* Action Buttons */}
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
-            <Button 
-              variant="outlined" 
-              onClick={() => queryProjectId ? navigate(`/project/${queryProjectId}`) : navigate('/tower')}
-              sx={{ 
-                borderRadius: '8px', 
-                textTransform: 'none', 
-                px: 4, 
-                fontWeight: 600, 
-                borderColor: '#e0e0e0', 
-                color: 'text.primary',
-                '&:hover': { borderColor: '#b0b0b0' }
-              }}
-            >
-              Cancel
-            </Button>
-            <Button 
-              type="submit"
-              variant="contained" 
-              startIcon={<SaveIcon />}
-              disabled={loading}
-              sx={{ 
-                borderRadius: '8px', 
-                textTransform: 'none', 
-                px: 4, 
-                fontWeight: 600, 
-                boxShadow: 'none',
-                bgcolor: '#2c4d93',
-                '&:hover': { bgcolor: '#2c4d93' }
-              }}
-            >
-              {loading ? 'Saving...' : 'Save Tower'}
-            </Button>
-          </Box>
-        </form>
-      </Paper>
+        {/* Action Buttons */}
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 2, mt: 4, pt: 3, borderTop: '1px solid #e0e0e0' }}>
+          <Button 
+            variant="outlined" 
+            onClick={() => queryProjectId ? navigate(`/project/${queryProjectId}`) : navigate('/tower')}
+            startIcon={<CloseIcon />}
+            sx={{ 
+              borderRadius: '8px', 
+              textTransform: 'none', 
+              px: 3, 
+              py: 1,
+              fontWeight: 600, 
+              borderColor: '#e0e0e0', 
+              color: '#4b5563',
+              '&:hover': { borderColor: '#b0b0b0', bgcolor: '#f9fafc' }
+            }}
+          >
+            Cancel
+          </Button>
+          <Button 
+            type="submit"
+            variant="contained" 
+            startIcon={<SaveIcon />}
+            disabled={loading}
+            sx={{ 
+              borderRadius: '8px', 
+              textTransform: 'none', 
+              px: 3, 
+              py: 1,
+              fontWeight: 600, 
+              boxShadow: 'none',
+              bgcolor: '#2c4d93',
+              '&:hover': { bgcolor: '#1f3b73', boxShadow: 'none' }
+            }}
+          >
+            {loading ? 'Saving...' : 'Save Tower'}
+          </Button>
+        </Box>
+      </form>
 
     </Box>
   );

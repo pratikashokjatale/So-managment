@@ -16,6 +16,9 @@ import {
   Breadcrumbs,
   Link,
   Paper,
+  Menu,
+  MenuItem,
+  Divider,
 } from "@mui/material";
 import {
   ExpandLess as ExpandLessIcon,
@@ -38,6 +41,9 @@ export default function DashboardLayout() {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
+  const [anchorElProject, setAnchorElProject] = useState<null | HTMLElement>(
+    null,
+  );
   const navigate = useNavigate();
   const location = useLocation();
   const { navType } = useConfig();
@@ -54,11 +60,14 @@ export default function DashboardLayout() {
       if (segment === "tower") text = "Towers";
       if (segment === "flat") text = "Flats";
       if (!isNaN(Number(segment)) || segment.length > 15) text = "Details";
-      
+
       if (segment === "setup") {
         items.push({ text: "Setup", href: "#" });
       } else {
-        items.push({ text, href: index === paths.length - 1 ? "" : currentPath });
+        items.push({
+          text,
+          href: index === paths.length - 1 ? "" : currentPath,
+        });
       }
     });
     return items;
@@ -103,30 +112,72 @@ export default function DashboardLayout() {
       {/* Selectors matching exactly the image */}
       <Box sx={{ px: 2, mb: 2 }}>
         <Box
+          onClick={(e) => setAnchorElProject(e.currentTarget)}
           sx={{
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            bgcolor: "#ffffff",
-            border: "1px solid #e2e8f0",
+            bgcolor: anchorElProject ? "rgba(63, 81, 181, 0.04)" : "#ffffff",
+            border: anchorElProject
+              ? "1.5px solid #3f51b5"
+              : "1px solid #e2e8f0",
             borderRadius: "8px",
             p: "8px 12px",
             mb: 2,
             cursor: "pointer",
             transition: "all 0.2s",
-            "&:hover": { bgcolor: "#b6b9bdff" },
+            "&:hover": { bgcolor: "#f1f5f9" },
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-            <ProjectIcon sx={{ color: "#d97706", fontSize: 16 }} />
+            <ProjectIcon
+              sx={{
+                color: anchorElProject ? "#3f51b5" : "#64748b",
+                fontSize: 18,
+              }}
+            />
             <Typography
-              sx={{ fontSize: "0.8rem", fontWeight: 700, color: "#1e293b" }}
+              sx={{ fontSize: "0.85rem", fontWeight: 500, color: "#1e293b" }}
             >
               All Projects
             </Typography>
           </Box>
           <ExpandMoreIcon sx={{ color: "#64748b", fontSize: 16 }} />
         </Box>
+
+        <Menu
+          anchorEl={anchorElProject}
+          open={Boolean(anchorElProject)}
+          onClose={() => setAnchorElProject(null)}
+          PaperProps={{
+            elevation: 0,
+            sx: {
+              mt: 1,
+              width: 200,
+              overflow: "visible",
+              filter: "drop-shadow(0px 4px 20px rgba(0,0,0,0.08))",
+              borderRadius: "12px",
+              border: "1px solid #f1f5f9",
+            },
+          }}
+          transformOrigin={{ horizontal: "left", vertical: "top" }}
+          anchorOrigin={{ horizontal: "left", vertical: "bottom" }}
+        >
+          <MenuItem
+            onClick={() => setAnchorElProject(null)}
+            sx={{ fontSize: "0.85rem", py: 1.5, color: "#475569" }}
+          >
+            All Projects
+          </MenuItem>
+          <MenuItem
+            onClick={() => setAnchorElProject(null)}
+            sx={{ fontSize: "0.85rem", py: 1.5, color: "#475569" }}
+          >
+            Marbella Grand
+          </MenuItem>
+
+          
+        </Menu>
 
         <Typography
           variant="overline"
@@ -344,7 +395,7 @@ export default function DashboardLayout() {
         sx={{
           width: "100%",
           maxWidth: "1350px", // Decreased width to force larger left/right margins
-          margin: "0 auto", 
+          margin: "0 auto",
           px: { xs: 0, md: 4, lg: 8 }, // Margins on left and right
           pb: { xs: 0, md: 2 }, // Small margin on bottom
           pt: { xs: "50px", md: "calc(50px + 16px)" }, // Small margin on top (plus TopBar height)
