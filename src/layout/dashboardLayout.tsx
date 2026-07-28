@@ -17,8 +17,8 @@ import {
   Link,
   Paper,
 } from "@mui/material";
-import { 
-  ExpandLess as ExpandLessIcon, 
+import {
+  ExpandLess as ExpandLessIcon,
   ExpandMore as ExpandMoreIcon,
   Dashboard as DashboardIcon,
   NavigateNext as NavigateNextIcon,
@@ -46,7 +46,7 @@ export default function DashboardLayout() {
   const getBreadcrumbs = () => {
     const paths = location.pathname.split("/").filter(Boolean);
     if (paths.length === 0) return [];
-    const items = [];
+    const items: { text: string; href: string }[] = [];
     let currentPath = "";
     paths.forEach((segment, index) => {
       currentPath += `/${segment}`;
@@ -54,13 +54,18 @@ export default function DashboardLayout() {
       if (segment === "tower") text = "Towers";
       if (segment === "flat") text = "Flats";
       if (!isNaN(Number(segment)) || segment.length > 15) text = "Details";
-      items.push({ text, href: index === paths.length - 1 ? "" : currentPath });
+      
+      if (segment === "setup") {
+        items.push({ text: "Setup", href: "#" });
+      } else {
+        items.push({ text, href: index === paths.length - 1 ? "" : currentPath });
+      }
     });
     return items;
   };
 
   const breadcrumbs = getBreadcrumbs();
-  const currentDrawerWidth = 260; // minimized size
+  const currentDrawerWidth = 230; // Minimized sidebar width
 
   if (isAuthLoading) return <Loader />;
   if (!isLoggedIn) return <Navigate to="/login" replace />;
@@ -70,16 +75,16 @@ export default function DashboardLayout() {
   };
 
   const handleMenuToggle = (text: string) => {
-    setOpenMenus(prev => ({ ...prev, [text]: !prev[text] }));
+    setOpenMenus((prev) => ({ ...prev, [text]: !prev[text] }));
   };
 
   const displayedMenuItems = isAdmin
     ? menuItems
     : [{ text: "Dashboard", icon: <DashboardIcon />, path: "/" }];
 
-  const isAllowedPath = 
-    location.pathname === "/" || 
-    location.pathname === "/profile" || 
+  const isAllowedPath =
+    location.pathname === "/" ||
+    location.pathname === "/profile" ||
     location.pathname === "/support";
 
   // Sidebar Component rendered inside a floating card
@@ -109,17 +114,32 @@ export default function DashboardLayout() {
             mb: 2,
             cursor: "pointer",
             transition: "all 0.2s",
-            "&:hover": { bgcolor: "#f8fafc" },
+            "&:hover": { bgcolor: "#b6b9bdff" },
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
             <ProjectIcon sx={{ color: "#d97706", fontSize: 16 }} />
-            <Typography sx={{ fontSize: "0.8rem", fontWeight: 700, color: "#1e293b" }}>All Projects</Typography>
+            <Typography
+              sx={{ fontSize: "0.8rem", fontWeight: 700, color: "#1e293b" }}
+            >
+              All Projects
+            </Typography>
           </Box>
           <ExpandMoreIcon sx={{ color: "#64748b", fontSize: 16 }} />
         </Box>
 
-        <Typography variant="overline" sx={{ color: "#94a3b8", fontWeight: 700, fontSize: "0.6rem", letterSpacing: "0.5px", mb: 0.5, display: "block", textTransform: "uppercase" }}>
+        <Typography
+          variant="overline"
+          sx={{
+            color: "#94a3b8",
+            fontWeight: 700,
+            fontSize: "0.6rem",
+            letterSpacing: "0.5px",
+            mb: 0.5,
+            display: "block",
+            textTransform: "uppercase",
+          }}
+        >
           VIEW AS
         </Typography>
 
@@ -134,24 +154,35 @@ export default function DashboardLayout() {
             p: "8px 12px",
             cursor: "pointer",
             transition: "all 0.2s",
-            "&:hover": { bgcolor: "#f1f5f9" }
+            "&:hover": { bgcolor: "#f1f5f9" },
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-            <AdminIcon sx={{ color: "#3b82f6", fontSize: 16 }} />
-            <Typography sx={{ fontSize: "0.8rem", fontWeight: 700, color: "#1e293b" }}>Admin (you)</Typography>
+            <AdminIcon
+              sx={{ color: theme.palette.primary.main, fontSize: 16 }}
+            />
+            <Typography
+              sx={{ fontSize: "0.8rem", fontWeight: 700, color: "#1e293b" }}
+            >
+              Admin (you)
+            </Typography>
           </Box>
           <ExpandMoreIcon sx={{ color: "#64748b", fontSize: 16 }} />
         </Box>
       </Box>
 
       {/* Navigation List styled exactly like the image */}
-      <List sx={{ px: 1.5, flexGrow: 1, overflowY: "auto", overflowX: "hidden" }}>
+      <List
+        sx={{ px: 1.5, flexGrow: 1, overflowY: "auto", overflowX: "hidden" }}
+      >
         {displayedMenuItems.map((item) => {
           const hasChildren = item.children && item.children.length > 0;
           const isMenuOpen = openMenus[item.text] || false;
           // Check if parent or child is active
-          const active = location.pathname === item.path || (hasChildren && item.children?.some(child => location.pathname === child.path));
+          const active =
+            location.pathname === item.path ||
+            (hasChildren &&
+              item.children?.some((child) => location.pathname === child.path));
 
           return (
             <Box key={item.text}>
@@ -172,35 +203,50 @@ export default function DashboardLayout() {
                     px: 1.5,
                     transition: "all 0.15s ease-in-out",
                     color: active ? "#0f172a" : "#64748b",
-                    bgcolor: active ? "#eff6ff" : "transparent",
+                    bgcolor: active
+                      ? theme.palette.primary.light
+                      : "transparent",
                     "&.Mui-selected": {
-                      bgcolor: "#eff6ff",
+                      bgcolor: theme.palette.primary.light,
                       color: "#0f172a",
-                      "& .MuiListItemIcon-root": { color: "#3b82f6" },
+                      "& .MuiListItemIcon-root": {
+                        color: theme.palette.primary.main,
+                      },
                       "&:hover": { bgcolor: "#e2e8f0" },
                     },
                     "&:hover": {
                       bgcolor: active ? "#e2e8f0" : "rgba(0,0,0,0.04)",
                       color: "#0f172a",
-                      "& .MuiListItemIcon-root": { color: "#3b82f6" },
+                      "& .MuiListItemIcon-root": {
+                        color: theme.palette.primary.main,
+                      },
                     },
                   }}
                 >
                   <ListItemIcon
                     sx={{
-                      minWidth: 32, 
+                      minWidth: 32,
                       justifyContent: "flex-start",
-                      color: active ? "#3b82f6" : "#94a3b8",
-                      "& svg": { fontSize: 20 }
+                      color: active ? theme.palette.primary.main : "#94a3b8",
+                      "& svg": { fontSize: 20 },
                     }}
                   >
                     {item.icon}
                   </ListItemIcon>
                   <ListItemText
                     primary={item.text}
-                    primaryTypographyProps={{ fontSize: "0.85rem", fontWeight: active ? 700 : 500, letterSpacing: "-0.1px" }} 
+                    primaryTypographyProps={{
+                      fontSize: "0.85rem",
+                      fontWeight: active ? 700 : 500,
+                      letterSpacing: "-0.1px",
+                    }}
                   />
-                  {hasChildren && (isMenuOpen ? <ExpandLessIcon sx={{ fontSize: 16 }} /> : <ExpandMoreIcon sx={{ fontSize: 16 }} />)}
+                  {hasChildren &&
+                    (isMenuOpen ? (
+                      <ExpandLessIcon sx={{ fontSize: 16 }} />
+                    ) : (
+                      <ExpandMoreIcon sx={{ fontSize: 16 }} />
+                    ))}
                 </ListItemButton>
               </ListItem>
 
@@ -220,27 +266,36 @@ export default function DashboardLayout() {
                           selected={childActive}
                           sx={{
                             borderRadius: "8px",
-                            py: 0.75, 
+                            py: 0.75,
                             mb: 0.25,
                             pl: 2,
                             color: childActive ? "#0f172a" : "#64748b",
-                            bgcolor: childActive ? "#eff6ff" : "transparent",
+                            bgcolor: childActive
+                              ? theme.palette.primary.light
+                              : "transparent",
                             "&.Mui-selected": {
-                              bgcolor: "#eff6ff",
+                              bgcolor: theme.palette.primary.light,
                               color: "#0f172a",
-                              "& .MuiListItemIcon-root": { color: "#3b82f6" },
+                              "& .MuiListItemIcon-root": {
+                                color: theme.palette.primary.main,
+                              },
                               "&:hover": { bgcolor: "#e2e8f0" },
                             },
-                            "&:hover": { bgcolor: "rgba(0,0,0,0.04)", color: "#0f172a" },
+                            "&:hover": {
+                              bgcolor: "rgba(0,0,0,0.04)",
+                              color: "#0f172a",
+                            },
                           }}
                         >
                           {child.icon && (
                             <ListItemIcon
                               sx={{
-                                minWidth: 28, 
+                                minWidth: 28,
                                 justifyContent: "flex-start",
-                                color: childActive ? "#3b82f6" : "#94a3b8",
-                                "& svg": { fontSize: 18 }
+                                color: childActive
+                                  ? theme.palette.primary.main
+                                  : "#94a3b8",
+                                "& svg": { fontSize: 18 },
                               }}
                             >
                               {child.icon}
@@ -248,7 +303,10 @@ export default function DashboardLayout() {
                           )}
                           <ListItemText
                             primary={child.text}
-                            primaryTypographyProps={{ fontSize: "0.8rem", fontWeight: childActive ? 600 : 500 }}
+                            primaryTypographyProps={{
+                              fontSize: "0.8rem",
+                              fontWeight: childActive ? 600 : 500,
+                            }}
                           />
                         </ListItemButton>
                       );
@@ -262,8 +320,12 @@ export default function DashboardLayout() {
       </List>
 
       <Box sx={{ p: 2, display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
-         <WifiIcon sx={{ fontSize: 14, color: "#10b981" }} />
-         <Typography sx={{ fontSize: "0.75rem", color: "#10b981", fontWeight: 700 }}>All gates online</Typography>
+        <WifiIcon sx={{ fontSize: 14, color: "#10b981" }} />
+        <Typography
+          sx={{ fontSize: "0.75rem", color: "#10b981", fontWeight: 700 }}
+        >
+          All gates online
+        </Typography>
       </Box>
     </Box>
   );
@@ -272,19 +334,25 @@ export default function DashboardLayout() {
     <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "#f4f7f9" }}>
       <Loader />
       <CssBaseline />
-      <TopBar handleDrawerToggle={handleDrawerToggle} drawerWidth={currentDrawerWidth} />
+      <TopBar
+        handleDrawerToggle={handleDrawerToggle}
+        drawerWidth={currentDrawerWidth}
+      />
 
       {/* Main container holding the single combined white card */}
-      <Box 
-        sx={{ 
+      <Box
+        sx={{
           width: "100%",
-          p: { xs: 0, md: 3 }, 
-          pt: { xs: "74px", md: "calc(74px + 24px)" }, // TopBar height + spacing
-          height: "100vh",
-          boxSizing: "border-box"
+          maxWidth: "1350px", // Decreased width to force larger left/right margins
+          margin: "0 auto", 
+          px: { xs: 0, md: 4, lg: 8 }, // Margins on left and right
+          pb: { xs: 0, md: 2 }, // Small margin on bottom
+          pt: { xs: "50px", md: "calc(50px + 16px)" }, // Small margin on top (plus TopBar height)
+          height: "100vh", // Keeps the sidebar layout strictly filling the screen height
+          boxSizing: "border-box",
         }}
       >
-        <Paper 
+        <Paper
           elevation={0}
           sx={{
             display: "flex",
@@ -294,7 +362,7 @@ export default function DashboardLayout() {
             borderRadius: { xs: 0, md: "24px" },
             border: { xs: "none", md: "1px solid #e2e8f0" },
             overflow: "hidden",
-            boxShadow: { xs: "none", md: "0 4px 20px rgba(0,0,0,0.02)" }
+            boxShadow: { xs: "none", md: "0 4px 20px rgba(0,0,0,0.02)" },
           }}
         >
           {/* Left Sidebar embedded directly inside the card */}
@@ -303,8 +371,8 @@ export default function DashboardLayout() {
               display: { xs: "none", md: "block" },
               width: currentDrawerWidth,
               flexShrink: 0,
-              borderRight: "1px solid #f1f5f9",
-              bgcolor: "transparent",
+              borderRight: "1px solid #e2e8f0",
+              bgcolor: "#f8fafc",
             }}
           >
             {sidebarContent}
@@ -321,7 +389,7 @@ export default function DashboardLayout() {
               "& .MuiDrawer-paper": {
                 boxSizing: "border-box",
                 width: 280,
-                bgcolor: "#ffffff",
+                bgcolor: "#f8fafc",
               },
             }}
           >
@@ -329,26 +397,36 @@ export default function DashboardLayout() {
           </Drawer>
 
           {/* Right Main Content Area embedded in the same card */}
-          <Box 
-            sx={{ 
-              flexGrow: 1, 
-              bgcolor: "transparent", 
+          <Box
+            sx={{
+              flexGrow: 1,
+              bgcolor: "transparent",
               overflow: "auto",
-              p: { xs: 2, md: 4 }, 
+              p: { xs: 2, md: 4 },
+              zoom: 0.85, // Scale down the content to make it more compact
             }}
           >
             {breadcrumbs.length > 0 && (
-              <Breadcrumbs 
-                separator={<NavigateNextIcon fontSize="small" sx={{ color: "#94a3b8" }} />} 
+              <Breadcrumbs
+                separator={
+                  <NavigateNextIcon
+                    fontSize="small"
+                    sx={{ color: "#94a3b8" }}
+                  />
+                }
                 aria-label="breadcrumb"
-                sx={{ mb: 2 }} 
+                sx={{ mb: 2 }}
               >
                 {breadcrumbs.map((item, idx) => {
                   const isLast = idx === breadcrumbs.length - 1;
                   return isLast ? (
-                    <Typography 
-                      key={idx} 
-                      sx={{ color: "#0f172a", fontWeight: 600, fontSize: "0.875rem" }}
+                    <Typography
+                      key={idx}
+                      sx={{
+                        color: "#0f172a",
+                        fontWeight: 600,
+                        fontSize: "0.875rem",
+                      }}
                     >
                       {item.text}
                     </Typography>
@@ -356,9 +434,13 @@ export default function DashboardLayout() {
                     <Link
                       key={idx}
                       underline="hover"
-                      sx={{ 
-                        color: "#64748b", fontWeight: 500, fontSize: "0.875rem",
-                        cursor: item.href === "#" ? "default" : "pointer", display: "flex", alignItems: "center"
+                      sx={{
+                        color: "#64748b",
+                        fontWeight: 500,
+                        fontSize: "0.875rem",
+                        cursor: item.href === "#" ? "default" : "pointer",
+                        display: "flex",
+                        alignItems: "center",
                       }}
                       onClick={() => {
                         if (item.href && item.href !== "#") navigate(item.href);
@@ -372,8 +454,8 @@ export default function DashboardLayout() {
             )}
 
             {!isAdmin && !isAllowedPath ? (
-              <PageNotFound 
-                title="Permission Denied" 
+              <PageNotFound
+                title="Permission Denied"
                 message="You do not have permission to view this page."
                 showBackButton={true}
               />

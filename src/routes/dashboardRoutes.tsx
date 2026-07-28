@@ -46,6 +46,7 @@ import GetProfile from "@/pages/profile/GetProfile";
 import MyWallet from "@/pages/wallet/MyWallet";
 import GetIssues from "@/pages/issues/GetIssues";
 import GetEmergency from "@/pages/emergency/GetEmergency";
+import GetRoles from "@/pages/roles/GetRoles";
 
 const DashboardRoutes = {
   path: "/",
@@ -242,6 +243,10 @@ const DashboardRoutes = {
     {
       path: "flat/edit/:id",
       element: <EditFlat />,
+    },
+    {
+      path: "setup/roles",
+      element: <GetRoles />,
     },
   ],
 };

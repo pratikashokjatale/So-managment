@@ -20,6 +20,7 @@ import {
   Groups as GroupsIcon,
   Emergency as EmergencyIcon,
   BarChart as AnalyticsIcon,
+  Security as RolesIcon,
 } from "@mui/icons-material";
 
 export const menuItems = [
@@ -35,6 +36,7 @@ export const menuItems = [
       { text: "Flats", icon: <FlatIcon />, path: "/flat" },
     ],
   },
+  { text: "Roles & Permissions", icon: <RolesIcon />, path: "/setup/roles" },
   { text: "facility", icon: <FacilityIcon />, path: "/facility" },
 
   {
@@ -85,6 +87,7 @@ export const menuItems = [
     icon: <EmergencyIcon />,
     path: "/emergency",
   },
+  
   { text: "Issues & Feedback", icon: <IssueIcon />, path: "/issues" },
 
   // { text: "Gate Entry", icon: <GateIcon />, path: "/gate" },

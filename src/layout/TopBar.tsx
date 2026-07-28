@@ -40,7 +40,16 @@ export default function TopBar({
         borderBottom: `1px solid ${theme.palette.divider}`,
       }}
     >
-      <Toolbar sx={{ justifyContent: "space-between", minHeight: 74, px: { xs: 2, md: 4 } }}>
+      <Toolbar 
+        sx={{ 
+          justifyContent: "space-between", 
+          minHeight: 50, 
+          width: "100%",
+          maxWidth: "1350px",
+          margin: "0 auto",
+          px: { xs: 2, md: 4, lg: 8 } 
+        }}
+      >
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <IconButton
             color="inherit"
