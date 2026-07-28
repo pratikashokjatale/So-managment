@@ -167,12 +167,12 @@ export default function AddResident() {
   };
 
   useEffect(() => {
-    if (open || isFamilyDialogOpen) {
+    if (isFamilyDialogOpen) {
       window.dispatchEvent(new CustomEvent('set-sidebar', { detail: false }));
     } else {
       window.dispatchEvent(new CustomEvent('set-sidebar', { detail: true }));
     }
-  }, [open, isFamilyDialogOpen]);
+  }, [isFamilyDialogOpen]);
 
   // Fetch initial data
   useEffect(() => {

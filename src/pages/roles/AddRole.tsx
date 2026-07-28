@@ -357,7 +357,7 @@ export default function AddRole() {
 
           <Grid container spacing={2}>
             {PERMISSION_KEYS.map((perm) => (
-              <Grid item xs={12} sm={6} md={4} key={perm.key}>
+              <Grid size={{ xs: 12, sm: 6, md: 4 }} key={perm.key}>
                 <FormControlLabel
                   control={
                     <Checkbox
