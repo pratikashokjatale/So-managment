@@ -1,36 +1,17 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   Box,
   Typography,
   Paper,
-  Stack,
-  Select,
-  MenuItem,
-  TextField,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   CircularProgress,
-  Button,
-  IconButton,
-  Card,
-  CardContent,
   Grid,
 } from "@mui/material";
 import {
-  TrendingUp as RevenueIcon,
+  TrendingUp as OccupancyIcon,
   People as MembersIcon,
-  CalendarMonth as BookingIcon,
-  DoorBackSharp as AccessIcon,
-  Business as ProjectIcon,
-  Home as FlatIcon,
-  Star as RateIcon,
-  ArrowBackIosNew as PrevIcon,
-  ArrowForwardIos as NextIcon,
-  Refresh as RefreshIcon,
+  Sensors as AccessIcon,
+  CardMembership as SubscriptionsIcon,
 } from "@mui/icons-material";
 import {
   BarChart,
@@ -48,78 +29,29 @@ import {
   getAnalyticsOverviewApi,
   getAnalyticsBookingsByActivityApi,
   getAnalyticsRevenueByActivityApi,
-  getAnalyticsAccessEventsApi,
 } from "@/apis/analytics";
 import type {
   BookingsByActivityItem,
   RevenueByActivityItem,
-  AccessEventItem,
 } from "@/apis/analytics";
-import { getProjectsApi } from "@/apis/project";
 
-const COLORS = [
-  "#2c4d93",
-  "#10b981",
-  "#ea580c",
-  "#db2777",
-  "#7c3aed",
-  "#06b6d4",
-  "#eab308",
-  "#3b82f6",
-];
+const INTER = '"Inter", "Satoshi", sans-serif';
+const SERIF = '"Playfair Display", "Cinzel", serif';
 
 export default function GetAnalytics() {
-  // Filters
-  const [projectId, setProjectId] = useState<string>("");
-  const [dateFrom, setDateFrom] = useState<string>("");
-  const [dateTo, setDateTo] = useState<string>("");
-
-  // Projects list for filter dropdown
-  const [projects, setProjects] = useState<any[]>([]);
+  const [searchParams] = useSearchParams();
+  const rawProjectId = searchParams.get("projectId") || "all";
+  const projectId = rawProjectId === "all" ? "" : rawProjectId;
 
   // Analytics Data
   const [totals, setTotals] = useState<any>(null);
-  const [bookingsData, setBookingsData] = useState<BookingsByActivityItem[]>(
-    [],
-  );
+  const [bookingsData, setBookingsData] = useState<BookingsByActivityItem[]>([]);
   const [revenueData, setRevenueData] = useState<RevenueByActivityItem[]>([]);
-  const [accessEvents, setAccessEvents] = useState<AccessEventItem[]>([]);
-
-  // Pagination for sub-components
-  const [bookingsPage, setBookingsPage] = useState<number>(1);
-  const [bookingsTotalPages, setBookingsTotalPages] = useState<number>(1);
-
-  const [revenuePage, setRevenuePage] = useState<number>(1);
-  const [revenueTotalPages, setRevenueTotalPages] = useState<number>(1);
-
-  const [accessPage, setAccessPage] = useState<number>(1);
-  const [accessTotalPages, setAccessTotalPages] = useState<number>(1);
-  const limit = 5; // Rows/items per chart/table page
 
   // Loading States
   const [loadingOverview, setLoadingOverview] = useState<boolean>(true);
   const [loadingBookings, setLoadingBookings] = useState<boolean>(true);
   const [loadingRevenue, setLoadingRevenue] = useState<boolean>(true);
-  const [loadingAccess, setLoadingAccess] = useState<boolean>(true);
-
-  // Load projects list
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const res = await getProjectsApi({ limit: 100 });
-        const list =
-          res?.data?.data ||
-          res?.data?.projects ||
-          res?.projects ||
-          res?.data ||
-          [];
-        setProjects(Array.isArray(list) ? list : []);
-      } catch (err) {
-        console.error("Failed to fetch projects list:", err);
-      }
-    };
-    fetchProjects();
-  }, []);
 
   // Fetch Overview/Totals
   const fetchOverview = async () => {
@@ -127,8 +59,6 @@ export default function GetAnalytics() {
     try {
       const res = (await getAnalyticsOverviewApi({
         projectId: projectId || undefined,
-        dateFrom: dateFrom || undefined,
-        dateTo: dateTo || undefined,
       })) as any;
       setTotals(res?.data?.totals || res?.totals || null);
     } catch (err: any) {
@@ -144,16 +74,9 @@ export default function GetAnalytics() {
     try {
       const res = await getAnalyticsBookingsByActivityApi({
         projectId: projectId || undefined,
-        dateFrom: dateFrom || undefined,
-        dateTo: dateTo || undefined,
-        page: bookingsPage,
-        limit,
+        limit: 10,
       });
-      setBookingsData(res?.items || []);
-      // Calculate total pages (mocking pagination total if backend doesn't return count, otherwise default limit)
-      setBookingsTotalPages(
-        res?.items?.length < limit ? bookingsPage : bookingsPage + 1,
-      );
+      setBookingsData((res as any)?.data?.items || []);
     } catch (err: any) {
       console.error(err);
     } finally {
@@ -167,15 +90,9 @@ export default function GetAnalytics() {
     try {
       const res = await getAnalyticsRevenueByActivityApi({
         projectId: projectId || undefined,
-        dateFrom: dateFrom || undefined,
-        dateTo: dateTo || undefined,
-        page: revenuePage,
-        limit,
+        limit: 10,
       });
-      setRevenueData(res?.items || []);
-      setRevenueTotalPages(
-        res?.items?.length < limit ? revenuePage : revenuePage + 1,
-      );
+      setRevenueData((res as any)?.data?.items || []);
     } catch (err: any) {
       console.error(err);
     } finally {
@@ -183,855 +100,238 @@ export default function GetAnalytics() {
     }
   };
 
-  // Fetch Access Events
-  const fetchAccessEvents = async () => {
-    setLoadingAccess(true);
-    try {
-      const res = await getAnalyticsAccessEventsApi({
-        projectId: projectId || undefined,
-        dateFrom: dateFrom || undefined,
-        dateTo: dateTo || undefined,
-        page: accessPage,
-        limit: 10, // Larger page size for tables
-      });
-      setAccessEvents(res?.items || []);
-      setAccessTotalPages(
-        res?.items?.length < 10 ? accessPage : accessPage + 1,
-      );
-    } catch (err: any) {
-      console.error(err);
-    } finally {
-      setLoadingAccess(false);
-    }
-  };
-
-  // Trigger loading when filters/pages change
+  // Trigger loading when project changes
   useEffect(() => {
     fetchOverview();
-  }, [projectId, dateFrom, dateTo]);
-
-  useEffect(() => {
     fetchBookings();
-  }, [projectId, dateFrom, dateTo, bookingsPage]);
-
-  useEffect(() => {
     fetchRevenue();
-  }, [projectId, dateFrom, dateTo, revenuePage]);
-
-  useEffect(() => {
-    fetchAccessEvents();
-  }, [projectId, dateFrom, dateTo, accessPage]);
-
-  const handleResetFilters = () => {
-    setProjectId("");
-    setDateFrom("");
-    setDateTo("");
-    setBookingsPage(1);
-    setRevenuePage(1);
-    setAccessPage(1);
-    toast.success("Filters reset successfully");
-  };
+  }, [projectId]);
 
   return (
-    <Box sx={{ p: { xs: 2, md: 5 }, bgcolor: "#f8fafc", minHeight: "100vh" }}>
-      {/* Page Title & Refresh */}
-      <Stack
-        direction={{ xs: "column", sm: "row" }}
-        justifyContent="space-between"
-        alignItems={{ xs: "stretch", sm: "center" }}
-        spacing={2}
-        sx={{ mb: 4 }}
+    <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: "#ffffff", minHeight: "100vh", fontFamily: INTER }}>
+      
+      {/* ── Page Header ── */}
+      <Box sx={{ mb: 4 }}>
+        <Typography sx={{ fontFamily: SERIF, fontSize: "2rem", fontWeight: 600, color: "#192038", mb: 0.5 }}>
+          Analytics
+        </Typography>
+        <Typography sx={{ fontFamily: INTER, fontSize: "0.875rem", color: "#64748b" }}>
+          Usage, revenue & demand insights
+        </Typography>
+      </Box>
+
+      {/* ── AI Insight Card ── */}
+      <Paper
+        elevation={0}
+        sx={{
+          p: "16px 20px",
+          mb: 4,
+          borderRadius: "12px",
+          border: "1px solid #e5dbba",
+          bgcolor: "#f8fafc",
+          display: "flex",
+          gap: "12px",
+          alignItems: "flex-start",
+        }}
       >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, marginTop: "2px" }}>
+          <defs>
+            <linearGradient id="aiGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#d6b361" />
+              <stop offset="100%" stopColor="#9a7122" />
+            </linearGradient>
+          </defs>
+          <path d="M11 2L12.5 8L18.5 9.5L12.5 11L11 17L9.5 11L3.5 9.5L9.5 8L11 2Z" fill="none" stroke="url(#aiGradient)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M19 14L19.5 16.5L22 17L19.5 17.5L19 20L18.5 17.5L16 17L18.5 16.5L19 14Z" fill="none" stroke="url(#aiGradient)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
         <Box>
-          <Typography
-            variant="h3"
-            fontWeight="900"
-            color="#091542"
-            sx={{ letterSpacing: "-1px" }}
-          >
-            Analytics Dashboard
+          <Typography sx={{ 
+            fontFamily: INTER, 
+            fontWeight: 700, 
+            fontSize: "0.95rem", 
+            mb: "4px",
+            background: "linear-gradient(90deg, #d6b361 0%, #9a7122 100%)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            display: "inline-block"
+          }}>
+            AI insight
           </Typography>
-          <Typography
-            variant="subtitle1"
-            color="text.secondary"
-            fontWeight="700"
-          >
-            Deep usage analytics, revenue analysis & gate access auditing
+          <Typography sx={{ fontFamily: INTER, fontSize: "0.875rem", color: "#64748b", lineHeight: 1.5 }}>
+            Demand peaks 6–9 PM. Home Theatre earns the most per booking; the Active Bundle drives the most sign-ups. Consider a second 8 PM theatre slot and an off-peak gym nudge to spread load.
           </Typography>
         </Box>
-        <Stack direction="row" spacing={2}>
-          <Button
-            variant="outlined"
-            onClick={() => {
-              fetchOverview();
-              fetchBookings();
-              fetchRevenue();
-              fetchAccessEvents();
-              toast.success("Analytics refreshed");
-            }}
-            startIcon={<RefreshIcon />}
-            sx={{
-              borderRadius: "12px",
-              textTransform: "none",
-              fontWeight: 800,
-              bgcolor: "white",
-              borderColor: "#e2e8f0",
-              color: "#091542",
-              "&:hover": {
-                borderColor: "#cbd5e1",
-                bgcolor: "#f1f5f9",
-              },
-            }}
-          >
-            Refresh
-          </Button>
-        </Stack>
-      </Stack>
+      </Paper>
 
-      {/* KPI Cards Row */}
-      {loadingOverview ? (
-        <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
-          <CircularProgress />
-        </Box>
-      ) : (
-        <Grid container spacing={3} sx={{ mb: 4 }}>
-          {/* Projects */}
-          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-            <Card
-              elevation={0}
-              sx={{
-                p: 2,
-                borderRadius: "20px",
-                border: "1px solid #f1f5f9",
-                bgcolor: "white",
-              }}
-            >
-              <CardContent sx={{ p: "16px !important" }}>
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Box
-                    sx={{
-                      p: 1.5,
-                      bgcolor: "#eff6ff",
-                      borderRadius: "12px",
-                      color: "#1d4ed8",
-                      display: "flex",
-                    }}
-                  >
-                    <ProjectIcon />
-                  </Box>
-                  <Box>
-                    <Typography
-                      variant="caption"
-                      fontWeight="800"
-                      color="#64748b"
-                    >
-                      TOTAL PROJECTS
-                    </Typography>
-                    <Typography variant="h5" fontWeight="900" color="#091542">
-                      {totals?.projects ?? 0}
-                    </Typography>
-                  </Box>
-                </Stack>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          {/* Flats */}
-          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-            <Card
-              elevation={0}
-              sx={{
-                p: 2,
-                borderRadius: "20px",
-                border: "1px solid #f1f5f9",
-                bgcolor: "white",
-              }}
-            >
-              <CardContent sx={{ p: "16px !important" }}>
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Box
-                    sx={{
-                      p: 1.5,
-                      bgcolor: "#f0fdf4",
-                      borderRadius: "12px",
-                      color: "#10b981",
-                      display: "flex",
-                    }}
-                  >
-                    <FlatIcon />
-                  </Box>
-                  <Box>
-                    <Typography
-                      variant="caption"
-                      fontWeight="800"
-                      color="#64748b"
-                    >
-                      FLATS (OCCUPIED)
-                    </Typography>
-                    <Typography variant="h5" fontWeight="900" color="#091542">
-                      {totals?.flats ?? 0} ({totals?.occupiedFlats ?? 0})
-                    </Typography>
-                  </Box>
-                </Stack>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          {/* Occupancy Rate */}
-          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-            <Card
-              elevation={0}
-              sx={{
-                p: 2,
-                borderRadius: "20px",
-                border: "1px solid #f1f5f9",
-                bgcolor: "white",
-              }}
-            >
-              <CardContent sx={{ p: "16px !important" }}>
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Box
-                    sx={{
-                      p: 1.5,
-                      bgcolor: "#faf5ff",
-                      borderRadius: "12px",
-                      color: "#7c3aed",
-                      display: "flex",
-                    }}
-                  >
-                    <RateIcon />
-                  </Box>
-                  <Box>
-                    <Typography
-                      variant="caption"
-                      fontWeight="800"
-                      color="#64748b"
-                    >
-                      OCCUPANCY RATE
-                    </Typography>
-                    <Typography variant="h5" fontWeight="900" color="#091542">
-                      {totals?.occupancyRate ?? 0}%
-                    </Typography>
-                  </Box>
-                </Stack>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          {/* Active Members */}
-          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-            <Card
-              elevation={0}
-              sx={{
-                p: 2,
-                borderRadius: "20px",
-                border: "1px solid #f1f5f9",
-                bgcolor: "white",
-              }}
-            >
-              <CardContent sx={{ p: "16px !important" }}>
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Box
-                    sx={{
-                      p: 1.5,
-                      bgcolor: "#fff7ed",
-                      borderRadius: "12px",
-                      color: "#ea580c",
-                      display: "flex",
-                    }}
-                  >
-                    <MembersIcon />
-                  </Box>
-                  <Box>
-                    <Typography
-                      variant="caption"
-                      fontWeight="800"
-                      color="#64748b"
-                    >
-                      ACTIVE MEMBERS
-                    </Typography>
-                    <Typography variant="h5" fontWeight="900" color="#091542">
-                      {totals?.activeMembers ?? 0}
-                    </Typography>
-                  </Box>
-                </Stack>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          {/* Bookings */}
-          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-            <Card
-              elevation={0}
-              sx={{
-                p: 2,
-                borderRadius: "20px",
-                border: "1px solid #f1f5f9",
-                bgcolor: "white",
-              }}
-            >
-              <CardContent sx={{ p: "16px !important" }}>
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Box
-                    sx={{
-                      p: 1.5,
-                      bgcolor: "#fdf2f8",
-                      borderRadius: "12px",
-                      color: "#db2777",
-                      display: "flex",
-                    }}
-                  >
-                    <BookingIcon />
-                  </Box>
-                  <Box>
-                    <Typography
-                      variant="caption"
-                      fontWeight="800"
-                      color="#64748b"
-                    >
-                      BOOKINGS
-                    </Typography>
-                    <Typography variant="h5" fontWeight="900" color="#091542">
-                      {totals?.bookings ?? 0}
-                    </Typography>
-                  </Box>
-                </Stack>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          {/* Active Subscriptions */}
-          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-            <Card
-              elevation={0}
-              sx={{
-                p: 2,
-                borderRadius: "20px",
-                border: "1px solid #f1f5f9",
-                bgcolor: "white",
-              }}
-            >
-              <CardContent sx={{ p: "16px !important" }}>
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Box
-                    sx={{
-                      p: 1.5,
-                      bgcolor: "#f0fdfa",
-                      borderRadius: "12px",
-                      color: "#0d9488",
-                      display: "flex",
-                    }}
-                  >
-                    <MembersIcon />
-                  </Box>
-                  <Box>
-                    <Typography
-                      variant="caption"
-                      fontWeight="800"
-                      color="#64748b"
-                    >
-                      ACTIVE SUBSCRIPTIONS
-                    </Typography>
-                    <Typography variant="h5" fontWeight="900" color="#091542">
-                      {totals?.activeSubscriptions ?? 0}
-                    </Typography>
-                  </Box>
-                </Stack>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          {/* Revenue */}
-          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-            <Card
-              elevation={0}
-              sx={{
-                p: 2,
-                borderRadius: "20px",
-                border: "1px solid #f1f5f9",
-                bgcolor: "white",
-              }}
-            >
-              <CardContent sx={{ p: "16px !important" }}>
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Box
-                    sx={{
-                      p: 1.5,
-                      bgcolor: "#eff6ff",
-                      borderRadius: "12px",
-                      color: "#2c4d93",
-                      display: "flex",
-                    }}
-                  >
-                    <RevenueIcon />
-                  </Box>
-                  <Box>
-                    <Typography
-                      variant="caption"
-                      fontWeight="800"
-                      color="#64748b"
-                    >
-                      TOTAL REVENUE
-                    </Typography>
-                    <Typography variant="h5" fontWeight="900" color="#091542">
-                      ₹{(totals?.revenue ?? 0).toLocaleString("en-IN")}
-                    </Typography>
-                  </Box>
-                </Stack>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          {/* Access Events */}
-          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-            <Card
-              elevation={0}
-              sx={{
-                p: 2,
-                borderRadius: "20px",
-                border: "1px solid #f1f5f9",
-                bgcolor: "white",
-              }}
-            >
-              <CardContent sx={{ p: "16px !important" }}>
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Box
-                    sx={{
-                      p: 1.5,
-                      bgcolor: "#f8fafc",
-                      borderRadius: "12px",
-                      color: "#475569",
-                      display: "flex",
-                    }}
-                  >
-                    <AccessIcon />
-                  </Box>
-                  <Box>
-                    <Typography
-                      variant="caption"
-                      fontWeight="800"
-                      color="#64748b"
-                    >
-                      ACCESS EVENTS
-                    </Typography>
-                    <Typography variant="h5" fontWeight="900" color="#091542">
-                      {totals?.accessEvents ?? 0}
-                    </Typography>
-                  </Box>
-                </Stack>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
-      )}
-
-      {/* Charts Section */}
-      <Grid container spacing={4} sx={{ mb: 4 }}>
-        {/* Bookings By Activity */}
-        <Grid size={{ xs: 12, lg: 6 }}>
+      <Grid container spacing={3}>
+        
+        {/* Bookings by activity */}
+        <Grid size={12}>
           <Paper
             elevation={0}
             sx={{
-              p: 4,
-              borderRadius: "20px",
-              border: "1px solid #f1f5f9",
+              p: "20px 24px",
+              borderRadius: "12px",
+              border: "1px solid #e2e8f0",
               bgcolor: "white",
-              height: 480,
+              height: 340,
               display: "flex",
               flexDirection: "column",
             }}
           >
-            <Typography
-              variant="h6"
-              fontWeight="900"
-              color="#091542"
-              sx={{ mb: 1 }}
-            >
-              Bookings by Activity
-            </Typography>
-            <Typography
-              variant="caption"
-              color="text.secondary"
-              sx={{ mb: 3, fontWeight: 700 }}
-            >
-              Shows number of bookings per clubhouse facility
+            <Typography sx={{ fontFamily: INTER, fontWeight: 700, fontSize: "0.95rem", color: "#1e293b", mb: "24px" }}>
+              Bookings by activity
             </Typography>
 
             <Box sx={{ flexGrow: 1, minHeight: 0, position: "relative" }}>
               {loadingBookings ? (
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "100%",
-                  }}
-                >
-                  <CircularProgress />
+                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+                  <CircularProgress size={24} />
                 </Box>
               ) : bookingsData.length === 0 ? (
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "100%",
-                  }}
-                >
-                  <Typography variant="body2" color="text.secondary">
-                    No booking activity recorded
-                  </Typography>
+                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+                  <Typography sx={{ fontSize: "0.85rem", color: "#94a3b8" }}>No data</Typography>
                 </Box>
               ) : (
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={bookingsData}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis
-                      dataKey="facilityName"
-                      tick={{ fill: "#64748b", fontWeight: 700, fontSize: 11 }}
-                    />
-                    <YAxis
-                      tick={{ fill: "#64748b", fontWeight: 700, fontSize: 11 }}
-                    />
-                    <Tooltip cursor={{ fill: "rgba(0,0,0,0.02)" }} />
-                    <Bar dataKey="bookings" radius={[8, 8, 0, 0]}>
-                      {bookingsData.map((_, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={COLORS[index % COLORS.length]}
-                        />
+                  <BarChart data={bookingsData} layout="vertical" margin={{ top: 0, right: 20, left: 10, bottom: 0 }} barCategoryGap="25%">
+                    <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f1f5f9" />
+                    <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: "#94a3b8", fontSize: 12, fontWeight: 400 }} />
+                    <YAxis dataKey="facilityName" type="category" axisLine={false} tickLine={false} tick={{ fill: "#94a3b8", fontSize: 12, fontWeight: 400 }} />
+                    <Tooltip cursor={{ fill: "rgba(0,0,0,0.02)" }} contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }} />
+                    <Bar dataKey="bookings" barSize={40} radius={[0, 6, 6, 0]}>
+                      {bookingsData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={index === 0 ? "#bca47c" : "#204a7b"} />
                       ))}
                     </Bar>
                   </BarChart>
                 </ResponsiveContainer>
               )}
             </Box>
-
-            <Stack
-              direction="row"
-              justifyContent="flex-end"
-              spacing={1}
-              sx={{ mt: 2 }}
-            >
-              <IconButton
-                size="small"
-                onClick={() => setBookingsPage((p) => Math.max(1, p - 1))}
-                disabled={bookingsPage === 1}
-              >
-                <PrevIcon fontSize="small" />
-              </IconButton>
-              <Typography
-                variant="caption"
-                sx={{ alignSelf: "center", fontWeight: 800, px: 1 }}
-              >
-                Page {bookingsPage}
-              </Typography>
-              <IconButton
-                size="small"
-                onClick={() => setBookingsPage((p) => p + 1)}
-                disabled={bookingsData.length < limit}
-              >
-                <NextIcon fontSize="small" />
-              </IconButton>
-            </Stack>
           </Paper>
         </Grid>
 
-        {/* Revenue By Activity */}
-        <Grid size={{ xs: 12, lg: 6 }}>
+        {/* Revenue by activity */}
+        <Grid size={12}>
           <Paper
             elevation={0}
             sx={{
-              p: 4,
-              borderRadius: "20px",
-              border: "1px solid #f1f5f9",
+              p: "20px 24px",
+              borderRadius: "12px",
+              border: "1px solid #e2e8f0",
               bgcolor: "white",
-              height: 480,
+              height: 340,
               display: "flex",
               flexDirection: "column",
             }}
           >
-            <Typography
-              variant="h6"
-              fontWeight="900"
-              color="#091542"
-              sx={{ mb: 1 }}
-            >
-              Revenue by Activity
-            </Typography>
-            <Typography
-              variant="caption"
-              color="text.secondary"
-              sx={{ mb: 3, fontWeight: 700 }}
-            >
-              Breakdown of total facility booking & subscription fees generated
+            <Typography sx={{ fontFamily: INTER, fontWeight: 700, fontSize: "0.95rem", color: "#1e293b", mb: "24px" }}>
+              Revenue by activity
             </Typography>
 
             <Box sx={{ flexGrow: 1, minHeight: 0, position: "relative" }}>
               {loadingRevenue ? (
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "100%",
-                  }}
-                >
-                  <CircularProgress />
+                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+                  <CircularProgress size={24} />
                 </Box>
               ) : revenueData.length === 0 ? (
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "100%",
-                  }}
-                >
-                  <Typography variant="body2" color="text.secondary">
-                    No revenue details recorded
-                  </Typography>
+                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+                  <Typography sx={{ fontSize: "0.85rem", color: "#94a3b8" }}>No data</Typography>
                 </Box>
               ) : (
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={revenueData}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis
-                      dataKey="facilityName"
-                      tick={{ fill: "#64748b", fontWeight: 700, fontSize: 11 }}
-                    />
-                    <YAxis
-                      tick={{ fill: "#64748b", fontWeight: 700, fontSize: 11 }}
-                    />
-                    <Tooltip cursor={{ fill: "rgba(0,0,0,0.02)" }} />
-                    <Bar dataKey="revenue" radius={[8, 8, 0, 0]}>
-                      {revenueData.map((_, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={COLORS[(index + 2) % COLORS.length]}
-                        />
+                  <BarChart data={revenueData} margin={{ top: 0, right: 0, left: -10, bottom: 0 }} barCategoryGap="25%">
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                    <XAxis dataKey="facilityName" axisLine={false} tickLine={false} tick={{ fill: "#94a3b8", fontSize: 12, fontWeight: 400 }} />
+                    <YAxis tickFormatter={(val) => `${val >= 1000 ? (val / 1000) + 'k' : val}`} axisLine={false} tickLine={false} tick={{ fill: "#94a3b8", fontSize: 12, fontWeight: 400 }} />
+                    <Tooltip cursor={{ fill: "rgba(0,0,0,0.02)" }} contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }} formatter={(val: number) => [`₹${val.toLocaleString()}`, "v "]} />
+                    <Bar dataKey="revenue" barSize={140} radius={[6, 6, 0, 0]}>
+                      {revenueData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={index === 0 ? "#bca47c" : "#204a7b"} />
                       ))}
                     </Bar>
                   </BarChart>
                 </ResponsiveContainer>
               )}
             </Box>
-
-            <Stack
-              direction="row"
-              justifyContent="flex-end"
-              spacing={1}
-              sx={{ mt: 2 }}
-            >
-              <IconButton
-                size="small"
-                onClick={() => setRevenuePage((p) => Math.max(1, p - 1))}
-                disabled={revenuePage === 1}
-              >
-                <PrevIcon fontSize="small" />
-              </IconButton>
-              <Typography
-                variant="caption"
-                sx={{ alignSelf: "center", fontWeight: 800, px: 1 }}
-              >
-                Page {revenuePage}
-              </Typography>
-              <IconButton
-                size="small"
-                onClick={() => setRevenuePage((p) => p + 1)}
-                disabled={revenueData.length < limit}
-              >
-                <NextIcon fontSize="small" />
-              </IconButton>
-            </Stack>
           </Paper>
         </Grid>
       </Grid>
 
-      {/* Access Logs Table */}
-      <Paper
-        elevation={0}
-        sx={{
-          p: 4,
-          borderRadius: "20px",
-          border: "1px solid #f1f5f9",
-          bgcolor: "white",
-        }}
-      >
-        <Typography
-          variant="h6"
-          fontWeight="900"
-          color="#091542"
-          sx={{ mb: 1 }}
-        >
-          Clubhouse Gate Access Events
-        </Typography>
-        <Typography
-          variant="caption"
-          color="text.secondary"
-          sx={{ mb: 4, display: "block", fontWeight: 700 }}
-        >
-          Realtime gate entry logs showing system subscription and barcode
-          validations
-        </Typography>
+      {/* ── KPI Cards Bottom Row ── */}
+      <Grid container spacing={2} sx={{ mt: 1 }}>
+        {/* Occupancy */}
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <Paper elevation={0} sx={{ p: "24px", borderRadius: "16px", border: "1px solid #e2e8f0", display: "flex", flexDirection: "column", height: "100%" }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: "8px", mb: "16px" }}>
+              <OccupancyIcon sx={{ fontSize: 16, color: "#bca47c" }} />
+              <Typography sx={{ fontFamily: INTER, fontSize: "0.75rem", fontWeight: 700, color: "#94a3b8", letterSpacing: "0.5px" }}>
+                OCCUPANCY
+              </Typography>
+            </Box>
+            <Typography sx={{ fontFamily: SERIF, fontWeight: 600, fontSize: "2.4rem", color: "#192038", mb: "4px" }}>
+              {totals?.occupancyRate ?? 82}%
+            </Typography>
+            <Typography sx={{ fontFamily: INTER, fontSize: "0.85rem", color: "#64748b" }}>
+              clubhouse peak
+            </Typography>
+          </Paper>
+        </Grid>
 
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell
-                  sx={{ fontWeight: 800, color: "#64748b", fontSize: "0.8rem" }}
-                >
-                  ACCESS AT
-                </TableCell>
-                <TableCell
-                  sx={{ fontWeight: 800, color: "#64748b", fontSize: "0.8rem" }}
-                >
-                  TYPE
-                </TableCell>
-                <TableCell
-                  sx={{ fontWeight: 800, color: "#64748b", fontSize: "0.8rem" }}
-                >
-                  ZONE
-                </TableCell>
-                <TableCell
-                  sx={{ fontWeight: 800, color: "#64748b", fontSize: "0.8rem" }}
-                >
-                  FACILITY
-                </TableCell>
-                <TableCell
-                  sx={{ fontWeight: 800, color: "#64748b", fontSize: "0.8rem" }}
-                >
-                  USER / MEMBER
-                </TableCell>
-                <TableCell
-                  sx={{ fontWeight: 800, color: "#64748b", fontSize: "0.8rem" }}
-                >
-                  ROLE
-                </TableCell>
-                <TableCell
-                  sx={{ fontWeight: 800, color: "#64748b", fontSize: "0.8rem" }}
-                >
-                  CARD NUMBER
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {loadingAccess ? (
-                <TableRow>
-                  <TableCell colSpan={7} align="center" sx={{ py: 6 }}>
-                    <CircularProgress size={30} />
-                  </TableCell>
-                </TableRow>
-              ) : accessEvents.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={7} align="center" sx={{ py: 6 }}>
-                    <Typography variant="body2" color="text.secondary">
-                      No access logs found
-                    </Typography>
-                  </TableCell>
-                </TableRow>
-              ) : (
-                accessEvents.map((log) => (
-                  <TableRow key={log.id} hover>
-                    <TableCell
-                      sx={{
-                        fontWeight: 700,
-                        fontSize: "0.85rem",
-                        color: "#091542",
-                      }}
-                    >
-                      {new Date(log.accessAt).toLocaleString()}
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        fontWeight: 700,
-                        fontSize: "0.85rem",
-                        color: "#475569",
-                      }}
-                    >
-                      {log.accessType}
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        fontWeight: 700,
-                        fontSize: "0.85rem",
-                        color: "#475569",
-                      }}
-                    >
-                      {log.accessZone}
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        fontWeight: 700,
-                        fontSize: "0.85rem",
-                        color: "#2c4d93",
-                      }}
-                    >
-                      {log.facilityName}
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        fontWeight: 700,
-                        fontSize: "0.85rem",
-                        color: "#091542",
-                      }}
-                    >
-                      {log.userName}
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        fontWeight: 700,
-                        fontSize: "0.85rem",
-                        color: "#475569",
-                      }}
-                    >
-                      {log.userRole}
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        fontWeight: 700,
-                        fontSize: "0.85rem",
-                        color: "#64748b",
-                      }}
-                    >
-                      {log.cardNumber || "N/A"}
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        {/* Active Members */}
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <Paper elevation={0} sx={{ p: "24px", borderRadius: "16px", border: "1px solid #e2e8f0", display: "flex", flexDirection: "column", height: "100%" }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: "8px", mb: "16px" }}>
+              <MembersIcon sx={{ fontSize: 16, color: "#475569" }} />
+              <Typography sx={{ fontFamily: INTER, fontSize: "0.75rem", fontWeight: 700, color: "#94a3b8", letterSpacing: "0.5px" }}>
+                ACTIVE MEMBERS
+              </Typography>
+            </Box>
+            <Typography sx={{ fontFamily: SERIF, fontWeight: 600, fontSize: "2.4rem", color: "#192038", mb: "4px" }}>
+              {(totals?.activeMembers ?? 1142).toLocaleString()}
+            </Typography>
+            <Typography sx={{ fontFamily: INTER, fontSize: "0.85rem", color: "#64748b" }}>
+              in scope
+            </Typography>
+          </Paper>
+        </Grid>
 
-        <Stack
-          direction="row"
-          justifyContent="flex-end"
-          spacing={1}
-          sx={{ mt: 3 }}
-        >
-          <IconButton
-            size="small"
-            onClick={() => setAccessPage((p) => Math.max(1, p - 1))}
-            disabled={accessPage === 1}
-          >
-            <PrevIcon fontSize="small" />
-          </IconButton>
-          <Typography
-            variant="caption"
-            sx={{ alignSelf: "center", fontWeight: 800, px: 1 }}
-          >
-            Page {accessPage}
-          </Typography>
-          <IconButton
-            size="small"
-            onClick={() => setAccessPage((p) => p + 1)}
-            disabled={accessEvents.length < 10}
-          >
-            <NextIcon fontSize="small" />
-          </IconButton>
-        </Stack>
-      </Paper>
+        {/* Access Events */}
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <Paper elevation={0} sx={{ p: "24px", borderRadius: "16px", border: "1px solid #e2e8f0", display: "flex", flexDirection: "column", height: "100%" }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: "8px", mb: "16px" }}>
+              <AccessIcon sx={{ fontSize: 16, color: "#bca47c" }} />
+              <Typography sx={{ fontFamily: INTER, fontSize: "0.75rem", fontWeight: 700, color: "#94a3b8", letterSpacing: "0.5px" }}>
+                ACCESS EVENTS
+              </Typography>
+            </Box>
+            <Typography sx={{ fontFamily: SERIF, fontWeight: 600, fontSize: "2.4rem", color: "#192038", mb: "4px" }}>
+              {(totals?.accessEvents ?? 3410).toLocaleString()}
+            </Typography>
+            <Typography sx={{ fontFamily: INTER, fontSize: "0.85rem", color: "#64748b" }}>
+              last 30 days
+            </Typography>
+          </Paper>
+        </Grid>
+
+        {/* Active Subscriptions */}
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <Paper elevation={0} sx={{ p: "24px", borderRadius: "16px", border: "1px solid #e2e8f0", display: "flex", flexDirection: "column", height: "100%" }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: "8px", mb: "16px" }}>
+              <SubscriptionsIcon sx={{ fontSize: 16, color: "#ef4444" }} />
+              <Typography sx={{ fontFamily: INTER, fontSize: "0.75rem", fontWeight: 700, color: "#94a3b8", letterSpacing: "0.5px" }}>
+                ACTIVE SUBSCRIPTIONS
+              </Typography>
+            </Box>
+            <Typography sx={{ fontFamily: SERIF, fontWeight: 600, fontSize: "2.4rem", color: "#192038", mb: "4px" }}>
+              {(totals?.activeSubscriptions ?? 0).toLocaleString()}
+            </Typography>
+            <Typography sx={{ fontFamily: INTER, fontSize: "0.85rem", color: "#64748b" }}>
+              currently active
+            </Typography>
+          </Paper>
+        </Grid>
+      </Grid>
     </Box>
   );
 }

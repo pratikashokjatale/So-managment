@@ -25,7 +25,7 @@ import {
 } from "@mui/icons-material";
 
 export const menuItems = [
-    { text: "Overview", icon: <DashboardIcon />, path: "/analytics" },
+    { text: "Analytics", icon: <DashboardIcon />, path: "/analytics" },
 
   
 

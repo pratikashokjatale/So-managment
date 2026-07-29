@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Outlet, useNavigate, useLocation, Navigate } from "react-router-dom";
+import { Outlet, useNavigate, useLocation, Navigate, useSearchParams } from "react-router-dom";
 import {
   Box,
   CssBaseline,
@@ -35,6 +35,7 @@ import { menuItems } from "./menuItems";
 import TopBar from "./TopBar";
 import Loader from "@/components/Loader";
 import PageNotFound from "@/pages/PageNotFound";
+import { getProjectsApi } from "@/apis/project";
 
 export default function DashboardLayout() {
   const theme = useTheme();
@@ -46,6 +47,27 @@ export default function DashboardLayout() {
   );
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const projectId = searchParams.get("projectId") || "all";
+  const [projects, setProjects] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const res = await getProjectsApi({ limit: 100 });
+        const list =
+          res?.data?.data ||
+          res?.data?.projects ||
+          res?.projects ||
+          res?.data ||
+          [];
+        setProjects(Array.isArray(list) ? list : []);
+      } catch (err) {
+        console.error("Failed to fetch projects for sidebar:", err);
+      }
+    };
+    fetchProjects();
+  }, []);
   const { navType } = useConfig();
   const { isLoggedIn, isAdmin, isAuthLoading } = useAuth();
 
@@ -117,10 +139,8 @@ export default function DashboardLayout() {
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            bgcolor: anchorElProject ? "rgba(63, 81, 181, 0.04)" : "#ffffff",
-            border: anchorElProject
-              ? "1.5px solid #3f51b5"
-              : "1px solid #e2e8f0",
+            bgcolor: anchorElProject ? "#f8fafc" : "#ffffff",
+            border: "1px solid #e2e8f0",
             borderRadius: "8px",
             p: "8px 12px",
             mb: 2,
@@ -132,14 +152,14 @@ export default function DashboardLayout() {
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
             <ProjectIcon
               sx={{
-                color: anchorElProject ? "#3f51b5" : "#64748b",
+                color: "#64748b",
                 fontSize: 18,
               }}
             />
             <Typography
-              sx={{ fontSize: "0.85rem", fontWeight: 500, color: "#1e293b" }}
+              sx={{ fontSize: "0.85rem", fontWeight: 500, color: "#1e293b", textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap", maxWidth: 120 }}
             >
-              All Projects
+              {projectId === "all" ? "All Projects" : (projects.find(p => p.id === projectId)?.name || "All Projects")}
             </Typography>
           </Box>
           <ExpandMoreIcon sx={{ color: "#64748b", fontSize: 16 }} />
@@ -164,17 +184,28 @@ export default function DashboardLayout() {
           anchorOrigin={{ horizontal: "left", vertical: "bottom" }}
         >
           <MenuItem
-            onClick={() => setAnchorElProject(null)}
-            sx={{ fontSize: "0.85rem", py: 1.5, color: "#475569" }}
+            onClick={() => {
+              searchParams.set("projectId", "all");
+              setSearchParams(searchParams);
+              setAnchorElProject(null);
+            }}
+            sx={{ fontSize: "0.85rem", py: 1.5, color: projectId === "all" ? "#1e293b" : "#475569", fontWeight: projectId === "all" ? 600 : 400, bgcolor: projectId === "all" ? "#f8fafc" : "transparent" }}
           >
             All Projects
           </MenuItem>
-          <MenuItem
-            onClick={() => setAnchorElProject(null)}
-            sx={{ fontSize: "0.85rem", py: 1.5, color: "#475569" }}
-          >
-            Marbella Grand
-          </MenuItem>
+          {projects.map((proj) => (
+            <MenuItem
+              key={proj.id}
+              onClick={() => {
+                searchParams.set("projectId", proj.id);
+                setSearchParams(searchParams);
+                setAnchorElProject(null);
+              }}
+              sx={{ fontSize: "0.85rem", py: 1.5, color: projectId === proj.id ? "#1e293b" : "#475569", fontWeight: projectId === proj.id ? 600 : 400, bgcolor: projectId === proj.id ? "#f8fafc" : "transparent" }}
+            >
+              {proj.name}
+            </MenuItem>
+          ))}
         </Menu>
 
         <Typography
