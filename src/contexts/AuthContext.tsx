@@ -182,8 +182,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const isAdmin =
     state.user?.role?.toLowerCase() === "admin" ||
-    state.user?.roles?.some((role: string) => role?.toLowerCase() === "admin") ||
+    state.user?.role?.toLowerCase() === "super_admin" ||
+    state.user?.role?.toLowerCase() === "superadmin" ||
+    state.user?.roles?.some((role: string) => role?.toLowerCase() === "admin" || role?.toLowerCase() === "super_admin") ||
     state.user?.roles?.includes("admin") ||
+    state.user?.roles?.includes("super_admin") ||
+    
     false;
 
   return (

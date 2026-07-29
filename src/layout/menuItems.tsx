@@ -22,12 +22,13 @@ import {
   BarChart as AnalyticsIcon,
   Security as RolesIcon,
   WorkspacePremium as CrownIcon,
+  CreditCard as CardIcon,
 } from "@mui/icons-material";
 
 export const menuItems = [
     { text: "Overview", icon:  <DashboardIcon />, path: "/" },
-
     { text: "Analytics", icon: <AnalyticsIcon />, path: "/analytics" },
+    { text: "Access & Cards", icon: <CardIcon />, path: "/access" },
 
   
 

@@ -9,6 +9,7 @@ export interface AnalyticsCommonParams {
 export interface AnalyticsPaginationParams extends AnalyticsCommonParams {
   page?: number;
   limit?: number;
+  status?: string;
 }
 
 export interface AnalyticsOverviewResponse {
