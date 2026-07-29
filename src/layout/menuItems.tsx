@@ -21,6 +21,7 @@ import {
   Emergency as EmergencyIcon,
   BarChart as AnalyticsIcon,
   Security as RolesIcon,
+  WorkspacePremium as CrownIcon,
 } from "@mui/icons-material";
 
 export const menuItems = [
@@ -94,6 +95,7 @@ export const menuItems = [
 
   // { text: "Gate Entry", icon: <GateIcon />, path: "/gate" },
   { text: "Announcements", icon: <CampaignIcon />, path: "/announcements" },
+  { text: "VIP Pass", icon: <CrownIcon />, path: "/vip-pass" },
   { text: "Dashboard", icon: <AnalyticsIcon /> , path: "/" },
   { text: "Report", icon: <ReportIcon />, path: "/report" },
 ];

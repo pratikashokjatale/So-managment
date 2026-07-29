@@ -20,7 +20,9 @@ import StaffAttendance from "@/pages/staff/StaffAttendance";
 import GetAnnouncement from "@/pages/announcement/GetAnnouncement";
 import AddAnnouncement from "@/pages/announcement/AddAnnouncement";
 import EditAnnouncement from "@/pages/announcement/EditAnnouncement";
+import AnnouncementDetails from "@/pages/announcement/AnnouncementDetails";
 import GetReport from "@/pages/report/GetReport";
+import VipPass from "@/pages/vip-pass/VipPass";
 import GetAnalytics from "@/pages/analytics/GetAnalytics";
 import GetDemoAccounts from "@/pages/residents/GetDemoAccounts";
 import AddDemoAccount from "@/pages/residents/AddDemoAccount";
@@ -179,8 +181,16 @@ const DashboardRoutes = {
       element: <EditAnnouncement />,
     },
     {
+      path: "announcements/:id",
+      element: <AnnouncementDetails />,
+    },
+    {
       path: "report",
       element: <GetReport />,
+    },
+    {
+      path: "vip-pass",
+      element: <VipPass />,
     },
     {
       path: "analytics",

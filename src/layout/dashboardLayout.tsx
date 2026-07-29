@@ -175,8 +175,6 @@ export default function DashboardLayout() {
           >
             Marbella Grand
           </MenuItem>
-
-          
         </Menu>
 
         <Typography
@@ -382,7 +380,7 @@ export default function DashboardLayout() {
   );
 
   return (
-    <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "#f4f7f9" }}>
+    <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "#edf1f9ff" }}>
       <Loader />
       <CssBaseline />
       <TopBar
@@ -413,7 +411,7 @@ export default function DashboardLayout() {
             borderRadius: { xs: 0, md: "24px" },
             border: { xs: "none", md: "1px solid #e2e8f0" },
             overflow: "hidden",
-            boxShadow: { xs: "none", md: "0 4px 20px rgba(0,0,0,0.02)" },
+            boxShadow: { xs: "none", md: "0 2px 8px rgba(99, 120, 160, 0.06), 0 8px 32px rgba(99, 120, 160, 0.10), 0 24px 64px rgba(99, 120, 160, 0.08)" },
           }}
         >
           {/* Left Sidebar embedded directly inside the card */}
