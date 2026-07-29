@@ -25,7 +25,9 @@ import {
 } from "@mui/icons-material";
 
 export const menuItems = [
-    { text: "Analytics", icon: <DashboardIcon />, path: "/analytics" },
+    { text: "Overview", icon:  <DashboardIcon />, path: "/" },
+
+    { text: "Analytics", icon: <AnalyticsIcon />, path: "/analytics" },
 
   
 
@@ -96,6 +98,5 @@ export const menuItems = [
   // { text: "Gate Entry", icon: <GateIcon />, path: "/gate" },
   { text: "Announcements", icon: <CampaignIcon />, path: "/announcements" },
   { text: "VIP Pass", icon: <CrownIcon />, path: "/vip-pass" },
-  { text: "Dashboard", icon: <AnalyticsIcon /> , path: "/" },
   { text: "Report", icon: <ReportIcon />, path: "/report" },
 ];

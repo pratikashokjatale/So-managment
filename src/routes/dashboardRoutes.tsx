@@ -1,5 +1,6 @@
 import DashboardLayout from "@/layout/dashboardLayout";
 import Dashboard from "@/pages/dashboard";
+import GetOverview from "@/pages/overview/GetOverview";
 import GetResident from "@/pages/residents/GetResident";
 import AddResident from "@/pages/residents/AddResident";
 import ResidentDetails from "@/pages/residents/ResidentDetails";
@@ -58,7 +59,7 @@ const DashboardRoutes = {
   children: [
     {
       index: true,
-      element: <Dashboard />,
+      element: <GetOverview />,
     },
     {
       path: "profile",
