@@ -29,10 +29,12 @@ import {
   getAnalyticsOverviewApi,
   getAnalyticsBookingsByActivityApi,
   getAnalyticsRevenueByActivityApi,
+  getAnalyticsAccessEventsApi,
 } from "@/apis/analytics";
 import type {
   BookingsByActivityItem,
   RevenueByActivityItem,
+  AccessEventItem,
 } from "@/apis/analytics";
 
 const INTER = '"Inter", "Satoshi", sans-serif';
@@ -47,11 +49,13 @@ export default function GetAnalytics() {
   const [totals, setTotals] = useState<any>(null);
   const [bookingsData, setBookingsData] = useState<BookingsByActivityItem[]>([]);
   const [revenueData, setRevenueData] = useState<RevenueByActivityItem[]>([]);
+  const [accessEventsData, setAccessEventsData] = useState<AccessEventItem[]>([]);
 
   // Loading States
   const [loadingOverview, setLoadingOverview] = useState<boolean>(true);
   const [loadingBookings, setLoadingBookings] = useState<boolean>(true);
   const [loadingRevenue, setLoadingRevenue] = useState<boolean>(true);
+  const [loadingAccessEvents, setLoadingAccessEvents] = useState<boolean>(true);
 
   // Fetch Overview/Totals
   const fetchOverview = async () => {
@@ -100,11 +104,28 @@ export default function GetAnalytics() {
     }
   };
 
+  // Fetch Access Events
+  const fetchAccessEvents = async () => {
+    setLoadingAccessEvents(true);
+    try {
+      const res = await getAnalyticsAccessEventsApi({
+        projectId: projectId || undefined,
+        limit: 20,
+      });
+      setAccessEventsData((res as any)?.items || []);
+    } catch (err: any) {
+      console.error(err);
+    } finally {
+      setLoadingAccessEvents(false);
+    }
+  };
+
   // Trigger loading when project changes
   useEffect(() => {
     fetchOverview();
     fetchBookings();
     fetchRevenue();
+    fetchAccessEvents();
   }, [projectId]);
 
   return (
@@ -244,7 +265,7 @@ export default function GetAnalytics() {
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                     <XAxis dataKey="facilityName" axisLine={false} tickLine={false} tick={{ fill: "#94a3b8", fontSize: 12, fontWeight: 400 }} />
                     <YAxis tickFormatter={(val) => `${val >= 1000 ? (val / 1000) + 'k' : val}`} axisLine={false} tickLine={false} tick={{ fill: "#94a3b8", fontSize: 12, fontWeight: 400 }} />
-                    <Tooltip cursor={{ fill: "rgba(0,0,0,0.02)" }} contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }} formatter={(val: number) => [`₹${val.toLocaleString()}`, "v "]} />
+                    <Tooltip cursor={{ fill: "rgba(0,0,0,0.02)" }} contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }} formatter={(val: any) => [`₹${Number(val || 0).toLocaleString()}`, "v "]} />
                     <Bar dataKey="revenue" barSize={140} radius={[6, 6, 0, 0]}>
                       {revenueData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={index === 0 ? "#bca47c" : "#204a7b"} />
