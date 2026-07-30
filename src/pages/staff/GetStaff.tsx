@@ -68,7 +68,7 @@ const mapBackendStaffToFrontend = (s: any) => {
 
 export default function GetStaff() {
   const navigate = useNavigate();
-  const [viewMode, setViewMode] = useState<"grid" | "table">("grid");
+  const [viewMode, setViewMode] = useState<"grid" | "table">("table");
   const [staffList, setStaffList] = useState<Staff[]>([]);
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");

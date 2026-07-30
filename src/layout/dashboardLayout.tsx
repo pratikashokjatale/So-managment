@@ -28,6 +28,8 @@ import {
   Business as ProjectIcon,
   VerifiedUser as AdminIcon,
   Wifi as WifiIcon,
+  HeadsetMicOutlined as CrmIcon,
+  BusinessCenterOutlined as ManagerIcon,
 } from "@mui/icons-material";
 import { useAuth } from "@/contexts/AuthContext";
 import { useConfig } from "@/contexts/ConfigContext";
@@ -45,6 +47,8 @@ export default function DashboardLayout() {
   const [anchorElProject, setAnchorElProject] = useState<null | HTMLElement>(
     null,
   );
+  const [anchorElRole, setAnchorElRole] = useState<null | HTMLElement>(null);
+  const [currentRole, setCurrentRole] = useState("Admin (you)");
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -224,6 +228,7 @@ export default function DashboardLayout() {
         </Typography>
 
         <Box
+          onClick={(e) => setAnchorElRole(e.currentTarget)}
           sx={{
             display: "flex",
             alignItems: "center",
@@ -238,17 +243,65 @@ export default function DashboardLayout() {
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-            <AdminIcon
-              sx={{ color: theme.palette.primary.main, fontSize: 16 }}
-            />
+            {currentRole === "Admin (you)" && <AdminIcon sx={{ color: theme.palette.primary.main, fontSize: 16 }} />}
+            {currentRole === "CRM" && <CrmIcon sx={{ color: theme.palette.primary.main, fontSize: 16 }} />}
+            {currentRole === "Manager" && <ManagerIcon sx={{ color: theme.palette.primary.main, fontSize: 16 }} />}
             <Typography
               sx={{ fontSize: "0.8rem", fontWeight: 700, color: "#1e293b" }}
             >
-              Admin (you)
+              {currentRole}
             </Typography>
           </Box>
           <ExpandMoreIcon sx={{ color: "#64748b", fontSize: 16 }} />
         </Box>
+
+        <Menu
+          anchorEl={anchorElRole}
+          open={Boolean(anchorElRole)}
+          onClose={() => setAnchorElRole(null)}
+          PaperProps={{
+            elevation: 0,
+            sx: {
+              mt: 1,
+              width: 200,
+              overflow: "visible",
+              filter: "drop-shadow(0px 4px 20px rgba(0,0,0,0.08))",
+              borderRadius: "12px",
+              border: "1px solid #f1f5f9",
+            },
+          }}
+          transformOrigin={{ horizontal: "left", vertical: "top" }}
+          anchorOrigin={{ horizontal: "left", vertical: "bottom" }}
+        >
+          {[
+            { label: "Admin (you)", icon: <AdminIcon sx={{ fontSize: 18 }} /> },
+            { label: "CRM", icon: <CrmIcon sx={{ fontSize: 18 }} /> },
+            { label: "Manager", icon: <ManagerIcon sx={{ fontSize: 18 }} /> },
+          ].map((role) => (
+            <MenuItem
+              key={role.label}
+              onClick={() => {
+                setCurrentRole(role.label);
+                setAnchorElRole(null);
+              }}
+              sx={{ 
+                fontSize: "0.85rem", 
+                py: 1.5, 
+                gap: 1.5,
+                color: currentRole === role.label ? theme.palette.primary.main : "#475569", 
+                fontWeight: currentRole === role.label ? 600 : 400, 
+                bgcolor: currentRole === role.label ? "#eff6ff" : "transparent",
+                borderRadius: "8px",
+                mx: 1,
+                my: 0.25,
+                "&:hover": { bgcolor: "#f8fafc" }
+              }}
+            >
+              {role.icon}
+              {role.label}
+            </MenuItem>
+          ))}
+        </Menu>
       </Box>
 
       {/* Navigation List styled exactly like the image */}
