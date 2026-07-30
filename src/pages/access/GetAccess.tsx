@@ -182,13 +182,7 @@ export default function GetAccess() {
         />
 
         <Stack direction="row" spacing={1.5} sx={{ ml: "auto" }}>
-          <Button
-            variant="contained"
-            startIcon={<ScanIcon />}
-            sx={{ bgcolor: "#1e293b", textTransform: "none", borderRadius: "8px", fontWeight: 600, px: 2 }}
-          >
-            Scan
-          </Button>
+          
           <Button
             variant="outlined"
             startIcon={<CardDesignsIcon />}
