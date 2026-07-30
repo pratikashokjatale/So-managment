@@ -14,6 +14,8 @@ import { getGuestById, approveGuestRequest, rejectGuestRequest } from '@/utils/g
 import type { Guest } from '@/utils/guestStore';
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material';
 import { getUserQrApi } from '@/apis/user';
+import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
+import logoImg from '@/assets/logo.jpeg';
 
 export default function GuestDetails() {
   const navigate = useNavigate();
@@ -127,7 +129,7 @@ export default function GuestDetails() {
               <Box>
                 <Typography variant="h5" fontWeight="bold" color="#091542">{guest.name}</Typography>
                 <Typography variant="body2" color="text.secondary" fontWeight="600" sx={{ mt: 0.5 }}>
-                  Pass ID: {guest.id.toUpperCase()}
+                  Pass ID: {String(guest.id).toUpperCase()}
                 </Typography>
               </Box>
             </Stack>
@@ -231,27 +233,79 @@ export default function GuestDetails() {
         {/* Right compliance, validation status panel */}
         <Grid size={{ xs: 12, md: 4 }}>
           {/* Access QR Pass */}
-          <Paper elevation={0} sx={{ border: '1px solid #f0f0f0', borderRadius: 4, p: 4, mb: 4, textAlign: 'center' }}>
-            <Typography variant="h6" fontWeight="bold" color="#091542" sx={{ mb: 2 }}>
-              Access QR Pass
-            </Typography>
-            {qrImageDataUrl ? (
-              <Box 
-                component="img"
-                src={qrImageDataUrl} 
-                alt="Access QR"
-                sx={{ width: 150, height: 150, display: 'block', borderRadius: '12px', mx: 'auto' }}
-              />
-            ) : guest ? (
-              <Box sx={{ p: 2.5, bgcolor: '#f8fafc', borderRadius: '20px', border: '2px dashed #cbd5e1', display: 'inline-block' }}>
-                <QRCodeSVG value={qrCodeToken || guest.id || id || ''} size={150} level="H" />
+          <Paper 
+            elevation={1} 
+            sx={{ 
+              width: '100%', 
+              minHeight: 460,
+              border: "1px solid #e2e8f0", 
+              borderRadius: "16px", 
+              display: "flex", 
+              flexDirection: "column", 
+              overflow: "hidden", 
+              bgcolor: "#ffffff",
+              position: "relative",
+              boxShadow: '0 20px 40px rgba(15, 23, 42, 0.06)',
+              mb: 4
+            }}
+          >
+            {/* Logo placeholder */}
+            <Box sx={{ mt: 3, display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <Box component="img" src={logoImg} alt="Marbella Logo" sx={{ height: 50, objectFit: 'contain' }} />
+              <Box sx={{ width: '40%', height: '1px', bgcolor: '#cbd5e1', mt: 1.5 }} />
+            </Box>
+
+            {/* Avatar placeholder */}
+            <Box sx={{ mt: 3, mx: "auto", width: 120, height: 140, bgcolor: "#e2e8f0", borderRadius: "16px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <PersonRoundedIcon sx={{ fontSize: 70, color: "#94a3b8" }} />
+            </Box>
+
+            {/* Title and ID */}
+            <Box sx={{ mt: 2.5, textAlign: "center" }}>
+              <Typography sx={{ fontFamily: "'Inter', sans-serif", fontSize: "0.7rem", fontWeight: 700, color: "#334155", letterSpacing: "1px" }}>
+                GUEST PASS NUMBER
+              </Typography>
+              <Typography sx={{ fontFamily: "'Playfair Display', serif", fontSize: "1.4rem", fontWeight: 600, color: "#475569", letterSpacing: "3px", mt: 0.5 }}>
+                {String(guest.id || '').substring(0, 6).toUpperCase().replace(/(.{2})/g, '$1 ').trim()}
+              </Typography>
+            </Box>
+
+            {/* QR Code */}
+            <Box sx={{ mt: 2, mx: "auto", flexGrow: 1, display: "flex", alignItems: "center", pb: 5 }}>
+              {qrImageDataUrl ? (
+                <Box 
+                  component="img"
+                  src={qrImageDataUrl} 
+                  alt="Access QR"
+                  sx={{ width: 100, height: 100, display: 'block', borderRadius: '8px' }}
+                />
+              ) : (
+                <QRCodeSVG 
+                  value={String(qrCodeToken || guest.id || id || '')} 
+                  size={100} 
+                  level="H" 
+                  style={{ display: 'block' }}
+                />
+              )}
+            </Box>
+
+            {/* Wave footer */}
+            <Box sx={{ mt: "auto", width: "100%", position: 'relative' }}>
+              {/* Gold Wave Layer */}
+              <svg viewBox="0 0 200 24" preserveAspectRatio="none" style={{ width: "100%", height: "20px", display: "block" }}>
+                <path d="M0,12 C50,-5 150,20 200,5 L200,24 L0,24 Z" fill="#bca47c" />
+              </svg>
+              {/* Dark Grey Wave Layer (overlapping) */}
+              <svg viewBox="0 0 200 24" preserveAspectRatio="none" style={{ width: "100%", height: "20px", display: "block", marginTop: "-17px", position: "relative", zIndex: 2 }}>
+                <path d="M0,12 C50,-5 150,20 200,5 L200,24 L0,24 Z" fill="#475569" />
+              </svg>
+              {/* Bottom block */}
+              <Box sx={{ bgcolor: "#475569", height: "40px", position: "relative", zIndex: 2, display: "flex", alignItems: "center", justifyContent: "center", marginTop: "-1px" }}>
+                <Typography sx={{ fontFamily: "'Inter', sans-serif", fontSize: "0.75rem", color: "#ffffff", letterSpacing: "0.5px" }}>
+                  clubmarbella.app
+                </Typography>
               </Box>
-            ) : (
-              <Typography variant="body2" color="text.secondary" sx={{ my: 2 }}>No QR Pass available</Typography>
-            )}
-            <Typography variant="caption" fontWeight="800" color="#94a3b8" sx={{ mt: 2, display: 'block' }}>
-              USE FOR GATE ENTRY VALIDATION
-            </Typography>
+            </Box>
           </Paper>
 
           <Paper elevation={0} sx={{ border: '1px solid #f0f0f0', borderRadius: 4, p: 4, mb: 4 }}>

@@ -18,11 +18,15 @@ import {
   Block as BlockIcon,
   CheckCircleOutline as CheckIcon,
   Sync as RefreshIcon,
+  Person as PersonIcon,
+  QrCode2 as QrCode2Icon,
 } from "@mui/icons-material";
+import { Dialog, DialogTitle, DialogContent } from "@mui/material";
 import { getUsersApi, updateUserApi } from "@/apis/user";
 import { getAnalyticsAccessEventsApi } from "@/apis/analytics";
 import toast from "react-hot-toast";
 import Pagination from "@/components/Pagination";
+import logoImg from "@/assets/logo.jpeg";
 
 const INTER = "'Inter', sans-serif";
 const SERIF = "'Playfair Display', serif";
@@ -36,6 +40,14 @@ export default function GetAccess() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [totalUsers, setTotalUsers] = useState(0);
+  const [openCardDesigns, setOpenCardDesigns] = useState(false);
+
+  const cardDesigns = [
+    { role: "Resident", title: "RESIDENT ID NUMBER", id: "M B 1 0 4 2", color: "#1e293b", textColor: "#1e3a8a" },
+    { role: "Guest", title: "GUEST PASS NUMBER", id: "G B 2 2 1 0", color: "#64748b", textColor: "#475569" },
+    { role: "Staff", title: "STAFF ID NUMBER", id: "S T 3 3 0 1", color: "#166534", textColor: "#166534" },
+    { role: "Manager", title: "MANAGER ID NUMBER", id: "M G 1 0 0 1", color: "#1e293b", textColor: "#1e3a8a" },
+  ];
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -185,6 +197,7 @@ export default function GetAccess() {
           
           <Button
             variant="outlined"
+            onClick={() => setOpenCardDesigns(true)}
             startIcon={<CardDesignsIcon />}
             sx={{ borderColor: "#e2e8f0", color: "#3b82f6", textTransform: "none", borderRadius: "8px", fontWeight: 600, px: 2, bgcolor: "#f0fdfa" }}
           >
@@ -325,6 +338,79 @@ export default function GetAccess() {
         )}
       </Paper>
 
+      {/* Card Designs Modal */}
+      <Dialog 
+        open={openCardDesigns} 
+        onClose={() => setOpenCardDesigns(false)} 
+        maxWidth="lg" 
+        fullWidth
+        PaperProps={{ sx: { borderRadius: "16px", bgcolor: "#f8fafc" } }}
+      >
+        <DialogTitle sx={{ fontFamily: SERIF, fontSize: "1.6rem", fontWeight: 600, textAlign: "center", pt: 4, color: "#1e293b" }}>
+          Role-based Card Designs
+        </DialogTitle>
+        <DialogContent sx={{ pb: 6, display: "flex", justifyContent: "center", gap: { xs: 2, md: 4 }, flexWrap: "wrap", mt: 2 }}>
+          {cardDesigns.map((card, idx) => (
+            <Box key={idx} sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
+              <Paper 
+                elevation={1} 
+                sx={{ 
+                  width: 250, 
+                  height: 420, 
+                  border: "1px solid #e2e8f0", 
+                  borderRadius: "8px", 
+                  display: "flex", 
+                  flexDirection: "column", 
+                  overflow: "hidden", 
+                  bgcolor: "#ffffff",
+                  position: "relative"
+                }}
+              >
+                {/* Logo placeholder */}
+                <Box sx={{ mt: 3, display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <Box component="img" src={logoImg} alt="Marbella Logo" sx={{ height: 45, objectFit: 'contain' }} />
+                  <Box sx={{ width: '40%', height: '1px', bgcolor: '#cbd5e1', mt: 1.5 }} />
+                </Box>
+
+                {/* Avatar placeholder */}
+                <Box sx={{ mt: 3, mx: "auto", width: 110, height: 130, bgcolor: "#e2e8f0", borderRadius: "16px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <PersonIcon sx={{ fontSize: 65, color: "#94a3b8" }} />
+                </Box>
+
+                {/* Title and ID */}
+                <Box sx={{ mt: 3, textAlign: "center" }}>
+                  <Typography sx={{ fontFamily: INTER, fontSize: "0.6rem", fontWeight: 700, color: card.textColor, letterSpacing: "0.5px" }}>
+                    {card.title}
+                  </Typography>
+                  <Typography sx={{ fontFamily: SERIF, fontSize: "1.25rem", fontWeight: 600, color: "#1e293b", letterSpacing: "3px", mt: 0.5 }}>
+                    {card.id}
+                  </Typography>
+                </Box>
+
+                {/* QR Code */}
+                <Box sx={{ mt: 1, mx: "auto", flexGrow: 1, display: "flex", alignItems: "center" }}>
+                  <QrCode2Icon sx={{ fontSize: 75, color: "#1e293b" }} />
+                </Box>
+
+                {/* Wave footer */}
+                <Box sx={{ mt: "auto", width: "100%" }}>
+                  <svg viewBox="0 0 200 24" preserveAspectRatio="none" style={{ width: "100%", height: "24px", display: "block" }}>
+                    <path d="M0,12 C50,-5 150,20 200,5 L200,24 L0,24 Z" fill={card.color} />
+                  </svg>
+                  <Box sx={{ bgcolor: card.color, height: "36px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <Typography sx={{ fontFamily: INTER, fontSize: "0.6rem", color: "#ffffff", letterSpacing: "0.5px" }}>
+                      clubmarbella.app
+                    </Typography>
+                  </Box>
+                </Box>
+              </Paper>
+              <Typography sx={{ fontFamily: INTER, fontSize: "0.95rem", fontWeight: 600, color: "#334155" }}>
+                {card.role}
+              </Typography>
+            </Box>
+          ))}
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 }
