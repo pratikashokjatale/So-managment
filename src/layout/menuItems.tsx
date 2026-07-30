@@ -29,6 +29,13 @@ export const menuItems = [
     { text: "Overview", icon:  <DashboardIcon />, path: "/" },
     { text: "Analytics", icon: <AnalyticsIcon />, path: "/analytics" },
     { text: "Access & Cards", icon: <CardIcon />, path: "/access" },
+     {
+        text: "Attendance",
+        icon: <AttendanceIcon />,
+        path: "/staff/attendance",
+      },
+    { text: "VIP Pass", icon: <CrownIcon />, path: "/vip-pass" },
+  { text: "Announcements", icon: <CampaignIcon />, path: "/announcements" },
 
   
 
@@ -98,6 +105,5 @@ export const menuItems = [
 
   // { text: "Gate Entry", icon: <GateIcon />, path: "/gate" },
   { text: "Announcements", icon: <CampaignIcon />, path: "/announcements" },
-  { text: "VIP Pass", icon: <CrownIcon />, path: "/vip-pass" },
   { text: "Report", icon: <ReportIcon />, path: "/report" },
 ];

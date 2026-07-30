@@ -1,53 +1,121 @@
-import { useState } from "react";
-import { Box, Typography, TextField, Button, Snackbar, Alert, Chip, Divider } from "@mui/material";
-import { Check as CheckIcon, WorkspacePremium as CrownIcon } from "@mui/icons-material";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import { Box, Typography, TextField, Button, Snackbar, Alert, Chip, CircularProgress } from "@mui/material";
+import { Check as CheckIcon } from "@mui/icons-material";
+import { useAuth } from "@/contexts/AuthContext";
+import { getVipPassesApi, createVipPassApi, cancelVipPassApi } from "@/apis/vipPass";
 
 const INTER = '"Inter", "Satoshi", sans-serif';
 const SERIF = '"Playfair Display", "Cinzel", serif';
 
-interface IssuedPass {
+interface VipPassData {
   id: string;
-  name: string;
+  guestName: string;
   passCode: string;
-  hoursLeft: number;
-  status: "active" | "revoked";
+  validUntil: string;
+  effectiveStatus: string;
+  depositAmount: number;
+  depositCollected: boolean;
 }
 
 export default function VipPass() {
+  const { projectId: authProjectId } = useAuth();
+  const [searchParams] = useSearchParams();
+  const rawProjectId = searchParams.get("projectId") || authProjectId || "all";
+  const projectId = rawProjectId === "all" ? "" : rawProjectId;
+
   const [guestName, setGuestName] = useState("");
-  const [depositCollected] = useState(true);
-  const [issuedPasses, setIssuedPasses] = useState<IssuedPass[]>([
-    {
-      id: "1",
-      name: "thi",
-      passCode: "VIP-8182",
-      hoursLeft: 48,
-      status: "active",
-    }
-  ]);
+  const [depositAmount, setDepositAmount] = useState<number | string>(2000);
+  const [depositCollected, setDepositCollected] = useState(false);
+  const [issuedPasses, setIssuedPasses] = useState<VipPassData[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  
   const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: "success" | "error" }>({
     open: false, message: "", severity: "success",
   });
 
-  const handleIssue = () => {
+  const fetchPasses = async () => {
+    try {
+      setLoading(true);
+      const params: any = {};
+      if (projectId && projectId !== "all") {
+        params.projectId = projectId;
+      }
+      const res = await getVipPassesApi(params);
+      
+      let list: any[] = [];
+      if (res) {
+        if (Array.isArray(res)) list = res;
+        else if (res.data && Array.isArray(res.data)) list = res.data;
+        else if (res.data && typeof res.data === 'object') {
+          const possibleArr = Object.values(res.data).find(v => Array.isArray(v));
+          if (possibleArr) list = possibleArr as any[];
+        }
+        else if (typeof res === 'object') {
+          const possibleArr = Object.values(res).find(v => Array.isArray(v));
+          if (possibleArr) list = possibleArr as any[];
+        }
+      }
+      
+      setIssuedPasses(list);
+    } catch (error: any) {
+      setSnackbar({ open: true, message: error?.message || "Failed to load passes", severity: "error" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPasses();
+  }, [projectId]);
+
+  const handleIssue = async () => {
     if (!guestName.trim()) {
       setSnackbar({ open: true, message: "Please enter the guest name.", severity: "error" });
       return;
     }
-    const newPass: IssuedPass = {
-      id: Date.now().toString(),
-      name: guestName.trim(),
-      passCode: `VIP-${Math.floor(1000 + Math.random() * 9000)}`,
-      hoursLeft: 48,
-      status: "active",
-    };
-    setIssuedPasses(prev => [newPass, ...prev]);
-    setSnackbar({ open: true, message: `VIP pass issued for ${guestName}!`, severity: "success" });
-    setGuestName("");
+    
+    if (!depositCollected) {
+      setSnackbar({ open: true, message: "Please mark the deposit as collected first.", severity: "error" });
+      return;
+    }
+    
+    // projectId is required according to spec, but we might be in "All Projects" view
+    const targetProjectId = projectId === "all" || !projectId ? "" : projectId;
+    
+    if (!targetProjectId) {
+      setSnackbar({ open: true, message: "Please select a specific project to issue a VIP pass.", severity: "error" });
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      await createVipPassApi({
+        projectId: targetProjectId,
+        guestName: guestName.trim(),
+        depositAmount: Number(depositAmount) || 2000,
+        depositCollected: depositCollected,
+        validHours: 48,
+        notes: "Created from Dashboard"
+      });
+      setSnackbar({ open: true, message: `VIP pass issued for ${guestName}!`, severity: "success" });
+      setGuestName("");
+      fetchPasses();
+    } catch (error: any) {
+      setSnackbar({ open: true, message: error?.message || "Failed to create VIP pass", severity: "error" });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  const handleRevoke = (id: string) => {
-    setIssuedPasses(prev => prev.map(p => p.id === id ? { ...p, status: "revoked" } : p));
+  const handleRevoke = async (id: string) => {
+    try {
+      await cancelVipPassApi(id, "Revoked by admin");
+      fetchPasses();
+    } catch (error: any) {
+      setSnackbar({ open: true, message: error?.message || "Failed to revoke VIP pass", severity: "error" });
+    }
   };
 
   return (
@@ -68,7 +136,7 @@ export default function VipPass() {
         sx={{
           border: "1px solid #dfcfb3",
           borderRadius: "16px",
-          background: "linear-gradient(90deg, #fdf7ec 0%, #ffffff 100%)", // Subtle gradient matching the design
+          background: "linear-gradient(90deg, #fdf7ec 0%, #ffffff 100%)",
           p: "28px 32px",
           width: "100%",
           mb: "32px",
@@ -99,6 +167,7 @@ export default function VipPass() {
               onChange={e => setGuestName(e.target.value)}
               onKeyDown={e => e.key === "Enter" && handleIssue()}
               size="small"
+              disabled={submitting}
               sx={{
                 "& .MuiOutlinedInput-root": {
                   fontFamily: INTER,
@@ -126,24 +195,56 @@ export default function VipPass() {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
-                border: "1px solid #a5d6a7",
-                borderRadius: "8px",
+                border: depositCollected ? "1px solid #a5d6a7" : "1px solid #e2e8f0",
+                borderRadius: "10px",
                 px: "16px",
                 height: "48px",
-                bgcolor: "#e7f5e8",
+                bgcolor: depositCollected ? "#e7f5e8" : "#fff",
+                transition: "all 0.2s"
               }}
             >
-              <Typography sx={{ fontFamily: INTER, fontSize: "0.95rem", color: "#1e293b", fontWeight: 500 }}>
-                ₹2,000 deposit
-              </Typography>
-              {depositCollected && (
-                <Box sx={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                  <CheckIcon sx={{ fontSize: 16, color: "#2e7d32" }} />
-                  <Typography sx={{ fontFamily: INTER, fontSize: "0.85rem", fontWeight: 600, color: "#2e7d32" }}>
-                    Collected
+              <TextField
+                variant="standard"
+                value={depositAmount}
+                onChange={e => setDepositAmount(e.target.value)}
+                type="number"
+                disabled={submitting}
+                InputProps={{
+                  disableUnderline: true,
+                  startAdornment: <Typography sx={{ mr: 0.5, color: '#1e293b', fontSize: "1rem" }}>₹</Typography>,
+                  sx: {
+                    fontFamily: INTER,
+                    fontSize: "1rem",
+                    color: "#1e293b",
+                  }
+                }}
+                sx={{ 
+                  width: '140px', 
+                  '& input': { p: 0, textAlign: 'left', WebkitAppearance: 'none', margin: 0, MozAppearance: 'textfield' } 
+                }}
+              />
+              <Box
+                onClick={() => !submitting && setDepositCollected(!depositCollected)}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  cursor: submitting ? "default" : "pointer",
+                }}
+              >
+                {depositCollected ? (
+                  <>
+                    <CheckIcon sx={{ fontSize: 18, color: "#059669" }} />
+                    <Typography sx={{ fontFamily: INTER, fontSize: "0.95rem", fontWeight: 600, color: "#059669" }}>
+                      Collected
+                    </Typography>
+                  </>
+                ) : (
+                  <Typography sx={{ fontFamily: INTER, fontSize: "0.95rem", fontWeight: 600, color: "#64748b" }}>
+                    Mark collected
                   </Typography>
-                </Box>
-              )}
+                )}
+              </Box>
             </Box>
           </Box>
         </Box>
@@ -164,6 +265,7 @@ export default function VipPass() {
         <Button
           fullWidth
           onClick={handleIssue}
+          disabled={submitting}
           sx={{
             fontFamily: INTER,
             fontWeight: 700,
@@ -171,8 +273,8 @@ export default function VipPass() {
             textTransform: "none",
             borderRadius: "10px",
             py: "14px",
-            bgcolor: "#dfcfb3",
-            color: "#192038",
+            bgcolor: submitting ? "#e2e8f0" : "#dfcfb3",
+            color: submitting ? "#94a3b8" : "#192038",
             display: "flex",
             alignItems: "center",
             gap: "10px",
@@ -181,11 +283,15 @@ export default function VipPass() {
             boxShadow: "none"
           }}
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M4 18L3 9L8 13L12 4L16 13L21 9L20 18H4Z" stroke="#192038" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M4 18L4.5 21H19.5L20 18" stroke="#192038" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-          Issue 48-hour VIP pass
+          {submitting ? (
+            <CircularProgress size={20} sx={{ color: "#94a3b8" }} />
+          ) : (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 18L3 9L8 13L12 4L16 13L21 9L20 18H4Z" stroke="#192038" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M4 18L4.5 21H19.5L20 18" stroke="#192038" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          )}
+          {submitting ? "Issuing..." : "Issue 48-hour VIP pass"}
         </Button>
       </Box>
 
@@ -207,104 +313,114 @@ export default function VipPass() {
         </Box>
 
         {/* Passes list */}
-        {issuedPasses.length > 0 ? (
-          issuedPasses.map((pass, i) => (
-            <Box
-              key={pass.id}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                px: "24px",
-                py: "20px",
-                borderBottom: i < issuedPasses.length - 1 ? "1px solid #f1f5f9" : "none",
-                opacity: pass.status === "revoked" ? 0.5 : 1,
-                transition: "opacity 0.2s",
-              }}
-            >
-              {/* Left: icon + info */}
-              <Box sx={{ display: "flex", alignItems: "center", gap: "20px" }}>
-                <Box
-                  sx={{
-                    width: 52,
-                    height: 52,
-                    borderRadius: "14px",
-                    bgcolor: "#fcf8f0",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M4 18L3 9L8 13L12 4L16 13L21 9L20 18H4Z" stroke="#b68e4c" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M4 18L4.5 21H19.5L20 18" stroke="#b68e4c" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </Box>
-                <Box>
-                  <Typography sx={{ fontFamily: INTER, fontWeight: 700, fontSize: "1.1rem", color: "#192038", mb: "6px", lineHeight: 1 }}>
-                    {pass.name}
-                  </Typography>
-                  <Typography sx={{ fontFamily: INTER, fontSize: "0.9rem", color: "#64748b", lineHeight: 1 }}>
-                    {pass.passCode} · unlimited · {pass.hoursLeft}h 00m left
-                  </Typography>
-                </Box>
-              </Box>
-
-              {/* Right: status badge + revoke */}
-              <Box sx={{ display: "flex", alignItems: "center", gap: "20px" }}>
-                {pass.status === "active" ? (
-                  <Chip
-                    label="active"
-                    size="small"
+        {loading ? (
+          <Box sx={{ py: 6, display: "flex", justifyContent: "center" }}>
+            <CircularProgress size={30} sx={{ color: "#dfcfb3" }} />
+          </Box>
+        ) : issuedPasses.length > 0 ? (
+          issuedPasses.map((pass, i) => {
+            const isActive = pass.effectiveStatus === "ACTIVE";
+            const validUntilDate = new Date(pass.validUntil);
+            const hoursLeft = Math.max(0, Math.floor((validUntilDate.getTime() - Date.now()) / (1000 * 60 * 60)));
+            
+            return (
+              <Box
+                key={pass.id}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  px: "24px",
+                  py: "20px",
+                  borderBottom: i < issuedPasses.length - 1 ? "1px solid #f1f5f9" : "none",
+                  opacity: isActive ? 1 : 0.5,
+                  transition: "opacity 0.2s",
+                }}
+              >
+                {/* Left: icon + info */}
+                <Box sx={{ display: "flex", alignItems: "center", gap: "20px" }}>
+                  <Box
                     sx={{
-                      fontFamily: INTER,
-                      fontWeight: 700,
-                      fontSize: "0.8rem",
-                      bgcolor: "#e7f5e8",
-                      color: "#2e7d32",
-                      height: 26,
-                      px: "4px"
-                    }}
-                  />
-                ) : (
-                  <Chip
-                    label="revoked"
-                    size="small"
-                    sx={{
-                      fontFamily: INTER,
-                      fontWeight: 700,
-                      fontSize: "0.75rem",
-                      bgcolor: "#f1f5f9",
-                      color: "#94a3b8",
-                      height: 24,
-                    }}
-                  />
-                )}
-
-                {pass.status === "active" && (
-                  <Button
-                    onClick={() => handleRevoke(pass.id)}
-                    sx={{
-                      fontFamily: INTER,
-                      fontWeight: 700,
-                      fontSize: "0.85rem",
-                      textTransform: "none",
-                      borderRadius: "8px",
-                      px: "18px",
-                      py: "8px",
-                      bgcolor: "#fdeceb",
-                      color: "#d84742",
-                      minWidth: 0,
-                      boxShadow: "none",
-                      "&:hover": { bgcolor: "#fca5a5", boxShadow: "none" },
+                      width: 52,
+                      height: 52,
+                      borderRadius: "14px",
+                      bgcolor: "#fcf8f0",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
                     }}
                   >
-                    Revoke
-                  </Button>
-                )}
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M4 18L3 9L8 13L12 4L16 13L21 9L20 18H4Z" stroke="#b68e4c" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M4 18L4.5 21H19.5L20 18" stroke="#b68e4c" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </Box>
+                  <Box>
+                    <Typography sx={{ fontFamily: INTER, fontWeight: 700, fontSize: "1.1rem", color: "#192038", mb: "6px", lineHeight: 1 }}>
+                      {pass.guestName}
+                    </Typography>
+                    <Typography sx={{ fontFamily: INTER, fontSize: "0.9rem", color: "#64748b", lineHeight: 1 }}>
+                      {pass.passCode} · unlimited {isActive ? `· ${hoursLeft}h left` : ""} · {pass.depositCollected ? `₹${pass.depositAmount || 2000} Deposit` : 'No Deposit'}
+                    </Typography>
+                  </Box>
+                </Box>
+  
+                {/* Right: status badge + revoke */}
+                <Box sx={{ display: "flex", alignItems: "center", gap: "20px" }}>
+                  {isActive ? (
+                    <Chip
+                      label="active"
+                      size="small"
+                      sx={{
+                        fontFamily: INTER,
+                        fontWeight: 700,
+                        fontSize: "0.8rem",
+                        bgcolor: "#e7f5e8",
+                        color: "#2e7d32",
+                        height: 26,
+                        px: "4px"
+                      }}
+                    />
+                  ) : (
+                    <Chip
+                      label={pass.effectiveStatus ? pass.effectiveStatus.toLowerCase() : "revoked"}
+                      size="small"
+                      sx={{
+                        fontFamily: INTER,
+                        fontWeight: 700,
+                        fontSize: "0.75rem",
+                        bgcolor: "#f1f5f9",
+                        color: "#94a3b8",
+                        height: 24,
+                      }}
+                    />
+                  )}
+  
+                  {isActive && (
+                    <Button
+                      onClick={() => handleRevoke(pass.id)}
+                      sx={{
+                        fontFamily: INTER,
+                        fontWeight: 700,
+                        fontSize: "0.85rem",
+                        textTransform: "none",
+                        borderRadius: "8px",
+                        px: "18px",
+                        py: "8px",
+                        bgcolor: "#fdeceb",
+                        color: "#d84742",
+                        minWidth: 0,
+                        boxShadow: "none",
+                        "&:hover": { bgcolor: "#fca5a5", boxShadow: "none" },
+                      }}
+                    >
+                      Revoke
+                    </Button>
+                  )}
+                </Box>
               </Box>
-            </Box>
-          ))
+            );
+          })
         ) : (
           <Box sx={{ py: 6, textAlign: "center" }}>
             <Typography sx={{ fontFamily: INTER, fontSize: "0.9rem", color: "#94a3b8" }}>
