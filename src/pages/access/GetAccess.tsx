@@ -28,8 +28,8 @@ import toast from "react-hot-toast";
 import Pagination from "@/components/Pagination";
 import logoImg from "@/assets/logo.jpeg";
 
-const INTER = "'Inter', sans-serif";
-const SERIF = "'Playfair Display', serif";
+const INTER = "'Inter', system-ui, sans-serif";
+const SERIF = "'Cormorant Garamond', Georgia, serif";
 
 export default function GetAccess() {
   const [users, setUsers] = useState<any[]>([]);

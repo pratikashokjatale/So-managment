@@ -405,10 +405,10 @@ export default function GetGuest() {
 
                     {/* Title and ID */}
                     <Box sx={{ mt: 2, textAlign: "center" }}>
-                      <Typography sx={{ fontFamily: "'Inter', sans-serif", fontSize: "0.65rem", fontWeight: 700, color: "#334155", letterSpacing: "1px" }}>
+                      <Typography sx={{ fontFamily: "'Inter', system-ui, sans-serif", fontSize: "0.65rem", fontWeight: 700, color: "#334155", letterSpacing: "1px" }}>
                         GUEST PASS NUMBER
                       </Typography>
-                      <Typography sx={{ fontFamily: "'Playfair Display', serif", fontSize: "1.2rem", fontWeight: 600, color: "#475569", letterSpacing: "2px", mt: 0.5 }}>
+                      <Typography sx={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "1.2rem", fontWeight: 600, color: "#475569", letterSpacing: "2px", mt: 0.5 }}>
                         {String(drawerGuest?.id || '').substring(0, 6).toUpperCase().replace(/(.{2})/g, '$1 ').trim()}
                       </Typography>
                     </Box>
@@ -435,7 +435,7 @@ export default function GetGuest() {
                       </svg>
                       {/* Bottom block */}
                       <Box sx={{ bgcolor: "#475569", height: "30px", position: "relative", zIndex: 2, display: "flex", alignItems: "center", justifyContent: "center", marginTop: "-1px" }}>
-                        <Typography sx={{ fontFamily: "'Inter', sans-serif", fontSize: "0.7rem", color: "#ffffff", letterSpacing: "0.5px" }}>
+                        <Typography sx={{ fontFamily: "'Inter', system-ui, sans-serif", fontSize: "0.7rem", color: "#ffffff", letterSpacing: "0.5px" }}>
                           clubmarbella.app
                         </Typography>
                       </Box>

@@ -29,7 +29,7 @@ import {
   deleteAnnouncementApi,
 } from '@/apis/announcement';
 
-const INTER = '"Inter", "Satoshi", sans-serif';
+const INTER = "'Inter', system-ui, sans-serif";
 const NAVY = '#2c4d93';
 
 // ── Helpers ────────────────────────────────────────────────────────────────

@@ -31,7 +31,7 @@ export default function ProjectCard({
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <Typography
           sx={{
-            fontFamily: '"Playfair Display", serif',
+            fontFamily: '"Cormorant Garamond", Georgia, serif',
             fontWeight: 600,
             fontSize: "1.25rem",
             color: "#1e293b",

@@ -72,7 +72,7 @@ export default function TopBar({ handleDrawerToggle }: TopBarProps) {
               variant="h6"
               sx={{
                 color: "#0f172a",
-                fontFamily: '"Playfair Display", serif',
+                fontFamily: '"Cormorant Garamond", Georgia, serif',
                 fontWeight: 700,
                 fontSize: "1.25rem",
                 letterSpacing: "-0.5px",

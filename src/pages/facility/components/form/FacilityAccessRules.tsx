@@ -26,10 +26,10 @@ function SectionHeader({ icon, title, subtitle, color, bgColor }: any) {
       <Box sx={{ px: 4, py: 2.5, display: "flex", alignItems: "center", gap: 1.5 }}>
         <Box sx={sectionHeaderIconSx(color, bgColor)}>{icon}</Box>
         <Box>
-          <Typography variant="subtitle1" fontWeight={800} sx={{ color: "#0F172A", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.01em" }}>
+          <Typography variant="subtitle1" fontWeight={800} sx={{ color: "#0F172A", fontFamily: "'Inter', system-ui, sans-serif", letterSpacing: "-0.01em" }}>
             {title}
           </Typography>
-          <Typography variant="caption" sx={{ color: "#64748B", fontFamily: "'Inter', sans-serif" }}>{subtitle}</Typography>
+          <Typography variant="caption" sx={{ color: "#64748B", fontFamily: "'Inter', system-ui, sans-serif" }}>{subtitle}</Typography>
         </Box>
       </Box>
       <Divider sx={{ borderColor: "#EEF2F7" }} />
@@ -105,7 +105,7 @@ export default function FacilityAccessRules({ data, onChange, errors }: Props) {
               }}
             >
               {Object.entries(ACCESS_TYPE_INFO).map(([val, info]) => (
-                <MenuItem key={val} value={val} sx={{ fontFamily: "'Inter', sans-serif" }}>{info.label}</MenuItem>
+                <MenuItem key={val} value={val} sx={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{info.label}</MenuItem>
               ))}
             </TextField>
           </Grid>
@@ -128,11 +128,11 @@ export default function FacilityAccessRules({ data, onChange, errors }: Props) {
                 ),
               }}
             >
-              <MenuItem value="SLOT" sx={{ fontFamily: "'Inter', sans-serif" }}>Slot Booking</MenuItem>
-              <MenuItem value="CAPACITY" sx={{ fontFamily: "'Inter', sans-serif" }}>Capacity-based</MenuItem>
-              <MenuItem value="EVENT" sx={{ fontFamily: "'Inter', sans-serif" }}>Event</MenuItem>
-              <MenuItem value="WALK_IN" sx={{ fontFamily: "'Inter', sans-serif" }}>Walk-In</MenuItem>
-              <MenuItem value="NONE" sx={{ fontFamily: "'Inter', sans-serif" }}>No Booking Required</MenuItem>
+              <MenuItem value="SLOT" sx={{ fontFamily: "'Inter', system-ui, sans-serif" }}>Slot Booking</MenuItem>
+              <MenuItem value="CAPACITY" sx={{ fontFamily: "'Inter', system-ui, sans-serif" }}>Capacity-based</MenuItem>
+              <MenuItem value="EVENT" sx={{ fontFamily: "'Inter', system-ui, sans-serif" }}>Event</MenuItem>
+              <MenuItem value="WALK_IN" sx={{ fontFamily: "'Inter', system-ui, sans-serif" }}>Walk-In</MenuItem>
+              <MenuItem value="NONE" sx={{ fontFamily: "'Inter', system-ui, sans-serif" }}>No Booking Required</MenuItem>
             </TextField>
           </Grid>
 
@@ -145,10 +145,10 @@ export default function FacilityAccessRules({ data, onChange, errors }: Props) {
               sx={fieldSx}
               InputLabelProps={{ shrink: true }}
             >
-              <MenuItem value="OPERATIONAL" sx={{ fontFamily: "'Inter', sans-serif" }}>✅  Operational</MenuItem>
-              <MenuItem value="IN_USE" sx={{ fontFamily: "'Inter', sans-serif" }}>🔵  In Use</MenuItem>
-              <MenuItem value="MAINTENANCE" sx={{ fontFamily: "'Inter', sans-serif" }}>🟡  Under Maintenance</MenuItem>
-              <MenuItem value="CLOSED" sx={{ fontFamily: "'Inter', sans-serif" }}>🔴  Closed / Inactive</MenuItem>
+              <MenuItem value="OPERATIONAL" sx={{ fontFamily: "'Inter', system-ui, sans-serif" }}>✅  Operational</MenuItem>
+              <MenuItem value="IN_USE" sx={{ fontFamily: "'Inter', system-ui, sans-serif" }}>🔵  In Use</MenuItem>
+              <MenuItem value="MAINTENANCE" sx={{ fontFamily: "'Inter', system-ui, sans-serif" }}>🟡  Under Maintenance</MenuItem>
+              <MenuItem value="CLOSED" sx={{ fontFamily: "'Inter', system-ui, sans-serif" }}>🔴  Closed / Inactive</MenuItem>
             </TextField>
           </Grid>
 
@@ -163,9 +163,9 @@ export default function FacilityAccessRules({ data, onChange, errors }: Props) {
               }}>
                 <Chip
                   label={accessInfo.label} size="small"
-                  sx={{ bgcolor: accessInfo.color, color: "white", fontWeight: 700, fontSize: "0.7rem", fontFamily: "'Inter', sans-serif", flexShrink: 0 }}
+                  sx={{ bgcolor: accessInfo.color, color: "white", fontWeight: 700, fontSize: "0.7rem", fontFamily: "'Inter', system-ui, sans-serif", flexShrink: 0 }}
                 />
-                <Typography variant="body2" sx={{ color: "#64748B", fontFamily: "'Inter', sans-serif" }}>
+                <Typography variant="body2" sx={{ color: "#64748B", fontFamily: "'Inter', system-ui, sans-serif" }}>
                   {accessInfo.description}
                 </Typography>
               </Box>
@@ -283,10 +283,10 @@ export default function FacilityAccessRules({ data, onChange, errors }: Props) {
             onClick={() => onChange("requiresApproval", !data.requiresApproval)}
           >
             <Box>
-              <Typography variant="body2" fontWeight={600} sx={{ color: "#0F172A", fontFamily: "'Inter', sans-serif" }}>
+              <Typography variant="body2" fontWeight={600} sx={{ color: "#0F172A", fontFamily: "'Inter', system-ui, sans-serif" }}>
                 Requires Manager Approval
               </Typography>
-              <Typography variant="caption" sx={{ color: "#64748B", fontFamily: "'Inter', sans-serif" }}>
+              <Typography variant="caption" sx={{ color: "#64748B", fontFamily: "'Inter', system-ui, sans-serif" }}>
                 Admin must approve each booking request
               </Typography>
             </Box>
@@ -310,10 +310,10 @@ export default function FacilityAccessRules({ data, onChange, errors }: Props) {
             onClick={() => onChange("isActive", !data.isActive)}
           >
             <Box>
-              <Typography variant="body2" fontWeight={600} sx={{ color: "#0F172A", fontFamily: "'Inter', sans-serif" }}>
+              <Typography variant="body2" fontWeight={600} sx={{ color: "#0F172A", fontFamily: "'Inter', system-ui, sans-serif" }}>
                 Active & Visible to Residents
               </Typography>
-              <Typography variant="caption" sx={{ color: "#64748B", fontFamily: "'Inter', sans-serif" }}>
+              <Typography variant="caption" sx={{ color: "#64748B", fontFamily: "'Inter', system-ui, sans-serif" }}>
                 Show this facility on the resident portal
               </Typography>
             </Box>

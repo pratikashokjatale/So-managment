@@ -5,8 +5,8 @@ import { Check as CheckIcon } from "@mui/icons-material";
 import { useAuth } from "@/contexts/AuthContext";
 import { getVipPassesApi, createVipPassApi, cancelVipPassApi } from "@/apis/vipPass";
 
-const INTER = '"Inter", "Satoshi", sans-serif';
-const SERIF = '"Playfair Display", "Cinzel", serif';
+const INTER = "'Inter', system-ui, sans-serif";
+const SERIF = "'Cormorant Garamond', Georgia, serif";
 
 interface VipPassData {
   id: string;

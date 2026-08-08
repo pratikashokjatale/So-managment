@@ -45,10 +45,10 @@ function SectionHeader({ icon, color, bgColor, title, subtitle }: any) {
       <Box sx={{ px: 4, py: 2.5, display: "flex", alignItems: "center", gap: 1.5 }}>
         <Box sx={sectionHeaderIconSx(color, bgColor)}>{icon}</Box>
         <Box>
-          <Typography variant="subtitle1" fontWeight={800} sx={{ color: "#0F172A", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.01em" }}>
+          <Typography variant="subtitle1" fontWeight={800} sx={{ color: "#0F172A", fontFamily: "'Inter', system-ui, sans-serif", letterSpacing: "-0.01em" }}>
             {title}
           </Typography>
-          <Typography variant="caption" sx={{ color: "#64748B", fontFamily: "'Inter', sans-serif" }}>{subtitle}</Typography>
+          <Typography variant="caption" sx={{ color: "#64748B", fontFamily: "'Inter', system-ui, sans-serif" }}>{subtitle}</Typography>
         </Box>
       </Box>
       <Divider sx={{ borderColor: "#EEF2F7" }} />
@@ -114,10 +114,10 @@ export default function FacilityBasicInfo({ data, onChange, errors }: Props) {
           </Box>
         </Box>
         <Box>
-          <Typography fontWeight={700} sx={{ color: "#0F172A", fontFamily: "'Inter', sans-serif", mb: 0.5 }}>
+          <Typography fontWeight={700} sx={{ color: "#0F172A", fontFamily: "'Inter', system-ui, sans-serif", mb: 0.5 }}>
             Facility Cover Image
           </Typography>
-          <Typography variant="body2" sx={{ color: "#64748B", mb: 2, maxWidth: 320, fontFamily: "'Inter', sans-serif", lineHeight: 1.6 }}>
+          <Typography variant="body2" sx={{ color: "#64748B", mb: 2, maxWidth: 320, fontFamily: "'Inter', system-ui, sans-serif", lineHeight: 1.6 }}>
             Use a high-quality landscape image. JPG or PNG, max 5MB. Recommended: 1280×720px.
           </Typography>
           <Button
@@ -126,7 +126,7 @@ export default function FacilityBasicInfo({ data, onChange, errors }: Props) {
             sx={{
               borderRadius: "10px", fontWeight: 600, textTransform: "none",
               borderColor: "#E2E8F0", color: "#475569", fontSize: "0.8125rem",
-              fontFamily: "'Inter', sans-serif", px: 2.5, py: 1,
+              fontFamily: "'Inter', system-ui, sans-serif", px: 2.5, py: 1,
               "&:hover": { borderColor: "#2c4d93", color: "#2c4d93", bgcolor: "#EFF6FF" },
             }}
           >
@@ -204,7 +204,7 @@ export default function FacilityBasicInfo({ data, onChange, errors }: Props) {
                 ),
               }}
             >
-              {CATEGORIES.map((c) => <MenuItem key={c} value={c} sx={{ fontFamily: "'Inter', sans-serif" }}>{c}</MenuItem>)}
+              {CATEGORIES.map((c) => <MenuItem key={c} value={c} sx={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{c}</MenuItem>)}
             </TextField>
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
@@ -226,7 +226,7 @@ export default function FacilityBasicInfo({ data, onChange, errors }: Props) {
               }}
             >
               {ICONS.map((icon) => (
-                <MenuItem key={icon.value} value={icon.value} sx={{ fontFamily: "'Inter', sans-serif", fontSize: "0.9rem" }}>
+                <MenuItem key={icon.value} value={icon.value} sx={{ fontFamily: "'Inter', system-ui, sans-serif", fontSize: "0.9rem" }}>
                   {icon.label}
                 </MenuItem>
               ))}

@@ -10,7 +10,7 @@ export const fieldSx = {
   "& .MuiInputLabel-root": {
     position: "relative",
     transform: "none",
-    fontFamily: "'Inter', sans-serif",
+    fontFamily: "'Inter', system-ui, sans-serif",
     fontSize: "0.875rem",
     fontWeight: 500,
     color: "#0F172A",
@@ -25,7 +25,7 @@ export const fieldSx = {
     borderRadius: "12px",
     bgcolor: "#ffffff",
     fontSize: "0.9375rem",
-    fontFamily: "'Inter', sans-serif",
+    fontFamily: "'Inter', system-ui, sans-serif",
     minHeight: "56px",
     transition: "all 0.18s ease",
     boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
@@ -72,7 +72,7 @@ export const fieldSx = {
     },
   },
   "& .MuiFormHelperText-root": {
-    fontFamily: "'Inter', sans-serif",
+    fontFamily: "'Inter', system-ui, sans-serif",
     fontSize: "0.75rem",
     color: "#64748B",
     mt: "6px",

@@ -1,5 +1,5 @@
 const typography = {
-  fontFamily: '"Inter", "Satoshi", "Poppins", "Roboto", "Helvetica", "Arial", sans-serif',
+  fontFamily: '"Inter", system-ui, sans-serif',
   h1: {
     fontSize: '2.25rem',
     fontWeight: 700,

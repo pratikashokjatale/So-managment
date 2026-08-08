@@ -22,7 +22,7 @@ import {
   setSessionRefreshToken,
   getSessionRefreshToken,
 } from "../utils/session";
-import { loginApi, logoutApi } from "../apis/auth";
+import { loginApi, logoutApi, firebaseLoginApi } from "../apis/auth";
 import { getCachedMe, clearApiCache } from "@/utils/apiCache";
 
 type AuthContextType = {
@@ -42,6 +42,11 @@ type AuthContextType = {
   register: (email: string, password: string, name?: string) => Promise<void>;
   refreshUser: () => void;
   logout: () => Promise<void>;
+  loginWithFirebase: (
+    idToken: string,
+    provider: string,
+    isLoggingIn: boolean
+  ) => Promise<any>;
 };
 
 const initialState = {
@@ -60,6 +65,7 @@ const initialState = {
   verifyOTP: async () => {},
   resetPassword: async () => {},
   updateProfile: () => {},
+  loginWithFirebase: async () => {},
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -158,6 +164,54 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const loginWithFirebase = async (
+    idToken: string,
+    provider: string,
+    isLoggingIn: boolean,
+  ) => {
+    dispatch({ type: IS_LOGINLODING, payload: true });
+    try {
+      clearApiCache();
+      const res = await firebaseLoginApi(idToken, provider);
+
+      const accessToken =
+        res?.data?.tokens?.accessToken ||
+        res?.tokens?.accessToken ||
+        res?.accessToken ||
+        res?.token ||
+        res?.data?.accessToken ||
+        res?.data?.token;
+      const refreshToken =
+        res?.data?.tokens?.refreshToken ||
+        res?.tokens?.refreshToken ||
+        res?.refreshToken ||
+        res?.data?.refreshToken;
+      const user = res?.data?.user || res?.user || res?.data || res;
+
+      if (accessToken) {
+        if (isLoggingIn) {
+          setCookies(accessToken);
+          if (refreshToken) setRefreshToken(refreshToken);
+        } else {
+          setSession(accessToken);
+          if (refreshToken) setSessionRefreshToken(refreshToken);
+        }
+      }
+
+      dispatch({
+        type: LOGIN,
+        payload: { isLoggedIn: true, user },
+      });
+
+      return res;
+    } catch (error: any) {
+      toast.error(error?.message || "Social login failed");
+      throw error;
+    } finally {
+      dispatch({ type: IS_LOGINLODING, payload: false });
+    }
+  };
+
   const logout = async () => {
     dispatch({
       type: AUTH_LOADING,
@@ -192,7 +246,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <AuthContext.Provider
-      value={{ ...state, login, logout, refreshUser, isAdmin }}
+      value={{ ...state, login, logout, refreshUser, isAdmin, loginWithFirebase }}
     >
       {children}
     </AuthContext.Provider>

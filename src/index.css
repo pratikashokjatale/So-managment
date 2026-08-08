@@ -1,6 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
+
 * {
   box-sizing: border-box;
-  font-family: 'Inter', 'Satoshi', 'Poppins', sans-serif !important;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.serif {
+  font-family: 'Cormorant Garamond', Georgia, serif;
 }
 
 html {

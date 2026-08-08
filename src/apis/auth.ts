@@ -9,6 +9,22 @@ export const loginApi = async (data: Record<string, unknown>) => {
   }
 };
 
+/**
+ * Firebase Social Login
+ * Sends the Firebase ID token to the backend.
+ * Backend should verify the token via Firebase Admin SDK and return its own JWT.
+ */
+export const firebaseLoginApi = async (idToken: string, provider: string) => {
+  try {
+    // Try dedicated social login endpoint first
+    const res = await api.post("auth/social-login", { idToken, provider });
+    return res?.data;
+  } catch (error) {
+    throw handleApiError(error);
+  }
+};
+
+
 export interface RegisterPayload {
   name: string;
   email: string;

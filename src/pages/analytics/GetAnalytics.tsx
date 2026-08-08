@@ -37,8 +37,8 @@ import type {
   AccessEventItem,
 } from "@/apis/analytics";
 
-const INTER = '"Inter", "Satoshi", sans-serif';
-const SERIF = '"Playfair Display", "Cinzel", serif';
+const INTER = "'Inter', system-ui, sans-serif";
+const SERIF = "'Cormorant Garamond', Georgia, serif";
 
 export default function GetAnalytics() {
   const [searchParams] = useSearchParams();

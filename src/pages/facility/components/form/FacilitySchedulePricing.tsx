@@ -37,10 +37,10 @@ function SectionHeader({ icon, title, subtitle, color, bgColor }: any) {
       <Box sx={{ px: 4, py: 2.5, display: "flex", alignItems: "center", gap: 1.5 }}>
         <Box sx={sectionHeaderIconSx(color, bgColor)}>{icon}</Box>
         <Box>
-          <Typography variant="subtitle1" fontWeight={800} sx={{ color: "#0F172A", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.01em" }}>
+          <Typography variant="subtitle1" fontWeight={800} sx={{ color: "#0F172A", fontFamily: "'Inter', system-ui, sans-serif", letterSpacing: "-0.01em" }}>
             {title}
           </Typography>
-          <Typography variant="caption" sx={{ color: "#64748B", fontFamily: "'Inter', sans-serif" }}>{subtitle}</Typography>
+          <Typography variant="caption" sx={{ color: "#64748B", fontFamily: "'Inter', system-ui, sans-serif" }}>{subtitle}</Typography>
         </Box>
       </Box>
       <Divider sx={{ borderColor: "#EEF2F7" }} />
@@ -123,7 +123,7 @@ export default function FacilitySchedulePricing({ data, onChange, errors }: Prop
                     sx={{ color: "#E2E8F0", "&.Mui-checked": { color: "#2c4d93" }, p: 1 }}
                   />
                 }
-                label={<Typography variant="body2" fontWeight={600} sx={{ color: "#374151", fontFamily: "'Inter', sans-serif" }}>Open All Day (24hrs)</Typography>}
+                label={<Typography variant="body2" fontWeight={600} sx={{ color: "#374151", fontFamily: "'Inter', system-ui, sans-serif" }}>Open All Day (24hrs)</Typography>}
                 sx={{ m: 0, width: "100%" }}
               />
             </Box>
@@ -161,7 +161,7 @@ export default function FacilitySchedulePricing({ data, onChange, errors }: Prop
               fontWeight: 600,
               fontSize: "0.875rem",
               textTransform: "none",
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "'Inter', system-ui, sans-serif",
               transition: "all 0.18s ease",
               boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
               "&.Mui-selected": {
@@ -181,7 +181,7 @@ export default function FacilitySchedulePricing({ data, onChange, errors }: Prop
             <ToggleButton key={day.value} value={day.value}>{day.label}</ToggleButton>
           ))}
         </ToggleButtonGroup>
-        <Typography variant="caption" sx={{ color: "#64748B", mt: 1.5, display: "block", fontFamily: "'Inter', sans-serif", ml: 0.5 }}>
+        <Typography variant="caption" sx={{ color: "#64748B", mt: 1.5, display: "block", fontFamily: "'Inter', system-ui, sans-serif", ml: 0.5 }}>
           {data.availableDays?.length} day{data.availableDays?.length !== 1 ? "s" : ""} selected
         </Typography>
       </Box>

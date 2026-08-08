@@ -31,8 +31,8 @@ import {
 } from "recharts";
 
 // Typography constants
-const INTER = "'Inter', sans-serif";
-const SERIF = "'Playfair Display', serif";
+const INTER = "'Inter', system-ui, sans-serif";
+const SERIF = "'Cormorant Garamond', Georgia, serif";
 
 // Mock data for the area chart (fallback)
 const fallbackAccessData = [
