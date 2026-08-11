@@ -1,5 +1,11 @@
 import { useState, useEffect } from "react";
-import { Outlet, useNavigate, useLocation, Navigate, useSearchParams } from "react-router-dom";
+import {
+  Outlet,
+  useNavigate,
+  useLocation,
+  Navigate,
+  useSearchParams,
+} from "react-router-dom";
 import {
   Box,
   CssBaseline,
@@ -72,8 +78,18 @@ export default function DashboardLayout() {
     };
     fetchProjects();
   }, []);
+
+  // Sync role dropdown with current route
+  useEffect(() => {
+    if (location.pathname === "/") {
+      setCurrentRole("Admin (you)");
+    } else if (location.pathname === "/manager") {
+      setCurrentRole("Manager");
+    }
+  }, [location.pathname]);
+
   const { navType } = useConfig();
-  const { isLoggedIn, isAdmin, isAuthLoading } = useAuth();
+  const { isLoggedIn, isAdmin, isAuthLoading, user } = useAuth();
 
   const getBreadcrumbs = () => {
     const paths = location.pathname.split("/").filter(Boolean);
@@ -105,6 +121,11 @@ export default function DashboardLayout() {
   if (isAuthLoading) return <Loader />;
   if (!isLoggedIn) return <Navigate to="/login" replace />;
 
+  // Manager role gets their own standalone page — no sidebar shell needed
+  if (location.pathname === "/manager") {
+    return <Outlet />;
+  }
+
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -115,12 +136,13 @@ export default function DashboardLayout() {
 
   const displayedMenuItems = isAdmin
     ? menuItems
-    : [{ text: "Dashboard", icon: <DashboardIcon />, path: "/" }];
+    : [{ text: "Dashboard", icon: <DashboardIcon />, path: user?.role === "MANAGER" ? "/manager" : "/" }];
 
   const isAllowedPath =
     location.pathname === "/" ||
     location.pathname === "/profile" ||
-    location.pathname === "/support";
+    location.pathname === "/support" ||
+    location.pathname === "/manager";
 
   // Sidebar Component rendered inside a floating card
   const sidebarContent = (
@@ -161,9 +183,20 @@ export default function DashboardLayout() {
               }}
             />
             <Typography
-              sx={{ fontSize: "0.85rem", fontWeight: 500, color: "#1e293b", textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap", maxWidth: 120 }}
+              sx={{
+                fontSize: "0.85rem",
+                fontWeight: 500,
+                color: "#1e293b",
+                textOverflow: "ellipsis",
+                overflow: "hidden",
+                whiteSpace: "nowrap",
+                maxWidth: 120,
+              }}
             >
-              {projectId === "all" ? "All Projects" : (projects.find(p => p.id === projectId)?.name || "All Projects")}
+              {projectId === "all"
+                ? "All Projects"
+                : projects.find((p) => p.id === projectId)?.name ||
+                  "All Projects"}
             </Typography>
           </Box>
           <ExpandMoreIcon sx={{ color: "#64748b", fontSize: 16 }} />
@@ -193,7 +226,13 @@ export default function DashboardLayout() {
               setSearchParams(searchParams);
               setAnchorElProject(null);
             }}
-            sx={{ fontSize: "0.85rem", py: 1.5, color: projectId === "all" ? "#1e293b" : "#475569", fontWeight: projectId === "all" ? 600 : 400, bgcolor: projectId === "all" ? "#f8fafc" : "transparent" }}
+            sx={{
+              fontSize: "0.85rem",
+              py: 1.5,
+              color: projectId === "all" ? "#1e293b" : "#475569",
+              fontWeight: projectId === "all" ? 600 : 400,
+              bgcolor: projectId === "all" ? "#f8fafc" : "transparent",
+            }}
           >
             All Projects
           </MenuItem>
@@ -205,7 +244,13 @@ export default function DashboardLayout() {
                 setSearchParams(searchParams);
                 setAnchorElProject(null);
               }}
-              sx={{ fontSize: "0.85rem", py: 1.5, color: projectId === proj.id ? "#1e293b" : "#475569", fontWeight: projectId === proj.id ? 600 : 400, bgcolor: projectId === proj.id ? "#f8fafc" : "transparent" }}
+              sx={{
+                fontSize: "0.85rem",
+                py: 1.5,
+                color: projectId === proj.id ? "#1e293b" : "#475569",
+                fontWeight: projectId === proj.id ? 600 : 400,
+                bgcolor: projectId === proj.id ? "#f8fafc" : "transparent",
+              }}
             >
               {proj.name}
             </MenuItem>
@@ -243,9 +288,21 @@ export default function DashboardLayout() {
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-            {currentRole === "Admin (you)" && <AdminIcon sx={{ color: theme.palette.primary.main, fontSize: 16 }} />}
-            {currentRole === "CRM" && <CrmIcon sx={{ color: theme.palette.primary.main, fontSize: 16 }} />}
-            {currentRole === "Manager" && <ManagerIcon sx={{ color: theme.palette.primary.main, fontSize: 16 }} />}
+            {currentRole === "Admin (you)" && (
+              <AdminIcon
+                sx={{ color: theme.palette.primary.main, fontSize: 16 }}
+              />
+            )}
+            {currentRole === "CRM" && (
+              <CrmIcon
+                sx={{ color: theme.palette.primary.main, fontSize: 16 }}
+              />
+            )}
+            {currentRole === "Manager" && (
+              <ManagerIcon
+                sx={{ color: theme.palette.primary.main, fontSize: 16 }}
+              />
+            )}
             <Typography
               sx={{ fontSize: "0.8rem", fontWeight: 700, color: "#1e293b" }}
             >
@@ -283,18 +340,26 @@ export default function DashboardLayout() {
               onClick={() => {
                 setCurrentRole(role.label);
                 setAnchorElRole(null);
+                if (role.label === "Manager") {
+                  navigate("/manager");
+                } else if (role.label === "Admin (you)") {
+                  navigate("/");
+                }
               }}
-              sx={{ 
-                fontSize: "0.85rem", 
-                py: 1.5, 
+              sx={{
+                fontSize: "0.85rem",
+                py: 1.5,
                 gap: 1.5,
-                color: currentRole === role.label ? theme.palette.primary.main : "#475569", 
-                fontWeight: currentRole === role.label ? 600 : 400, 
+                color:
+                  currentRole === role.label
+                    ? theme.palette.primary.main
+                    : "#475569",
+                fontWeight: currentRole === role.label ? 600 : 400,
                 bgcolor: currentRole === role.label ? "#eff6ff" : "transparent",
                 borderRadius: "8px",
                 mx: 1,
                 my: 0.25,
-                "&:hover": { bgcolor: "#f8fafc" }
+                "&:hover": { bgcolor: "#f8fafc" },
               }}
             >
               {role.icon}
@@ -495,7 +560,10 @@ export default function DashboardLayout() {
             borderRadius: { xs: 0, md: "24px" },
             border: { xs: "none", md: "1px solid #e2e8f0" },
             overflow: "hidden",
-            boxShadow: { xs: "none", md: "0 2px 8px rgba(99, 120, 160, 0.06), 0 8px 32px rgba(99, 120, 160, 0.10), 0 24px 64px rgba(99, 120, 160, 0.08)" },
+            boxShadow: {
+              xs: "none",
+              md: "0 2px 8px rgba(99, 120, 160, 0.06), 0 8px 32px rgba(99, 120, 160, 0.10), 0 24px 64px rgba(99, 120, 160, 0.08)",
+            },
           }}
         >
           {/* Left Sidebar embedded directly inside the card */}

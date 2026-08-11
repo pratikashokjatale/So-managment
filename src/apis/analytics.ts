@@ -31,8 +31,15 @@ export interface AnalyticsOverviewResponse {
       revenue: number;
       accessEvents: number;
     };
+    activeVipPasses?: number;
+    daily?: {
+      accessEventsByHour?: Record<string, number>;
+      [key: string]: any;
+    };
+    [key: string]: any;
   };
 }
+
 
 export interface BookingsByActivityItem {
   facilityId: string;

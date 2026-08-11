@@ -7,6 +7,7 @@ export interface ListUsersParams {
   status?: string;
   role?: string;
   flatId?: string;
+  cardNumber?: string;
 }
 
 export interface CreateUserPayload {

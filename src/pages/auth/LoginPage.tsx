@@ -94,17 +94,21 @@ const MaintenanceIcon = () => (
 );
 
 const LoginPage = () => {
-  const navigate = useNavigate();
   const { t } = useTranslation();
-  const { login, isLoginLoading, isLoggedIn, isInitialized, loginWithFirebase } = useAuth();
+  const navigate = useNavigate();
+  const { login, isLoginLoading, isLoggedIn, isInitialized, loginWithFirebase, user } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
 
   useEffect(() => {
     if (isInitialized && isLoggedIn) {
-      navigate("/");
+      if (user?.role === "MANAGER") {
+        navigate("/manager");
+      } else {
+        navigate("/");
+      }
     }
-  }, [isInitialized, isLoggedIn, navigate]);
+  }, [isInitialized, isLoggedIn, user, navigate]);
 
   const handleTogglePassword = () => setShowPassword(!showPassword);
 
@@ -121,9 +125,14 @@ const LoginPage = () => {
     }),
     onSubmit: async (values) => {
       try {
-        await login(values.email, values.password, rememberMe);
+        const res = await login(values.email, values.password, rememberMe);
         toast.success("Login successful! Welcome back.");
-        navigate("/");
+        const loggedUser = res?.data?.user || res?.user || res?.data || res;
+        if (loggedUser?.role === "MANAGER") {
+          navigate("/manager");
+        } else {
+          navigate("/");
+        }
       } catch (error: any) {
         console.error("Login error:", error);
         const errorMsg =
@@ -165,10 +174,15 @@ const LoginPage = () => {
 
       // Step 3: Send Firebase ID token to YOUR backend API (auth/social-login)
       // Backend verifies token via Firebase Admin SDK and returns its own JWT
-      await loginWithFirebase(idToken, providerName.toLowerCase(), rememberMe);
+      const backendRes = await loginWithFirebase(idToken, providerName.toLowerCase(), rememberMe);
 
+      const loggedUser = backendRes?.data?.user || backendRes?.user || backendRes?.data || backendRes;
       toast.success(`Signed in with ${providerName}! Welcome, ${user.displayName || user.email}.`);
-      navigate("/");
+      if (loggedUser?.role === "MANAGER") {
+        navigate("/manager");
+      } else {
+        navigate("/");
+      }
     } catch (error: any) {
       if (
         error?.code === "auth/popup-closed-by-user" ||

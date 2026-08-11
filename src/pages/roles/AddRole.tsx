@@ -33,6 +33,7 @@ const BASE_ROLES = [
   "ADMIN",
   "RESIDENT",
   "STAFF",
+  "MANAGER",
   "GUEST",
   "DEMO_GUEST"
 ];

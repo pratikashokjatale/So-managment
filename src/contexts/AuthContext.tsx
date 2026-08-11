@@ -45,7 +45,7 @@ type AuthContextType = {
   loginWithFirebase: (
     idToken: string,
     provider: string,
-    isLoggingIn: boolean
+    isLoggingIn: boolean,
   ) => Promise<any>;
 };
 
@@ -117,11 +117,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     refreshUser();
   }, []);
 
-  const login = async (
-    email: string,
-    password: string,
-    isLogin: boolean,
-  ) => {
+  const login = async (email: string, password: string, isLogin: boolean) => {
     dispatch({
       type: IS_LOGINLODING,
       payload: true,
@@ -129,9 +125,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       clearApiCache();
       const res = await loginApi({ identifier: email, password });
-      
-      const accessToken = res?.data?.tokens?.accessToken || res?.tokens?.accessToken || res?.accessToken || res?.token || res?.data?.accessToken || res?.data?.token;
-      const refreshToken = res?.data?.tokens?.refreshToken || res?.tokens?.refreshToken || res?.refreshToken || res?.data?.refreshToken;
+
+      const accessToken =
+        res?.data?.tokens?.accessToken ||
+        res?.tokens?.accessToken ||
+        res?.accessToken ||
+        res?.token ||
+        res?.data?.accessToken ||
+        res?.data?.token;
+      const refreshToken =
+        res?.data?.tokens?.refreshToken ||
+        res?.tokens?.refreshToken ||
+        res?.refreshToken ||
+        res?.data?.refreshToken;
       const user = res?.data?.user || res?.user || res?.data || res;
 
       if (accessToken) {
@@ -238,15 +244,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     state.user?.role?.toLowerCase() === "admin" ||
     state.user?.role?.toLowerCase() === "super_admin" ||
     state.user?.role?.toLowerCase() === "superadmin" ||
-    state.user?.roles?.some((role: string) => role?.toLowerCase() === "admin" || role?.toLowerCase() === "super_admin") ||
+    state.user?.roles?.some(
+      (role: string) =>
+        role?.toLowerCase() === "admin" ||
+        role?.toLowerCase() === "super_admin",
+    ) ||
     state.user?.roles?.includes("admin") ||
     state.user?.roles?.includes("super_admin") ||
-    
     false;
 
   return (
     <AuthContext.Provider
-      value={{ ...state, login, logout, refreshUser, isAdmin, loginWithFirebase }}
+      value={{
+        ...state,
+        login,
+        logout,
+        refreshUser,
+        isAdmin,
+        loginWithFirebase,
+      }}
     >
       {children}
     </AuthContext.Provider>

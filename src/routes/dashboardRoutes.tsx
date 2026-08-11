@@ -1,5 +1,6 @@
 import DashboardLayout from "@/layout/dashboardLayout";
 import Dashboard from "@/pages/dashboard";
+import ManagerDashboard from "@/pages/dashboard/ManagerDashboard";
 import GetOverview from "@/pages/overview/GetOverview";
 import GetAccess from "@/pages/access/GetAccess";
 import GetResident from "@/pages/residents/GetResident";
@@ -61,6 +62,10 @@ const DashboardRoutes = {
     {
       index: true,
       element: <GetOverview />,
+    },
+    {
+      path: "manager",
+      element: <ManagerDashboard />,
     },
     {
       path: "access",

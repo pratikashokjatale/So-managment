@@ -60,7 +60,7 @@ export const menuItems = [
       { text: "Residents", icon: <ResidentsIcon />, path: "/residents" },
       { text: "Guest", icon: <GuestIcon />, path: "/guest" },
       {
-        text: "Demo Accounts",
+        text: "Accounts Creation",
         icon: <ResidentsIcon />,
         path: "/demo-accounts",
       },

@@ -332,6 +332,7 @@ export default function GetBooking() {
       {/* Tabs Menu */}
       <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
         <Tabs 
+          key={String(allCount)}
           value={activeTab} 
           onChange={(_e, val) => {
             setActiveTab(val);
@@ -341,32 +342,26 @@ export default function GetBooking() {
           indicatorColor="primary"
         >
           <Tab 
-            label={
-              <Stack direction="row" spacing={1} alignItems="center">
-                <span>All Bookings</span>
-                {allCount > 0 && (
-                  <Box sx={{ bgcolor: 'grey.300', color: 'text.primary', px: 1, py: 0.1, borderRadius: '10px', fontSize: '0.7rem', fontWeight: 800 }}>
-                    {allCount}
-                  </Box>
-                )}
-              </Stack>
-            } 
+            label="All Bookings"
+            icon={allCount > 0 ? (
+              <Box sx={{ bgcolor: 'grey.300', color: 'text.primary', px: 1, py: 0.1, borderRadius: '10px', fontSize: '0.7rem', fontWeight: 800 }}>
+                {allCount}
+              </Box>
+            ) : undefined}
+            iconPosition="end"
             value="ALL" 
-            sx={{ fontWeight: 600, textTransform: 'none' }} 
+            sx={{ fontWeight: 600, textTransform: 'none', minHeight: '48px' }} 
           />
           {/* <Tab 
-            label={
-              <Stack direction="row" spacing={1} alignItems="center">
-                <span>Booking Requests</span>
-                {pendingCount > 0 && (
-                  <Box sx={{ bgcolor: 'error.main', color: 'white', px: 1, py: 0.1, borderRadius: '10px', fontSize: '0.7rem', fontWeight: 800 }}>
-                    {pendingCount}
-                  </Box>
-                )}
-              </Stack>
-            } 
+            label="Booking Requests"
+            icon={pendingCount > 0 ? (
+              <Box sx={{ bgcolor: 'error.main', color: 'white', px: 1, py: 0.1, borderRadius: '10px', fontSize: '0.7rem', fontWeight: 800 }}>
+                {pendingCount}
+              </Box>
+            ) : undefined}
+            iconPosition="end"
             value="REQUESTS" 
-            sx={{ fontWeight: 600, textTransform: 'none' }} 
+            sx={{ fontWeight: 600, textTransform: 'none', minHeight: '48px' }} 
           /> */}
         </Tabs>
       </Box>

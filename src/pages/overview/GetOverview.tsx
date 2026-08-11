@@ -80,7 +80,7 @@ export default function GetOverview() {
   // Derived metrics from API
   const totalResidents = overview?.totals?.activeMembers || 0;
   const monthlyRevenue = overview?.totals?.revenue || 0;
-  const apartments = overview?.totals?.flats || 600;
+  const apartments = overview?.totals?.flats || 0;
   const blockedCards = overview?.totals?.inactiveBlockedCount ?? 0;
 
   const chartData =

@@ -203,6 +203,7 @@ export default function GetResident() {
       }}
     >
       <Tabs
+        key={`${activeCount}-${pendingCount}-${rejectedCount}`}
         value={tabValue}
         onChange={handleTabChange}
         sx={{
@@ -212,30 +213,31 @@ export default function GetResident() {
             textTransform: 'none',
             fontWeight: 800,
             fontSize: '0.95rem',
-            minWidth: 120,
+            minHeight: '48px',
+            px: 2
           },
           '& .Mui-selected': { color: '#2c4d93 !important' },
           '& .MuiTabs-indicator': { backgroundColor: '#2c4d93', height: 3 },
         }}
       >
-        <Tab label={(
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            Active Residents
-            {activeCount > 0 && <Chip label={activeCount} size="small" sx={{ height: 18, fontSize: '0.7rem', fontWeight: 800, bgcolor: '#e0f2fe', color: '#0369a1' }} />}
-          </Box>
-        )} value={0} />
-        <Tab label={(
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            Enrollment Requests
-            {pendingCount > 0 && <Chip label={pendingCount} size="small" color="warning" sx={{ height: 18, fontSize: '0.7rem', fontWeight: 800 }} />}
-          </Box>
-        )} value={1} />
-        <Tab label={(
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            Rejected Requests
-            {rejectedCount > 0 && <Chip label={rejectedCount} size="small" color="error" sx={{ height: 18, fontSize: '0.7rem', fontWeight: 800 }} />}
-          </Box>
-        )} value={2} />
+        <Tab 
+          label="Active Residents" 
+          icon={activeCount > 0 ? <Chip label={activeCount} size="small" sx={{ height: 18, fontSize: '0.7rem', fontWeight: 800, bgcolor: '#e0f2fe', color: '#0369a1' }} /> : undefined}
+          iconPosition="end"
+          value={0} 
+        />
+        <Tab 
+          label="Enrollment Requests" 
+          icon={pendingCount > 0 ? <Chip label={pendingCount} size="small" color="warning" sx={{ height: 18, fontSize: '0.7rem', fontWeight: 800 }} /> : undefined}
+          iconPosition="end"
+          value={1} 
+        />
+        <Tab 
+          label="Rejected Requests" 
+          icon={rejectedCount > 0 ? <Chip label={rejectedCount} size="small" color="error" sx={{ height: 18, fontSize: '0.7rem', fontWeight: 800 }} /> : undefined}
+          iconPosition="end"
+          value={2} 
+        />
       </Tabs>
 
       {tabValue === 0 && (

@@ -30,6 +30,7 @@ import { useNavigate } from "react-router-dom";
 import BackButton from "@/components/BackButton";
 
 import { createDemoAccountApi } from "@/apis/user";
+import { getRolesApi } from "@/apis/roles";
 import { getProjects, getTowers, getFlats } from "@/utils/setupStore";
 import type { Project, Tower, Flat } from "@/utils/setupStore";
 import {
@@ -44,6 +45,7 @@ export default function AddDemoAccount() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [towers, setTowers] = useState<Tower[]>([]);
   const [flats, setFlats] = useState<Flat[]>([]);
+  const [roleProfiles, setRoleProfiles] = useState<any[]>([]);
 
   // Form Fields
   const [name, setName] = useState("");
@@ -71,6 +73,26 @@ export default function AddDemoAccount() {
       } catch (error) {
         console.warn("Failed to fetch projects via API, falling back to local storage:", error);
         setProjects(getProjects());
+      }
+      
+      try {
+        const rolesRes = await getRolesApi({ limit: 100, status: "ACTIVE" });
+        let list: any[] = [];
+        if (rolesRes) {
+          if (Array.isArray(rolesRes)) list = rolesRes;
+          else if (rolesRes.data && Array.isArray(rolesRes.data)) list = rolesRes.data;
+          else if (rolesRes.data && typeof rolesRes.data === 'object') {
+            const possibleArr = Object.values(rolesRes.data).find(v => Array.isArray(v));
+            if (possibleArr) list = possibleArr as any[];
+          }
+          else if (typeof rolesRes === 'object') {
+            const possibleArr = Object.values(rolesRes).find(v => Array.isArray(v));
+            if (possibleArr) list = possibleArr as any[];
+          }
+        }
+        setRoleProfiles(list);
+      } catch (error) {
+        console.error("Failed to fetch roles via API:", error);
       }
     };
     loadSetupData();
@@ -147,7 +169,7 @@ export default function AddDemoAccount() {
   return (
     <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: "#ffffff", minHeight: "100vh", borderRadius: 2 }}>
       <Box sx={{ mb: 5, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <BackButton to="/demo-accounts" label="Back to Demo Accounts" />
+        <BackButton to="/demo-accounts" label="Back to  Accounts" />
       </Box>
 
       <Box sx={{ maxWidth: 800, mx: "auto", border: "1px solid #f1f5f9", borderRadius: "24px", p: { xs: 3, md: 5 }, bgcolor: "white" }}>
@@ -248,6 +270,7 @@ export default function AddDemoAccount() {
               required
               fullWidth
               value={name}
+              onChange={(e) => setName(e.target.value)}
               sx={{ "& fieldset": { borderRadius: "12px" } }}
               InputProps={{
                 startAdornment: (
@@ -322,8 +345,15 @@ export default function AddDemoAccount() {
                 select
                 required
                 fullWidth
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
+                value={roleProfileId || ""}
+                onChange={(e) => {
+                  const selectedId = e.target.value;
+                  setRoleProfileId(selectedId);
+                  const selectedProfile = roleProfiles.find(r => r.id === selectedId);
+                  if (selectedProfile) {
+                    setRole(selectedProfile.baseRole);
+                  }
+                }}
                 sx={{ "& fieldset": { borderRadius: "12px" } }}
                 InputProps={{
                   startAdornment: (
@@ -335,127 +365,120 @@ export default function AddDemoAccount() {
                   ),
                 }}
               >
-                <MenuItem value="RESIDENT">RESIDENT</MenuItem>
-                <MenuItem value="STAFF">STAFF</MenuItem>
-                <MenuItem value="MANAGER">MANAGER</MenuItem>
-                <MenuItem value="ADMIN">ADMIN</MenuItem>
-              </TextField>
-            </Stack>
-
-            <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-              <TextField
-                label="Project"
-                select
-                fullWidth
-                value={projectId}
-                onChange={(e) => handleProjectChange(e.target.value)}
-                sx={{ "& fieldset": { borderRadius: "12px" } }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
-                      </Box>
-                    </InputAdornment>
-                  ),
-                }}
-              >
-                {projects.map((p) => (
+                {roleProfiles.map((p) => (
                   <MenuItem key={p.id} value={p.id}>
                     {p.name}
                   </MenuItem>
                 ))}
               </TextField>
-              <TextField
-                label="Tower"
-                select
-                fullWidth
-                disabled={!projectId}
-                value={towerId}
-                onChange={(e) => handleTowerChange(e.target.value)}
-                sx={{ "& fieldset": { borderRadius: "12px" } }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
-                      </Box>
-                    </InputAdornment>
-                  ),
-                }}
-              >
-                {towers.map((t) => (
-                  <MenuItem key={t.id} value={t.id}>
-                    {t.name}
-                  </MenuItem>
-                ))}
-              </TextField>
             </Stack>
 
-            <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-              <TextField
-                label="Flat"
-                select
-                fullWidth
-                disabled={!towerId}
-                value={flatId}
-                onChange={(e) => setFlatId(e.target.value)}
-                sx={{ "& fieldset": { borderRadius: "12px" } }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
-                      </Box>
-                    </InputAdornment>
-                  ),
-                }}
-              >
-                {flats.map((f: any) => (
-                  <MenuItem key={f.id} value={f.id}>
-                    Flat {f.flatNumber || f.number}
-                  </MenuItem>
-                ))}
-              </TextField>
-              <TextField
-                label="Account Role"
-                select
-                fullWidth
-                value={accountRole}
-                onChange={(e) => setAccountRole(e.target.value)}
-                sx={{ "& fieldset": { borderRadius: "12px" } }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <BadgeOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
-                      </Box>
-                    </InputAdornment>
-                  ),
-                }}
-              >
-                <MenuItem value="OWNER">OWNER</MenuItem>
-                <MenuItem value="TENANT">TENANT</MenuItem>
-              </TextField>
-            </Stack>
+            {role !== 'ADMIN' && (
+              <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+                <TextField
+                  label="Project"
+                  select
+                  fullWidth
+                  value={projectId}
+                  onChange={(e) => handleProjectChange(e.target.value)}
+                  sx={{ "& fieldset": { borderRadius: "12px" } }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                          <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                        </Box>
+                      </InputAdornment>
+                    ),
+                  }}
+                >
+                  {projects.map((p) => (
+                    <MenuItem key={p.id} value={p.id}>
+                      {p.name}
+                    </MenuItem>
+                  ))}
+                </TextField>
+                
+                {["RESIDENT", "GUEST", "DEMO_GUEST"].includes(role) && (
+                  <TextField
+                    label="Tower"
+                    select
+                    fullWidth
+                    disabled={!projectId}
+                    value={towerId}
+                    onChange={(e) => handleTowerChange(e.target.value)}
+                    sx={{ "& fieldset": { borderRadius: "12px" } }}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                            <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                          </Box>
+                        </InputAdornment>
+                      ),
+                    }}
+                  >
+                    {towers.map((t) => (
+                      <MenuItem key={t.id} value={t.id}>
+                        {t.name}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                )}
+              </Stack>
+            )}
+
+            {["RESIDENT", "GUEST", "DEMO_GUEST"].includes(role) && (
+              <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+                <TextField
+                  label="Flat"
+                  select
+                  fullWidth
+                  disabled={!towerId}
+                  value={flatId}
+                  onChange={(e) => setFlatId(e.target.value)}
+                  sx={{ "& fieldset": { borderRadius: "12px" } }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                          <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                        </Box>
+                      </InputAdornment>
+                    ),
+                  }}
+                >
+                  {flats.map((f: any) => (
+                    <MenuItem key={f.id} value={f.id}>
+                      Flat {f.flatNumber || f.number}
+                    </MenuItem>
+                  ))}
+                </TextField>
+                <TextField
+                  label="Account Role"
+                  select
+                  fullWidth
+                  value={accountRole}
+                  onChange={(e) => setAccountRole(e.target.value)}
+                  sx={{ "& fieldset": { borderRadius: "12px" } }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                          <BadgeOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                        </Box>
+                      </InputAdornment>
+                    ),
+                  }}
+                >
+                  <MenuItem value="OWNER">OWNER</MenuItem>
+                  <MenuItem value="TENANT">TENANT</MenuItem>
+                </TextField>
+              </Stack>
+            )}
 
             <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-              <TextField
-                label="Role Profile ID"
-                fullWidth
-                value={roleProfileId}
-                onChange={(e) => setRoleProfileId(e.target.value)}
-                sx={{ "& fieldset": { borderRadius: "12px" } }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <BadgeOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
-                      </Box>
-                    </InputAdornment>
-                  ),
-                }}
-              />
+
               <TextField
                 label="Expiry Date"
                 type="date"

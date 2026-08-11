@@ -80,7 +80,7 @@ export default function GetDemoAccounts() {
       setDemoAccounts(list);
       setTotalCount(list.length);
     } catch (error) {
-      console.warn("Failed to fetch demo accounts via API:", error);
+      console.warn("Failed to fetch accounts via API:", error);
       setDemoAccounts([]);
       setTotalCount(0);
     } finally {
@@ -104,7 +104,7 @@ export default function GetDemoAccounts() {
     >
       <Box sx={{ mb: 2 }}>
         <Typography variant="h4" fontWeight="800" color="#091542">
-          Demo Accounts
+         Accounts Creation
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600 }}>
           Manage temporary, auto-configured developer/client demonstration profiles
@@ -219,7 +219,7 @@ export default function GetDemoAccounts() {
           setRowsPerPage(parseInt(e.target.value, 10));
           setPage(1);
         }}
-        emptyMessage="No demo accounts found."
+        emptyMessage="No accounts found."
       />
 
       <Menu
