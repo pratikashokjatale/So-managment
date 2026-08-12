@@ -8,6 +8,7 @@ import {
   Button,
 } from "@mui/material";
 import { Menu as MenuIcon, Logout as LogoutIcon } from "@mui/icons-material";
+import HeadsetMicIcon from "@mui/icons-material/HeadsetMic";
 import { useAuth } from "@/contexts/AuthContext";
 import logoImg from "@/assets/logo.jpeg";
 
@@ -18,7 +19,7 @@ interface TopBarProps {
 
 export default function TopBar({ handleDrawerToggle }: TopBarProps) {
   const theme = useTheme();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
 
   return (
     <Box
@@ -84,25 +85,65 @@ export default function TopBar({ handleDrawerToggle }: TopBarProps) {
           </Box>
         </Box>
 
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Button
-            onClick={logout}
-            endIcon={<LogoutIcon sx={{ fontSize: 18, color: "#64748b" }} />}
-            sx={{
-              bgcolor: "#f8fafc",
-              color: "#1e293b",
-              fontWeight: 700,
-              borderRadius: "20px",
-              px: 2,
-              py: 0.5,
-              textTransform: "none",
-              "&:hover": {
-                bgcolor: "#f1f5f9",
-              },
-            }}
-          >
-            Admin
-          </Button>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          {user?.role === "CRM" ? (
+            <>
+              <Box sx={{ textAlign: "right", display: { xs: "none", sm: "block" } }}>
+                <Typography sx={{ fontWeight: 700, color: "#1e293b", fontSize: "0.95rem", lineHeight: 1.2 }}>
+                  {user?.name || "Simran Kaur"}
+                </Typography>
+                <Typography sx={{ color: "#64748b", fontSize: "0.85rem" }}>
+                  Sales / CRM desk
+                </Typography>
+              </Box>
+              <Box 
+                sx={{ 
+                  bgcolor: "#f3e8ff", 
+                  color: "#7e22ce", 
+                  fontWeight: 600, 
+                  fontSize: "0.85rem", 
+                  px: 1.5, 
+                  py: 0.5, 
+                  borderRadius: "20px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 0.5
+                }}
+              >
+                <HeadsetMicIcon sx={{ fontSize: 16 }} /> CRM
+              </Box>
+              <IconButton
+                onClick={logout}
+                sx={{
+                  border: "1px solid #e2e8f0",
+                  borderRadius: "8px",
+                  p: 1,
+                  "&:hover": { bgcolor: "#f8fafc" },
+                }}
+              >
+                <LogoutIcon sx={{ fontSize: 20, color: "#64748b" }} />
+              </IconButton>
+            </>
+          ) : (
+            <Button
+              onClick={logout}
+              endIcon={<LogoutIcon sx={{ fontSize: 18, color: "#64748b" }} />}
+              sx={{
+                bgcolor: "#f8fafc",
+                color: "#1e293b",
+                fontWeight: 700,
+                borderRadius: "20px",
+                px: 2,
+                py: 0.5,
+                textTransform: "none",
+                "&:hover": {
+                  bgcolor: "#f1f5f9",
+                },
+              }}
+            >
+              Admin
+            </Button>
+          )}
         </Box>
       </Toolbar>
     </Box>

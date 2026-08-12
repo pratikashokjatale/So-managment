@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import CRMDashboard from "@/pages/dashboard/components/CRMDashboard";
 import {
   Box,
   Typography,
@@ -57,9 +59,14 @@ const formatHour = (hour: number) => {
 export default function GetOverview() {
   const [searchParams] = useSearchParams();
   const projectId = searchParams.get("projectId") || "all";
+  const { user } = useAuth();
 
   const [overview, setOverview] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+
+  if (user?.role === "CRM") {
+    return <CRMDashboard user={user} />;
+  }
 
   useEffect(() => {
     const fetchData = async () => {

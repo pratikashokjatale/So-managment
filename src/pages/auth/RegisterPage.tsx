@@ -25,6 +25,7 @@ const roles = [
   { value: "ROLE_USER", label: "User" },
   { value: "ROLE_ADMIN", label: "Admin" },
   { value: "ROLE_RESIDENT", label: "Resident" },
+  { value: "ROLE_CRM", label: "CRM" },
 ];
 
 const RegisterPage = () => {

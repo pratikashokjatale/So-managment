@@ -44,6 +44,7 @@ import TopBar from "./TopBar";
 import Loader from "@/components/Loader";
 import PageNotFound from "@/pages/PageNotFound";
 import { getProjectsApi } from "@/apis/project";
+import CRMDashboard from "@/pages/dashboard/components/CRMDashboard";
 
 export default function DashboardLayout() {
   const theme = useTheme();
@@ -136,7 +137,13 @@ export default function DashboardLayout() {
 
   const displayedMenuItems = isAdmin
     ? menuItems
-    : [{ text: "Dashboard", icon: <DashboardIcon />, path: user?.role === "MANAGER" ? "/manager" : "/" }];
+    : [
+        {
+          text: "Dashboard",
+          icon: <DashboardIcon />,
+          path: user?.role === "MANAGER" ? "/manager" : "/",
+        },
+      ];
 
   const isAllowedPath =
     location.pathname === "/" ||
@@ -567,35 +574,39 @@ export default function DashboardLayout() {
           }}
         >
           {/* Left Sidebar embedded directly inside the card */}
-          <Box
-            sx={{
-              display: { xs: "none", md: "block" },
-              width: currentDrawerWidth,
-              flexShrink: 0,
-              borderRight: "1px solid #e2e8f0",
-              bgcolor: "#f8fafc",
-            }}
-          >
-            {sidebarContent}
-          </Box>
+          {user?.role !== "CRM" && (
+            <Box
+              sx={{
+                display: { xs: "none", md: "block" },
+                width: currentDrawerWidth,
+                flexShrink: 0,
+                borderRight: "1px solid #e2e8f0",
+                bgcolor: "#f8fafc",
+              }}
+            >
+              {sidebarContent}
+            </Box>
+          )}
 
           {/* Mobile Drawer (Hidden on Desktop) */}
-          <Drawer
-            variant="temporary"
-            open={mobileOpen}
-            onClose={handleDrawerToggle}
-            ModalProps={{ keepMounted: true }}
-            sx={{
-              display: { xs: "block", md: "none" },
-              "& .MuiDrawer-paper": {
-                boxSizing: "border-box",
-                width: 280,
-                bgcolor: "#f8fafc",
-              },
-            }}
-          >
-            {sidebarContent}
-          </Drawer>
+          {user?.role !== "CRM" && (
+            <Drawer
+              variant="temporary"
+              open={mobileOpen}
+              onClose={handleDrawerToggle}
+              ModalProps={{ keepMounted: true }}
+              sx={{
+                display: { xs: "block", md: "none" },
+                "& .MuiDrawer-paper": {
+                  boxSizing: "border-box",
+                  width: 280,
+                  bgcolor: "#f8fafc",
+                },
+              }}
+            >
+              {sidebarContent}
+            </Drawer>
+          )}
 
           {/* Right Main Content Area embedded in the same card */}
           <Box
@@ -603,11 +614,11 @@ export default function DashboardLayout() {
               flexGrow: 1,
               bgcolor: "transparent",
               overflow: "auto",
-              p: { xs: 2, md: 4 },
+              p: user?.role === "CRM" ? 0 : { xs: 2, md: 4 },
               zoom: 0.85, // Scale down the content to make it more compact
             }}
           >
-            {breadcrumbs.length > 0 && (
+            {breadcrumbs.length > 0 && user?.role !== "CRM" && (
               <Breadcrumbs
                 separator={
                   <NavigateNextIcon
@@ -616,7 +627,7 @@ export default function DashboardLayout() {
                   />
                 }
                 aria-label="breadcrumb"
-                sx={{ mb: 2 }}
+                sx={{ mb: 2, px: { xs: 2, md: 4 }, pt: 2 }}
               >
                 {breadcrumbs.map((item, idx) => {
                   const isLast = idx === breadcrumbs.length - 1;

@@ -17,6 +17,7 @@ import CreateBookingDialog from "@/pages/residents/components/CreateBookingDialo
 
 import AdminDashboard from "./dashboard/components/AdminDashboard";
 import ResidentDashboard from "./dashboard/components/ResidentDashboard";
+import CRMDashboard from "./dashboard/components/CRMDashboard";
 
 const lineData = [
   { name: "Mon", total: 30, confirmed: 15, cancelled: 5 },
@@ -309,6 +310,10 @@ export default function Dashboard() {
   };
 
   if (!isAdmin) {
+    if (user?.role === "CRM") {
+      return <CRMDashboard user={user} />;
+    }
+
     const userName = user?.name || "User";
     const userInitials = userName
       .split(" ")

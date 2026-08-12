@@ -35,7 +35,8 @@ const BASE_ROLES = [
   "STAFF",
   "MANAGER",
   "GUEST",
-  "DEMO_GUEST"
+  "DEMO_GUEST",
+  "CRM"
 ];
 
 const PERMISSION_KEYS: Array<{ key: keyof RolePermissions; label: string }> = [
