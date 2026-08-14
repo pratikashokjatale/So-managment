@@ -21,13 +21,27 @@ import InsertChartOutlinedIcon from '@mui/icons-material/InsertChartOutlined';
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import Avatar from '@mui/material/Avatar';
+import CloseIcon from '@mui/icons-material/Close';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
+import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
+import ChevronRightOutlinedIcon from '@mui/icons-material/ChevronRightOutlined';
+import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import VerifiedUserOutlinedIcon from '@mui/icons-material/VerifiedUserOutlined';
+import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
+import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
 
 const demoIds = ["MEM-100482", "MEM-100613", "MEM-100731", "MEM-100355"];
 
 const CRMDashboard = ({ user }: { user: any }) => {
   const userName = user?.name || 'Simran Kaur';
-  const [view, setView] = useState<'home' | 'concierge'>('home');
+  const [view, setView] = useState<'home' | 'concierge' | 'groupOffice'>('home');
   const [activeTab, setActiveTab] = useState<'helpdesk' | 'rfid' | 'intake'>('helpdesk');
+  const [activeGroupOfficeTab, setActiveGroupOfficeTab] = useState('onboarding');
 
   // Search and member state
   const [memberId, setMemberId] = useState("");
@@ -39,6 +53,7 @@ const CRMDashboard = ({ user }: { user: any }) => {
   // Modal states
   const [scanModalOpen, setScanModalOpen] = useState(false);
   const [rechargeModalOpen, setRechargeModalOpen] = useState(false);
+  const [populationModalOpen, setPopulationModalOpen] = useState(false);
   const [recharging, setRecharging] = useState(false);
   const [rechargeAmount, setRechargeAmount] = useState("");
   const [rechargeMethod, setRechargeMethod] = useState("CASH");
@@ -108,6 +123,481 @@ const CRMDashboard = ({ user }: { user: any }) => {
     }
   };
 
+  if (view === 'groupOffice') {
+    return (
+      <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', fontFamily: '"Inter", sans-serif' }}>
+        {/* Top User Profile Header */}
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: { xs: 2, md: 3 }, borderBottom: '1px solid #e2e8f0', bgcolor: '#fafafa' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Box sx={{ width: 44, height: 44, bgcolor: '#f3e8ff', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <HeadsetMicIcon sx={{ color: '#7e22ce', fontSize: 22 }} />
+            </Box>
+            <Box>
+              <Typography sx={{ fontWeight: 600, color: '#1e293b', fontSize: '0.95rem' }}>{userName}</Typography>
+              <Typography sx={{ color: '#64748b', fontSize: '0.8rem' }}>Sales / CRM desk</Typography>
+            </Box>
+          </Box>
+          <Box sx={{ bgcolor: '#f3e8ff', color: '#7e22ce', fontWeight: 600, fontSize: '0.75rem', px: 1.5, py: 0.75, borderRadius: '20px' }}>
+            CRM portal
+          </Box>
+        </Box>
+
+        {/* Group Office Content Area */}
+        <Box sx={{ p: { xs: 3, md: 4 }, flexGrow: 1 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 2, mb: 4 }}>
+            <Box>
+              <Typography variant="h4" sx={{ fontFamily: '"Cormorant Garamond", serif', color: '#1e293b', fontWeight: 600, mb: 1, fontSize: '2.2rem' }}>
+                The Group Office
+              </Typography>
+              <Typography sx={{ color: '#64748b', fontSize: '0.95rem', mb: 1.5 }}>
+                Marbella Group · onboarding, key handover, inventory & sales
+              </Typography>
+            </Box>
+            <Button
+              onClick={() => setView("home")}
+              startIcon={<WorkOutlineIcon sx={{ fontSize: 18 }} />}
+              sx={{
+                backgroundColor: "#f3e8ff",
+                color: "#7e22ce",
+                boxShadow: "none",
+                textTransform: "none",
+                borderRadius: "12px",
+                padding: "8px 16px",
+                fontWeight: 600,
+                "&:hover": { backgroundColor: "#e9d5ff", boxShadow: "none" },
+              }}
+            >
+              Group Office · Switch
+            </Button>
+          </Box>
+
+          {/* Tabs */}
+          <Box sx={{ display: "flex", gap: 1, mb: 4 }}>
+            {['Onboarding & handover', 'Inventory', 'Payment plans', 'Reminders', 'Sales pipeline'].map((tab, i) => (
+              <Button
+                key={i}
+                onClick={() => setActiveGroupOfficeTab(tab.toLowerCase())}
+                sx={{
+                  bgcolor: activeGroupOfficeTab === tab.toLowerCase() || (i === 0 && activeGroupOfficeTab === 'onboarding') ? "#2c5282" : "",
+                  color: activeGroupOfficeTab === tab.toLowerCase() || (i === 0 && activeGroupOfficeTab === 'onboarding') ? "#f7f7f7ff" : "",
+                  textTransform: "none",
+                  borderRadius: "10px",
+                  padding: "8px 16px",
+                  fontWeight: 600,
+                  fontSize: "0.85rem",
+                  "&:hover": {
+                    bgcolor: "#2c5282",
+                    color: "#ffffffff",
+                  },
+                }}
+              >
+                {tab}
+              </Button>
+            ))}
+          </Box>
+
+          {(activeGroupOfficeTab === 'onboarding & handover' || activeGroupOfficeTab === 'onboarding') && (
+            <Box>
+              {/* Stat Boxes */}
+          <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 3, mb: 4 }}>
+            {[
+              { value: "1", label: "COLLECTING", color: "#ab68eaff" },
+              { value: "2", label: "PAID UP", color: "#bca462" },
+              { value: "1", label: "RELEASED", color: "#a667e2ff" },
+              { value: "1", label: "COMPLETE", color: "#10b981" }
+            ].map((stat, i) => (
+              <Box key={i} sx={{ border: '1px solid #394b63ff', borderRadius: '12px', py: 2.5, px: 2, textAlign: 'center', bgcolor: '#ffffff' }}>
+                <Typography sx={{ fontSize: '1rem', color: stat.color, fontWeight: 800, mb: 0.5 }}>{stat.value}</Typography>
+                <Typography sx={{ color: '#94a3b8', fontSize: '0.7rem', fontWeight: 600, letterSpacing: '0.5px' }}>{stat.label}</Typography>
+              </Box>
+            ))}
+          </Box>
+
+          {/* Cases List */}
+          <Box sx={{ bgcolor: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0', overflow: 'hidden', mb: 3 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2, borderBottom: '1px solid #e2e8f0' }}>
+              <Typography sx={{ fontWeight: 600, color: '#64748b', fontSize: '0.85rem' }}>Onboarding cases</Typography>
+              <Typography sx={{ color: '#94a3b8', fontSize: '0.75rem' }}>owners & tenants · post-sales</Typography>
+            </Box>
+            
+            <Box>
+              {[
+                { name: "Rohit & Priya Mehra", meta: "Owner · B-1204 · Marbella Grand", status: "Released — handover pending", statusColor: "#4f46e5", isBar: false },
+                { name: "Meera Nair", meta: "Owner · A-0410 · Marbella Grand", status: "Handover complete — active", statusColor: "#10b981", isBar: false },
+                { name: "Aman Verma", meta: "Tenant · D-0302 · Twin Tower", status: "Paid up — ready to release", statusColor: "#bca462", isBar: true, barProgress: "100%" },
+                { name: "S. Ahuja", meta: "Owner · T2-1108 · Twin Tower", status: "Paid up — ready to release", statusColor: "#bca462", isBar: true, barProgress: "100%" },
+                { name: "Kabir Singh", meta: "Owner · C-0907 · Royce", status: "Collecting · 70% paid", statusColor: "#7e22ce", isBar: true, barProgress: "70%" },
+              ].map((row, i) => (
+                <Box key={i} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', py: 1.5, px: 2.5, borderBottom: i < 4 ? '1px solid #e2e8f0' : 'none', bgcolor: '#ffffff' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2.5 }}>
+                    <Box sx={{ width: 44, height: 44, bgcolor: '#f5edff', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <BusinessOutlinedIcon sx={{ color: '#9333ea', fontSize: 20 }} />
+                    </Box>
+                    <Box>
+                      <Typography sx={{ fontWeight: 600, color: '#1e293b', fontSize: '0.95rem' }}>{row.name}</Typography>
+                      <Typography sx={{ color: '#64748b', fontSize: '0.8rem', mt: 0.25 }}>{row.meta}</Typography>
+                    </Box>
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <Box sx={{ textAlign: 'right', minWidth: 160 }}>
+                      <Typography sx={{ color: row.statusColor, fontSize: '0.75rem', fontWeight: 600, mb: row.isBar ? 1 : 0 }}>{row.status}</Typography>
+                      {row.isBar && (
+                        <Box sx={{ width: '100%', height: 4, bgcolor: '#e2e8f0', borderRadius: '2px', mt: 0.5 }}>
+                          <Box sx={{ width: row.barProgress, height: '100%', bgcolor: row.statusColor, borderRadius: '2px' }} />
+                        </Box>
+                      )}
+                    </Box>
+                    <Button
+                      variant="contained"
+                      sx={{
+                        bgcolor: "#7e22ce",
+                        color: "#fff",
+                        textTransform: "none",
+                        borderRadius: "8px",
+                        boxShadow: "none",
+                        fontWeight: 600,
+                        px: 3,
+                        py: 0.5,
+                        "&:hover": { bgcolor: "#6b21a8", boxShadow: "none" },
+                      }}
+                    >
+                      Open
+                    </Button>
+                  </Box>
+                </Box>
+              ))}
+            </Box>
+          </Box>
+          
+          <Typography sx={{ color: '#94a3b8', fontSize: '0.75rem', lineHeight: 1.5, textAlign: 'center' }}>
+            CRM allots the unit, keeps the payment trail, and builds the document file over time — every action time & date stamped. Documents unlock only when payments are complete. (Uploads/payments shown are prototype actions.)
+          </Typography>
+            </Box>
+          )}
+
+          {activeGroupOfficeTab === 'inventory' && (
+            <Box>
+              {/* Inventory Header */}
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', mb: 3 }}>
+                <Box>
+                  <Typography variant="h5" sx={{ fontFamily: '"Cormorant Garamond", serif', color: '#1e293b', fontWeight: 600, mb: 0.5, fontSize: '1.8rem' }}>
+                    Inventory
+                  </Typography>
+                  <Typography sx={{ color: '#64748b', fontSize: '0.85rem' }}>
+                    The live unit book — edit anything, changes are approval-gated.
+                  </Typography>
+                </Box>
+                <Button
+                  startIcon={<AutorenewOutlinedIcon sx={{ fontSize: 16 }} />}
+                  sx={{
+                    backgroundColor: "#f8fafc",
+                    color: "#94a3b8",
+                    border: '1px solid #e2e8f0',
+                    boxShadow: "none",
+                    textTransform: "none",
+                    borderRadius: "8px",
+                    padding: "4px 12px",
+                    fontWeight: 500,
+                    fontSize: "0.75rem",
+                    "&:hover": { backgroundColor: "#f1f5f9" },
+                  }}
+                >
+                  Auto-backup · snapshot 2d ago
+                </Button>
+              </Box>
+
+              {/* Sub tabs */}
+              <Box sx={{ display: 'flex', gap: 1, mb: 4 }}>
+                {['Inventory', 'My submissions', 'Change log'].map((tab, i) => (
+                  <Button
+                    key={i}
+                    sx={{
+                      bgcolor: i === 0 ? "#1e3a8a" : "#f1f5f9",
+                      color: i === 0 ? "#ffffff" : "#475569",
+                      textTransform: "none",
+                      borderRadius: "8px",
+                      padding: "6px 16px",
+                      fontWeight: 600,
+                      fontSize: "0.85rem",
+                      "&:hover": { bgcolor: i === 0 ? "#1e3a8a" : "#e2e8f0" },
+                    }}
+                  >
+                    {tab}
+                  </Button>
+                ))}
+              </Box>
+
+              {/* Stat Cards (3 identical projects) */}
+              <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 3, mb: 4 }}>
+                {[
+                  { title: "Grand", loaded: "8 of 600 loaded", avail: 3, held: 1, sold: 4, public: 5, private: 3 },
+                  { title: "Twin Tower", loaded: "4 of 480 loaded", avail: 1, held: 1, sold: 2, public: 3, private: 1 },
+                  { title: "Royce", loaded: "3 of 360 loaded", avail: 2, held: 0, sold: 1, public: 2, private: 1 }
+                ].map((proj, i) => (
+                  <Box key={i} sx={{ border: '1px solid #e2e8f0', borderRadius: '12px', p: 3, bgcolor: '#ffffff' }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                      <Typography sx={{ fontWeight: 700, color: '#1e293b', fontSize: '1rem' }}>{proj.title}</Typography>
+                      <Typography sx={{ color: '#94a3b8', fontSize: '0.8rem', fontWeight: 500 }}>{proj.loaded}</Typography>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
+                      <Box sx={{ flex: 1, bgcolor: '#f4f9f5ff', borderRadius: '8px', p: 1.5, textAlign: 'center' }}>
+                        <Typography sx={{ color: '#10b981', fontSize: '1.2rem', fontWeight: 700, fontFamily: '"Cormorant Garamond", serif', lineHeight: 1 }}>{proj.avail}</Typography>
+                        <Typography sx={{ color: '#94a3b8', fontSize: '0.65rem', fontWeight: 600, mt: 0.5 }}>Available</Typography>
+                      </Box>
+                      <Box sx={{ flex: 1, bgcolor: '#faf9f3ff', borderRadius: '8px', p: 1.5, textAlign: 'center' }}>
+                        <Typography sx={{ color: '#bca462', fontSize: '1.2rem', fontWeight: 700, fontFamily: '"Cormorant Garamond", serif', lineHeight: 1 }}>{proj.held}</Typography>
+                        <Typography sx={{ color: '#94a3b8', fontSize: '0.65rem', fontWeight: 600, mt: 0.5 }}>Held</Typography>
+                      </Box>
+                      <Box sx={{ flex: 1, bgcolor: '#f1f5f9', borderRadius: '8px', p: 1.5, textAlign: 'center' }}>
+                        <Typography sx={{ color: '#475569', fontSize: '1.2rem', fontWeight: 700, fontFamily: '"Cormorant Garamond", serif', lineHeight: 1 }}>{proj.sold}</Typography>
+                        <Typography sx={{ color: '#94a3b8', fontSize: '0.65rem', fontWeight: 600, mt: 0.5 }}>Sold</Typography>
+                      </Box>
+                    </Box>
+
+                    <Typography sx={{ color: '#069968ff', fontSize: '0.75rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 0.5, mb: 2 }}>
+                      <CheckCircleIcon sx={{ fontSize: 14 }} />
+                      {proj.avail} + {proj.held} + {proj.sold} = {proj.avail + proj.held + proj.sold} · reconciles
+                    </Typography>
+
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: '#64748b', fontSize: '0.8rem', fontWeight: 500, mb: 2 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        <VisibilityOutlinedIcon sx={{ fontSize: 14, color: '#94a3b8' }} /> {proj.public} public
+                      </Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        <LockOutlinedIcon sx={{ fontSize: 14, color: '#94a3b8' }} /> {proj.private} private
+                      </Box>
+                    </Box>
+
+                    <Typography sx={{ color: '#069968ff', fontSize: '0.8rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                      <VerifiedUserOutlinedIcon sx={{ fontSize: 16 }} />
+                      Every unit checks out.
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
+
+              {/* Filters Block */}
+              <Box sx={{ mb: 4, border: '1px solid #e2e8f0', borderRadius: '16px', p: 3, bgcolor: '#ffffff' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', bgcolor: '#f8fafc', borderRadius: '12px', p: 1.5, mb: 3 }}>
+                  <SearchIcon sx={{ color: '#94a3b8', mr: 1, fontSize: 20 }} />
+                  <input 
+                    type="text" 
+                    placeholder="Search unit, type or buyer..." 
+                    style={{ border: 'none', background: 'transparent', outline: 'none', width: '100%', fontSize: '0.95rem', color: '#1e293b' }}
+                  />
+                </Box>
+                
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 4, mb: 2 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Typography sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.7rem', letterSpacing: '0.5px' }}>PROJECT</Typography>
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                      {['All', 'Grand', 'Twin Tower', 'Royce'].map((opt, i) => (
+                        <Box key={i} sx={{ px: 2, py: 0.75, borderRadius: '8px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', bgcolor: i === 0 ? '#1e3a8a' : '#f8fafc', color: i === 0 ? '#ffffff' : '#64748b' }}>
+                          {opt}
+                        </Box>
+                      ))}
+                    </Box>
+                  </Box>
+                </Box>
+
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Typography sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.7rem', letterSpacing: '0.5px' }}>STATUS</Typography>
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                      {['All', 'Available', 'Held', 'Sold'].map((opt, i) => (
+                        <Box key={i} sx={{ px: 2, py: 0.75, borderRadius: '8px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', bgcolor: i === 0 ? '#1e3a8a' : '#f8fafc', color: i === 0 ? '#ffffff' : '#64748b' }}>
+                          {opt}
+                        </Box>
+                      ))}
+                    </Box>
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Typography sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.7rem', letterSpacing: '0.5px' }}>VISIBILITY</Typography>
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                      {['All', 'Published', 'Private'].map((opt, i) => (
+                        <Box key={i} sx={{ px: 2, py: 0.75, borderRadius: '8px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', bgcolor: i === 0 ? '#1e3a8a' : '#f8fafc', color: i === 0 ? '#ffffff' : '#64748b' }}>
+                          {opt}
+                        </Box>
+                      ))}
+                    </Box>
+                  </Box>
+                </Box>
+              </Box>
+
+              {/* List Header and Item */}
+              <Box sx={{ border: '1px solid #e2e8f0', borderRadius: '12px', bgcolor: '#ffffff' }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2, borderBottom: '1px solid #e2e8f0', bgcolor: '#f8fafc', borderRadius: '12px 12px 0 0' }}>
+                  <Typography sx={{ fontWeight: 600, color: '#475569', fontSize: '0.85rem' }}>15 units</Typography>
+                  <Typography sx={{ color: '#94a3b8', fontSize: '0.75rem' }}>tap a unit to edit · CRM edits go to Admin</Typography>
+                </Box>
+                <Box sx={{ p: 2.5, display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', '&:hover': { bgcolor: '#f8fafc' } }}>
+                  <Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.5 }}>
+                      <Typography sx={{ fontWeight: 700, color: '#1e293b', fontSize: '0.95rem' }}>B-1204</Typography>
+                      <Typography sx={{ color: '#64748b', fontSize: '0.9rem' }}>4 BHK · 2450 sq ft · East</Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Typography sx={{ color: '#94a3b8', fontSize: '0.8rem' }}>Grand</Typography>
+                      <Typography sx={{ color: '#64748b', fontSize: '0.8rem' }}>Tower B · Floor 12 · Rohit & Priya Mehra</Typography>
+                    </Box>
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Box sx={{ textAlign: 'right' }}>
+                      <Typography sx={{ fontWeight: 700, color: '#1e293b', fontSize: '1rem', mb: 0.5 }}>₹1,25,00,000</Typography>
+                      <Box sx={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', bgcolor: '#eef2ff', color: '#4f46e5', px: 1.5, py: 0.25, borderRadius: '4px', fontSize: '0.7rem', fontWeight: 600 }}>
+                        Sold
+                      </Box>
+                    </Box>
+                    <ChevronRightOutlinedIcon sx={{ color: '#cbd5e1' }} />
+                  </Box>
+                </Box>
+              </Box>
+
+            </Box>
+          )}
+
+          {activeGroupOfficeTab === 'reminders' && (
+            <Box>
+              {/* Reminders Header */}
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', mb: 3 }}>
+                <Box>
+                  <Typography variant="h5" sx={{ fontFamily: '"Cormorant Garamond", serif', color: '#1e293b', fontWeight: 600, mb: 0.5, fontSize: '1.8rem' }}>
+                    Payment reminders
+                  </Typography>
+                  <Typography sx={{ color: '#64748b', fontSize: '0.85rem' }}>
+                    Buyers with an upcoming milestone — nudge them warmly, in one click.
+                  </Typography>
+                </Box>
+                <Button
+                  startIcon={<VisibilityOffOutlinedIcon sx={{ fontSize: 16 }} />}
+                  sx={{
+                    backgroundColor: "#f3e8ff",
+                    color: "#7e22ce",
+                    boxShadow: "none",
+                    textTransform: "none",
+                    borderRadius: "8px",
+                    padding: "6px 16px",
+                    fontWeight: 600,
+                    fontSize: "0.8rem",
+                    "&:hover": { backgroundColor: "#e9d5ff" },
+                  }}
+                >
+                  Hide template
+                </Button>
+              </Box>
+
+              {/* Template Block */}
+              <Box sx={{ border: '1px solid #e2e8f0', borderRadius: '16px', overflow: 'hidden', mb: 4, bgcolor: '#ffffff' }}>
+                {/* Purple Header */}
+                <Box sx={{ bgcolor: '#7e22ce', p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, color: '#ffffff' }}>
+                    <DescriptionOutlinedIcon sx={{ fontSize: 18 }} />
+                    <Typography sx={{ fontWeight: 600, fontSize: '0.9rem' }}>Reminder template</Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', gap: 1 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, bgcolor: 'rgba(255,255,255,0.15)', px: 1.5, py: 0.5, borderRadius: '6px', color: '#ffffff' }}>
+                      <EmailOutlinedIcon sx={{ fontSize: 14 }} />
+                      <Typography sx={{ fontSize: '0.75rem', fontWeight: 600 }}>Email</Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, bgcolor: 'rgba(255,255,255,0.15)', px: 1.5, py: 0.5, borderRadius: '6px', color: '#ffffff' }}>
+                      <PhoneOutlinedIcon sx={{ fontSize: 14 }} />
+                      <Typography sx={{ fontSize: '0.75rem', fontWeight: 600 }}>SMS</Typography>
+                    </Box>
+                  </Box>
+                </Box>
+
+                {/* Template Content */}
+                <Box sx={{ p: 3 }}>
+                  <Typography sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.7rem', letterSpacing: '0.5px', mb: 1 }}>SUBJECT</Typography>
+                  <Typography sx={{ color: '#1e293b', fontSize: '0.9rem', mb: 3, display: 'flex', alignItems: 'center', gap: 0.5, flexWrap: 'wrap' }}>
+                    Gentle reminder — payment due for 
+                    <Box component="span" sx={{ bgcolor: '#f3e8ff', color: '#7e22ce', px: 1, py: 0.25, borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600 }}>{`{Unit}`}</Box> , 
+                    <Box component="span" sx={{ bgcolor: '#f3e8ff', color: '#7e22ce', px: 1, py: 0.25, borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600 }}>{`{Project}`}</Box>
+                  </Typography>
+
+                  <Typography sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.7rem', letterSpacing: '0.5px', mb: 1 }}>MESSAGE</Typography>
+                  <Box sx={{ bgcolor: '#f8fafc', p: 3, borderRadius: '12px', color: '#334155', fontSize: '0.9rem', lineHeight: 1.6, mb: 3 }}>
+                    <Typography sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 0.5, flexWrap: 'wrap' }}>
+                      Dear <Box component="span" sx={{ bgcolor: '#f3e8ff', color: '#7e22ce', px: 1, py: 0.25, borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600 }}>{`{Name}`}</Box> ,
+                    </Typography>
+                    <Typography sx={{ mb: 2, display: 'inline', lineHeight: 2 }}>
+                      Warm greetings from Marbella. This is a gentle reminder that your payment of <Box component="span" sx={{ bgcolor: '#f3e8ff', color: '#7e22ce', px: 1, py: 0.25, borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600 }}>{`{Amount}`}</Box> towards <Box component="span" sx={{ bgcolor: '#f3e8ff', color: '#7e22ce', px: 1, py: 0.25, borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600 }}>{`{Unit}`}</Box> , <Box component="span" sx={{ bgcolor: '#f3e8ff', color: '#7e22ce', px: 1, py: 0.25, borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600 }}>{`{Project}`}</Box> — <Box component="span" sx={{ bgcolor: '#f3e8ff', color: '#7e22ce', px: 1, py: 0.25, borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600 }}>{`{Milestone}`}</Box> — is due on <Box component="span" sx={{ bgcolor: '#f3e8ff', color: '#7e22ce', px: 1, py: 0.25, borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600 }}>{`{Due date}`}</Box> .
+                    </Typography>
+                    <Typography sx={{ mb: 2, display: 'block' }}>
+                      Kindly arrange the payment on time to keep your booking benefits intact and avoid any late charges. We're delighted to have you in the Marbella family and are here to help with anything you need.
+                    </Typography>
+                    <Typography sx={{ display: 'block' }}>
+                      Warm regards,<br/>Team Marbella
+                    </Typography>
+                  </Box>
+
+                  <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'flex-start' }}>
+                    <AutoAwesomeIcon sx={{ color: '#9333ea', fontSize: 18, mt: 0.25 }} />
+                    <Typography sx={{ color: '#94a3b8', fontSize: '0.75rem', lineHeight: 1.5 }}>
+                      The highlighted <Box component="span" sx={{ color: '#7e22ce', fontWeight: 700 }}>fields</Box> auto-fill for each buyer below — their exact legal name, amount, unit, milestone and due date. Overdue buyers get the same message with an "overdue" line. Preview any row to see the final message.
+                    </Typography>
+                  </Box>
+                </Box>
+              </Box>
+
+              {/* Buyers List Header */}
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                <Typography sx={{ fontWeight: 600, color: '#64748b', fontSize: '0.85rem' }}>5 buyers eligible</Typography>
+                <Button
+                  sx={{
+                    bgcolor: '#f3e8ff',
+                    color: '#7e22ce',
+                    textTransform: 'none',
+                    borderRadius: '8px',
+                    px: 2,
+                    py: 0.5,
+                    fontWeight: 600,
+                    fontSize: '0.75rem',
+                    '&:hover': { bgcolor: '#e9d5ff' }
+                  }}
+                >
+                  Select all eligible
+                </Button>
+              </Box>
+
+              {/* Buyers List */}
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                {[
+                  { name: "Neha Kapoor", due: "Due in 2 days", dueColor: "#d97706", dueBg: "#fef3c7", meta: "A-1502 · Marbella Grand · Down payment (80%)", amount: "₹96,00,000" },
+                  { name: "Kabir Singh", due: "Due in 1 day", dueColor: "#d97706", dueBg: "#fef3c7", meta: "C-0907 · Royce · 10th slab (15%)", amount: "₹12,00,000" }
+                ].map((buyer, i) => (
+                  <Box key={i} sx={{ border: '1px solid #e2e8f0', borderRadius: '12px', p: 2.5, bgcolor: '#ffffff', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+                      <Box sx={{ mt: 0.5, width: 18, height: 18, border: '1.5px solid #cbd5e1', borderRadius: '4px', cursor: 'pointer' }} />
+                      <Box>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.5 }}>
+                          <Typography sx={{ fontWeight: 700, color: '#1e293b', fontSize: '0.95rem' }}>{buyer.name}</Typography>
+                          <Box sx={{ bgcolor: buyer.dueBg, color: buyer.dueColor, px: 1, py: 0.25, borderRadius: '4px', fontSize: '0.65rem', fontWeight: 700 }}>
+                            {buyer.due}
+                          </Box>
+                        </Box>
+                        <Typography sx={{ color: '#64748b', fontSize: '0.8rem' }}>{buyer.meta}</Typography>
+                      </Box>
+                    </Box>
+                    <Box sx={{ textAlign: 'right' }}>
+                      <Typography sx={{ fontWeight: 700, color: '#1e293b', fontSize: '1.05rem', mb: 0.5 }}>{buyer.amount}</Typography>
+                      <Typography sx={{ color: '#7e22ce', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}>
+                        Preview message
+                      </Typography>
+                    </Box>
+                  </Box>
+                ))}
+              </Box>
+
+            </Box>
+          )}
+
+        </Box>
+      </Box>
+    );
+  }
+
   if (view === 'concierge') {
     return (
       <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', fontFamily: '"Inter", sans-serif' }}>
@@ -144,42 +634,51 @@ const CRMDashboard = ({ user }: { user: any }) => {
                 </Typography>
               </Box>
             </Box>
-            <Box sx={{ display: 'flex', gap: 2 }}>
-              <Button 
-                onClick={() => setView('home')}
-                startIcon={<HeadsetMicIcon sx={{ fontSize: 18 }} />} 
-                sx={{ bgcolor: '#eff6ff', color: '#1e40af', textTransform: 'none', fontWeight: 600, borderRadius: '8px', px: 2, py: 0.75, '&:hover': { bgcolor: '#dbeafe' }, mr: 1 }}
+            <Box sx={{ display: "flex", gap: 2 }}>
+              <Button
+                onClick={() => setView("home")}
+                startIcon={<HeadsetMicIcon sx={{ fontSize: 18 }} />}
+                sx={{
+                  backgroundColor: "#e8eff7",
+                  color: "#2a5c8d",
+                  boxShadow: "none",
+                  textTransform: "none",
+                  borderRadius: "12px",
+                  padding: "8px 16px",
+                  fontWeight: 600,
+                  "&:hover": { backgroundColor: "#d0e1f0", boxShadow: "none" },
+                }}
               >
                 Residence Concierge · Switch
               </Button>
-              <Button 
-                startIcon={<PeopleAltOutlinedIcon sx={{ fontSize: 18 }} />} 
-                sx={{ 
-                  bgcolor: '#f8fafc', 
-                  color: '#1e40af', 
-                  border: '1px solid #cbd5e1',
-                  textTransform: 'none', 
-                  fontWeight: 600, 
-                  borderRadius: '10px', 
-                  px: 2.5, 
-                  py: 0.75, 
-                  '&:hover': { bgcolor: '#f1f5f9' } 
+              <Button
+                onClick={() => setPopulationModalOpen(true)}
+                startIcon={<PeopleAltOutlinedIcon sx={{ fontSize: 18 }} />}
+                sx={{
+                  backgroundColor: "#e8eff7",
+                  color: "#2a5c8d",
+                  boxShadow: "none",
+                  textTransform: "none",
+                  borderRadius: "12px",
+                  padding: "8px 16px",
+                  fontWeight: 600,
+                  "&:hover": { backgroundColor: "#d0e1f0", boxShadow: "none" },
                 }}
               >
                 Population
               </Button>
-              <Button 
+              <Button
                 onClick={() => setScanModalOpen(true)}
-                startIcon={<SensorsIcon sx={{ fontSize: 18 }} />} 
-                sx={{ 
-                  bgcolor: '#5b21b6', 
-                  color: '#ffffff', 
-                  textTransform: 'none', 
-                  fontWeight: 600, 
-                  borderRadius: '10px', 
-                  px: 2.5, 
-                  py: 0.75, 
-                  '&:hover': { bgcolor: '#4c1d95' } 
+                startIcon={<SensorsIcon sx={{ fontSize: 18 }} />}
+                sx={{
+                  backgroundColor: "#5a3d7a",
+                  color: "#fff",
+                  boxShadow: "none",
+                  textTransform: "none",
+                  borderRadius: "12px",
+                  padding: "8px 16px",
+                  fontWeight: 600,
+                  "&:hover": { backgroundColor: "#472e61", boxShadow: "none" },
                 }}
               >
                 Scan / block card
@@ -188,48 +687,54 @@ const CRMDashboard = ({ user }: { user: any }) => {
           </Box>
 
           {/* Tabs */}
-          <Box sx={{ display: 'flex', gap: 1.5, mb: 4 }}>
-            <Button 
-              onClick={() => setActiveTab('helpdesk')}
-              sx={{ 
-                bgcolor: activeTab === 'helpdesk' ? '#1e3a8a' : '#f1f5f9', 
-                color: activeTab === 'helpdesk' ? '#ffffff' : '#64748b', 
-                textTransform: 'none', 
-                fontWeight: 600, 
-                borderRadius: '8px', 
-                px: 3, 
-                py: 1,
-                '&:hover': { bgcolor: activeTab === 'helpdesk' ? '#1e3a8a' : '#e2e8f0' }
+          <Box sx={{ display: "flex", gap: 2, mb: 4 }}>
+            <Button
+              onClick={() => setActiveTab("helpdesk")}
+              sx={{
+                bgcolor: activeTab === "helpdesk" ? "#2c5282" : "#f0f2f5",
+                color: activeTab === "helpdesk" ? "#fff" : "#666",
+                textTransform: "none",
+                borderRadius: "12px",
+                padding: "6px 20px",
+                fontWeight: 600,
+                fontSize: "14px",
+                "&:hover": {
+                  bgcolor: activeTab === "helpdesk" ? "#1a365d" : "#e2e8f0",
+                },
               }}
             >
               Help desk
             </Button>
-            <Button 
-              onClick={() => setActiveTab('rfid')}
-              sx={{ 
-                bgcolor: activeTab === 'rfid' ? '#1e3a8a' : '#f1f5f9', 
-                color: activeTab === 'rfid' ? '#ffffff' : '#64748b', 
-                textTransform: 'none', 
-                fontWeight: 600, 
-                borderRadius: '8px', 
-                px: 3, 
-                py: 1,
-                '&:hover': { bgcolor: activeTab === 'rfid' ? '#1e3a8a' : '#e2e8f0' }
+            <Button
+              onClick={() => setActiveTab("rfid")}
+              sx={{
+                bgcolor: activeTab === "rfid" ? "#2c5282" : "#f0f2f5",
+                color: activeTab === "rfid" ? "#fff" : "#666",
+                textTransform: "none",
+                borderRadius: "12px",
+                padding: "6px 20px",
+                fontWeight: 600,
+                fontSize: "14px",
+                "&:hover": {
+                  bgcolor: activeTab === "rfid" ? "#1a365d" : "#e2e8f0",
+                },
               }}
             >
               RFID cards
             </Button>
-            <Button 
-              onClick={() => setActiveTab('intake')}
-              sx={{ 
-                bgcolor: activeTab === 'intake' ? '#1e3a8a' : '#f1f5f9', 
-                color: activeTab === 'intake' ? '#ffffff' : '#64748b', 
-                textTransform: 'none', 
-                fontWeight: 600, 
-                borderRadius: '8px', 
-                px: 3, 
-                py: 1,
-                '&:hover': { bgcolor: activeTab === 'intake' ? '#1e3a8a' : '#e2e8f0' }
+            <Button
+              onClick={() => setActiveTab("intake")}
+              sx={{
+                bgcolor: activeTab === "intake" ? "#2c5282" : "#f0f2f5",
+                color: activeTab === "intake" ? "#fff" : "#666",
+                textTransform: "none",
+                borderRadius: "12px",
+                padding: "6px 20px",
+                fontWeight: 600,
+                fontSize: "14px",
+                "&:hover": {
+                  bgcolor: activeTab === "intake" ? "#1a365d" : "#e2e8f0",
+                },
               }}
             >
               Intake
@@ -407,10 +912,10 @@ const CRMDashboard = ({ user }: { user: any }) => {
 
                 {/* Right Column - Preview & Actions */}
                 <Box sx={{ bgcolor: '#f8fafc', borderRadius: '16px', p: { xs: 3, lg: 4 } }}>
-                  <Typography sx={{ fontWeight: 700, color: '#94a3b8', fontSize: '0.7rem', mb: 3, letterSpacing: '0.5px' }}>PREVIEW · what prints</Typography>
+                  <Typography sx={{ fontWeight: 700, color: '#94a3b8', fontSize: '0.7rem', mb: 1, letterSpacing: '0.5px' }}>PREVIEW · what prints</Typography>
                   
                   {/* Card Visual */}
-                  <Box sx={{ bgcolor: '#0d213f', borderRadius: '16px', color: '#ffffff', p: 3, mb: 4, position: 'relative', overflow: 'hidden', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)', aspectRatio: '1.586/1' }}>
+                  <Box sx={{ maxWidth: '500px', mx: 'auto', bgcolor: '#0d213f', borderRadius: '16px', color: '#ffffff', p: 3, mb: 2, position: 'relative', overflow: 'hidden', boxShadow: '0 10px 15px 2px rgba(0, 0, 0, 0.1)', aspectRatio: '1.586/1' }}>
                     <Box sx={{ position: 'relative', zIndex: 1, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                       
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -523,7 +1028,7 @@ const CRMDashboard = ({ user }: { user: any }) => {
 
                     <Typography sx={{ color: '#64748b', fontSize: '0.85rem', mb: 3 }}>Try a sample so you can see exactly what it does:</Typography>
 
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, width: '100%', maxWidth: '500px' }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, width: '100%', maxWidth: '800px' }}>
                       <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1.5, flexWrap: 'wrap' }}>
                         <Button variant="contained" sx={{ bgcolor: '#ffffff', color: '#1e293b', borderRadius: '12px', py: 1, px: 2, boxShadow: 'none', textTransform: 'none', '&:hover': { bgcolor: '#f8fafc', boxShadow: 'none' } }}>
                           <DescriptionOutlinedIcon sx={{ fontSize: 16, mr: 1, color: '#9333ea' }} />
@@ -666,6 +1171,176 @@ const CRMDashboard = ({ user }: { user: any }) => {
             </Button>
           </DialogActions>
         </Dialog>
+        {/* Population Modal */}
+        <Dialog
+          open={populationModalOpen}
+          onClose={() => setPopulationModalOpen(false)}
+          maxWidth="lg"
+          fullWidth
+          PaperProps={{
+            sx: { borderRadius: '24px', p: { xs: 2, md: 4 }, bgcolor: '#ffffff' }
+          }}
+        >
+          <Box sx={{ position: 'relative' }}>
+            {/* Close Button */}
+            <Box sx={{ position: 'absolute', top: -8, right: -8, display: 'flex', gap: 2, alignItems: 'center' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, bgcolor: '#fff6e5', color: '#c28b21', px: 1.5, py: 0.5, borderRadius: '8px', fontSize: '0.75rem', fontWeight: 600 }}>
+                <LockOutlinedIcon sx={{ fontSize: 14 }} />
+                View only
+              </Box>
+              <Box 
+                onClick={() => setPopulationModalOpen(false)}
+                sx={{ bgcolor: '#f1f5f9', width: 32, height: 32, borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#64748b', '&:hover': { bgcolor: '#e2e8f0' } }}
+              >
+                <CloseIcon sx={{ fontSize: 18 }} />
+              </Box>
+            </Box>
+
+            {/* Header */}
+            <Box sx={{ mb: 4 }}>
+              <Box sx={{ display: 'inline-block', bgcolor: '#eef2ff', color: '#4f46e5', px: 1.5, py: 0.5, borderRadius: '6px', fontSize: '0.7rem', fontWeight: 700, mb: 2 }}>
+                CRM - Population
+              </Box>
+              <Typography sx={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '2rem', color: '#1e293b', lineHeight: 1.2, mb: 0.5 }}>
+                Population
+              </Typography>
+              <Typography sx={{ color: '#64748b', fontSize: '0.9rem' }}>
+                Everyone living across the buildings — buyers, families, tenants, resales.
+              </Typography>
+            </Box>
+
+            {/* Stat Cards Row 1 */}
+            <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 2, mb: 2 }}>
+              {[
+                { icon: <PeopleAltOutlinedIcon sx={{ fontSize: 16 }} />, label: "POPULATION", value: "18", subtext: "living here now", color: "#64748b" },
+                { icon: <HomeOutlinedIcon sx={{ fontSize: 16 }} />, label: "HOUSEHOLDS", value: "7", subtext: "6 owned · 1 rented", color: "#64748b" },
+                { icon: <PersonOutlineIcon sx={{ fontSize: 16 }} />, label: "BUYERS", value: "6", subtext: "bought from us", color: "#64748b" },
+                { icon: <AutorenewOutlinedIcon sx={{ fontSize: 16 }} />, label: "RESALES", value: "2", subtext: "ownership transfers", color: "#64748b" }
+              ].map((stat, i) => (
+                <Box key={i} sx={{ border: '1px solid #e2e8f0', borderRadius: '12px', p: 2.5 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: stat.color, mb: 2 }}>
+                    {stat.icon}
+                    <Typography sx={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.5px' }}>{stat.label}</Typography>
+                  </Box>
+                  <Typography sx={{ fontSize: '2rem', color: '#1e293b', lineHeight: 1, fontFamily: '"Cormorant Garamond", serif' }}>{stat.value}</Typography>
+                  <Typography sx={{ color: '#94a3b8', fontSize: '0.75rem', mt: 1 }}>{stat.subtext}</Typography>
+                </Box>
+              ))}
+            </Box>
+
+            {/* Stat Cards Row 2 */}
+            <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2, mb: 4 }}>
+              {[
+                { value: "13", subtext: "Adults", color: "#1e3a8a" },
+                { value: "4", subtext: "Children", color: "#bca462" },
+                { value: "1", subtext: "Seniors", color: "#7e22ce" }
+              ].map((stat, i) => (
+                <Box key={i} sx={{ border: '1px solid #e2e8f0', borderRadius: '12px', p: 2, textAlign: 'center' }}>
+                  <Typography sx={{ fontSize: '1.5rem', color: stat.color, lineHeight: 1, fontFamily: '"Cormorant Garamond", serif' }}>{stat.value}</Typography>
+                  <Typography sx={{ color: '#64748b', fontSize: '0.75rem', mt: 0.5, fontWeight: 500 }}>{stat.subtext}</Typography>
+                </Box>
+              ))}
+            </Box>
+
+            {/* Search Bar */}
+            <Box sx={{ display: 'flex', alignItems: 'center', bgcolor: '#f8fafc', borderRadius: '12px', p: 1.5, mb: 3 }}>
+              <SearchIcon sx={{ color: '#94a3b8', mr: 1, fontSize: 20 }} />
+              <input 
+                type="text" 
+                placeholder="Search name or unit..." 
+                style={{ border: 'none', background: 'transparent', outline: 'none', width: '100%', fontSize: '0.9rem', color: '#1e293b' }}
+              />
+            </Box>
+
+            {/* Filters */}
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 4 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Typography sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.65rem', letterSpacing: '0.5px', width: 60 }}>WHO</Typography>
+                <Box sx={{ display: 'flex', gap: 1 }}>
+                  {['Everyone', 'Owners / residents', 'Tenants', 'Family'].map((opt, i) => (
+                    <Box key={i} sx={{ px: 1.5, py: 0.5, borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer', bgcolor: i === 0 ? '#1e3a8a' : '#f1f5f9', color: i === 0 ? '#ffffff' : '#64748b' }}>
+                      {opt}
+                    </Box>
+                  ))}
+                </Box>
+              </Box>
+              
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Typography sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.65rem', letterSpacing: '0.5px', width: 60 }}>AGE</Typography>
+                <Box sx={{ display: 'flex', gap: 1 }}>
+                  {['All ages', 'Children', 'Adults', 'Seniors'].map((opt, i) => (
+                    <Box key={i} sx={{ px: 1.5, py: 0.5, borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer', bgcolor: i === 0 ? '#1e3a8a' : '#f1f5f9', color: i === 0 ? '#ffffff' : '#64748b' }}>
+                      {opt}
+                    </Box>
+                  ))}
+                </Box>
+              </Box>
+
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Typography sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.65rem', letterSpacing: '0.5px', width: 60 }}>PROJECT</Typography>
+                <Box sx={{ display: 'flex', gap: 1, flex: 1, alignItems: 'center' }}>
+                  {['All', 'Grand', 'Twin Tower', 'Royce'].map((opt, i) => (
+                    <Box key={i} sx={{ px: 1.5, py: 0.5, borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer', bgcolor: i === 0 ? '#1e3a8a' : '#f1f5f9', color: i === 0 ? '#ffffff' : '#64748b' }}>
+                      {opt}
+                    </Box>
+                  ))}
+                  
+                  <Typography sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.65rem', letterSpacing: '0.5px', ml: 2, mr: 1 }}>MOVED IN</Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, border: '1px solid #e2e8f0', borderRadius: '8px', px: 1.5, py: 0.5, color: '#94a3b8' }}>
+                      <Typography sx={{ fontSize: '0.8rem' }}>--------- ----</Typography>
+                      <CalendarTodayOutlinedIcon sx={{ fontSize: 14 }} />
+                    </Box>
+                    <Typography sx={{ color: '#64748b', fontSize: '0.8rem' }}>to</Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, border: '1px solid #e2e8f0', borderRadius: '8px', px: 1.5, py: 0.5, color: '#94a3b8' }}>
+                      <Typography sx={{ fontSize: '0.8rem' }}>--------- ----</Typography>
+                      <CalendarTodayOutlinedIcon sx={{ fontSize: 14 }} />
+                    </Box>
+                  </Box>
+                </Box>
+              </Box>
+            </Box>
+
+            {/* List Header */}
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', bgcolor: '#f8fafc', p: 2, borderRadius: '12px 12px 0 0', borderBottom: '1px solid #e2e8f0' }}>
+              <Typography sx={{ fontWeight: 600, color: '#475569', fontSize: '0.85rem' }}>18 people</Typography>
+              <Typography sx={{ color: '#94a3b8', fontSize: '0.75rem' }}>tap anyone to open their profile</Typography>
+            </Box>
+
+            {/* List Items */}
+            <Box sx={{ border: '1px solid #e2e8f0', borderTop: 'none', borderRadius: '0 0 12px 12px' }}>
+              {[
+                { name: "Rohit Mehra", badge: "BUYER", initials: "RM", meta: "Owner · 44 yrs · Adult", unit: "B-1204", project: "Grand" },
+                { name: "Priya Mehra", badge: null, initials: "PM", meta: "Spouse · 41 yrs · Adult", unit: "B-1204", project: "Grand" }
+              ].map((person, i) => (
+                <Box key={i} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 2, borderBottom: i === 0 ? '1px solid #e2e8f0' : 'none', cursor: 'pointer', '&:hover': { bgcolor: '#f8fafc' } }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Avatar sx={{ bgcolor: '#f1f5f9', color: '#1e3a8a', width: 40, height: 40, fontSize: '0.9rem', fontWeight: 600 }}>{person.initials}</Avatar>
+                    <Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography sx={{ fontWeight: 600, color: '#1e293b' }}>{person.name}</Typography>
+                        {person.badge && (
+                          <Box sx={{ bgcolor: '#eef2ff', color: '#4f46e5', px: 1, py: 0.25, borderRadius: '4px', fontSize: '0.6rem', fontWeight: 700 }}>
+                            {person.badge}
+                          </Box>
+                        )}
+                      </Box>
+                      <Typography sx={{ color: '#64748b', fontSize: '0.8rem', mt: 0.5 }}>{person.meta}</Typography>
+                    </Box>
+                  </Box>
+                  
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Box sx={{ textAlign: 'right' }}>
+                      <Typography sx={{ fontWeight: 600, color: '#1e293b', fontSize: '0.85rem' }}>{person.unit}</Typography>
+                      <Typography sx={{ color: '#94a3b8', fontSize: '0.75rem' }}>{person.project}</Typography>
+                    </Box>
+                    <ChevronRightOutlinedIcon sx={{ color: '#cbd5e1' }} />
+                  </Box>
+                </Box>
+              ))}
+            </Box>
+          </Box>
+        </Dialog>
         
         {/* Scan Modal */}
         <ScanModal open={scanModalOpen} onClose={() => setScanModalOpen(false)} />
@@ -746,6 +1421,7 @@ const CRMDashboard = ({ user }: { user: any }) => {
 
           {/* Right Card: The Group Office */}
           <Box 
+            onClick={() => setView('groupOffice')}
             sx={{ 
               flex: 1, 
               borderRadius: '16px', 
@@ -849,11 +1525,15 @@ const CRMDashboard = ({ user }: { user: any }) => {
         </DialogActions>
       </Dialog>
       
+
+      
       {/* Scan Modal */}
       <ScanModal open={scanModalOpen} onClose={() => setScanModalOpen(false)} />
 
     </Box>
   );
 };
+
+
 
 export default CRMDashboard;
