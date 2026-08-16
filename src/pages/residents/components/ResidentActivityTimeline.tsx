@@ -14,6 +14,7 @@ import { getStaffAttendanceStatsApi } from '@/apis/logdasboard';
 
 interface TimelineProps {
   userId: string;
+  compact?: boolean;
 }
 
 const getLogMeta = (eventType: string) => {
@@ -94,7 +95,7 @@ const getLogsList = (raw: any) => {
   return [];
 };
 
-export default function ResidentActivityTimeline({ userId }: TimelineProps) {
+export default function ResidentActivityTimeline({ userId, compact = false }: TimelineProps) {
   const [logs, setLogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -136,10 +137,11 @@ export default function ResidentActivityTimeline({ userId }: TimelineProps) {
   return (
     <Box>
       {/* Header Row */}
-      <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 4 }}>
-        <Typography variant="h6" fontWeight="900" color="#091542">
-          Activity Audit Trail
-        </Typography>
+      {!compact && (
+        <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 4 }}>
+          <Typography variant="h6" fontWeight="900" color="#091542">
+            Activity Audit Trail
+          </Typography>
         <Tooltip title="Refresh History">
           <IconButton
             onClick={fetchLogs}
@@ -157,6 +159,7 @@ export default function ResidentActivityTimeline({ userId }: TimelineProps) {
           </IconButton>
         </Tooltip>
       </Stack>
+      )}
 
       {/* Loading Indicator */}
       {loading && (
@@ -193,7 +196,7 @@ export default function ResidentActivityTimeline({ userId }: TimelineProps) {
       {/* Vertical Timeline Card List */}
       {!loading && !error && logs.length > 0 && (
         <Box sx={{
-          maxHeight: "500px",
+          maxHeight: compact ? "280px" : "500px",
           overflowY: "auto",
           pr: 1.5,
           "&::-webkit-scrollbar": {
@@ -221,7 +224,7 @@ export default function ResidentActivityTimeline({ userId }: TimelineProps) {
             zIndex: 0
           }}}>
             {logs.map((log) => (
-              <Box key={log.id} sx={{ mb: 4, position: 'relative' }}>
+              <Box key={log.id} sx={{ mb: compact ? 2.5 : 4, position: 'relative' }}>
                 
                 {/* Timeline Node Badge Icon */}
                 <Box sx={{
@@ -246,9 +249,9 @@ export default function ResidentActivityTimeline({ userId }: TimelineProps) {
 
                 {/* Event Content Card */}
                 <Paper elevation={0} sx={{
-                  p: 3,
-                  ml: 2,
-                  borderRadius: '20px',
+                  p: compact ? 1.5 : 3,
+                  ml: compact ? 1.5 : 2,
+                  borderRadius: compact ? '12px' : '20px',
                   border: '1px solid #e2e8f0',
                   bgcolor: 'white',
                   boxShadow: '0 4px 12px rgba(9, 21, 66, 0.01)',

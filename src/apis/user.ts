@@ -129,3 +129,12 @@ export const createDemoAccountApi = async (data: CreateDemoAccountPayload) => {
     throw handleApiError(error);
   }
 };
+
+export const getActivityLogsApi = async (userId: string) => {
+  try {
+    const res = await api.get(`activity-logs`, { params: { userId } });
+    return res?.data;
+  } catch (error) {
+    throw handleApiError(error);
+  }
+};

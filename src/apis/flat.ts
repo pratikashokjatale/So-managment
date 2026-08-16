@@ -66,6 +66,8 @@ export interface ListFlatsParams {
   projectId?: string;
   towerId?: string;
   status?: string;
+  search?: string;
+  visibility?: string;
 }
 
 export const getAllFlatsApi = async (params?: ListFlatsParams) => {

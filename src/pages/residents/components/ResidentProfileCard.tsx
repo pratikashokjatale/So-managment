@@ -132,7 +132,7 @@ export default function ResidentProfileCard({ resident }: ResidentProfileCardPro
                   '&:hover': { textDecoration: 'underline', cursor: 'pointer' }
                 }}
               >
-                #{displayId}
+               
               </Typography>
             </Stack>
           </Box>
