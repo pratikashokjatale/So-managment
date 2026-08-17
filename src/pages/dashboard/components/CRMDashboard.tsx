@@ -2264,7 +2264,7 @@ const CRMDashboard = ({ user }: { user: any }) => {
                     "&:hover": { bgcolor: "#1e3a8a" },
                   }}
                 >
-                  Load member
+                  Recharge Wallte
                 </Button>
               </Box>
 
