@@ -56,13 +56,15 @@ export default function AddMembership() {
       else if (u?.data && Array.isArray(u.data)) setUsers(u.data);
     });
 
-    getFacilitiesApi({ limit: 100 }).then((res) => {
+    getFacilitiesApi({ limit: 100, isActive: true }).then((res) => {
       let f = res?.data || res;
-      if (Array.isArray(f)) setFacilities(f);
-      else if (f?.items && Array.isArray(f.items)) setFacilities(f.items);
-      else if (f?.facilities && Array.isArray(f.facilities))
-        setFacilities(f.facilities);
-      else if (f?.data && Array.isArray(f.data)) setFacilities(f.data);
+      let list: any[] = [];
+      if (Array.isArray(f)) list = f;
+      else if (f?.items && Array.isArray(f.items)) list = f.items;
+      else if (f?.facilities && Array.isArray(f.facilities)) list = f.facilities;
+      else if (f?.data && Array.isArray(f.data)) list = f.data;
+      const activeFacilities = list.filter((item: any) => item.isActive !== false && item.status !== 'CLOSED' && item.status !== 'Inactive');
+      setFacilities(activeFacilities);
     });
   }, []);
 

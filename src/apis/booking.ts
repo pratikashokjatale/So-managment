@@ -26,7 +26,7 @@ export interface UpdateBookingPaymentPayload {
 export interface GetSlotsParams {
   facilityId: string;
   date: string; // YYYY-MM-DD
-  slotMinutes?: 30 | 45 | 60 | 90 | 120;
+  slotMinutes?: 30 | 45 | 60 | 90 | 120 | 180;
 }
 
 export interface CreateBookingPayload {

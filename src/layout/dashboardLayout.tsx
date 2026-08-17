@@ -83,7 +83,9 @@ export default function DashboardLayout() {
   // Sync role dropdown with current route
   useEffect(() => {
     if (location.pathname === "/") {
-      setCurrentRole("Admin (you)");
+      if (currentRole !== "CRM") {
+        setCurrentRole("Admin (you)");
+      }
     } else if (location.pathname === "/manager") {
       setCurrentRole("Manager");
     }
@@ -349,7 +351,7 @@ export default function DashboardLayout() {
                 setAnchorElRole(null);
                 if (role.label === "Manager") {
                   navigate("/manager");
-                } else if (role.label === "Admin (you)") {
+                } else if (role.label === "Admin (you)" || role.label === "CRM") {
                   navigate("/");
                 }
               }}
@@ -542,6 +544,11 @@ export default function DashboardLayout() {
       <TopBar
         handleDrawerToggle={handleDrawerToggle}
         drawerWidth={currentDrawerWidth}
+        currentRole={currentRole}
+        onBackToAdmin={() => {
+          setCurrentRole("Admin (you)");
+          navigate("/");
+        }}
       />
 
       {/* Main container holding the single combined white card */}
@@ -574,7 +581,7 @@ export default function DashboardLayout() {
           }}
         >
           {/* Left Sidebar embedded directly inside the card */}
-          {user?.role !== "CRM" && (
+          {user?.role !== "CRM" && currentRole !== "CRM" && (
             <Box
               sx={{
                 display: { xs: "none", md: "block" },
@@ -589,7 +596,7 @@ export default function DashboardLayout() {
           )}
 
           {/* Mobile Drawer (Hidden on Desktop) */}
-          {user?.role !== "CRM" && (
+          {user?.role !== "CRM" && currentRole !== "CRM" && (
             <Drawer
               variant="temporary"
               open={mobileOpen}
@@ -614,11 +621,11 @@ export default function DashboardLayout() {
               flexGrow: 1,
               bgcolor: "transparent",
               overflow: "auto",
-              p: user?.role === "CRM" ? 0 : { xs: 2, md: 4 },
+              p: (user?.role === "CRM" || currentRole === "CRM") ? 0 : { xs: 2, md: 4 },
               zoom: 0.85, // Scale down the content to make it more compact
             }}
           >
-            {breadcrumbs.length > 0 && user?.role !== "CRM" && (
+            {breadcrumbs.length > 0 && user?.role !== "CRM" && currentRole !== "CRM" && (
               <Breadcrumbs
                 separator={
                   <NavigateNextIcon
@@ -671,6 +678,8 @@ export default function DashboardLayout() {
                 message="You do not have permission to view this page."
                 showBackButton={true}
               />
+            ) : currentRole === "CRM" && location.pathname === "/" ? (
+              <CRMDashboard user={user} />
             ) : (
               <Outlet />
             )}

@@ -13,6 +13,7 @@ import { getBookingsApi, approveBookingApi, rejectBookingApi, payBookingFromWall
 import { 
   getSubscriptionPlansApi, 
   createSubscriptionPlanApi, 
+  updateSubscriptionPlanApi,
   getSubscriptionsApi, 
   updateSubscriptionPaymentApi,
   approveSubscriptionApi,
@@ -46,6 +47,8 @@ export default function FacilityDetails() {
   const [plans, setPlans] = useState<any[]>([]);
   const [plansLoading, setPlansLoading] = useState(false);
   const [createPlanOpen, setCreatePlanOpen] = useState(false);
+  const [editPlanOpen, setEditPlanOpen] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<any>(null);
   const [planForm, setPlanForm] = useState({
     name: '',
     code: '',
@@ -54,7 +57,8 @@ export default function FacilityDetails() {
     priceAmount: 1000,
     priceCurrency: 'INR',
     requiresApproval: false,
-    maxUsesPerDay: ''
+    maxUsesPerDay: '',
+    isActive: true
   });
 
   // Tab 4: Subscriptions states
@@ -312,7 +316,62 @@ export default function FacilityDetails() {
           priceAmount: 1000,
           priceCurrency: 'INR',
           requiresApproval: false,
-          maxUsesPerDay: ''
+          maxUsesPerDay: '',
+          isActive: true
+        });
+        fetchPlans();
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleEditPlanClick = (plan: any) => {
+    setSelectedPlan(plan);
+    setPlanForm({
+      name: plan.name || '',
+      code: plan.code || '',
+      description: plan.description || '',
+      durationDays: plan.durationDays || 30,
+      priceAmount: plan.priceAmount || 0,
+      priceCurrency: plan.priceCurrency || 'INR',
+      requiresApproval: !!plan.requiresApproval,
+      maxUsesPerDay: plan.maxUsesPerDay !== undefined && plan.maxUsesPerDay !== null ? String(plan.maxUsesPerDay) : '',
+      isActive: plan.isActive !== undefined ? plan.isActive : true
+    });
+    setEditPlanOpen(true);
+  };
+
+  const handleEditPlanSubmit = async () => {
+    if (!selectedPlan) return;
+    setActionLoading(true);
+    try {
+      const payload = {
+        name: planForm.name,
+        description: planForm.description,
+        durationDays: Number(planForm.durationDays),
+        priceAmount: Number(planForm.priceAmount),
+        priceCurrency: planForm.priceCurrency,
+        requiresApproval: planForm.requiresApproval,
+        maxUsesPerDay: planForm.maxUsesPerDay !== '' ? Number(planForm.maxUsesPerDay) : null,
+        isActive: planForm.isActive
+      };
+      const res = await updateSubscriptionPlanApi(selectedPlan.id, payload);
+      if (res?.success) {
+        setEditPlanOpen(false);
+        setSelectedPlan(null);
+        setPlanForm({
+          name: '',
+          code: '',
+          description: '',
+          durationDays: 30,
+          priceAmount: 1000,
+          priceCurrency: 'INR',
+          requiresApproval: false,
+          maxUsesPerDay: '',
+          isActive: true
         });
         fetchPlans();
       }
@@ -491,6 +550,7 @@ export default function FacilityDetails() {
                   plans={plans}
                   loading={plansLoading}
                   setCreatePlanOpen={setCreatePlanOpen}
+                  onEditPlan={handleEditPlanClick}
                 />
               )}
 
@@ -614,6 +674,126 @@ export default function FacilityDetails() {
             sx={{ textTransform: 'none', boxShadow: 'none' }}
           >
             Create Plan
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Edit Plan Dialog */}
+      <Dialog open={editPlanOpen} onClose={() => !actionLoading && setEditPlanOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ fontWeight: 'bold', color: '#091542' }}>Edit Subscription Plan</DialogTitle>
+        <DialogContent>
+          <Stack spacing={2} sx={{ mt: 1 }}>
+            <TextField 
+              label="Plan Name" 
+              fullWidth 
+              value={planForm.name} 
+              onChange={(e) => setPlanForm({ ...planForm, name: e.target.value })} 
+              disabled={actionLoading}
+            />
+            <TextField 
+              label="Plan Code" 
+              fullWidth 
+              value={planForm.code} 
+              disabled={true}
+            />
+            <TextField 
+              label="Description" 
+              fullWidth 
+              multiline 
+              rows={2} 
+              value={planForm.description} 
+              onChange={(e) => setPlanForm({ ...planForm, description: e.target.value })} 
+              disabled={actionLoading}
+            />
+            <Grid container spacing={2}>
+              <Grid size={6}>
+                <TextField 
+                  label="Duration (Days)" 
+                  type="number" 
+                  fullWidth 
+                  value={planForm.durationDays} 
+                  onChange={(e) => setPlanForm({ ...planForm, durationDays: Number(e.target.value) })} 
+                  disabled={actionLoading}
+                />
+              </Grid>
+              <Grid size={6}>
+                <TextField 
+                  label="Price Amount" 
+                  type="number" 
+                  fullWidth 
+                  value={planForm.priceAmount} 
+                  onChange={(e) => setPlanForm({ ...planForm, priceAmount: Number(e.target.value) })} 
+                  disabled={actionLoading}
+                />
+              </Grid>
+            </Grid>
+
+            <Grid container spacing={2}>
+              <Grid size={6}>
+                <FormControl fullWidth>
+                  <InputLabel>Currency</InputLabel>
+                  <Select
+                    value={planForm.priceCurrency}
+                    label="Currency"
+                    onChange={(e) => setPlanForm({ ...planForm, priceCurrency: e.target.value })}
+                    disabled={actionLoading}
+                  >
+                    <MenuItem value="INR">INR (₹)</MenuItem>
+                    <MenuItem value="USD">USD ($)</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid size={6}>
+                <TextField 
+                  label="Max Uses/Day (Optional)" 
+                  type="number" 
+                  fullWidth 
+                  value={planForm.maxUsesPerDay} 
+                  onChange={(e) => setPlanForm({ ...planForm, maxUsesPerDay: e.target.value })} 
+                  disabled={actionLoading}
+                  placeholder="Unlimited"
+                />
+              </Grid>
+            </Grid>
+
+            <FormControl fullWidth>
+              <InputLabel>Requires Approval</InputLabel>
+              <Select
+                value={planForm.requiresApproval ? "true" : "false"}
+                label="Requires Approval"
+                onChange={(e) => setPlanForm({ ...planForm, requiresApproval: e.target.value === "true" })}
+                disabled={actionLoading}
+              >
+                <MenuItem value="false">Auto-Approve</MenuItem>
+                <MenuItem value="true">Requires Manager Approval</MenuItem>
+              </Select>
+            </FormControl>
+
+            <FormControl fullWidth>
+              <InputLabel>Status</InputLabel>
+              <Select
+                value={planForm.isActive ? "true" : "false"}
+                label="Status"
+                onChange={(e) => setPlanForm({ ...planForm, isActive: e.target.value === "true" })}
+                disabled={actionLoading}
+              >
+                <MenuItem value="true">Active</MenuItem>
+                <MenuItem value="false">Inactive</MenuItem>
+              </Select>
+            </FormControl>
+          </Stack>
+        </DialogContent>
+        <DialogActions sx={{ p: 3 }}>
+          <Button onClick={() => setEditPlanOpen(false)} color="inherit" disabled={actionLoading} sx={{ textTransform: 'none' }}>
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleEditPlanSubmit} 
+            variant="contained" 
+            disabled={actionLoading}
+            sx={{ textTransform: 'none', boxShadow: 'none' }}
+          >
+            Save Changes
           </Button>
         </DialogActions>
       </Dialog>

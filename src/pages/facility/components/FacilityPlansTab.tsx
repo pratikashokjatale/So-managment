@@ -1,5 +1,6 @@
-import { Box, Stack, Typography, Button, CircularProgress, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Chip } from '@mui/material';
+import { Box, Stack, Typography, Button, CircularProgress, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Chip, IconButton } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
 
 interface PlanRow {
   id: string;
@@ -10,6 +11,7 @@ interface PlanRow {
   priceCurrency: string;
   requiresApproval: boolean;
   maxUsesPerDay?: number | null;
+  isActive?: boolean;
 }
 
 interface FacilityPlansTabProps {
@@ -17,13 +19,15 @@ interface FacilityPlansTabProps {
   plans: PlanRow[];
   loading: boolean;
   setCreatePlanOpen: (open: boolean) => void;
+  onEditPlan?: (plan: PlanRow) => void;
 }
 
 export default function FacilityPlansTab({
   accessType,
   plans = [],
   loading,
-  setCreatePlanOpen
+  setCreatePlanOpen,
+  onEditPlan
 }: FacilityPlansTabProps) {
   const plansList = Array.isArray(plans) ? plans : [];
 
@@ -73,6 +77,9 @@ export default function FacilityPlansTab({
                 <TableCell sx={{ fontWeight: 600, color: '#475569' }}>Price</TableCell>
                 <TableCell sx={{ fontWeight: 600, color: '#475569' }}>Requires Approval</TableCell>
                 <TableCell sx={{ fontWeight: 600, color: '#475569' }}>Usage Limit</TableCell>
+                {(accessType === 'SUBSCRIPTION' || accessType === 'MIXED') && (
+                  <TableCell sx={{ fontWeight: 600, color: '#475569' }}>Actions</TableCell>
+                )}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -97,6 +104,17 @@ export default function FacilityPlansTab({
                   <TableCell sx={{ fontWeight: 600, color: 'text.secondary' }}>
                     {plan.maxUsesPerDay ? `${plan.maxUsesPerDay}/day` : 'Unlimited'}
                   </TableCell>
+                  {(accessType === 'SUBSCRIPTION' || accessType === 'MIXED') && (
+                    <TableCell>
+                      <IconButton 
+                        size="small" 
+                        color="primary"
+                        onClick={() => onEditPlan && onEditPlan(plan)}
+                      >
+                        <EditIcon fontSize="small" />
+                      </IconButton>
+                    </TableCell>
+                  )}
                 </TableRow>
               ))}
             </TableBody>

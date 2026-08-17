@@ -161,7 +161,7 @@ export default function CreateBookingDialog({ open, onClose, resident }: CreateB
   useEffect(() => {
     if (!open) return;
     setLoadingFacilities(true);
-    getFacilitiesApi({ limit: 100 })
+    getFacilitiesApi({ limit: 100, isActive: true })
       .then((res) => {
         // Match exact parsing pattern from GetFacility.tsx
         const d = res?.data || res;
@@ -175,7 +175,8 @@ export default function CreateBookingDialog({ open, onClose, resident }: CreateB
         } else if (d?.data && Array.isArray(d.data)) {
           list = d.data;
         }
-        setFacilities(list);
+        const activeFacilities = list.filter((f: any) => f.isActive !== false && f.status !== 'CLOSED' && f.status !== 'Inactive');
+        setFacilities(activeFacilities);
       })
       .catch(() => setFacilities([]))
       .finally(() => setLoadingFacilities(false));
@@ -567,7 +568,7 @@ export default function CreateBookingDialog({ open, onClose, resident }: CreateB
                       size="small"
                       sx={{ '& .MuiToggleButton-root': { borderRadius: '8px !important', fontWeight: 700, fontSize: '0.75rem', px: 1.5 } }}
                     >
-                      {[30, 45, 60, 90, 120].map((m) => (
+                      {[30, 45, 60, 90, 120, 180].map((m) => (
                         <ToggleButton key={m} value={m} sx={{ '&.Mui-selected': { bgcolor: '#091542 !important', color: 'white' } }}>
                           {m}m
                         </ToggleButton>

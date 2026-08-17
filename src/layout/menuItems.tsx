@@ -73,11 +73,7 @@ export const menuItems = [
     path: "/staff",
     children: [
       { text: "All Staff", icon: <AllStaffIcon />, path: "/staff" },
-      {
-        text: "Attendance",
-        icon: <AttendanceIcon />,
-        path: "/staff/attendance",
-      },
+      
     ],
   },
 
@@ -104,6 +100,6 @@ export const menuItems = [
   { text: "Issues & Feedback", icon: <IssueIcon />, path: "/issues" },
 
   // { text: "Gate Entry", icon: <GateIcon />, path: "/gate" },
-  { text: "Announcements", icon: <CampaignIcon />, path: "/announcements" },
+ 
   { text: "Report", icon: <ReportIcon />, path: "/report" },
 ];

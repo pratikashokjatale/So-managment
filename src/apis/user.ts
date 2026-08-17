@@ -43,6 +43,9 @@ export interface UpdateUserPayload {
   flatId?: string | null;
   profilePhotoUrl?: string | null;
   cardNumber?: string;
+  inactiveReason?: string;
+  inactiveProofImageUrl?: string;
+  inactiveProofPdfUrl?: string;
 }
 
 export const getUsersApi = async (params?: ListUsersParams) => {

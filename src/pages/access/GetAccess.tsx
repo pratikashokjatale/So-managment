@@ -21,8 +21,9 @@ import {
   Person as PersonIcon,
   QrCode2 as QrCode2Icon,
 } from "@mui/icons-material";
-import { Dialog, DialogTitle, DialogContent } from "@mui/material";
+import { Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import { getUsersApi, updateUserApi } from "@/apis/user";
+import { uploadDocumentApi } from "@/apis/document";
 import { getAnalyticsAccessEventsApi } from "@/apis/analytics";
 import toast from "react-hot-toast";
 import Pagination from "@/components/Pagination";
@@ -41,6 +42,14 @@ export default function GetAccess() {
   const [limit, setLimit] = useState(10);
   const [totalUsers, setTotalUsers] = useState(0);
   const [openCardDesigns, setOpenCardDesigns] = useState(false);
+  const [blockDialogOpen, setBlockDialogOpen] = useState(false);
+  const [blockingUser, setBlockingUser] = useState<any>(null);
+  const [inactiveReason, setInactiveReason] = useState("");
+  const [inactiveProofImageUrl, setInactiveProofImageUrl] = useState("");
+  const [inactiveProofPdfUrl, setInactiveProofPdfUrl] = useState("");
+  const [submittingBlock, setSubmittingBlock] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadingPdf, setUploadingPdf] = useState(false);
 
   const cardDesigns = [
     { role: "Resident", title: "RESIDENT ID NUMBER", id: "M B 1 0 4 2", color: "#1e293b", textColor: "#1e3a8a" },
@@ -91,13 +100,75 @@ export default function GetAccess() {
 
   const handleToggleStatus = async (user: any) => {
     const isCurrentlyActive = user.status === "ACTIVE";
-    const newStatus = isCurrentlyActive ? "INACTIVE" : "ACTIVE";
+    if (isCurrentlyActive) {
+      setBlockingUser(user);
+      setInactiveReason("");
+      setInactiveProofImageUrl("");
+      setInactiveProofPdfUrl("");
+      setBlockDialogOpen(true);
+    } else {
+      try {
+        await updateUserApi(user.id, { status: "ACTIVE" });
+        toast.success("User activated successfully");
+        fetchUsers();
+        fetchRecentEvents();
+      } catch (error) {
+        toast.error("Failed to activate user");
+      }
+    }
+  };
+
+  const handleConfirmBlock = async () => {
+    if (!blockingUser) return;
+    setSubmittingBlock(true);
     try {
-      await updateUserApi(user.id, { status: newStatus });
-      toast.success(`User ${newStatus === "ACTIVE" ? "activated" : "blocked"} successfully`);
+      const payload: any = {
+        status: "INACTIVE"
+      };
+      if (inactiveReason) payload.inactiveReason = inactiveReason;
+      if (inactiveProofImageUrl) payload.inactiveProofImageUrl = inactiveProofImageUrl;
+      if (inactiveProofPdfUrl) payload.inactiveProofPdfUrl = inactiveProofPdfUrl;
+
+      await updateUserApi(blockingUser.id, payload);
+      toast.success("User blocked successfully");
+      setBlockDialogOpen(false);
+      setBlockingUser(null);
       fetchUsers();
+      fetchRecentEvents();
     } catch (error) {
-      toast.error("Failed to update user status");
+      toast.error("Failed to block user");
+    } finally {
+      setSubmittingBlock(false);
+    }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingImage(true);
+    try {
+      const url = await uploadDocumentApi(file);
+      setInactiveProofImageUrl(url);
+      toast.success("Image proof uploaded successfully");
+    } catch (err) {
+      toast.error("Failed to upload image proof");
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const handlePdfUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingPdf(true);
+    try {
+      const url = await uploadDocumentApi(file);
+      setInactiveProofPdfUrl(url);
+      toast.success("PDF proof uploaded successfully");
+    } catch (err) {
+      toast.error("Failed to upload PDF proof");
+    } finally {
+      setUploadingPdf(false);
     }
   };
 
@@ -410,6 +481,120 @@ export default function GetAccess() {
             </Box>
           ))}
         </DialogContent>
+      </Dialog>
+
+      {/* Block User Dialog */}
+      <Dialog 
+        open={blockDialogOpen} 
+        onClose={() => !submittingBlock && setBlockDialogOpen(false)} 
+        maxWidth="xs" 
+        fullWidth
+        PaperProps={{ sx: { borderRadius: "16px" } }}
+      >
+        <DialogTitle sx={{ fontWeight: 'bold', color: '#1e293b' }}>
+          Block User / Make Inactive
+        </DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+            Specify the reasons and proof for blocking {blockingUser?.name}. All inactive audit fields are optional.
+          </Typography>
+          <Stack spacing={2.5}>
+            <Box>
+              <TextField 
+                label="Inactive Reason" 
+                placeholder="e.g. KYC rejected / resident moved out" 
+                fullWidth
+                value={inactiveReason}
+                onChange={(e) => setInactiveReason(e.target.value)}
+                disabled={submittingBlock}
+              />
+            </Box>
+
+            <Box>
+              <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 1 }}>
+                <Button
+                  variant="outlined"
+                  component="label"
+                  disabled={submittingBlock || uploadingImage}
+                  sx={{ textTransform: 'none', borderRadius: '8px' }}
+                >
+                  {uploadingImage ? "Uploading..." : "Select Image Proof"}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    hidden
+                    onChange={handleImageUpload}
+                  />
+                </Button>
+                <Typography variant="caption" sx={{ wordBreak: 'break-all', color: 'text.secondary' }}>
+                  {inactiveProofImageUrl ? "Uploaded Image" : "No image selected"}
+                </Typography>
+              </Stack>
+              {inactiveProofImageUrl && (
+                <TextField
+                  size="small"
+                  fullWidth
+                  value={inactiveProofImageUrl}
+                  onChange={(e) => setInactiveProofImageUrl(e.target.value)}
+                  disabled={submittingBlock}
+                  helperText="Image proof URL (automatically set on upload)"
+                />
+              )}
+            </Box>
+
+            <Box>
+              <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 1 }}>
+                <Button
+                  variant="outlined"
+                  component="label"
+                  disabled={submittingBlock || uploadingPdf}
+                  sx={{ textTransform: 'none', borderRadius: '8px' }}
+                >
+                  {uploadingPdf ? "Uploading..." : "Select PDF Proof"}
+                  <input
+                    type="file"
+                    accept="application/pdf"
+                    hidden
+                    onChange={handlePdfUpload}
+                  />
+                </Button>
+                <Typography variant="caption" sx={{ wordBreak: 'break-all', color: 'text.secondary' }}>
+                  {inactiveProofPdfUrl ? "Uploaded PDF" : "No PDF selected"}
+                </Typography>
+              </Stack>
+              {inactiveProofPdfUrl && (
+                <TextField
+                  size="small"
+                  fullWidth
+                  value={inactiveProofPdfUrl}
+                  onChange={(e) => setInactiveProofPdfUrl(e.target.value)}
+                  disabled={submittingBlock}
+                  helperText="PDF proof URL (automatically set on upload)"
+                />
+              )}
+            </Box>
+          </Stack>
+        </DialogContent>
+        <DialogActions sx={{ p: 3 }}>
+          <Button 
+            onClick={() => setBlockDialogOpen(false)} 
+            color="inherit" 
+            disabled={submittingBlock}
+            sx={{ textTransform: 'none' }}
+          >
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleConfirmBlock} 
+            variant="contained" 
+            color="error" 
+            disabled={submittingBlock}
+            startIcon={submittingBlock ? <CircularProgress size={16} color="inherit" /> : <BlockIcon />}
+            sx={{ textTransform: 'none', borderRadius: '8px', boxShadow: 'none' }}
+          >
+            Block User
+          </Button>
+        </DialogActions>
       </Dialog>
     </Box>
   );

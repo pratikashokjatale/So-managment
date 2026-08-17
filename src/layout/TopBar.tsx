@@ -15,9 +15,11 @@ import logoImg from "@/assets/logo.jpeg";
 interface TopBarProps {
   handleDrawerToggle: () => void;
   drawerWidth: number;
+  currentRole?: string;
+  onBackToAdmin?: () => void;
 }
 
-export default function TopBar({ handleDrawerToggle }: TopBarProps) {
+export default function TopBar({ handleDrawerToggle, currentRole, onBackToAdmin }: TopBarProps) {
   const theme = useTheme();
   const { logout, user } = useAuth();
 
@@ -47,14 +49,16 @@ export default function TopBar({ handleDrawerToggle }: TopBarProps) {
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <IconButton
-            color="inherit"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { md: "none" } }}
-          >
-            <MenuIcon />
-          </IconButton>
+          {currentRole !== "CRM" && (
+            <IconButton
+              color="inherit"
+              edge="start"
+              onClick={handleDrawerToggle}
+              sx={{ mr: 2, display: { md: "none" } }}
+            >
+              <MenuIcon />
+            </IconButton>
+          )}
 
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             <Box
@@ -86,7 +90,25 @@ export default function TopBar({ handleDrawerToggle }: TopBarProps) {
         </Box>
 
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          {user?.role === "CRM" ? (
+          {currentRole === "CRM" ? (
+            <Button
+              onClick={onBackToAdmin}
+              sx={{
+                bgcolor: "#eff6ff",
+                color: "#1d4ed8",
+                fontWeight: 700,
+                borderRadius: "20px",
+                px: 3,
+                py: 0.75,
+                textTransform: "none",
+                "&:hover": {
+                  bgcolor: "#dbeafe",
+                },
+              }}
+            >
+              Back to Admin
+            </Button>
+          ) : user?.role === "CRM" ? (
             <>
               <Box sx={{ textAlign: "right", display: { xs: "none", sm: "block" } }}>
                 <Typography sx={{ fontWeight: 700, color: "#1e293b", fontSize: "0.95rem", lineHeight: 1.2 }}>
