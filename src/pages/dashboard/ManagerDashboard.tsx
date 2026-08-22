@@ -497,7 +497,7 @@ export default function ManagerDashboard() {
                   variant="contained" 
                   sx={{ bgcolor: "#1e3a5f", color: "white", textTransform: "none", borderRadius: "8px", px: 3, fontWeight: 600, fontSize: "0.83rem", whiteSpace: "nowrap", boxShadow: "none", "&:hover": { bgcolor: "#162d4a", boxShadow: "none" } }}
                 >
-                  Member Details
+                  Recharge Wallet
                 </Button>
               </Box>
               <Box sx={{ display: "flex", gap: 0.8, alignItems: "flex-start", mb: 0.8 }}>
