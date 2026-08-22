@@ -116,7 +116,7 @@ const CreateProfileModal: React.FC<CreateProfileModalProps> = ({ open, onClose }
     setWizardStep(1);
     setRole(null);
     setFormData({
-      name: "", mobile: "", email: "", gender: "", dob: "", project: "", tower: "", flat: "", address: "", remarks: ""
+      name: "", mobile: "", email: "", password: "", gender: "", dob: "", project: "", tower: "", flat: "", address: "", stayEndsAt: "", remarks: ""
     });
     setPrivacyAccepted(false);
     setTermsAccepted(false);
