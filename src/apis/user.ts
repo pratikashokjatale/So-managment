@@ -8,6 +8,8 @@ export interface ListUsersParams {
   role?: string;
   flatId?: string;
   cardNumber?: string;
+  startDate?: string;
+  endDate?: string;
 }
 
 export interface CreateUserPayload {

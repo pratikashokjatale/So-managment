@@ -4,6 +4,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import SensorsIcon from "@mui/icons-material/Sensors";
 import GraphicEqOutlinedIcon from "@mui/icons-material/GraphicEqOutlined";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import BlockOutlinedIcon from "@mui/icons-material/BlockOutlined";
 import { Html5Qrcode } from "html5-qrcode";
 import toast from "react-hot-toast";
@@ -77,6 +78,8 @@ export default function ScanModal({
 
       setVerifiedData({
         id: userData?.id || userData?._id || "",
+        accessGranted: res?.data?.accessGranted !== false && res?.accessGranted !== false,
+        reason: res?.data?.reason || res?.reason || "Unknown",
         name: userData?.name || "Unknown User",
         status: userData?.status || res?.data?.accessStatus?.accessStatus || "ACTIVE",
         residentId: userData?.cardNumber || userData?.id?.substring(0,8) || "N/A",
@@ -99,7 +102,7 @@ export default function ScanModal({
       return;
     }
     try {
-      const promise = updateUserApi(verifiedData.id, { status: "SUSPENDED" });
+      const promise = updateUserApi(verifiedData.id, { status: "INACTIVE" });
       toast.promise(promise, {
         loading: "Blocking card...",
         success: "Card blocked successfully",
@@ -109,6 +112,25 @@ export default function ScanModal({
       handleClose();
     } catch (err) {
       console.error("Failed to block card:", err);
+    }
+  };
+
+  const handleUnblockCard = async () => {
+    if (!verifiedData?.id) {
+      toast.error("User ID not found");
+      return;
+    }
+    try {
+      const promise = updateUserApi(verifiedData.id, { status: "ACTIVE" });
+      toast.promise(promise, {
+        loading: "Unblocking card...",
+        success: "Card unblocked successfully",
+        error: "Failed to unblock card"
+      });
+      await promise;
+      handleClose();
+    } catch (err) {
+      console.error("Failed to unblock card:", err);
     }
   };
 
@@ -165,9 +187,9 @@ export default function ScanModal({
         
         {verifiedData ? (
           <Box sx={{ display: "flex", flexDirection: "column", width: "100%", textAlign: "left" }}>
-            {/* Green Header */}
+            {/* Dynamic Header */}
             <Box sx={{ 
-              bgcolor: "#0d944d", 
+              bgcolor: verifiedData.accessGranted ? "#0d944d" : "#ef4444", 
               color: "white", 
               pt: 5, pb: 4, px: 3, 
               display: "flex", 
@@ -176,10 +198,18 @@ export default function ScanModal({
               textAlign: "center"
             }}>
               <Box sx={{ width: 80, height: 80, borderRadius: "50%", border: "2px solid rgba(255,255,255,0.8)", display: "flex", alignItems: "center", justifyContent: "center", mb: 2 }}>
-                <CheckCircleOutlineIcon sx={{ fontSize: 50, color: "white" }} />
+                {verifiedData.accessGranted ? (
+                  <CheckCircleOutlineIcon sx={{ fontSize: 50, color: "white" }} />
+                ) : (
+                  <CancelOutlinedIcon sx={{ fontSize: 50, color: "white" }} />
+                )}
               </Box>
-              <Typography sx={{ fontWeight: 800, fontSize: "1.4rem", letterSpacing: "1px", mb: 0.5 }}>ACCESS GRANTED</Typography>
-              <Typography sx={{ fontSize: "0.95rem", opacity: 0.9 }}>Valid — access granted</Typography>
+              <Typography sx={{ fontWeight: 800, fontSize: "1.4rem", letterSpacing: "1px", mb: 0.5 }}>
+                {verifiedData.accessGranted ? "ACCESS GRANTED" : "ACCESS DENIED"}
+              </Typography>
+              <Typography sx={{ fontSize: "0.95rem", opacity: 0.9 }}>
+                {verifiedData.accessGranted ? "Valid — access granted" : `Denied — ${verifiedData.reason.replace(/_/g, " ")}`}
+              </Typography>
             </Box>
 
             {/* Profile Area */}
@@ -247,24 +277,45 @@ export default function ScanModal({
               >
                 Scan another
               </Button>
-              <Button
-                fullWidth
-                variant="contained"
-                onClick={handleBlockCard}
-                sx={{
-                  bgcolor: "#c2410c",
-                  color: "white",
-                  fontWeight: 600,
-                  textTransform: "none",
-                  borderRadius: "12px",
-                  boxShadow: "none",
-                  py: 1.2,
-                  "&:hover": { bgcolor: "#9a3412", boxShadow: "none" }
-                }}
-              >
-                <BlockOutlinedIcon sx={{ fontSize: 18, mr: 1 }} />
-                Block card
-              </Button>
+              {verifiedData.accessGranted ? (
+                <Button
+                  fullWidth
+                  variant="contained"
+                  onClick={handleBlockCard}
+                  sx={{
+                    bgcolor: "#c2410c",
+                    color: "white",
+                    fontWeight: 600,
+                    textTransform: "none",
+                    borderRadius: "12px",
+                    boxShadow: "none",
+                    py: 1.2,
+                    "&:hover": { bgcolor: "#9a3412", boxShadow: "none" }
+                  }}
+                >
+                  <BlockOutlinedIcon sx={{ fontSize: 18, mr: 1 }} />
+                  Block card
+                </Button>
+              ) : (
+                <Button
+                  fullWidth
+                  variant="contained"
+                  onClick={handleUnblockCard}
+                  sx={{
+                    bgcolor: "#0d944d",
+                    color: "white",
+                    fontWeight: 600,
+                    textTransform: "none",
+                    borderRadius: "12px",
+                    boxShadow: "none",
+                    py: 1.2,
+                    "&:hover": { bgcolor: "#166534", boxShadow: "none" }
+                  }}
+                >
+                  <CheckCircleOutlineIcon sx={{ fontSize: 18, mr: 1 }} />
+                  Unblock card
+                </Button>
+              )}
             </Box>
           </Box>
         ) : (
