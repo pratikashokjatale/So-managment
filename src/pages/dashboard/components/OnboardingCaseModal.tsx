@@ -77,7 +77,7 @@ const OnboardingCaseModal: React.FC<OnboardingCaseModalProps> = ({ open, onClose
     <Dialog 
       open={open} 
       onClose={onClose}
-      maxWidth="md"
+      maxWidth="sm"
       fullWidth
       PaperProps={{
         sx: { 
@@ -89,16 +89,16 @@ const OnboardingCaseModal: React.FC<OnboardingCaseModalProps> = ({ open, onClose
       }}
     >
       {/* Header */}
-      <Box sx={{ bgcolor: "#7e22ce", color: "#fff", p: 3, display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+      <Box sx={{ bgcolor: "#7A4FB5", color: "#fff", p: 2.5, display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
         <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-          <Box sx={{ bgcolor: "rgba(255,255,255,0.2)", width: 56, height: 56, borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <BusinessIcon sx={{ fontSize: 28, color: "#fff" }} />
+          <Box sx={{ bgcolor: "rgba(255,255,255,0.2)", width: 48, height: 48, borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <BusinessIcon sx={{ fontSize: 24, color: "#fff" }} />
           </Box>
           <Box>
-            <Typography sx={{ fontWeight: 600, fontSize: "1.25rem" }}>
+            <Typography sx={{ fontWeight: 600, fontSize: "1.1rem" }}>
               {user.name || "Rohit & Priya Mehra"}
             </Typography>
-            <Typography sx={{ fontSize: "0.85rem", opacity: 0.9, mt: 0.5 }}>
+            <Typography sx={{ fontSize: "0.8rem", opacity: 0.9, mt: 0.25 }}>
               CRM-2041 · {roleLabel} · Unit {flatNum} · Marbella Grand
             </Typography>
           </Box>
@@ -114,7 +114,7 @@ const OnboardingCaseModal: React.FC<OnboardingCaseModalProps> = ({ open, onClose
         <Box sx={{ bgcolor: "#f1f5f9", borderRadius: "16px", p: 3, display: "flex", flexDirection: "column", gap: 2 }}>
           <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <BusinessIcon sx={{ color: "#7e22ce", fontSize: 20 }} />
+              <BusinessIcon sx={{ color: "#7A4FB5", fontSize: 20 }} />
               <Typography sx={{ fontWeight: 600, color: "#1e293b", fontSize: "0.95rem" }}>
                 Unit {flatNum} allotted · 12 Jul
               </Typography>
@@ -163,7 +163,7 @@ const OnboardingCaseModal: React.FC<OnboardingCaseModalProps> = ({ open, onClose
         <Box sx={{ bgcolor: "#fff", border: "1px solid #e2e8f0", borderRadius: "16px", p: 3 }}>
           <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <DescriptionOutlinedIcon sx={{ color: "#7e22ce", fontSize: 20 }} />
+              <DescriptionOutlinedIcon sx={{ color: "#7A4FB5", fontSize: 20 }} />
               <Typography sx={{ fontWeight: 700, color: "#1e293b" }}>Documents ({docs.length})</Typography>
             </Box>
             <Button
@@ -171,7 +171,7 @@ const OnboardingCaseModal: React.FC<OnboardingCaseModalProps> = ({ open, onClose
               size="small"
               startIcon={<FileUploadOutlinedIcon />}
               sx={{
-                color: "#7e22ce",
+                color: "#7A4FB5",
                 borderColor: "#e9d5ff",
                 bgcolor: "#faf5ff",
                 textTransform: "none",

@@ -157,10 +157,7 @@ export default function GetDemoAccounts() {
             label: 'Card Details',
             render: (row) => (
               <Box>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  <Box sx={{ width: 10, height: 10, borderRadius: "50%", bgcolor: "#1d4ed8" }} />
-                  <Typography variant="body2" fontWeight="600">Blue Card</Typography>
-                </Box>
+                
                 {(row.cardNumber || row.cardNo) && (
                   <Typography variant="caption" color="text.secondary" fontWeight="700" sx={{ mt: 0.5, display: "block" }}>
                     No: {row.cardNumber || row.cardNo}

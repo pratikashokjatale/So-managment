@@ -58,6 +58,8 @@ import { getFacilitiesApi } from "@/apis/facility";
 import { getUsersApi } from "@/apis/user";
 import { adminRechargeUserWalletApi } from "@/apis/wallet";
 import ScanModal from "./components/ScanModal";
+import CreateProfileModal from "./components/CreateProfileModal";
+import PersonAddAltOutlinedIcon from "@mui/icons-material/PersonAddAltOutlined";
 
 const INTER = "'Inter', system-ui, sans-serif";
 const SERIF = "'Cormorant Garamond', Georgia, serif";
@@ -104,6 +106,7 @@ export default function ManagerDashboard() {
 
   // Scan Modal State
   const [scanModalOpen, setScanModalOpen] = useState(false);
+  const [createProfileModalOpen, setCreateProfileModalOpen] = useState(false);
 
   const handleRecharge = async () => {
     if (!memberId) {
@@ -414,7 +417,15 @@ export default function ManagerDashboard() {
                   startIcon={<ScanIcon />} 
                   sx={{ bgcolor: "#1e3a5f", color: "white", textTransform: "none", borderRadius: "10px", px: 2.5, py: 1, fontWeight: 600, fontSize: "0.85rem", boxShadow: "none", "&:hover": { bgcolor: "#162d4a", boxShadow: "none" } }}
                 >
-                  Scan RFID / QR
+                  Scan / block
+                </Button>
+                <Button 
+                  onClick={() => setCreateProfileModalOpen(true)}
+                  variant="contained" 
+                  startIcon={<PersonAddAltOutlinedIcon />} 
+                  sx={{ bgcolor: "#f8f3e6", color: "#a17a3f", textTransform: "none", borderRadius: "10px", px: 2.5, py: 1, fontWeight: 600, fontSize: "0.85rem", boxShadow: "none", "&:hover": { bgcolor: "#f0e8d5", boxShadow: "none" } }}
+                >
+                  Create profile
                 </Button>
               </Box>
             </Box>
@@ -429,7 +440,17 @@ export default function ManagerDashboard() {
                   </Box>
                   {card.value === null
                     ? <CircularProgress size={22} thickness={4} sx={{ color: "#204a7b", my: 0.5 }} />
-                    : <Typography sx={{ fontFamily: SERIF, fontSize: "1.8rem", fontWeight: 600, color: "#192038", lineHeight: 1.1 }}>{card.value}</Typography>
+                    : <Typography sx={{ 
+                        fontFamily: SERIF, 
+                        fontSize: "1.8rem", 
+                        fontWeight: 600, 
+                        color: "#192038", 
+                        lineHeight: 1.1,
+                        filter: card.label === "TOTAL REVENUE" ? "blur(6px)" : "none",
+                        userSelect: card.label === "TOTAL REVENUE" ? "none" : "auto"
+                      }}>
+                        {card.value}
+                      </Typography>
                   }
                   <Typography sx={{ fontSize: "0.72rem", color: "#64748b", mt: 0.3 }}>{card.sub}</Typography>
                 </Paper>
@@ -709,6 +730,7 @@ export default function ManagerDashboard() {
       
       {/* Scan Modal */}
       <ScanModal open={scanModalOpen} onClose={() => setScanModalOpen(false)} />
+      <CreateProfileModal open={createProfileModalOpen} onClose={() => setCreateProfileModalOpen(false)} />
     </Box>
   );
 }

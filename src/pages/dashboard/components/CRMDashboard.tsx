@@ -62,6 +62,7 @@ import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
 import SendIcon from "@mui/icons-material/Send";
+import SendOutlinedIcon from "@mui/icons-material/SendOutlined";
 
 const demoIds = ["MEM-100482", "MEM-100613", "MEM-100731", "MEM-100355"];
 
@@ -125,6 +126,7 @@ const CRMDashboard = ({ user }: { user: any }) => {
   const [inventoryPage, setInventoryPage] = useState(1);
   const [inventoryTotalPages, setInventoryTotalPages] = useState(1);
   const [inventoryTotalFlats, setInventoryTotalFlats] = useState(0);
+  const [activeInventoryTab, setActiveInventoryTab] = useState("Inventory");
 
   // Resident Profile Modal
   const [residentProfileModalOpen, setResidentProfileModalOpen] = useState(false);
@@ -771,7 +773,7 @@ const CRMDashboard = ({ user }: { user: any }) => {
                           variant="contained"
                           onClick={() => setSelectedOnboardingCase(user)}
                           sx={{
-                            bgcolor: "#7e22ce",
+                            bgcolor: "#7A4FB5",
                             color: "#fff",
                             textTransform: "none",
                             borderRadius: "8px",
@@ -780,7 +782,7 @@ const CRMDashboard = ({ user }: { user: any }) => {
                             px: 3,
                             py: 0.5,
                             "&:hover": {
-                              bgcolor: "#6b21a8",
+                              bgcolor: "#653F97",
                               boxShadow: "none",
                             },
                           }}
@@ -863,15 +865,16 @@ const CRMDashboard = ({ user }: { user: any }) => {
                 {["Inventory", "My submissions", "Change log"].map((tab, i) => (
                   <Button
                     key={i}
+                    onClick={() => setActiveInventoryTab(tab)}
                     sx={{
-                      bgcolor: i === 0 ? "#1e3a8a" : "#f1f5f9",
-                      color: i === 0 ? "#ffffff" : "#475569",
+                      bgcolor: activeInventoryTab === tab ? "#1e3a8a" : "#f1f5f9",
+                      color: activeInventoryTab === tab ? "#ffffff" : "#475569",
                       textTransform: "none",
                       borderRadius: "8px",
                       padding: "6px 16px",
                       fontWeight: 600,
                       fontSize: "0.85rem",
-                      "&:hover": { bgcolor: i === 0 ? "#1e3a8a" : "#e2e8f0" },
+                      "&:hover": { bgcolor: activeInventoryTab === tab ? "#1e3a8a" : "#e2e8f0" },
                     }}
                   >
                     {tab}
@@ -879,8 +882,61 @@ const CRMDashboard = ({ user }: { user: any }) => {
                 ))}
               </Box>
 
-              {/* Stat Cards (dynamic projects) */}
-              {loadingResidentSummary ? (
+              {activeInventoryTab === "My submissions" && (
+                <Box
+                  sx={{
+                    border: "1px solid #e2e8f0",
+                    borderRadius: "16px",
+                    p: 4,
+                    bgcolor: "#ffffff",
+                    textAlign: "center",
+                    minHeight: "200px",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: 1
+                  }}
+                >
+                  <SendOutlinedIcon sx={{ fontSize: 24, color: "#475569", mb: 1, transform: "rotate(-45deg)" }} />
+                  <Typography sx={{ fontWeight: 700, color: "#1e293b", fontSize: "0.95rem" }}>
+                    No pending submissions
+                  </Typography>
+                  <Typography sx={{ color: "#64748b", fontSize: "0.85rem" }}>
+                    Edit a unit and submit it — it waits here until Admin approves.
+                  </Typography>
+                </Box>
+              )}
+
+              {activeInventoryTab === "Change log" && (
+                <Box
+                  sx={{
+                    border: "1px solid #e2e8f0",
+                    borderRadius: "12px",
+                    bgcolor: "#f8fafc",
+                    minHeight: "150px",
+                    display: "flex",
+                    flexDirection: "column",
+                    position: "relative"
+                  }}
+                >
+                  <Box sx={{ p: 2, borderBottom: "1px solid #e2e8f0" }}>
+                    <Typography sx={{ color: "#475569", fontSize: "0.85rem", fontWeight: 500 }}>
+                      Every applied change - newest first
+                    </Typography>
+                  </Box>
+                  <Box sx={{ flex: 1, display: "flex", justifyContent: "center", alignItems: "center" }}>
+                    <Typography sx={{ color: "#64748b", fontSize: "0.85rem" }}>
+                      No changes yet this session.
+                    </Typography>
+                  </Box>
+                </Box>
+              )}
+
+              {activeInventoryTab === "Inventory" && (
+                <Box>
+                  {/* Stat Cards (dynamic projects) */}
+                  {loadingResidentSummary ? (
                 <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
                   <CircularProgress size={24} sx={{ color: '#1e3a8a' }} />
                 </Box>
@@ -1352,6 +1408,8 @@ const CRMDashboard = ({ user }: { user: any }) => {
                 )}
                 </Box>
               </Box>
+              </Box>
+              )}
             </Box>
           )}
 
@@ -1417,7 +1475,7 @@ const CRMDashboard = ({ user }: { user: any }) => {
                 {/* Purple Header */}
                 <Box
                   sx={{
-                    bgcolor: "#7e22ce",
+                    bgcolor: "#7A4FB5",
                     p: 2,
                     display: "flex",
                     justifyContent: "space-between",
@@ -1796,7 +1854,7 @@ const CRMDashboard = ({ user }: { user: any }) => {
                           }
                         }}
                         sx={{
-                          color: "#7e22ce",
+                          color: "#7A4FB5",
                           fontSize: "0.75rem",
                           fontWeight: 600,
                           cursor: "pointer",
@@ -1831,7 +1889,7 @@ const CRMDashboard = ({ user }: { user: any }) => {
             sx: { borderRadius: "16px", overflow: "hidden" }
           }}
         >
-          <Box sx={{ bgcolor: "#7e22ce", color: "#fff", p: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <Box sx={{ bgcolor: "#7A4FB5", color: "#fff", p: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <Box sx={{ display: "flex", gap: 1.5, alignItems: "center" }}>
               <Box sx={{ bgcolor: "rgba(255,255,255,0.2)", p: 0.75, borderRadius: "8px", display: "flex" }}>
                 <EmailOutlinedIcon sx={{ fontSize: 20 }} />
@@ -2511,7 +2569,7 @@ const CRMDashboard = ({ user }: { user: any }) => {
                         letterSpacing: "0.5px",
                       }}
                     >
-                      CARD TYPE
+                      CARD NO
                     </Typography>
                     <Box sx={{ display: "flex", gap: 1, mb: 3 }}>
                       {["Master", "Dependent", "Guest"].map((type) => (
