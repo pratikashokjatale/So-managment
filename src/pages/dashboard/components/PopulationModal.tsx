@@ -26,6 +26,8 @@ const PopulationModal: React.FC<PopulationModalProps> = ({ open, onClose, onResi
   const [ageFilter, setAgeFilter] = useState("ALL");
   const [projectFilter, setProjectFilter] = useState("ALL");
   const [search, setSearch] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
   const fetchData = async () => {
     try {
@@ -33,7 +35,9 @@ const PopulationModal: React.FC<PopulationModalProps> = ({ open, onClose, onResi
         who: whoFilter,
         ageGroup: ageFilter,
         projectId: projectFilter === "ALL" ? undefined : projectFilter,
-        search: search || undefined
+        search: search || undefined,
+        startDate: startDate || undefined,
+        endDate: endDate || undefined
       });
       setData(res?.data || res);
     } catch (err) {
@@ -49,6 +53,8 @@ const PopulationModal: React.FC<PopulationModalProps> = ({ open, onClose, onResi
       const res = await getUsersApi({
         role: roleFilter,
         search: search || undefined,
+        startDate: startDate || undefined,
+        endDate: endDate || undefined,
         limit: 50
       });
       const list = (res as any)?.data?.users || (res as any)?.data?.items || (res as any)?.items || (res as any)?.data || [];
@@ -63,7 +69,7 @@ const PopulationModal: React.FC<PopulationModalProps> = ({ open, onClose, onResi
       fetchData();
       fetchUsers();
     }
-  }, [open, whoFilter, ageFilter, projectFilter, search]);
+  }, [open, whoFilter, ageFilter, projectFilter, search, startDate, endDate]);
 
   const cards = data?.cards || { population: 18, households: 7, ownersResidents: 6, tenants: 2, guests: 1, family: 9 };
   const ageGroups = data?.ageGroups || { adults: 13, children: 4, seniors: 1 };
@@ -468,43 +474,37 @@ const PopulationModal: React.FC<PopulationModalProps> = ({ open, onClose, onResi
                     MOVED IN
                   </Typography>
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 1,
+                    <input
+                      type="date"
+                      value={startDate}
+                      onChange={(e) => setStartDate(e.target.value)}
+                      style={{
                         border: "1px solid #e2e8f0",
                         borderRadius: "8px",
-                        px: 1.5,
-                        py: 0.5,
-                        color: "#94a3b8",
+                        padding: "6px 12px",
+                        color: startDate ? "#1e293b" : "#94a3b8",
+                        outline: "none",
+                        fontFamily: "inherit",
+                        fontSize: "0.8rem",
                       }}
-                    >
-                      <Typography sx={{ fontSize: "0.8rem" }}>
-                        --------- ----
-                      </Typography>
-                      <CalendarTodayOutlinedIcon sx={{ fontSize: 14 }} />
-                    </Box>
+                    />
                     <Typography sx={{ color: "#64748b", fontSize: "0.8rem" }}>
                       to
                     </Typography>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 1,
+                    <input
+                      type="date"
+                      value={endDate}
+                      onChange={(e) => setEndDate(e.target.value)}
+                      style={{
                         border: "1px solid #e2e8f0",
                         borderRadius: "8px",
-                        px: 1.5,
-                        py: 0.5,
-                        color: "#94a3b8",
+                        padding: "6px 12px",
+                        color: endDate ? "#1e293b" : "#94a3b8",
+                        outline: "none",
+                        fontFamily: "inherit",
+                        fontSize: "0.8rem",
                       }}
-                    >
-                      <Typography sx={{ fontSize: "0.8rem" }}>
-                        --------- ----
-                      </Typography>
-                      <CalendarTodayOutlinedIcon sx={{ fontSize: 14 }} />
-                    </Box>
+                    />
                   </Box>
                 </Box>
               </Box>

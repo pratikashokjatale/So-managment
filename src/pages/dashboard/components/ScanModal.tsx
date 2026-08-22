@@ -4,9 +4,12 @@ import CloseIcon from "@mui/icons-material/Close";
 import SensorsIcon from "@mui/icons-material/Sensors";
 import GraphicEqOutlinedIcon from "@mui/icons-material/GraphicEqOutlined";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import BlockOutlinedIcon from "@mui/icons-material/BlockOutlined";
 import { Html5Qrcode } from "html5-qrcode";
 import toast from "react-hot-toast";
 import { verifyAccessApi, type VerifyAccessPayload } from "@/apis/access";
+import { updateUserApi } from "@/apis/user";
+import { getFlatDetailsApi } from "@/apis/flat";
 
 interface ScanModalProps {
   open: boolean;
@@ -61,20 +64,51 @@ export default function ScanModal({
       
       const res = await promise;
       const userData = res?.user || res?.data?.user || res?.data || res;
+
+      let flatNumber = userData?.flat?.number || userData?.flat?.flatNumber || userData?.flatNumber;
+      if (!flatNumber && userData?.flatId) {
+        try {
+          const flatRes = await getFlatDetailsApi(userData.flatId);
+          flatNumber = flatRes?.data?.flatNumber || flatRes?.data?.number || flatRes?.flatNumber || flatRes?.number;
+        } catch (e) {
+          console.warn("Failed to fetch flat details", e);
+        }
+      }
+
       setVerifiedData({
-        name: userData?.name || "Nitish R. Walia",
-        status: userData?.status || "active",
-        residentId: userData?.residentId || "MB-1042",
-        flatNumber: userData?.flatNumber || "A-1204",
-        tier: userData?.tier || "Master",
-        walletBalance: userData?.walletBalance || "6,800",
-        project: userData?.project || "Grand"
+        id: userData?.id || userData?._id || "",
+        name: userData?.name || "Unknown User",
+        status: userData?.status || res?.data?.accessStatus?.accessStatus || "ACTIVE",
+        residentId: userData?.cardNumber || userData?.id?.substring(0,8) || "N/A",
+        flatNumber: flatNumber || userData?.flatId?.substring(0,6) || "N/A",
+        tier: userData?.accountRole || userData?.role || "Member",
+        walletBalance: userData?.walletBalance || "0",
+        project: userData?.project?.name || "Grand" // Defaulting if not in response
       });
     } catch (err) {
       console.warn("Scan verify error:", err);
       setScannedText(""); // reset so they can scan again
     } finally {
       setTimeout(() => { isProcessing.current = false; }, 1000); // 1s debounce
+    }
+  };
+
+  const handleBlockCard = async () => {
+    if (!verifiedData?.id) {
+      toast.error("User ID not found");
+      return;
+    }
+    try {
+      const promise = updateUserApi(verifiedData.id, { status: "SUSPENDED" });
+      toast.promise(promise, {
+        loading: "Blocking card...",
+        success: "Card blocked successfully",
+        error: "Failed to block card"
+      });
+      await promise;
+      handleClose();
+    } catch (err) {
+      console.error("Failed to block card:", err);
     }
   };
 
@@ -117,8 +151,16 @@ export default function ScanModal({
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: "16px", boxShadow: "0 10px 40px rgba(0,0,0,0.1)" } }}>
-     
-      
+      <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", pb: 2, pt: 2, px: 3 }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+          <SensorsIcon sx={{ color: "#204a7b" }} />
+          <Typography sx={{ fontWeight: "bold", color: "#091542", fontSize: "1.1rem" }}>Scan QR / RFID</Typography>
+          <Chip label="CRM" size="small" sx={{ height: 20, fontSize: "0.7rem", bgcolor: "#eff6ff", color: "#3b82f6", fontWeight: 600 }} />
+        </Box>
+        <IconButton onClick={handleClose} size="small" sx={{ color: "#64748b", border: "1px solid #e2e8f0", borderRadius: "10px" }}>
+          <CloseIcon fontSize="small" />
+        </IconButton>
+      </DialogTitle>
       <DialogContent sx={{ p: verifiedData ? 0 : 4, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
         
         {verifiedData ? (
@@ -184,6 +226,45 @@ export default function ScanModal({
                   </Paper>
                 </Grid>
               </Grid>
+            </Box>
+
+            {/* Actions */}
+            <Box sx={{ display: "flex", gap: 2, p: 3, pt: 0 }}>
+              <Button
+                fullWidth
+                variant="outlined"
+                onClick={() => setVerifiedData(null)}
+                sx={{
+                  bgcolor: "#eff6ff",
+                  borderColor: "transparent",
+                  color: "#1e3a8a",
+                  fontWeight: 600,
+                  textTransform: "none",
+                  borderRadius: "12px",
+                  py: 1.2,
+                  "&:hover": { bgcolor: "#dbeafe", borderColor: "transparent" }
+                }}
+              >
+                Scan another
+              </Button>
+              <Button
+                fullWidth
+                variant="contained"
+                onClick={handleBlockCard}
+                sx={{
+                  bgcolor: "#c2410c",
+                  color: "white",
+                  fontWeight: 600,
+                  textTransform: "none",
+                  borderRadius: "12px",
+                  boxShadow: "none",
+                  py: 1.2,
+                  "&:hover": { bgcolor: "#9a3412", boxShadow: "none" }
+                }}
+              >
+                <BlockOutlinedIcon sx={{ fontSize: 18, mr: 1 }} />
+                Block card
+              </Button>
             </Box>
           </Box>
         ) : (
