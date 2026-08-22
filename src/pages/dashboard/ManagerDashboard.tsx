@@ -350,8 +350,6 @@ export default function ManagerDashboard() {
     },
   ];
 
-  const demoIds = ["MEM-100482", "MEM-100613", "MEM-100731", "MEM-100355"];
-
   // Max values for bar width normalization
   const maxBookings = Math.max(...bookingsByActivity.map((b) => b.bookings || 0), 1);
   const maxRevenue = Math.max(...revenueByActivity.map((r) => r.revenue || 0), 1);
@@ -508,12 +506,6 @@ export default function ManagerDashboard() {
                   <strong>Resident ID</strong> (MEM-######) is the member's account number — one per person. The <strong>Card ID</strong> (MB-/TW-/RY-####) is printed on their physical RFID card; a member may hold several cards (self, dependents, guest). Either loads the same account.
                 </Typography>
               </Box>
-              <Typography sx={{ fontSize: "0.71rem", color: "#64748b" }}>
-                Demo IDs:{" "}
-                {demoIds.map((id) => (
-                  <Box key={id} component="span" onClick={() => setMemberId(id)} sx={{ color: "#204a7b", textDecoration: "underline", cursor: "pointer", mr: 1, "&:hover": { color: "#162d4a" } }}>{id}</Box>
-                ))}
-              </Typography>
             </Paper>
 
             {/* ── Data Panels Row ── */}
