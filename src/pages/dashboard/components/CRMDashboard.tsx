@@ -28,6 +28,10 @@ import ScanModal from "./ScanModal";
 import OnboardingCaseModal from "./OnboardingCaseModal";
 import PopulationModal from "./PopulationModal";
 import ResidentProfileModal from "./ResidentProfileModal";
+import AdminQRRechargeModal from "./AdminQRRechargeModal";
+import ResidentSearchUI from "./ResidentSearchUI";
+import ResidentProfileCard from "./ResidentProfileCard";
+import ResidentQRModal from "./ResidentQRModal";
 import { 
   getCrmOnboardingSummaryApi, 
   getCrmResidentInventorySummaryApi, 
@@ -87,6 +91,7 @@ const CRMDashboard = ({ user }: { user: any }) => {
   // Modal states
   const [scanModalOpen, setScanModalOpen] = useState(false);
   const [rechargeModalOpen, setRechargeModalOpen] = useState(false);
+  const [qrRechargeModalOpen, setQrRechargeModalOpen] = useState(false);
   const [populationModalOpen, setPopulationModalOpen] = useState(false);
   const [recharging, setRecharging] = useState(false);
 
@@ -2259,118 +2264,21 @@ const CRMDashboard = ({ user }: { user: any }) => {
                 Member counter — book & recharge on a member's behalf
               </Typography>
 
-              <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-                <Autocomplete
-                  fullWidth
-                  options={residentOptions}
-                  filterOptions={(x) => x}
-                  getOptionLabel={(option) =>
-                    `${option.name || "Unknown"} (${option.residentId || "No ID"})${option.cardNumber ? ` [Card: ${option.cardNumber}]` : ""} - ${option.phone || ""}`
-                  }
-                  value={selectedResident}
-                  onChange={(_, val) => {
-                    setSelectedResident(val);
-                    setMemberId(val ? val.residentId || val.id : "");
-                  }}
-                  onInputChange={(_, val) => setResidentSearchQuery(val)}
-                  loading={loadingResidents}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      placeholder="Scan card or type Resident ID (e.g. MEM-100482)"
-                      variant="outlined"
-                      sx={{
-                        "& .MuiOutlinedInput-root": {
-                          borderRadius: "8px",
-                          bgcolor: "#ffffff",
-                          "& fieldset": { borderColor: "#e2e8f0" },
-                          "&:hover fieldset": { borderColor: "#cbd5e1" },
-                          "&.Mui-focused fieldset": { borderColor: "#3b82f6" },
-                        },
-                        "& .MuiInputBase-input": {
-                          p: "6.5px 4px",
-                          fontSize: "0.95rem",
-                        },
-                      }}
-                      InputProps={{
-                        ...params.InputProps,
-                        endAdornment: (
-                          <React.Fragment>
-                            {loadingResidents ? (
-                              <CircularProgress color="inherit" size={16} />
-                            ) : null}
-                            {params.InputProps.endAdornment}
-                          </React.Fragment>
-                        ),
-                      }}
-                    />
-                  )}
-                />
-                <Button
-                  onClick={() => setRechargeModalOpen(true)}
-                  disabled={!memberId}
-                  variant="contained"
-                  sx={{
-                    bgcolor: "#1e40af",
-                    color: "#ffffff",
-                    textTransform: "none",
-                    fontWeight: 600,
-                    borderRadius: "8px",
-                    px: 4,
-                    py: 1.5,
-                    whiteSpace: "nowrap",
-                    "&:hover": { bgcolor: "#1e3a8a" },
-                  }}
-                >
-                  Recharge Wallte
-                </Button>
-              </Box>
+              <ResidentSearchUI
+                residentOptions={residentOptions}
+                selectedResident={selectedResident}
+                setSelectedResident={setSelectedResident}
+                setMemberId={setMemberId}
+                setResidentSearchQuery={setResidentSearchQuery}
+                loadingResidents={loadingResidents}
+                demoIds={demoIds}
+              />
 
-              <Box
-                sx={{
-                  display: "flex",
-                  gap: 1,
-                  alignItems: "flex-start",
-                  mb: 2,
-                }}
-              >
-                <InfoOutlinedIcon
-                  sx={{ color: "#d97706", fontSize: 16, mt: 0.3 }}
-                />
-                <Typography
-                  sx={{
-                    color: "#64748b",
-                    fontSize: "0.85rem",
-                    lineHeight: 1.5,
-                  }}
-                >
-                  <strong>Resident ID</strong> (MEM-######) is the member's
-                  account number — one per person. The <strong>Card ID</strong>{" "}
-                  (MB-/TW-/RY-####) is printed on their physical RFID card; a
-                  member may have multiple cards (e.g. dependents, guest).
-                  Either loads the same account.
-                </Typography>
-              </Box>
-
-              <Typography sx={{ fontSize: "0.85rem", color: "#64748b" }}>
-                Demo IDs:{" "}
-                {demoIds.map((id) => (
-                  <Box
-                    key={id}
-                    component="span"
-                    onClick={() => setMemberId(id)}
-                    sx={{
-                      color: "#204a7b",
-                      textDecoration: "underline",
-                      cursor: "pointer",
-                      mr: 1,
-                      "&:hover": { color: "#162d4a" },
-                    }}
-                  >
-                    {id}
-                  </Box>
-                ))}
-              </Typography>
+              <ResidentProfileCard
+                user={selectedResident}
+                walletBalance={0} // Ideally we fetch real balance, but defaulting to 0 as in screenshot
+                onShowRechargeQR={() => setQrRechargeModalOpen(true)}
+              />
             </Box>
           )}
 
@@ -3416,6 +3324,16 @@ const CRMDashboard = ({ user }: { user: any }) => {
         </Box>
 
         {/* Admin Recharge Modal */}
+        {/* New Resident QR Modal */}
+        <ResidentQRModal
+          open={qrRechargeModalOpen}
+          onClose={() => setQrRechargeModalOpen(false)}
+          user={selectedResident}
+          onSuccess={() => {
+            setQrRechargeModalOpen(false);
+          }}
+        />
+
         <Dialog
           open={rechargeModalOpen}
           onClose={() => !recharging && setRechargeModalOpen(false)}
@@ -3458,6 +3376,20 @@ const CRMDashboard = ({ user }: { user: any }) => {
                   <MenuItem value="BANK_TRANSFER">Bank Transfer</MenuItem>
                   <MenuItem value="MANUAL">Manual/Other</MenuItem>
                 </Select>
+                {rechargeMethod === "UPI" && (
+                  <Button
+                    variant="outlined"
+                    fullWidth
+                    sx={{ mt: 2, borderColor: "#1e40af", color: "#1e40af", "&:hover": { bgcolor: "#f0f4ff" } }}
+                    onClick={() => {
+                      setRechargeModalOpen(false);
+                      setQrRechargeModalOpen(true);
+                    }}
+                    startIcon={<QrCode2Icon />}
+                  >
+                    Show QR code
+                  </Button>
+                )}
               </Box>
               <TextField
                 fullWidth

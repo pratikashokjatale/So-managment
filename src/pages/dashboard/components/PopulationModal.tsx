@@ -36,8 +36,9 @@ const PopulationModal: React.FC<PopulationModalProps> = ({ open, onClose, onResi
         ageGroup: ageFilter,
         projectId: projectFilter === "ALL" ? undefined : projectFilter,
         search: search || undefined,
-        startDate: startDate || undefined,
-        endDate: endDate || undefined
+        movedInFrom: startDate || undefined,
+        movedInTo: endDate || undefined,
+        status: "ACTIVE"
       });
       setData(res?.data || res);
     } catch (err) {
@@ -224,7 +225,7 @@ const PopulationModal: React.FC<PopulationModalProps> = ({ open, onClose, onResi
                 {
                   icon: <AutorenewOutlinedIcon sx={{ fontSize: 16 }} />,
                   label: "RESALES",
-                  value: propertySales.resales?.count || 2,
+                  value: propertySales.resales?.count,
                   subtext: "ownership transfers",
                   color: "#64748b",
                 },
@@ -286,9 +287,9 @@ const PopulationModal: React.FC<PopulationModalProps> = ({ open, onClose, onResi
               }}
             >
               {[
-                { value: ageGroups.adults || "13", subtext: "Adults", color: "#1e3a8a" },
-                { value: ageGroups.children || "4", subtext: "Children", color: "#bca462" },
-                { value: ageGroups.seniors || "1", subtext: "Seniors", color: "#7e22ce" },
+                { value: ageGroups.adults , subtext: "Adults", color: "#1e3a8a" },
+                { value: ageGroups.children , subtext: "Children", color: "#bca462" },
+                { value: ageGroups.seniors , subtext: "Seniors", color: "#7e22ce" },
               ].map((stat, i) => (
                 <Box
                   key={i}
@@ -338,6 +339,8 @@ const PopulationModal: React.FC<PopulationModalProps> = ({ open, onClose, onResi
               <input
                 type="text"
                 placeholder="Search name or unit..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
                 style={{
                   border: "none",
                   background: "transparent",

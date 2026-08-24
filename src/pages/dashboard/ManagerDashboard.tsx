@@ -60,6 +60,9 @@ import { adminRechargeUserWalletApi } from "@/apis/wallet";
 import ScanModal from "./components/ScanModal";
 import CreateProfileModal from "./components/CreateProfileModal";
 import PersonAddAltOutlinedIcon from "@mui/icons-material/PersonAddAltOutlined";
+import ResidentSearchUI from "./components/ResidentSearchUI";
+import ResidentProfileCard from "./components/ResidentProfileCard";
+import ResidentQRModal from "./components/ResidentQRModal";
 
 const INTER = "'Inter', system-ui, sans-serif";
 const SERIF = "'Cormorant Garamond', Georgia, serif";
@@ -98,6 +101,7 @@ export default function ManagerDashboard() {
 
   // Recharge State
   const [rechargeModalOpen, setRechargeModalOpen] = useState(false);
+  const [qrRechargeModalOpen, setQrRechargeModalOpen] = useState(false);
   const [rechargeAmount, setRechargeAmount] = useState('');
   const [rechargeMethod, setRechargeMethod] = useState('CASH');
   const [rechargeRefId, setRechargeRefId] = useState('');
@@ -456,56 +460,26 @@ export default function ManagerDashboard() {
             </Box>
 
             {/* ── Member Counter ── */}
-            <Paper elevation={0} sx={{ p: "18px 22px", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
+            <Paper elevation={0} sx={{ p: "18px 22px", borderRadius: "12px", border: "1px solid #e2e8f0", mb: 2 }}>
               <Typography sx={{ fontWeight: 600, fontSize: "0.88rem", color: "#1e293b", mb: 1.8 }}>
                 Member counter — book & recharge on a member's behalf
               </Typography>
-              <Box sx={{ display: "flex", gap: 1.5, mb: 1.5 }}>
-                <Autocomplete
-                  fullWidth
-                  size="small"
-                  options={residentOptions}
-                  getOptionLabel={(option) => `${option.name || "Unknown"} (${option.residentId || "No ID"})${option.cardNumber ? ` [Card: ${option.cardNumber}]` : ""} - ${option.phone || ""}`}
-                  value={selectedResident}
-                  onChange={(_, val) => {
-                    setSelectedResident(val);
-                    setMemberId(val ? val.residentId || val.id : "");
-                  }}
-                  onInputChange={(_, val) => setResidentSearchQuery(val)}
-                  loading={loadingResidents}
-                  renderInput={(params) => (
-                    <TextField 
-                      {...params} 
-                      placeholder="Scan card or search by name, phone, or ID..." 
-                      variant="outlined" 
-                      InputProps={{
-                        ...params.InputProps,
-                        endAdornment: (
-                          <>
-                            {loadingResidents ? <CircularProgress color="inherit" size={16} /> : null}
-                            {params.InputProps.endAdornment}
-                          </>
-                        ),
-                      }}
-                      sx={{ "& .MuiOutlinedInput-root": { borderRadius: "8px", fontSize: "0.83rem", bgcolor: "#fafafa" } }} 
-                    />
-                  )}
-                />
-                <Button 
-                  onClick={() => setRechargeModalOpen(true)}
-                  disabled={!memberId}
-                  variant="contained" 
-                  sx={{ bgcolor: "#1e3a5f", color: "white", textTransform: "none", borderRadius: "8px", px: 3, fontWeight: 600, fontSize: "0.83rem", whiteSpace: "nowrap", boxShadow: "none", "&:hover": { bgcolor: "#162d4a", boxShadow: "none" } }}
-                >
-                  Recharge Wallet
-                </Button>
-              </Box>
-              <Box sx={{ display: "flex", gap: 0.8, alignItems: "flex-start", mb: 0.8 }}>
-                <InfoOutlined sx={{ fontSize: 14, color: "#bca47c", mt: 0.2, flexShrink: 0 }} />
-                <Typography sx={{ fontSize: "0.71rem", color: "#64748b", lineHeight: 1.55 }}>
-                  <strong>Resident ID</strong> (MEM-######) is the member's account number — one per person. The <strong>Card ID</strong> (MB-/TW-/RY-####) is printed on their physical RFID card; a member may hold several cards (self, dependents, guest). Either loads the same account.
-                </Typography>
-              </Box>
+              
+              <ResidentSearchUI
+                residentOptions={residentOptions}
+                selectedResident={selectedResident}
+                setSelectedResident={setSelectedResident}
+                setMemberId={setMemberId}
+                setResidentSearchQuery={setResidentSearchQuery}
+                loadingResidents={loadingResidents}
+                demoIds={["MEM-100482", "MEM-100613", "MEM-100731", "MEM-100355"]}
+              />
+
+              <ResidentProfileCard
+                user={selectedResident}
+                walletBalance={0}
+                onShowRechargeQR={() => setQrRechargeModalOpen(true)}
+              />
             </Paper>
 
             {/* ── Data Panels Row ── */}
@@ -656,6 +630,14 @@ export default function ManagerDashboard() {
           </Box>
         </Paper>
       </Box>
+
+      {/* Admin QR Modal */}
+      <ResidentQRModal
+        open={qrRechargeModalOpen}
+        onClose={() => setQrRechargeModalOpen(false)}
+        user={selectedResident}
+        onSuccess={() => setQrRechargeModalOpen(false)}
+      />
 
       {/* Admin Recharge Modal */}
       <Dialog open={rechargeModalOpen} onClose={() => !recharging && setRechargeModalOpen(false)} maxWidth="sm" fullWidth>

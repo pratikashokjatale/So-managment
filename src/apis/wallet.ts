@@ -80,3 +80,29 @@ export const getAdminUserWalletApi = async (userId: string) => {
     throw handleApiError(error);
   }
 };
+
+export interface CreateAdminRazorpayQrRechargePayload {
+  amount: number;
+  expiresInMinutes?: number;
+  notes?: string;
+  metadata?: any;
+}
+
+export const createAdminRazorpayQrRechargeApi = async (userId: string, data: CreateAdminRazorpayQrRechargePayload) => {
+  try {
+    const res = await api.post(`wallet/admin/users/${userId}/recharge/razorpay-qr`, data);
+    return res?.data;
+  } catch (error) {
+    throw handleApiError(error);
+  }
+};
+
+export const getWalletRechargesApi = async (params: { userId?: string, providerOrderId?: string }) => {
+  try {
+    const res = await api.get("wallet/recharges", { params });
+    return res?.data;
+  } catch (error) {
+    throw handleApiError(error);
+  }
+};
+
