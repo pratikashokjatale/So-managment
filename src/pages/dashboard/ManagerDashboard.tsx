@@ -376,7 +376,6 @@ export default function ManagerDashboard() {
               <Typography sx={{ fontWeight: 600, fontSize: "0.82rem", color: "#1e293b", lineHeight: 1.2 }}>{user?.name || "Manager"}</Typography>
               <Typography sx={{ fontSize: "0.7rem", color: "#64748b" }}>Club Manager</Typography>
             </Box>
-            <Button onClick={() => navigate("/")} size="small" sx={{ bgcolor: "#f1f5f9", color: "#475569", fontWeight: 600, borderRadius: "20px", px: 1.8, py: 0.4, fontSize: "0.75rem", textTransform: "none", "&:hover": { bgcolor: "#e2e8f0" } }}>Back to Admin</Button>
             <Button onClick={handleLogout} size="small" sx={{ minWidth: 0, p: 0.5, color: "#94a3b8", "&:hover": { color: "#475569" } }}>
               <LogoutIcon sx={{ fontSize: 18 }} />
             </Button>
@@ -399,9 +398,6 @@ export default function ManagerDashboard() {
                 <Typography sx={{ fontSize: "0.75rem", color: "#64748b" }}>Club Manager</Typography>
               </Box>
             </Box>
-            <Button onClick={() => navigate("/")} variant="outlined" size="small" sx={{ borderColor: "#cbd5e1", color: "#475569", textTransform: "none", borderRadius: "20px", fontSize: "0.75rem", px: 2, fontWeight: 500, "&:hover": { borderColor: "#94a3b8", bgcolor: "#f8fafc" } }}>
-              Back to Admin
-            </Button>
           </Box>
 
           <Box sx={{ p: 3, display: "flex", flexDirection: "column", gap: 3 }}>
