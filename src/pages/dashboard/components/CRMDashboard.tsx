@@ -25,6 +25,8 @@ import SensorsIcon from "@mui/icons-material/Sensors";
 import { getUsersApi } from "@/apis/user";
 import { adminRechargeUserWalletApi } from "@/apis/wallet";
 import ScanModal from "./ScanModal";
+import CreateProfileModal from "./CreateProfileModal";
+import PersonAddAltOutlinedIcon from "@mui/icons-material/PersonAddAltOutlined";
 import OnboardingCaseModal from "./OnboardingCaseModal";
 import PopulationModal from "./PopulationModal";
 import ResidentProfileModal from "./ResidentProfileModal";
@@ -90,6 +92,8 @@ const CRMDashboard = ({ user }: { user: any }) => {
 
   // Modal states
   const [scanModalOpen, setScanModalOpen] = useState(false);
+  const [createProfileModalOpen, setCreateProfileModalOpen] = useState(false);
+  const [selectedCreateProfile, setSelectedCreateProfile] = useState<any>(null);
   const [rechargeModalOpen, setRechargeModalOpen] = useState(false);
   const [qrRechargeModalOpen, setQrRechargeModalOpen] = useState(false);
   const [populationModalOpen, setPopulationModalOpen] = useState(false);
@@ -2089,17 +2093,10 @@ const CRMDashboard = ({ user }: { user: any }) => {
         </Box>
 
         {/* Concierge Content Area */}
-        <Box sx={{ p: { xs: 3, md: 4 }, flexGrow: 1 }}>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "flex-start",
-              flexWrap: "wrap",
-              gap: 2,
-              mb: 4,
-            }}
-          >
+        <Box sx={{ p: { xs: 3, md: 4 }, flexGrow: 1, position: "relative" }}>
+          
+          {/* Top Row: Title & Switch Button */}
+          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: 2 }}>
             <Box>
               <Typography
                 variant="h4"
@@ -2113,45 +2110,64 @@ const CRMDashboard = ({ user }: { user: any }) => {
               >
                 Residence Concierge
               </Typography>
-              <Typography
-                sx={{ color: "#64748b", fontSize: "0.95rem", mb: 1.5 }}
-              >
-                Club Marbella · Marbella Grand clubhouse — profiles, RFID cards,
-                plans & bookings
+              <Typography sx={{ color: "#64748b", fontSize: "0.95rem" }}>
+                Club Marbella · Marbella Grand clubhouse — profiles, RFID cards, plans & bookings
               </Typography>
-              <Box
-                sx={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 0.5,
-                  color: "#a0890ae3",
-                  px: 1,
-                  py: 0.25,
-                  borderRadius: "4px",
-                }}
-              >
-                <LocationOnOutlinedIcon sx={{ fontSize: 14 }} />
-                <Typography sx={{ fontSize: "0.75rem", fontWeight: 500 }}>
-                  Club Marbella is for Marbella Grand members only — for now.
-                </Typography>
-              </Box>
             </Box>
-            <Box sx={{ display: "flex", gap: 2 }}>
-              <Button
-                onClick={() => setView("home")}
-                startIcon={<HeadsetMicIcon sx={{ fontSize: 18 }} />}
+            <Button
+              onClick={() => setView("home")}
+              startIcon={<HeadsetMicIcon sx={{ fontSize: 18 }} />}
+              sx={{
+                backgroundColor: "#e8eff7",
+                color: "#2a5c8d",
+                boxShadow: "none",
+                textTransform: "none",
+                borderRadius: "12px",
+                padding: "8px 16px",
+                fontWeight: 600,
+                "&:hover": { backgroundColor: "#d0e1f0", boxShadow: "none" },
+              }}
+            >
+              Residence Concierge · Switch
+            </Button>
+          </Box>
+
+          {/* Second Row: Location text & Action Buttons */}
+          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 4, flexWrap: "wrap", gap: 2 }}>
+            <Box
+              sx={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 0.5,
+                color: "#a0890ae3",
+                px: 1,
+                py: 0.25,
+                borderRadius: "4px",
+              }}
+            >
+              <LocationOnOutlinedIcon sx={{ fontSize: 14 }} />
+              <Typography sx={{ fontSize: "0.75rem", fontWeight: 500 }}>
+                Club Marbella is for Marbella Grand members only — for now.
+              </Typography>
+            </Box>
+            
+            <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
+              <Button 
+                onClick={() => setCreateProfileModalOpen(true)}
+                variant="contained"
+                startIcon={<PersonAddAltOutlinedIcon sx={{ fontSize: 18 }} />} 
                 sx={{
-                  backgroundColor: "#e8eff7",
-                  color: "#2a5c8d",
+                  bgcolor: "#f8f3e6",
+                  color: "#a17a3f",
                   boxShadow: "none",
                   textTransform: "none",
                   borderRadius: "12px",
                   padding: "8px 16px",
                   fontWeight: 600,
-                  "&:hover": { backgroundColor: "#d0e1f0", boxShadow: "none" },
+                  "&:hover": { bgcolor: "#f0e8d5", boxShadow: "none" },
                 }}
               >
-                Residence Concierge · Switch
+                Create profile
               </Button>
               <Button
                 onClick={() => setPopulationModalOpen(true)}
@@ -2169,6 +2185,7 @@ const CRMDashboard = ({ user }: { user: any }) => {
               >
                 Population
               </Button>
+
               <Button
                 onClick={() => setScanModalOpen(true)}
                 startIcon={<SensorsIcon sx={{ fontSize: 18 }} />}
@@ -3865,8 +3882,43 @@ const CRMDashboard = ({ user }: { user: any }) => {
         </DialogActions>
       </Dialog>
 
+      {/* Floating Action Button */}
+      <Button
+        variant="contained"
+        startIcon={<PersonAddAltOutlinedIcon />}
+        onClick={() => setCreateProfileModalOpen(true)}
+        sx={{
+          position: "fixed",
+          bottom: 32,
+          right: 32,
+          bgcolor: "#bca462",
+          color: "#fff",
+          borderRadius: "30px",
+          px: 3,
+          py: 1.5,
+          boxShadow: "0 4px 14px 0 rgba(0,0,0,0.2)",
+          textTransform: "none",
+          fontWeight: 600,
+          fontSize: "1rem",
+          zIndex: 1000,
+          "&:hover": {
+            bgcolor: "#a89052",
+          }
+        }}
+      >
+        Create profile
+      </Button>
+
       {/* Scan Modal */}
       <ScanModal open={scanModalOpen} onClose={() => setScanModalOpen(false)} />
+      <CreateProfileModal 
+        open={createProfileModalOpen} 
+        onClose={() => {
+          setCreateProfileModalOpen(false);
+          setSelectedCreateProfile(null);
+        }} 
+        selectedProfile={selectedCreateProfile}
+      />
     </Box>
   );
 };

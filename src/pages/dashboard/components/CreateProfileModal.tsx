@@ -35,9 +35,10 @@ import { uploadDocumentApi } from "@/apis/document";
 interface CreateProfileModalProps {
   open: boolean;
   onClose: () => void;
+  selectedProfile?: any;
 }
 
-const CreateProfileModal: React.FC<CreateProfileModalProps> = ({ open, onClose }) => {
+const CreateProfileModal: React.FC<CreateProfileModalProps> = ({ open, onClose, selectedProfile }) => {
   const [view, setView] = useState<"drafts" | "role" | "wizard">("drafts");
   const [role, setRole] = useState<"Apartment owner" | "Tenant" | "Club Marbella member" | null>(null);
   const [wizardStep, setWizardStep] = useState<1 | 2 | 3 | 4>(1);
@@ -62,6 +63,33 @@ const CreateProfileModal: React.FC<CreateProfileModalProps> = ({ open, onClose }
     stayEndsAt: "",
     remarks: "",
   });
+
+  // Pre-fill form if editing an existing profile
+  useEffect(() => {
+    if (open && selectedProfile) {
+      setFormData({
+        name: selectedProfile.name || "",
+        mobile: selectedProfile.phone || selectedProfile.mobile || "",
+        email: selectedProfile.email || "",
+        password: "", // Leave password empty for editing
+        gender: selectedProfile.gender || "",
+        dob: selectedProfile.dob || "",
+        project: selectedProfile.projectId || "",
+        tower: selectedProfile.towerId || "",
+        flat: selectedProfile.flatId || "",
+        address: selectedProfile.address || "",
+        stayEndsAt: selectedProfile.stayEndsAt || "",
+        remarks: selectedProfile.remarks || "",
+      });
+      if (selectedProfile.accountRole === "OWNER") setRole("Apartment owner");
+      else if (selectedProfile.accountRole === "TENANT") setRole("Tenant");
+      else setRole("Club Marbella member");
+      
+      setAadhaarUrl(selectedProfile.aadhaarDocumentUrl || "");
+      setView("wizard");
+      setWizardStep(1); // Jump to edit form
+    }
+  }, [open, selectedProfile]);
 
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
@@ -233,6 +261,7 @@ const CreateProfileModal: React.FC<CreateProfileModalProps> = ({ open, onClose }
       onClose={handleClose}
       maxWidth="sm"
       fullWidth
+      sx={{ zIndex: 99999 }}
       PaperProps={{
         sx: {
           borderRadius: "16px",
