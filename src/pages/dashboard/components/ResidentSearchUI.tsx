@@ -95,7 +95,7 @@ const ResidentSearchUI: React.FC<ResidentSearchUIProps> = ({
             "&:hover": { bgcolor: "#1a365d", boxShadow: "none" },
           }}
         >
-          Load member
+           Member Details
         </Button>
       </Box>
 
