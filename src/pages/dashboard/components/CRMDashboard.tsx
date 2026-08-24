@@ -3475,6 +3475,43 @@ const CRMDashboard = ({ user }: { user: any }) => {
           open={scanModalOpen}
           onClose={() => setScanModalOpen(false)}
         />
+        
+        {/* Create Profile Modal */}
+        <CreateProfileModal 
+          open={createProfileModalOpen} 
+          onClose={() => {
+            setCreateProfileModalOpen(false);
+            setSelectedCreateProfile(null);
+          }} 
+          selectedProfile={selectedCreateProfile}
+        />
+
+        {/* Floating Action Button */}
+        <Button
+          variant="contained"
+          startIcon={<PersonAddAltOutlinedIcon />}
+          onClick={() => setCreateProfileModalOpen(true)}
+          sx={{
+            position: "fixed",
+            bottom: 32,
+            right: 32,
+            bgcolor: "#bca462",
+            color: "#fff",
+            borderRadius: "30px",
+            px: 3,
+            py: 1.5,
+            boxShadow: "0 4px 14px 0 rgba(0,0,0,0.2)",
+            textTransform: "none",
+            fontWeight: 600,
+            fontSize: "1rem",
+            zIndex: 1000,
+            "&:hover": {
+              bgcolor: "#a89052",
+            }
+          }}
+        >
+          Create profile
+        </Button>
       </Box>
     );
   }
@@ -3882,43 +3919,9 @@ const CRMDashboard = ({ user }: { user: any }) => {
         </DialogActions>
       </Dialog>
 
-      {/* Floating Action Button */}
-      <Button
-        variant="contained"
-        startIcon={<PersonAddAltOutlinedIcon />}
-        onClick={() => setCreateProfileModalOpen(true)}
-        sx={{
-          position: "fixed",
-          bottom: 32,
-          right: 32,
-          bgcolor: "#bca462",
-          color: "#fff",
-          borderRadius: "30px",
-          px: 3,
-          py: 1.5,
-          boxShadow: "0 4px 14px 0 rgba(0,0,0,0.2)",
-          textTransform: "none",
-          fontWeight: 600,
-          fontSize: "1rem",
-          zIndex: 1000,
-          "&:hover": {
-            bgcolor: "#a89052",
-          }
-        }}
-      >
-        Create profile
-      </Button>
-
+      
       {/* Scan Modal */}
       <ScanModal open={scanModalOpen} onClose={() => setScanModalOpen(false)} />
-      <CreateProfileModal 
-        open={createProfileModalOpen} 
-        onClose={() => {
-          setCreateProfileModalOpen(false);
-          setSelectedCreateProfile(null);
-        }} 
-        selectedProfile={selectedCreateProfile}
-      />
     </Box>
   );
 };
