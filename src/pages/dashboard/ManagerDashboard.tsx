@@ -74,8 +74,6 @@ const fmtTime = (iso: string) => {
 };
 
 const fmtRupees = (n: number) => {
-  if (n >= 100000) return `₹${(n / 100000).toFixed(1)}L`;
-  if (n >= 1000) return `₹${(n / 1000).toFixed(1)}K`;
   return `₹${n.toLocaleString("en-IN")}`;
 };
 
@@ -444,7 +442,7 @@ export default function ManagerDashboard() {
                         fontWeight: 600, 
                         color: "#192038", 
                         lineHeight: 1.1,
-                        filter: card.label === "TOTAL REVENUE" ? "blur(6px)" : "none",
+                        
                         userSelect: card.label === "TOTAL REVENUE" ? "none" : "auto"
                       }}>
                         {card.value}
@@ -701,6 +699,33 @@ export default function ManagerDashboard() {
       {/* Scan Modal */}
       <ScanModal open={scanModalOpen} onClose={() => setScanModalOpen(false)} />
       <CreateProfileModal open={createProfileModalOpen} onClose={() => setCreateProfileModalOpen(false)} />
+
+      {/* Floating Action Button */}
+      <Button
+        variant="contained"
+        startIcon={<PersonAddAltOutlinedIcon />}
+        onClick={() => setCreateProfileModalOpen(true)}
+        sx={{
+          position: "fixed",
+          bottom: 32,
+          right: 32,
+          bgcolor: "#bca462",
+          color: "#fff",
+          borderRadius: "30px",
+          px: 3,
+          py: 1.5,
+          boxShadow: "0 4px 14px 0 rgba(0,0,0,0.2)",
+          textTransform: "none",
+          fontWeight: 600,
+          fontSize: "1rem",
+          zIndex: 1000,
+          "&:hover": {
+            bgcolor: "#a89052",
+          }
+        }}
+      >
+        Create profile
+      </Button>
     </Box>
   );
 }
