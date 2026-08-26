@@ -429,7 +429,7 @@ export default function ManagerDashboard() {
             {/* ── 4 KPI Cards ── */}
             <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr 1fr", md: "repeat(4, 1fr)" }, gap: 1.5 }}>
               {kpiCards.map((card, idx) => (
-                <Paper key={idx} elevation={0} sx={{ p: "14px 18px", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
+                <Paper key={idx} elevation={0} sx={{ p: "14px 18px", borderRadius: "12px", border: "1px solid #e2e8f0", height: "100%", display: "flex", flexDirection: "column" }}>
                   <Box sx={{ display: "flex", alignItems: "center", gap: 0.8, mb: 1.2 }}>
                     {card.icon}
                     <Typography sx={{ fontSize: "0.6rem", fontWeight: 700, color: "#94a3b8", letterSpacing: "0.6px", textTransform: "uppercase" }}>{card.label}</Typography>
@@ -448,7 +448,7 @@ export default function ManagerDashboard() {
                         {card.value}
                       </Typography>
                   }
-                  <Typography sx={{ fontSize: "0.72rem", color: "#64748b", mt: 0.3 }}>{card.sub}</Typography>
+                  <Typography sx={{ fontSize: "0.72rem", color: "#64748b", mt: "auto" }}>{card.sub}</Typography>
                 </Paper>
               ))}
             </Box>
