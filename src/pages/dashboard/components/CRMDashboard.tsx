@@ -34,6 +34,8 @@ import AdminQRRechargeModal from "./AdminQRRechargeModal";
 import ResidentSearchUI from "./ResidentSearchUI";
 import ResidentProfileCard from "./ResidentProfileCard";
 import ResidentQRModal from "./ResidentQRModal";
+import PaymentPlansTab from "./PaymentPlansTab";
+import SalesPipelineTab from "./SalesPipelineTab";
 import { 
   getCrmOnboardingSummaryApi, 
   getCrmResidentInventorySummaryApi, 
@@ -551,12 +553,12 @@ const CRMDashboard = ({ user }: { user: any }) => {
                     activeGroupOfficeTab === tab.toLowerCase() ||
                     (i === 0 && activeGroupOfficeTab === "onboarding")
                       ? "#2c5282"
-                      : "",
+                      : "#EEF3FA",
                   color:
                     activeGroupOfficeTab === tab.toLowerCase() ||
                     (i === 0 && activeGroupOfficeTab === "onboarding")
                       ? "#f7f7f7ff"
-                      : "",
+                      : "#6B7794",
                   textTransform: "none",
                   borderRadius: "10px",
                   padding: "8px 16px",
@@ -1419,6 +1421,90 @@ const CRMDashboard = ({ user }: { user: any }) => {
               </Box>
               </Box>
               )}
+            </Box>
+          )}
+
+          {activeGroupOfficeTab === "payment plans" && (
+            <Box sx={{ position: 'relative' }}>
+              <Box sx={{ opacity: 0.6, pointerEvents: 'none', userSelect: 'none' }}>
+                <PaymentPlansTab />
+              </Box>
+              <Box 
+                sx={{
+                  position: 'absolute',
+                  top: 0, left: 0, right: 0, bottom: 0,
+                  backdropFilter: 'blur(6px)',
+                  WebkitBackdropFilter: 'blur(6px)',
+                  backgroundColor: 'rgba(255, 255, 255, 0.4)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  zIndex: 10
+                }}
+              >
+                <Box
+                  sx={{
+                    bgcolor: "#ffffff",
+                    borderRadius: "16px",
+                    boxShadow: "0 10px 40px rgba(0,0,0,0.1)",
+                    border: "1px solid #e2e8f0",
+                    p: 4,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    textAlign: "center"
+                  }}
+                >
+                  <Typography sx={{ fontWeight: 700, color: "#1e293b", fontSize: "1.5rem", mb: 1, fontFamily: '"Cormorant Garamond", serif' }}>
+                    Coming soon
+                  </Typography>
+                  <Typography sx={{ color: "#64748b", fontSize: "0.95rem" }}>
+                    The Payment plans feature is currently being wired up.
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
+          )}
+
+          {activeGroupOfficeTab === "sales pipeline" && (
+            <Box sx={{ position: 'relative' }}>
+              <Box sx={{ opacity: 0.6, pointerEvents: 'none', userSelect: 'none' }}>
+                <SalesPipelineTab />
+              </Box>
+              <Box 
+                sx={{
+                  position: 'absolute',
+                  top: 0, left: 0, right: 0, bottom: 0,
+                  backdropFilter: 'blur(6px)',
+                  WebkitBackdropFilter: 'blur(6px)',
+                  backgroundColor: 'rgba(255, 255, 255, 0.4)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  zIndex: 10
+                }}
+              >
+                <Box
+                  sx={{
+                    bgcolor: "#ffffff",
+                    borderRadius: "16px",
+                    boxShadow: "0 10px 40px rgba(0,0,0,0.1)",
+                    border: "1px solid #e2e8f0",
+                    p: 4,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    textAlign: "center"
+                  }}
+                >
+                  <Typography sx={{ fontWeight: 700, color: "#1e293b", fontSize: "1.5rem", mb: 1, fontFamily: '"Cormorant Garamond", serif' }}>
+                    Coming soon
+                  </Typography>
+                  <Typography sx={{ color: "#64748b", fontSize: "0.95rem" }}>
+                    The Sales pipeline feature is currently being wired up.
+                  </Typography>
+                </Box>
+              </Box>
             </Box>
           )}
 
@@ -2834,6 +2920,8 @@ const CRMDashboard = ({ user }: { user: any }) => {
           )}
 
           {activeTab === "intake" && (
+            <Box sx={{ position: 'relative' }}>
+              <Box sx={{ opacity: 0.6, pointerEvents: 'none', userSelect: 'none' }}>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
               {/* Header */}
               <Box sx={{ mb: 1 }}>
@@ -3334,6 +3422,42 @@ const CRMDashboard = ({ user }: { user: any }) => {
                       right place.
                     </Typography>
                   </Box>
+                </Box>
+              </Box>
+            </Box>
+              </Box>
+              <Box 
+                sx={{
+                  position: 'absolute',
+                  top: 0, left: 0, right: 0, bottom: 0,
+                  backdropFilter: 'blur(6px)',
+                  WebkitBackdropFilter: 'blur(6px)',
+                  backgroundColor: 'rgba(255, 255, 255, 0.4)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  zIndex: 10
+                }}
+              >
+                <Box
+                  sx={{
+                    bgcolor: "#ffffff",
+                    borderRadius: "16px",
+                    boxShadow: "0 10px 40px rgba(0,0,0,0.1)",
+                    border: "1px solid #e2e8f0",
+                    p: 4,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    textAlign: "center"
+                  }}
+                >
+                  <Typography sx={{ fontWeight: 700, color: "#1e293b", fontSize: "1.5rem", mb: 1, fontFamily: '"Cormorant Garamond", serif' }}>
+                    Coming soon
+                  </Typography>
+                  <Typography sx={{ color: "#64748b", fontSize: "0.95rem" }}>
+                    The AI document intake engine is currently being wired up.
+                  </Typography>
                 </Box>
               </Box>
             </Box>
