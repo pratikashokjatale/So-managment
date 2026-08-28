@@ -732,7 +732,7 @@ const LoginPage = () => {
                     </Typography>
                   }
                 />
-                <Typography
+                {/* <Typography
                   variant="body2"
                   onClick={handleForgotPassword}
                   sx={{
@@ -747,7 +747,7 @@ const LoginPage = () => {
                   }}
                 >
                   Forgot Password?
-                </Typography>
+                </Typography> */}
               </Box>
 
               {/* Sign In button */}
@@ -887,7 +887,7 @@ const LoginPage = () => {
           </Box>
 
           {/* Footer link */}
-          <Box sx={{ mt: 3, display: "flex", justifyContent: "center", gap: 0.5 }}>
+          {/* <Box sx={{ mt: 3, display: "flex", justifyContent: "center", gap: 0.5 }}>
             <Typography
               variant="body2"
               sx={{ color: "#64748b", fontFamily: "'Satoshi', sans-serif", fontSize: "0.82rem" }}
@@ -910,7 +910,7 @@ const LoginPage = () => {
             >
               Sign up
             </Typography>
-          </Box>
+          </Box> */}
         </Paper>
       </Box>
     </Box>
