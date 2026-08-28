@@ -41,6 +41,7 @@ import {
   CardMembershipOutlined,
   InfoOutlined,
   Logout as LogoutIcon,
+  RestaurantOutlined,
   SensorsOutlined as AccessIcon,
   BarChartOutlined,
   TrendingUpOutlined,
@@ -63,6 +64,12 @@ import PersonAddAltOutlinedIcon from "@mui/icons-material/PersonAddAltOutlined";
 import ResidentSearchUI from "./components/ResidentSearchUI";
 import ResidentProfileCard from "./components/ResidentProfileCard";
 import ResidentQRModal from "./components/ResidentQRModal";
+import BanquetTab from "./components/BanquetTab";
+import SessionsTab from "./components/SessionsTab";
+import StaffTab from "./components/StaffTab";
+import UpkeepTab from "./components/UpkeepTab";
+import SpendTab from "./components/SpendTab";
+import RequestsTab from "./components/RequestsTab";
 
 const INTER = "'Inter', system-ui, sans-serif";
 const SERIF = "'Cormorant Garamond', Georgia, serif";
@@ -107,6 +114,7 @@ export default function ManagerDashboard() {
   const [recharging, setRecharging] = useState(false);
 
   // Scan Modal State
+  const [activeTab, setActiveTab] = useState("counter");
   const [scanModalOpen, setScanModalOpen] = useState(false);
   const [createProfileModalOpen, setCreateProfileModalOpen] = useState(false);
 
@@ -166,7 +174,10 @@ export default function ManagerDashboard() {
       }
     };
     const timer = setTimeout(fetchResidents, 400);
-    return () => clearTimeout(timer);
+    
+
+
+  return () => clearTimeout(timer);
   }, [residentSearchQuery, isLoggedIn]);
 
   // ── KPI stats ──────────────────────────────────────────
@@ -359,6 +370,16 @@ export default function ManagerDashboard() {
   // Max count for hourly bars
   const maxHourly = Math.max(...hourlyData.map((h) => h.count), 1);
 
+  const managerTabs = [
+    { id: "counter", label: "Counter", icon: <AccountBalanceWalletOutlined sx={{ fontSize: 16 }} /> },
+    { id: "banquet", label: "Banquet", icon: <RestaurantOutlined sx={{ fontSize: 16 }} /> },
+    { id: "sessions", label: "Sessions", icon: <CardMembershipOutlined sx={{ fontSize: 16 }} /> },
+    { id: "staff", label: "Staff", icon: <PeopleOutlined sx={{ fontSize: 16 }} /> },
+    { id: "upkeep", label: "Upkeep", icon: <WorkOutline sx={{ fontSize: 16 }} /> },
+    { id: "spend", label: "Spend", icon: <TrendingUpOutlined sx={{ fontSize: 16 }} /> },
+    { id: "requests", label: "Requests", icon: <InfoOutlined sx={{ fontSize: 16 }} /> }
+  ];
+
   return (
     <Box sx={{ minHeight: "100vh", bgcolor: "#edf1f9", fontFamily: INTER }}>
 
@@ -453,6 +474,41 @@ export default function ManagerDashboard() {
               ))}
             </Box>
 
+            
+            {/* ── Tabs ── */}
+            <Box sx={{ display: "flex", gap: 1, overflowX: "auto", pb: 1, mt: 1, '&::-webkit-scrollbar': { display: 'none' } }}>
+              {managerTabs.map((tab) => {
+                const isActive = activeTab === tab.id;
+                return (
+                  <Button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    startIcon={tab.icon}
+                    sx={{
+                      bgcolor: isActive ? "#204a7b" : "#f1f5f9",
+                      color: isActive ? "#ffffff" : "#64748b",
+                      textTransform: "none",
+                      borderRadius: "10px",
+                      px: 2,
+                      py: 0.8,
+                      fontWeight: 600,
+                      fontSize: "0.8rem",
+                      whiteSpace: "nowrap",
+                      boxShadow: "none",
+                      "&:hover": {
+                        bgcolor: isActive ? "#163a62" : "#e2e8f0",
+                        boxShadow: "none"
+                      }
+                    }}
+                  >
+                    {tab.label}
+                  </Button>
+                );
+              })}
+            </Box>
+
+            {activeTab === "counter" && (
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
             {/* ── Member Counter ── */}
             <Paper elevation={0} sx={{ p: "18px 22px", borderRadius: "12px", border: "1px solid #e2e8f0", mb: 2 }}>
               <Typography sx={{ fontWeight: 600, fontSize: "0.88rem", color: "#1e293b", mb: 1.8 }}>
@@ -621,6 +677,34 @@ export default function ManagerDashboard() {
               </Paper>
             </Box>
 
+              </Box>
+            )}
+            {activeTab === "banquet" && (
+              <BanquetTab />
+            )}
+            {activeTab === "sessions" && (
+              <SessionsTab />
+            )}
+            {activeTab === "staff" && (
+              <StaffTab />
+            )}
+            {activeTab === "upkeep" && (
+              <UpkeepTab />
+            )}
+            {activeTab === "spend" && (
+              <SpendTab />
+            )}
+            {activeTab === "requests" && (
+              <RequestsTab />
+            )}
+            {activeTab !== "counter" && activeTab !== "banquet" && activeTab !== "sessions" && activeTab !== "staff" && activeTab !== "upkeep" && activeTab !== "spend" && activeTab !== "requests" && (
+              <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "300px", bgcolor: "#f8fafc", borderRadius: "16px", border: "1px dashed #cbd5e1", textAlign: "center" }}>
+                <Box>
+                  <Typography sx={{ fontWeight: 700, color: "#1e293b", fontSize: "1.5rem", mb: 1, fontFamily: "\"Cormorant Garamond\", serif" }}>Coming soon</Typography>
+                  <Typography sx={{ color: "#64748b", fontSize: "0.95rem" }}>The {managerTabs.find(t => t.id === activeTab)?.label} tab is currently being wired up.</Typography>
+                </Box>
+              </Box>
+            )}
           </Box>
         </Paper>
       </Box>

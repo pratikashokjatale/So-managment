@@ -36,6 +36,7 @@ import ResidentProfileCard from "./ResidentProfileCard";
 import ResidentQRModal from "./ResidentQRModal";
 import PaymentPlansTab from "./PaymentPlansTab";
 import SalesPipelineTab from "./SalesPipelineTab";
+import RequestsTab from "./RequestsTab";
 import { 
   getCrmOnboardingSummaryApi, 
   getCrmResidentInventorySummaryApi, 
@@ -543,6 +544,7 @@ const CRMDashboard = ({ user }: { user: any }) => {
               "Inventory",
               "Payment plans",
               "Reminders",
+              "Purchase requests",
               "Sales pipeline",
             ].map((tab, i) => (
               <Button
@@ -1423,6 +1425,8 @@ const CRMDashboard = ({ user }: { user: any }) => {
               )}
             </Box>
           )}
+
+          {activeGroupOfficeTab === "purchase requests" && <RequestsTab isCrm={true} />}
 
           {activeGroupOfficeTab === "payment plans" && (
             <Box sx={{ position: 'relative' }}>
