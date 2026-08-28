@@ -1,5 +1,5 @@
 import React from 'react';
-import { Headphones } from 'lucide-react';
+import HeadsetMicIcon from '@mui/icons-material/HeadsetMic';
 import { Box, Typography, Button } from '@mui/material';
 
 const LINE = "#E6ECF5";
@@ -40,7 +40,7 @@ function SalesPipelineTab() {
         {LEADS.map((l, i) => (
           <Box key={i} sx={{ display: 'flex', alignItems: 'center', gap: 1.5, px: 2, py: 1.5, background: '#fff', borderBottom: i < LEADS.length - 1 ? `1px solid ${LINE}` : 'none' }}>
             <Box sx={{ width: 32, height: 32, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: CRM_TINT }}>
-              <Headphones size={14} color={CRM_ACCENT} />
+              <HeadsetMicIcon sx={{ fontSize: 16, color: CRM_ACCENT }} />
             </Box>
             <Box sx={{ flex: 1, minWidth: 0 }}>
               <Typography sx={{ fontSize: '0.875rem', fontWeight: 600, color: INK }}>{l.n}</Typography>
