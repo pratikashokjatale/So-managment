@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import CRMDashboard from "@/pages/dashboard/components/CRMDashboard";
+import CRMDashboard from "@/pages/dashboard/components/crm-dashboard/CRMDashboard";
 import {
   Box,
   Typography,

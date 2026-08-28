@@ -44,7 +44,7 @@ import TopBar from "./TopBar";
 import Loader from "@/components/Loader";
 import PageNotFound from "@/pages/PageNotFound";
 import { getProjectsApi } from "@/apis/project";
-import CRMDashboard from "@/pages/dashboard/components/CRMDashboard";
+import CRMDashboard from "@/pages/dashboard/components/crm-dashboard/CRMDashboard";
 
 export default function DashboardLayout() {
   const theme = useTheme();

@@ -17,7 +17,7 @@ import CreateBookingDialog from "@/pages/residents/components/CreateBookingDialo
 
 import AdminDashboard from "./dashboard/components/AdminDashboard";
 import ResidentDashboard from "./dashboard/components/ResidentDashboard";
-import CRMDashboard from "./dashboard/components/CRMDashboard";
+import CRMDashboard from "./dashboard/components/crm-dashboard/CRMDashboard";
 
 const lineData = [
   { name: "Mon", total: 30, confirmed: 15, cancelled: 5 },

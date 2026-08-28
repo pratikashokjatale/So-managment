@@ -24,19 +24,19 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import SensorsIcon from "@mui/icons-material/Sensors";
 import { getUsersApi } from "@/apis/user";
 import { adminRechargeUserWalletApi } from "@/apis/wallet";
-import ScanModal from "./ScanModal";
-import CreateProfileModal from "./CreateProfileModal";
+import ScanModal from "../ScanModal";
+import CreateProfileModal from "../CreateProfileModal";
 import PersonAddAltOutlinedIcon from "@mui/icons-material/PersonAddAltOutlined";
-import OnboardingCaseModal from "./OnboardingCaseModal";
-import PopulationModal from "./PopulationModal";
-import ResidentProfileModal from "./ResidentProfileModal";
-import AdminQRRechargeModal from "./AdminQRRechargeModal";
-import ResidentSearchUI from "./ResidentSearchUI";
-import ResidentProfileCard from "./ResidentProfileCard";
-import ResidentQRModal from "./ResidentQRModal";
-import PaymentPlansTab from "./PaymentPlansTab";
-import SalesPipelineTab from "./SalesPipelineTab";
-import RequestsTab from "./RequestsTab";
+import OnboardingCaseModal from "../OnboardingCaseModal";
+import PopulationModal from "../PopulationModal";
+import ResidentProfileModal from "../ResidentProfileModal";
+import AdminQRRechargeModal from "../AdminQRRechargeModal";
+import ResidentSearchUI from "../ResidentSearchUI";
+import ResidentProfileCard from "../ResidentProfileCard";
+import ResidentQRModal from "../ResidentQRModal";
+import PaymentPlansTab from "../PaymentPlansTab";
+import SalesPipelineTab from "../SalesPipelineTab";
+import RequestsTab from "../RequestsTab";
 import { 
   getCrmOnboardingSummaryApi, 
   getCrmResidentInventorySummaryApi, 
@@ -72,14 +72,14 @@ import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
 import SendIcon from "@mui/icons-material/Send";
 import SendOutlinedIcon from "@mui/icons-material/SendOutlined";
-import CRMProfileHeader from "./crm-dashboard/CRMProfileHeader";
+import CRMProfileHeader from "./CRMProfileHeader";
 import GroupOfficeTabs, {
   type GroupOfficeTab,
-} from "./crm-dashboard/GroupOfficeTabs";
-import GroupOfficeOnboardingSection from "./crm-dashboard/GroupOfficeOnboardingSection";
-import GroupOfficeInventorySection from "./crm-dashboard/GroupOfficeInventorySection";
-import GroupOfficeCommercialSection from "./crm-dashboard/GroupOfficeCommercialSection";
-import GroupOfficeRemindersSection from "./crm-dashboard/GroupOfficeRemindersSection";
+} from "./GroupOfficeTabs";
+import GroupOfficeOnboardingSection from "./GroupOfficeOnboardingSection";
+import GroupOfficeInventorySection from "./GroupOfficeInventorySection";
+import GroupOfficeCommercialSection from "./GroupOfficeCommercialSection";
+import GroupOfficeRemindersSection from "./GroupOfficeRemindersSection";
 
 const demoIds = ["MEM-100482", "MEM-100613", "MEM-100731", "MEM-100355"];
 
