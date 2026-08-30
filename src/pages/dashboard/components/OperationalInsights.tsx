@@ -71,9 +71,9 @@ export default function OperationalInsights({
               <Box
                 sx={{
                   p: 1,
-                  bgcolor: "#eff6ff",
+                  bgcolor: "#EAF0F7",
                   borderRadius: "10px",
-                  color: "#2c4d93",
+                  color: "#24528C",
                   display: "flex",
                 }}
               >
@@ -127,7 +127,7 @@ export default function OperationalInsights({
                         "& .MuiLinearProgress-bar": {
                           bgcolor:
                             summary.role === "RESIDENT"
-                              ? "#2c4d93"
+                              ? "#24528C"
                               : summary.role === "STAFF"
                               ? "#10b981"
                               : "#ff9800",
@@ -221,7 +221,7 @@ export default function OperationalInsights({
               <Typography
                 variant="h5"
                 fontWeight="950"
-                color="#2c4d93"
+                color="#24528C"
                 sx={{ letterSpacing: "-0.5px" }}
               >
                 ₹
@@ -279,9 +279,9 @@ export default function OperationalInsights({
                         "& .MuiLinearProgress-bar": {
                           bgcolor:
                             pay.provider === "RAZORPAY"
-                              ? "#2196f3"
+                              ? "#24528C"
                               : pay.provider === "WALLET"
-                              ? "#9c27b0"
+                              ? "#7A4FB5"
                               : "#4caf50",
                           borderRadius: 3,
                         },
@@ -417,10 +417,10 @@ export default function OperationalInsights({
                 <Box
                   sx={{
                     p: 1.5,
-                    bgcolor: "#eff6ff",
+                    bgcolor: "#EAF0F7",
                     borderRadius: "12px",
                     textAlign: "center",
-                    border: "1px solid #dbeafe",
+                    border: "1px solid #EAF0F7",
                   }}
                 >
                   <Typography
@@ -430,7 +430,7 @@ export default function OperationalInsights({
                   >
                     PRESENT
                   </Typography>
-                  <Typography variant="h6" fontWeight="950" color="#1e40af">
+                  <Typography variant="h6" fontWeight="950" color="#24528C">
                     {presentCount}
                   </Typography>
                 </Box>

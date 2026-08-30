@@ -148,7 +148,7 @@ export default function ProjectDetails() {
             variant="contained" 
             startIcon={<AddIcon />}
             onClick={() => navigate(`/tower/add?projectId=${project.id}`)}
-            sx={{ borderRadius: '8px', textTransform: 'none', px: 2.5, fontWeight: 600, boxShadow: 'none', bgcolor: '#2c4d93', '&:hover': { bgcolor: '#2c4d93' } }}
+            sx={{ borderRadius: '8px', textTransform: 'none', px: 2.5, fontWeight: 600, boxShadow: 'none', bgcolor: '#24528C', '&:hover': { bgcolor: '#24528C' } }}
           >
             Add Tower
           </Button>
@@ -173,7 +173,7 @@ export default function ProjectDetails() {
               </Grid>
               <Grid size={{ xs: 12, sm: 6 }}>
                 <Typography variant="caption" color="text.secondary" fontWeight="600" display="block">PROJECT CODE</Typography>
-                <Typography variant="body1" fontWeight="700" color="#2c4d93">{project.code}</Typography>
+                <Typography variant="body1" fontWeight="700" color="#24528C">{project.code}</Typography>
               </Grid>
               <Grid size={{ xs: 12, sm: 6 }}>
                 <Typography variant="caption" color="text.secondary" fontWeight="600" display="block">LOCATION</Typography>
@@ -214,8 +214,8 @@ export default function ProjectDetails() {
                     fontSize: '0.75rem', 
                     fontWeight: 700,
                     mt: 0.5,
-                    bgcolor: project.geofenceEnabled ? '#eff6ff' : '#f1f5f9',
-                    color: project.geofenceEnabled ? '#1d4ed8' : '#64748b'
+                    bgcolor: project.geofenceEnabled ? '#EAF0F7' : '#f1f5f9',
+                    color: project.geofenceEnabled ? '#24528C' : '#64748b'
                   }}
                 >
                   {project.geofenceEnabled ? 'Enabled' : 'Disabled'}
@@ -254,9 +254,9 @@ export default function ProjectDetails() {
         <Grid size={{ xs: 12, md: 4 }}>
           <Grid container spacing={3}>
             <Grid size={{ xs: 12 }}>
-              <Card sx={{ bgcolor: '#faf5ff', borderRadius: '16px', boxShadow: 'none', border: '1px solid #f3e8ff' }}>
+              <Card sx={{ bgcolor: '#F3E8FF', borderRadius: '16px', boxShadow: 'none', border: '1px solid #F3E8FF' }}>
                 <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2.5, py: 3 }}>
-                  <Box sx={{ p: 2, bgcolor: '#8b5cf6', color: '#ffffff', borderRadius: '12px', display: 'flex' }}>
+                  <Box sx={{ p: 2, bgcolor: '#7A4FB5', color: '#ffffff', borderRadius: '12px', display: 'flex' }}>
                     <TowerIcon fontSize="medium" />
                   </Box>
                   <Box>
@@ -320,7 +320,7 @@ export default function ProjectDetails() {
                       <Typography variant="body2" fontWeight="600">{tower.totalFloors !== undefined ? tower.totalFloors : tower.floorsCount} Floors</Typography>
                     </TableCell>
                     <TableCell sx={{ py: 2, borderBottomColor: '#f0f0f0' }}>
-                      <Typography variant="body2" fontWeight="600" color="#2c4d93">{towerFlatsCount} Flats</Typography>
+                      <Typography variant="body2" fontWeight="600" color="#24528C">{towerFlatsCount} Flats</Typography>
                     </TableCell>
                     <TableCell sx={{ py: 2, borderBottomColor: '#f0f0f0' }}>
                       <Box 
@@ -341,7 +341,7 @@ export default function ProjectDetails() {
                     <TableCell align="right" sx={{ py: 2, borderBottomColor: '#f0f0f0' }}>
                       <IconButton 
                         size="small" 
-                        sx={{ color: '#2c4d93', bgcolor: '#eff6ff', mr: 1, '&:hover': { bgcolor: '#d0e1fd' } }} 
+                        sx={{ color: '#24528C', bgcolor: '#EAF0F7', mr: 1, '&:hover': { bgcolor: '#d0e1fd' } }} 
                         onClick={() => navigate(`/tower/${tower.id}`)}
                       >
                         <VisibilityOutlinedIcon fontSize="small" />

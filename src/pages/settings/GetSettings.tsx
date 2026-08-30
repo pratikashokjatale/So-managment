@@ -65,13 +65,13 @@ export default function GetSettings() {
                   borderRadius: '24px',
                   cursor: 'pointer',
                   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                  bgcolor: isActive ? '#eff6ff' : 'white',
-                  border: `2px solid ${isActive ? '#bfdbfe' : 'transparent'}`,
+                  bgcolor: isActive ? '#EAF0F7' : 'white',
+                  border: `2px solid ${isActive ? '#EAF0F7' : 'transparent'}`,
                   boxShadow: isActive ? 'none' : '0 4px 6px -1px rgba(0,0,0,0.05)',
                   '&:hover': {
                     transform: isActive ? 'none' : 'translateY(-2px)',
                     boxShadow: isActive ? 'none' : '0 10px 15px -3px rgba(0,0,0,0.1)',
-                    bgcolor: isActive ? '#eff6ff' : '#f8fafc'
+                    bgcolor: isActive ? '#EAF0F7' : '#f8fafc'
                   }
                 }}
               >

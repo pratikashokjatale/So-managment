@@ -22,9 +22,9 @@ const getLogMeta = (eventType: string) => {
   switch (type.toLowerCase()) {
     case 'access':
       return {
-        icon: <SecurityIcon sx={{ color: '#1d4ed8' }} />,
-        bgcolor: '#eff6ff',
-        color: '#1d4ed8'
+        icon: <SecurityIcon sx={{ color: '#24528C' }} />,
+        bgcolor: '#EAF0F7',
+        color: '#24528C'
       };
     case 'payment':
       return {
@@ -35,9 +35,9 @@ const getLogMeta = (eventType: string) => {
     case 'resident':
     case 'user':
       return {
-        icon: <ResidentIcon sx={{ color: '#7c3aed' }} />,
-        bgcolor: '#f5f3ff',
-        color: '#7c3aed'
+        icon: <ResidentIcon sx={{ color: '#7A4FB5' }} />,
+        bgcolor: '#F3E8FF',
+        color: '#7A4FB5'
       };
     case 'security':
     case 'alert':

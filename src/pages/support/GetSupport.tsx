@@ -56,7 +56,7 @@ export default function GetSupport() {
               <Grid size={{ xs: 12, sm: 6 }}>
                 <Card elevation={0} sx={{ border: '1px solid #e2e8f0', borderRadius: '24px', bgcolor: 'white' }}>
                   <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2, py: '20px !important' }}>
-                    <Avatar sx={{ bgcolor: '#eff6ff', color: '#1d4ed8' }}><PhoneIcon /></Avatar>
+                    <Avatar sx={{ bgcolor: '#EAF0F7', color: '#24528C' }}><PhoneIcon /></Avatar>
                     <Box>
                       <Typography variant="caption" color="text.secondary" fontWeight="800">EMERGENCY HELPDESK</Typography>
                       <Typography variant="body1" fontWeight="800" color="#091542">+91 22 8879 4400</Typography>
@@ -100,7 +100,7 @@ export default function GetSupport() {
                     sx={{ bgcolor: 'white', py: 1 }}
                   >
                     <Stack direction="row" spacing={2} alignItems="center">
-                      <HelpIcon sx={{ color: '#3b82f6' }} />
+                      <HelpIcon sx={{ color: '#24528C' }} />
                       <Typography variant="body1" fontWeight="800" color="#091542">
                         {faq.q}
                       </Typography>
@@ -122,7 +122,7 @@ export default function GetSupport() {
         <Grid size={{ xs: 12, md: 5 }}>
           <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: 'white', position: 'sticky', top: 96 }}>
             <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
-              <Avatar sx={{ bgcolor: '#eff6ff', color: '#1d4ed8' }}><AgentIcon /></Avatar>
+              <Avatar sx={{ bgcolor: '#EAF0F7', color: '#24528C' }}><AgentIcon /></Avatar>
               <Box>
                 <Typography variant="h5" fontWeight="900" color="#091542">Submit a Ticket</Typography>
                 <Typography variant="caption" color="text.secondary" fontWeight="700">Direct query to operational executives</Typography>

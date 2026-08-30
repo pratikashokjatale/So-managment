@@ -216,13 +216,13 @@ export default function GetResident() {
             minHeight: '48px',
             px: 2
           },
-          '& .Mui-selected': { color: '#2c4d93 !important' },
-          '& .MuiTabs-indicator': { backgroundColor: '#2c4d93', height: 3 },
+          '& .Mui-selected': { color: '#24528C !important' },
+          '& .MuiTabs-indicator': { backgroundColor: '#24528C', height: 3 },
         }}
       >
         <Tab 
           label="Active Residents" 
-          icon={activeCount > 0 ? <Chip label={activeCount} size="small" sx={{ height: 18, fontSize: '0.7rem', fontWeight: 800, bgcolor: '#e0f2fe', color: '#0369a1' }} /> : undefined}
+          icon={activeCount > 0 ? <Chip label={activeCount} size="small" sx={{ height: 18, fontSize: '0.7rem', fontWeight: 800, bgcolor: '#e0f2fe', color: '#24528C' }} /> : undefined}
           iconPosition="end"
           value={0} 
         />
@@ -361,7 +361,7 @@ export default function GetResident() {
                 align: 'right',
                 render: (row) => (
                   <>
-                    <IconButton size="small" sx={{ color: "primary.main", bgcolor: "#eff6ff", mr: 1 }} onClick={() => navigate(`/residents/${row.id}`)}>
+                    <IconButton size="small" sx={{ color: "primary.main", bgcolor: "#EAF0F7", mr: 1 }} onClick={() => navigate(`/residents/${row.id}`)}>
                       <VisibilityOutlinedIcon fontSize="small" />
                     </IconButton>
                     <IconButton size="small" sx={{ color: "text.secondary" }} onClick={() => navigate(`/residents/edit/${row.id}`)}>

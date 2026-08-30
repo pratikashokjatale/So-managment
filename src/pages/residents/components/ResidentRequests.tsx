@@ -349,8 +349,8 @@ export default function ResidentRequests() {
                       label={request.type || request.role || "New Enrollment"}
                       size="small"
                       sx={{
-                        bgcolor: "#eff6ff",
-                        color: "#1d4ed8",
+                        bgcolor: "#EAF0F7",
+                        color: "#24528C",
                         fontWeight: 700,
                         borderRadius: "6px",
                       }}
@@ -488,7 +488,7 @@ export default function ResidentRequests() {
                           fontWeight: 900,
                           fontSize: "1.5rem",
                           bgcolor: "#e0e7ff",
-                          color: "#4f46e5",
+                          color: "#24528C",
                         }}
                       >
                         {(kycDetails?.name ||
@@ -516,8 +516,8 @@ export default function ResidentRequests() {
                             }
                             size="small"
                             sx={{
-                              bgcolor: "#eff6ff",
-                              color: "#1d4ed8",
+                              bgcolor: "#EAF0F7",
+                              color: "#24528C",
                               fontWeight: 700,
                               borderRadius: "6px",
                             }}
@@ -892,7 +892,7 @@ export default function ResidentRequests() {
                                       width: 32,
                                       height: 32,
                                       bgcolor: "#e0e7ff",
-                                      color: "#4f46e5",
+                                      color: "#24528C",
                                       fontSize: "0.8rem",
                                       fontWeight: 900,
                                     }}
@@ -918,8 +918,8 @@ export default function ResidentRequests() {
                                     label={f.accessLevel || "FULL"}
                                     size="small"
                                     sx={{
-                                      bgcolor: "#eff6ff",
-                                      color: "#1d4ed8",
+                                      bgcolor: "#EAF0F7",
+                                      color: "#24528C",
                                       fontWeight: 700,
                                       borderRadius: "6px",
                                       fontSize: "0.7rem",

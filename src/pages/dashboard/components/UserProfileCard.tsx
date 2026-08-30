@@ -48,9 +48,9 @@ export default function UserProfileCard({
             height: 76,
             fontSize: "1.85rem",
             fontWeight: 900,
-            bgcolor: "#eff6ff",
-            color: "#1e40af",
-            border: "3px solid #eff6ff",
+            bgcolor: "#EAF0F7",
+            color: "#24528C",
+            border: "3px solid #EAF0F7",
             boxShadow: "0 4px 15px rgba(30, 64, 175, 0.08)",
           }}
         >
@@ -209,7 +209,7 @@ export default function UserProfileCard({
             borderRadius: "12px",
             textTransform: "none",
             fontWeight: 800,
-            bgcolor: "#2c4d93",
+            bgcolor: "#24528C",
             boxShadow: "none",
             px: 4,
             py: 1.25,

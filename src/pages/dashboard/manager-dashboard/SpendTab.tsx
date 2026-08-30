@@ -18,7 +18,7 @@ import {
   Search as SearchIcon,
 } from "@mui/icons-material";
 
-const BRAND = "#204a7b";
+const BRAND = "#24528C";
 const GREEN = "#22c55e";
 const GOLD = "#bca47c";
 const GOLD_D = "#a17a3f";
@@ -134,7 +134,7 @@ export default function SpendTab() {
               fontWeight: 600,
               fontSize: "0.85rem",
               boxShadow: "none",
-              "&:hover": { bgcolor: "#163a62", boxShadow: "none" },
+              "&:hover": { bgcolor: "#24528C", boxShadow: "none" },
             }}
           >
             Record expense
@@ -340,7 +340,7 @@ export default function SpendTab() {
               fontWeight: 600,
               bgcolor: cat === c ? BRAND : BG,
               color: cat === c ? "#fff" : MUT,
-              "&:hover": { bgcolor: cat === c ? "#163a62" : "#e2e8f0" },
+              "&:hover": { bgcolor: cat === c ? "#24528C" : "#e2e8f0" },
             }}
           >
             {c === "all" ? "All" : c}

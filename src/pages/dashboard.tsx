@@ -30,8 +30,8 @@ const lineData = [
 ];
 
 const pieData = [
-  { name: "Gym", value: 40, color: "#2c4d93ff" },
-  { name: "Swimming Pool", value: 25, color: "#2196f3" },
+  { name: "Gym", value: 40, color: "#24528Cff" },
+  { name: "Swimming Pool", value: 25, color: "#24528C" },
   { name: "Tennis Court", value: 20, color: "#4caf50" },
   { name: "Badminton Court", value: 10, color: "#ff9800" },
   { name: "Others", value: 5, color: "#9e9e9e" },
@@ -366,7 +366,7 @@ export default function Dashboard() {
   const finalLineData = lineChartData.length > 0 ? lineChartData : lineData;
 
   // Map facility statistics for the PieChart
-  const COLORS = ["#2c4d93", "#2196f3", "#4caf50", "#ff9800", "#9c27b0", "#e91e63", "#009688"];
+  const COLORS = ["#24528C", "#24528C", "#4caf50", "#ff9800", "#7A4FB5", "#e91e63", "#009688"];
   const pieChartData = facilityStats
     .map((fac: any, index: number) => ({
       name: fac.name,

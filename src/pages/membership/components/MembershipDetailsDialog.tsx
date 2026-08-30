@@ -110,8 +110,8 @@ export default function MembershipDetailsDialog({ open, onClose, membership, onR
             <Grid size={{ xs: 12, md: 6 }}>
               <Box sx={{ height: '100%', p: 3, borderRadius: 3, bgcolor: '#fafbfd', border: '1px solid #f1f5f9' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
-                  <Box sx={{ p: 1, bgcolor: '#eff6ff', borderRadius: 2, display: 'flex' }}>
-                    <AssignmentOutlinedIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                  <Box sx={{ p: 1, bgcolor: '#EAF0F7', borderRadius: 2, display: 'flex' }}>
+                    <AssignmentOutlinedIcon sx={{ color: '#24528C', fontSize: 20 }} />
                   </Box>
                   <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#091542' }}>
                     Plan Information
@@ -143,8 +143,8 @@ export default function MembershipDetailsDialog({ open, onClose, membership, onR
             <Grid size={{ xs: 12, md: 6 }}>
               <Box sx={{ height: '100%', p: 3, borderRadius: 3, bgcolor: '#fafbfd', border: '1px solid #f1f5f9' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
-                  <Box sx={{ p: 1, bgcolor: '#eff6ff', borderRadius: 2, display: 'flex' }}>
-                    <DateRangeOutlinedIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                  <Box sx={{ p: 1, bgcolor: '#EAF0F7', borderRadius: 2, display: 'flex' }}>
+                    <DateRangeOutlinedIcon sx={{ color: '#24528C', fontSize: 20 }} />
                   </Box>
                   <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#091542' }}>
                     Duration & Status
@@ -172,8 +172,8 @@ export default function MembershipDetailsDialog({ open, onClose, membership, onR
             <Grid size={{ xs: 12 }}>
               <Box sx={{ p: 3, borderRadius: 3, bgcolor: '#fafbfd', border: '1px solid #f1f5f9' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                  <Box sx={{ p: 1, bgcolor: '#eff6ff', borderRadius: 2, display: 'flex' }}>
-                    <HomeOutlinedIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                  <Box sx={{ p: 1, bgcolor: '#EAF0F7', borderRadius: 2, display: 'flex' }}>
+                    <HomeOutlinedIcon sx={{ color: '#24528C', fontSize: 20 }} />
                   </Box>
                   <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#091542' }}>
                     Apartment Details
@@ -220,7 +220,7 @@ export default function MembershipDetailsDialog({ open, onClose, membership, onR
             </Button>
           )}
         </Box>
-        <Button onClick={onClose} variant="contained" sx={{ px: 4, py: 1.25, borderRadius: 2, textTransform: 'none', bgcolor: '#2c4d93', fontWeight: 700, boxShadow: 'none', '&:hover': { bgcolor: '#2c4d93', boxShadow: 'none' } }}>
+        <Button onClick={onClose} variant="contained" sx={{ px: 4, py: 1.25, borderRadius: 2, textTransform: 'none', bgcolor: '#24528C', fontWeight: 700, boxShadow: 'none', '&:hover': { bgcolor: '#24528C', boxShadow: 'none' } }}>
           Done
         </Button>
       </DialogActions>

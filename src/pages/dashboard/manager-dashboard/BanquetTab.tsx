@@ -21,7 +21,7 @@ import {
   RestaurantOutlined as UtensilsIcon,
 } from "@mui/icons-material";
 
-const BRAND = "#204a7b";
+const BRAND = "#24528C";
 const GREEN = "#22c55e";
 const GOLD = "#bca47c";
 const GOLD_D = "#a17a3f";
@@ -282,7 +282,7 @@ export default function BanquetTab() {
               fontWeight: 600,
               fontSize: "0.85rem",
               boxShadow: "none",
-              "&:hover": { bgcolor: "#163a62", boxShadow: "none" },
+              "&:hover": { bgcolor: "#24528C", boxShadow: "none" },
             }}
           >
             Add booking
@@ -466,7 +466,7 @@ export default function BanquetTab() {
             fontWeight: 600,
             bgcolor: view === "upcoming" ? BRAND : BG,
             color: view === "upcoming" ? "#fff" : MUT,
-            "&:hover": { bgcolor: view === "upcoming" ? "#163a62" : "#e2e8f0" },
+            "&:hover": { bgcolor: view === "upcoming" ? "#24528C" : "#e2e8f0" },
           }}
         >
           Upcoming ({upcoming.length})
@@ -482,7 +482,7 @@ export default function BanquetTab() {
             fontWeight: 600,
             bgcolor: view === "past" ? BRAND : BG,
             color: view === "past" ? "#fff" : MUT,
-            "&:hover": { bgcolor: view === "past" ? "#163a62" : "#e2e8f0" },
+            "&:hover": { bgcolor: view === "past" ? "#24528C" : "#e2e8f0" },
           }}
         >
           Past ({past.length})
@@ -582,7 +582,7 @@ export default function BanquetTab() {
                         Cancel
                       </Button>
                     )}
-                    <Button onClick={() => signOff(b.id)} size="small" sx={{ bgcolor: b.cleared ? BG : "#eef2ff", color: b.cleared ? MUT : BRAND, textTransform: "none", fontSize: "0.7rem", fontWeight: 600, py: 0.5, px: 1.5, borderRadius: "8px", minWidth: 0, "&:hover": { bgcolor: b.cleared ? "#e2e8f0" : "#dbeafe" } }}>
+                    <Button onClick={() => signOff(b.id)} size="small" sx={{ bgcolor: b.cleared ? BG : "#EAF0F7", color: b.cleared ? MUT : BRAND, textTransform: "none", fontSize: "0.7rem", fontWeight: 600, py: 0.5, px: 1.5, borderRadius: "8px", minWidth: 0, "&:hover": { bgcolor: b.cleared ? "#e2e8f0" : "#EAF0F7" } }}>
                       {b.cleared ? "Undo sign-off" : "Sign off turnaround"}
                     </Button>
                   </Box>

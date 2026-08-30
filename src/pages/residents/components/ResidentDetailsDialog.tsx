@@ -56,7 +56,7 @@ export default function ResidentDetailsDialog({ open, onClose, resident }: Resid
           {/* Membership Wallet */}
           <Paper elevation={0} sx={{ p: 2.5, borderRadius: '16px', border: '1px solid #e2e8f0' }}>
             <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 2 }}>
-              <Box sx={{ p: 1, bgcolor: '#eff6ff', color: '#1d4ed8', borderRadius: '10px' }}>
+              <Box sx={{ p: 1, bgcolor: '#EAF0F7', color: '#24528C', borderRadius: '10px' }}>
                 <TimerIcon />
               </Box>
               <Typography variant="subtitle1" fontWeight="800">Membership</Typography>
@@ -146,7 +146,7 @@ export default function ResidentDetailsDialog({ open, onClose, resident }: Resid
                 </Box>
               </Stack>
             </Box>
-            <Button fullWidth variant="contained" sx={{ mt: 3, borderRadius: '12px', height: 48, fontWeight: 900, textTransform: 'none', bgcolor: '#2c4d93' }}>
+            <Button fullWidth variant="contained" sx={{ mt: 3, borderRadius: '12px', height: 48, fontWeight: 900, textTransform: 'none', bgcolor: '#24528C' }}>
               Complete Checkout
             </Button>
           </Paper>

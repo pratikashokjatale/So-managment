@@ -157,7 +157,7 @@ export default function AdminDashboard({
               textTransform: "none",
               px: 2.5,
               fontWeight: 700,
-              bgcolor: "#2c4d93",
+              bgcolor: "#24528C",
               boxShadow: "none",
             }}
           >

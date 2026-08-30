@@ -383,9 +383,9 @@ const CreateProfileModal: React.FC<CreateProfileModalProps> = ({ open, onClose, 
 
             <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
               {[
-                { title: "Apartment owner", sub: "Bought a Marbella flat — full owner record & documents", icon: <BusinessIcon sx={{ color: "#3b82f6" }} />, color: "#eff6ff" },
+                { title: "Apartment owner", sub: "Bought a Marbella flat — full owner record & documents", icon: <BusinessIcon sx={{ color: "#24528C" }} />, color: "#EAF0F7" },
                 { title: "Tenant", sub: "Renting a unit — with agreement expiry tracked", icon: <HomeOutlinedIcon sx={{ color: "#d97706" }} />, color: "#fffbeb" },
-                { title: "Club Marbella member", sub: "Clubhouse access & facilities — linked to the same person", icon: <WorkspacePremiumOutlinedIcon sx={{ color: "#9333ea" }} />, color: "#faf5ff" }
+                { title: "Club Marbella member", sub: "Clubhouse access & facilities — linked to the same person", icon: <WorkspacePremiumOutlinedIcon sx={{ color: "#7A4FB5" }} />, color: "#F3E8FF" }
               ].map((opt, idx) => (
                 <Box key={idx} onClick={() => handleSelectRole(opt.title)} sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", p: 2, border: "1px solid #e2e8f0", borderRadius: "12px", cursor: "pointer", "&:hover": { bgcolor: "#f8fafc" } }}>
                   <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
@@ -425,9 +425,9 @@ const CreateProfileModal: React.FC<CreateProfileModalProps> = ({ open, onClose, 
             {/* Wizard Role Header */}
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", bgcolor: "#f8fafc", p: 1.5, borderRadius: "12px", border: "1px solid #e2e8f0" }}>
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                {role === "Apartment owner" && <BusinessIcon sx={{ color: "#3b82f6", fontSize: 18 }} />}
+                {role === "Apartment owner" && <BusinessIcon sx={{ color: "#24528C", fontSize: 18 }} />}
                 {role === "Tenant" && <HomeOutlinedIcon sx={{ color: "#d97706", fontSize: 18 }} />}
-                {role === "Club Marbella member" && <WorkspacePremiumOutlinedIcon sx={{ color: "#9333ea", fontSize: 18 }} />}
+                {role === "Club Marbella member" && <WorkspacePremiumOutlinedIcon sx={{ color: "#7A4FB5", fontSize: 18 }} />}
                 <Typography sx={{ fontWeight: 600, fontSize: "0.9rem", color: "#1e293b" }}>{role}</Typography>
               </Box>
               <Button size="small" onClick={() => setView("role")} sx={{ textTransform: "none", color: "#64748b", fontWeight: 600 }}>Change</Button>
@@ -446,7 +446,7 @@ const CreateProfileModal: React.FC<CreateProfileModalProps> = ({ open, onClose, 
                 </Typography>
 
                 <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
-                  <Box sx={{ width: 80, height: 80, borderRadius: "50%", border: "2px dashed #94a3b8", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", color: "#3b82f6", cursor: "pointer", "&:hover": { bgcolor: "#f8fafc" } }}>
+                  <Box sx={{ width: 80, height: 80, borderRadius: "50%", border: "2px dashed #94a3b8", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", color: "#24528C", cursor: "pointer", "&:hover": { bgcolor: "#f8fafc" } }}>
                     <CameraAltOutlinedIcon />
                     <Typography sx={{ fontSize: "0.65rem", fontWeight: 600, mt: 0.5 }}>Add photo</Typography>
                   </Box>
@@ -555,7 +555,7 @@ const CreateProfileModal: React.FC<CreateProfileModalProps> = ({ open, onClose, 
                 <Box sx={{ display: "flex", gap: 2, mb: 3 }}>
                   <Box sx={{ flex: 1, border: "1px solid", borderColor: aadhaarUrl ? "#81c784" : "#e2e8f0", bgcolor: aadhaarUrl ? "#e8f5e9" : "transparent", borderRadius: "12px", p: 2, display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative" }}>
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-                      <Box sx={{ bgcolor: aadhaarUrl ? "#fff" : "#f8fafc", p: 1, borderRadius: "8px" }}><CreditCardOutlinedIcon sx={{ color: aadhaarUrl ? "#2e7d32" : "#3b82f6" }}/></Box>
+                      <Box sx={{ bgcolor: aadhaarUrl ? "#fff" : "#f8fafc", p: 1, borderRadius: "8px" }}><CreditCardOutlinedIcon sx={{ color: aadhaarUrl ? "#2e7d32" : "#24528C" }}/></Box>
                       <Box>
                         <Typography sx={{ fontWeight: 600, fontSize: "0.9rem", color: "#1e293b" }}>Aadhaar</Typography>
                         <Typography sx={{ fontSize: "0.7rem", color: "#64748b" }}>{aadhaarUrl ? "Uploaded" : "Upload / scan"}</Typography>
@@ -573,7 +573,7 @@ const CreateProfileModal: React.FC<CreateProfileModalProps> = ({ open, onClose, 
                   
                   <Box sx={{ flex: 1, border: "1px solid", borderColor: panUrl ? "#81c784" : "#e2e8f0", bgcolor: panUrl ? "#e8f5e9" : "transparent", borderRadius: "12px", p: 2, display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative" }}>
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-                      <Box sx={{ bgcolor: panUrl ? "#fff" : "#f8fafc", p: 1, borderRadius: "8px" }}><CreditCardOutlinedIcon sx={{ color: panUrl ? "#2e7d32" : "#3b82f6" }}/></Box>
+                      <Box sx={{ bgcolor: panUrl ? "#fff" : "#f8fafc", p: 1, borderRadius: "8px" }}><CreditCardOutlinedIcon sx={{ color: panUrl ? "#2e7d32" : "#24528C" }}/></Box>
                       <Box>
                         <Typography sx={{ fontWeight: 600, fontSize: "0.9rem", color: "#1e293b" }}>PAN <span style={{fontWeight: 400}}>(optional)</span></Typography>
                         <Typography sx={{ fontSize: "0.7rem", color: "#64748b" }}>{panUrl ? "Uploaded" : "Upload"}</Typography>
@@ -707,7 +707,7 @@ const CreateProfileModal: React.FC<CreateProfileModalProps> = ({ open, onClose, 
               <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
                 <Button sx={{ textTransform: "none", color: "#d97706", fontWeight: 600 }} disabled={isSubmitting}>Finish later</Button>
                 {wizardStep < 4 ? (
-                  <Button variant="contained" onClick={() => setWizardStep(prev => prev + 1 as any)} sx={{ bgcolor: "#1e3a5f", textTransform: "none", borderRadius: "8px", px: 3, "&:hover": { bgcolor: "#162d4a" } }}>
+                  <Button variant="contained" onClick={() => setWizardStep(prev => prev + 1 as any)} sx={{ bgcolor: "#1e3a5f", textTransform: "none", borderRadius: "8px", px: 3, "&:hover": { bgcolor: "#1D4270" } }}>
                     Next &gt;
                   </Button>
                 ) : (

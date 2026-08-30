@@ -417,10 +417,10 @@ export default function StaffAttendance() {
             label="On Break"
             size="small"
             sx={{
-              bgcolor: "#eff6ff",
-              color: "#3b82f6",
+              bgcolor: "#EAF0F7",
+              color: "#24528C",
               fontWeight: 900,
-              border: "1px solid #dbeafe",
+              border: "1px solid #EAF0F7",
             }}
           />
         );
@@ -550,7 +550,7 @@ export default function StaffAttendance() {
             label="Present Today"
             value={presentCount}
             total={totalCount}
-            color="#3b82f6"
+            color="#24528C"
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -1108,9 +1108,9 @@ export default function StaffAttendance() {
                         activeLog.checkOutTime !== "Active"
                           ? "#fef2f2"
                           : activeLog.checkOutTime === "Active"
-                            ? "#eff6ff"
+                            ? "#EAF0F7"
                             : "#f1f5f9",
-                      border: `2px solid ${activeLog.checkOutTime !== "-" && activeLog.checkOutTime !== "Active" ? "#ef4444" : activeLog.checkOutTime === "Active" ? "#3b82f6" : "#cbd5e1"}`,
+                      border: `2px solid ${activeLog.checkOutTime !== "-" && activeLog.checkOutTime !== "Active" ? "#ef4444" : activeLog.checkOutTime === "Active" ? "#24528C" : "#cbd5e1"}`,
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
@@ -1120,7 +1120,7 @@ export default function StaffAttendance() {
                       <DotIcon
                         sx={{
                           fontSize: 16,
-                          color: "#3b82f6",
+                          color: "#24528C",
                           animation: "pulse 1.5s infinite",
                         }}
                       />
@@ -1153,7 +1153,7 @@ export default function StaffAttendance() {
                           <Typography
                             variant="body2"
                             fontWeight="900"
-                            color="#3b82f6"
+                            color="#24528C"
                           >
                             Shift Active & On Duty
                           </Typography>

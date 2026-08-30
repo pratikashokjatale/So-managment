@@ -125,7 +125,7 @@ export default function ResidentProfileCard({ resident }: ResidentProfileCardPro
               <Typography 
                 variant="body2" 
                 fontWeight="800" 
-                color="#2c4d93"
+                color="#24528C"
                 sx={{ 
                   fontSize: '0.88rem',
                   letterSpacing: '0.2px',

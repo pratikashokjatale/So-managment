@@ -253,7 +253,7 @@ const LoginPage = () => {
               textAlign: "center",
             }}
           >
-            <Box component="span" sx={{ color: "#183A6B", mr: 1.5 }}>
+            <Box component="span" sx={{ color: "#24528C", mr: 1.5 }}>
               Marbella Society
             </Box>
             <Box component="span" sx={{ color: "#C89A3D" }}>
@@ -592,10 +592,10 @@ const LoginPage = () => {
                         borderWidth: "1.2px",
                       },
                       "&:hover fieldset": {
-                        borderColor: "#183A6B !important", // Navy hover
+                        borderColor: "#24528C !important", // Navy hover
                       },
                       "&.Mui-focused fieldset": {
-                        borderColor: "#183A6B !important", // Navy focus
+                        borderColor: "#24528C !important", // Navy focus
                         borderWidth: "1.5px",
                       },
                     },
@@ -672,10 +672,10 @@ const LoginPage = () => {
                         borderWidth: "1.2px",
                       },
                       "&:hover fieldset": {
-                        borderColor: "#183A6B !important",
+                        borderColor: "#24528C !important",
                       },
                       "&.Mui-focused fieldset": {
-                        borderColor: "#183A6B !important",
+                        borderColor: "#24528C !important",
                         borderWidth: "1.5px",
                       },
                     },
@@ -712,7 +712,7 @@ const LoginPage = () => {
                         p: 0.25,
                         mr: 0.25,
                         "&.Mui-checked": {
-                          color: "#183A6B", // Navy
+                          color: "#24528C", // Navy
                         },
                       }}
                       size="small"
@@ -765,7 +765,7 @@ const LoginPage = () => {
                   fontSize: "0.92rem",
                   letterSpacing: "1px",
                   fontFamily: "'Satoshi', sans-serif",
-                  background: "linear-gradient(135deg, #183A6B 0%, #254F85 100%)", // Navy
+                  background: "linear-gradient(135deg, #24528C 0%, #254F85 100%)", // Navy
                   boxShadow: "0 4px 15px rgba(24, 58, 107, 0.2)",
                   transition: "all 0.2s ease-in-out",
                   "&:hover": {
@@ -822,7 +822,7 @@ const LoginPage = () => {
                 py: 1.1,
                 transition: "all 0.2s ease-in-out",
                 "&:hover": {
-                  borderColor: "#183A6B",
+                  borderColor: "#24528C",
                   bgcolor: "rgba(200,154,61,0.05)",
                   transform: "translateY(-2px)",
                   boxShadow: "0 4px 12px rgba(24,58,107,0.12)",
@@ -849,7 +849,7 @@ const LoginPage = () => {
                 py: 1.1,
                 transition: "all 0.2s ease-in-out",
                 "&:hover": {
-                  borderColor: "#183A6B",
+                  borderColor: "#24528C",
                   bgcolor: "rgba(200,154,61,0.05)",
                   transform: "translateY(-2px)",
                   boxShadow: "0 4px 12px rgba(24,58,107,0.12)",
@@ -873,7 +873,7 @@ const LoginPage = () => {
                 py: 1.1,
                 transition: "all 0.2s ease-in-out",
                 "&:hover": {
-                  borderColor: "#183A6B",
+                  borderColor: "#24528C",
                   bgcolor: "rgba(200,154,61,0.05)",
                   transform: "translateY(-2px)",
                   boxShadow: "0 4px 12px rgba(24,58,107,0.12)",

@@ -115,7 +115,7 @@ const getInventoryList = (payload: any): any[] => {
 const CRMDashboard = ({ user }: { user: any }) => {
   const userName = user?.name || "Simran Kaur";
   const [view, setView] = useState<DashboardView>("home");
-  const [activeTab, setActiveTab] = useState<"helpdesk" | "rfid" | "intake">(
+  const [activeTab, setActiveTab] = useState<"helpdesk" | "rfid" | "intake" | "approvals">(
     "helpdesk",
   );
   const [activeGroupOfficeTab, setActiveGroupOfficeTab] =
@@ -261,8 +261,8 @@ const CRMDashboard = ({ user }: { user: any }) => {
             key={index}
             component="span"
             sx={{
-              bgcolor: "#f3e8ff",
-              color: "#7e22ce",
+              bgcolor: "#F3E8FF",
+              color: "#7A4FB5",
               px: 1,
               py: 0.25,
               borderRadius: "4px",

@@ -29,11 +29,11 @@ const categoryLabels: Record<string, string> = {
 
 const statusColors: Record<string, { bg: string; color: string }> = {
   OPEN: { bg: "#fff7ed", color: "#ea580c" },
-  IN_PROGRESS: { bg: "#eff6ff", color: "#1d4ed8" },
+  IN_PROGRESS: { bg: "#EAF0F7", color: "#24528C" },
   RESOLVED: { bg: "#f0fdf4", color: "#16a34a" },
   CLOSED: { bg: "#f8fafc", color: "#64748b" },
   REJECTED: { bg: "#fef2f2", color: "#dc2626" },
-  CANCELLED: { bg: "#faf5ff", color: "#7c3aed" },
+  CANCELLED: { bg: "#F3E8FF", color: "#7A4FB5" },
 };
 
 const priorityColors: Record<string, { bg: string; color: string }> = {
@@ -182,8 +182,8 @@ export default function GetIssues() {
               <Stack direction="row" spacing={1.5} alignItems="center">
                 <Avatar
                   sx={{
-                    bgcolor: row.type === "FEEDBACK" ? "#faf5ff" : "#fef2f2",
-                    color: row.type === "FEEDBACK" ? "#7c3aed" : "#dc2626",
+                    bgcolor: row.type === "FEEDBACK" ? "#F3E8FF" : "#fef2f2",
+                    color: row.type === "FEEDBACK" ? "#7A4FB5" : "#dc2626",
                     width: 38,
                     height: 38,
                   }}
@@ -344,9 +344,9 @@ export default function GetIssues() {
                   textTransform: "none",
                   fontWeight: 700,
                   fontSize: "0.75rem",
-                  borderColor: "#2c4d93",
-                  color: "#2c4d93",
-                  "&:hover": { bgcolor: "#eff6ff", borderColor: "#2c4d93" },
+                  borderColor: "#24528C",
+                  color: "#24528C",
+                  "&:hover": { bgcolor: "#EAF0F7", borderColor: "#24528C" },
                 }}
               >
                 Manage

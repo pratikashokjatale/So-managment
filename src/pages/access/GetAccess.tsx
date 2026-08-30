@@ -52,10 +52,10 @@ export default function GetAccess() {
   const [uploadingPdf, setUploadingPdf] = useState(false);
 
   const cardDesigns = [
-    { role: "Resident", title: "RESIDENT ID NUMBER", id: "M B 1 0 4 2", color: "#1e293b", textColor: "#1e3a8a" },
+    { role: "Resident", title: "RESIDENT ID NUMBER", id: "M B 1 0 4 2", color: "#1e293b", textColor: "#24528C" },
     { role: "Guest", title: "GUEST PASS NUMBER", id: "G B 2 2 1 0", color: "#64748b", textColor: "#475569" },
     { role: "Staff", title: "STAFF ID NUMBER", id: "S T 3 3 0 1", color: "#166534", textColor: "#166534" },
-    { role: "Manager", title: "MANAGER ID NUMBER", id: "M G 1 0 0 1", color: "#1e293b", textColor: "#1e3a8a" },
+    { role: "Manager", title: "MANAGER ID NUMBER", id: "M G 1 0 0 1", color: "#1e293b", textColor: "#24528C" },
   ];
 
   const fetchUsers = async () => {
@@ -188,14 +188,14 @@ export default function GetAccess() {
       case "SUPER_ADMIN":
         return "#d6b361"; // Gold
       case "RESIDENT":
-        return "#204a7b"; // Dark Blue
+        return "#24528C"; // Dark Blue
       case "GUEST":
         return "#e2e8f0"; // Light Grey
       case "STAFF":
       case "SECURITY":
         return "#22c55e"; // Green
       default:
-        return "#204a7b";
+        return "#24528C";
     }
   };
 
@@ -270,14 +270,14 @@ export default function GetAccess() {
             variant="outlined"
             onClick={() => setOpenCardDesigns(true)}
             startIcon={<CardDesignsIcon />}
-            sx={{ borderColor: "#e2e8f0", color: "#3b82f6", textTransform: "none", borderRadius: "8px", fontWeight: 600, px: 2, bgcolor: "#f0fdfa" }}
+            sx={{ borderColor: "#e2e8f0", color: "#24528C", textTransform: "none", borderRadius: "8px", fontWeight: 600, px: 2, bgcolor: "#f0fdfa" }}
           >
             Card designs
           </Button>
           <Button
             variant="contained"
             startIcon={<AddIcon />}
-            sx={{ bgcolor: "#204a7b", textTransform: "none", borderRadius: "8px", fontWeight: 600, px: 2 }}
+            sx={{ bgcolor: "#24528C", textTransform: "none", borderRadius: "8px", fontWeight: 600, px: 2 }}
           >
             Issue card
           </Button>

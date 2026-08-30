@@ -37,15 +37,15 @@ interface DashboardSidebarProps {
 function getFacilityIcon(iconName: string) {
   switch (iconName) {
     case "SportsTennis":
-      return <TennisIcon sx={{ color: "#2c4d93" }} />;
+      return <TennisIcon sx={{ color: "#24528C" }} />;
     case "FitnessCenter":
       return <GymIcon sx={{ color: "#ea580c" }} />;
     case "Movie":
-      return <CinemaIcon sx={{ color: "#7c3aed" }} />;
+      return <CinemaIcon sx={{ color: "#7A4FB5" }} />;
     case "Spa":
-      return <SpaIcon sx={{ color: "#db2777" }} />;
+      return <SpaIcon sx={{ color: "#7A4FB5" }} />;
     case "SelfImprovement":
-      return <YogaIcon sx={{ color: "#8b5cf6" }} />;
+      return <YogaIcon sx={{ color: "#7A4FB5" }} />;
     case "Pool":
       return <PoolIcon sx={{ color: "#06b6d4" }} />;
     case "Park":
@@ -101,8 +101,8 @@ export default function DashboardSidebar({
             minWidth: "auto",
             flex: 1,
           },
-          "& .Mui-selected": { color: "#2c4d93 !important" },
-          "& .MuiTabs-indicator": { backgroundColor: "#2c4d93" },
+          "& .Mui-selected": { color: "#24528C !important" },
+          "& .MuiTabs-indicator": { backgroundColor: "#24528C" },
         }}
       >
         <Tab label="Upcoming Bookings" />
@@ -127,7 +127,7 @@ export default function DashboardSidebar({
               alignItems: "center",
             }}
           >
-            <CircularProgress size={30} sx={{ color: "#2c4d93" }} />
+            <CircularProgress size={30} sx={{ color: "#24528C" }} />
           </Box>
         ) : sidebarTab === 0 ? (
           /* Bookings Tab */
@@ -169,7 +169,7 @@ export default function DashboardSidebar({
                     textTransform: "none",
                     fontWeight: 800,
                     mt: 1,
-                    color: "#2c4d93",
+                    color: "#24528C",
                   }}
                 >
                   Book a Facility
@@ -242,7 +242,7 @@ export default function DashboardSidebar({
                       {isAdmin && (
                         <Typography
                           variant="caption"
-                          color="#2c4d93"
+                          color="#24528C"
                           fontWeight="700"
                           display="block"
                         >
@@ -342,7 +342,7 @@ export default function DashboardSidebar({
                         width: 48,
                         height: 48,
                         borderRadius: "10px",
-                        bgcolor: "#eff6ff",
+                        bgcolor: "#EAF0F7",
                       }}
                     >
                       {getFacilityIcon(facility.iconKey)}
@@ -375,12 +375,12 @@ export default function DashboardSidebar({
                         fontWeight: 800,
                         fontSize: "0.75rem",
                         borderColor: "#e2e8f0",
-                        color: "#2c4d93",
+                        color: "#24528C",
                         minWidth: 60,
                         transition: "all 0.2s",
                         "&:hover": {
-                          bgcolor: "#eff6ff",
-                          borderColor: "#bfdbfe",
+                          bgcolor: "#EAF0F7",
+                          borderColor: "#EAF0F7",
                         },
                       }}
                     >
@@ -404,7 +404,7 @@ export default function DashboardSidebar({
             py: 1.25,
             fontWeight: 800,
             textTransform: "none",
-            bgcolor: "#2c4d93",
+            bgcolor: "#24528C",
             color: "white",
             boxShadow: "none",
             transition: "all 0.2s",

@@ -145,9 +145,9 @@ const ConciergeIntakeSection = ({ dashboard }: { dashboard: any }) => {
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                   <Box
                     sx={{
-                      bgcolor: "#f5effb",
+                      bgcolor: "#F3E8FF",
                       borderRadius: "16px",
-                      border: "2px dashed #d8b4fe",
+                      border: "2px dashed #F3E8FF",
                       p: { xs: 3, md: 5 },
                       display: "flex",
                       flexDirection: "column",
@@ -169,7 +169,7 @@ const ConciergeIntakeSection = ({ dashboard }: { dashboard: any }) => {
                       }}
                     >
                       <FileUploadOutlinedIcon
-                        sx={{ color: "#9333ea", fontSize: 24 }}
+                        sx={{ color: "#7A4FB5", fontSize: 24 }}
                       />
                     </Box>
                     <Typography
@@ -256,7 +256,7 @@ const ConciergeIntakeSection = ({ dashboard }: { dashboard: any }) => {
                           }}
                         >
                           <DescriptionOutlinedIcon
-                            sx={{ fontSize: 16, mr: 1, color: "#9333ea" }}
+                            sx={{ fontSize: 16, mr: 1, color: "#7A4FB5" }}
                           />
                           <Typography
                             sx={{ fontWeight: 600, fontSize: "0.85rem" }}
@@ -266,8 +266,8 @@ const ConciergeIntakeSection = ({ dashboard }: { dashboard: any }) => {
                           <Box
                             sx={{
                               ml: 1,
-                              bgcolor: "#f3e8ff",
-                              color: "#9333ea",
+                              bgcolor: "#F3E8FF",
+                              color: "#7A4FB5",
                               px: 1,
                               py: 0.25,
                               borderRadius: "4px",
@@ -295,7 +295,7 @@ const ConciergeIntakeSection = ({ dashboard }: { dashboard: any }) => {
                           }}
                         >
                           <DescriptionOutlinedIcon
-                            sx={{ fontSize: 16, mr: 1, color: "#9333ea" }}
+                            sx={{ fontSize: 16, mr: 1, color: "#7A4FB5" }}
                           />
                           <Typography
                             sx={{ fontWeight: 600, fontSize: "0.85rem" }}
@@ -305,8 +305,8 @@ const ConciergeIntakeSection = ({ dashboard }: { dashboard: any }) => {
                           <Box
                             sx={{
                               ml: 1,
-                              bgcolor: "#f3e8ff",
-                              color: "#9333ea",
+                              bgcolor: "#F3E8FF",
+                              color: "#7A4FB5",
                               px: 1,
                               py: 0.25,
                               borderRadius: "4px",
@@ -334,7 +334,7 @@ const ConciergeIntakeSection = ({ dashboard }: { dashboard: any }) => {
                           }}
                         >
                           <DescriptionOutlinedIcon
-                            sx={{ fontSize: 16, mr: 1, color: "#9333ea" }}
+                            sx={{ fontSize: 16, mr: 1, color: "#7A4FB5" }}
                           />
                           <Typography
                             sx={{ fontWeight: 600, fontSize: "0.85rem" }}
@@ -344,8 +344,8 @@ const ConciergeIntakeSection = ({ dashboard }: { dashboard: any }) => {
                           <Box
                             sx={{
                               ml: 1,
-                              bgcolor: "#f3e8ff",
-                              color: "#9333ea",
+                              bgcolor: "#F3E8FF",
+                              color: "#7A4FB5",
                               px: 1,
                               py: 0.25,
                               borderRadius: "4px",
@@ -382,7 +382,7 @@ const ConciergeIntakeSection = ({ dashboard }: { dashboard: any }) => {
                           }}
                         >
                           <InsertChartOutlinedIcon
-                            sx={{ fontSize: 16, mr: 1, color: "#9333ea" }}
+                            sx={{ fontSize: 16, mr: 1, color: "#7A4FB5" }}
                           />
                           <Typography
                             sx={{ fontWeight: 600, fontSize: "0.85rem" }}
@@ -392,8 +392,8 @@ const ConciergeIntakeSection = ({ dashboard }: { dashboard: any }) => {
                           <Box
                             sx={{
                               ml: 1,
-                              bgcolor: "#f3e8ff",
-                              color: "#9333ea",
+                              bgcolor: "#F3E8FF",
+                              color: "#7A4FB5",
                               px: 1,
                               py: 0.25,
                               borderRadius: "4px",
@@ -421,7 +421,7 @@ const ConciergeIntakeSection = ({ dashboard }: { dashboard: any }) => {
                           }}
                         >
                           <PeopleOutlineIcon
-                            sx={{ fontSize: 16, mr: 1, color: "#9333ea" }}
+                            sx={{ fontSize: 16, mr: 1, color: "#7A4FB5" }}
                           />
                           <Typography
                             sx={{ fontWeight: 600, fontSize: "0.85rem" }}
@@ -431,8 +431,8 @@ const ConciergeIntakeSection = ({ dashboard }: { dashboard: any }) => {
                           <Box
                             sx={{
                               ml: 1,
-                              bgcolor: "#f3e8ff",
-                              color: "#9333ea",
+                              bgcolor: "#F3E8FF",
+                              color: "#7A4FB5",
                               px: 1,
                               py: 0.25,
                               borderRadius: "4px",
@@ -460,7 +460,7 @@ const ConciergeIntakeSection = ({ dashboard }: { dashboard: any }) => {
                           }}
                         >
                           <DescriptionOutlinedIcon
-                            sx={{ fontSize: 16, mr: 1, color: "#9333ea" }}
+                            sx={{ fontSize: 16, mr: 1, color: "#7A4FB5" }}
                           />
                           <Typography
                             sx={{ fontWeight: 600, fontSize: "0.85rem" }}
@@ -470,8 +470,8 @@ const ConciergeIntakeSection = ({ dashboard }: { dashboard: any }) => {
                           <Box
                             sx={{
                               ml: 1,
-                              bgcolor: "#f3e8ff",
-                              color: "#9333ea",
+                              bgcolor: "#F3E8FF",
+                              color: "#7A4FB5",
                               px: 1,
                               py: 0.25,
                               borderRadius: "4px",
@@ -533,7 +533,7 @@ const ConciergeIntakeSection = ({ dashboard }: { dashboard: any }) => {
                       }}
                     >
                       <AutoAwesomeIcon
-                        sx={{ color: "#9333ea", fontSize: 16 }}
+                        sx={{ color: "#7A4FB5", fontSize: 16 }}
                       />
                       <Typography
                         sx={{
@@ -558,8 +558,8 @@ const ConciergeIntakeSection = ({ dashboard }: { dashboard: any }) => {
                         <Box
                           key={type}
                           sx={{
-                            bgcolor: "#f3e8ff",
-                            color: "#9333ea",
+                            bgcolor: "#F3E8FF",
+                            color: "#7A4FB5",
                             px: 1.5,
                             py: 0.5,
                             borderRadius: "20px",

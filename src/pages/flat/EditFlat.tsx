@@ -410,8 +410,8 @@ export default function EditFlat() {
                 px: 4,
                 fontWeight: 600,
                 boxShadow: "none",
-                bgcolor: "#2c4d93",
-                "&:hover": { bgcolor: "#2c4d93" },
+                bgcolor: "#24528C",
+                "&:hover": { bgcolor: "#24528C" },
               }}
             >
               {submitting ? "Saving..." : "Save Changes"}

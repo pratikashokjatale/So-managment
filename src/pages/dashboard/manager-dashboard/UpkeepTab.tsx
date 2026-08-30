@@ -15,15 +15,15 @@ import {
   Check as CheckIcon,
 } from "@mui/icons-material";
 
-const BRAND = "#204a7b";
-const GREEN = "#22c55e";
+const BRAND = "#24528C";
+const GREEN = "#159A5B";
 const GOLD = "#bca47c";
 const GOLD_D = "#a17a3f";
 const MUT = "#64748b";
 const INK = "#1e293b";
 const BG = "#f1f5f9";
 const LINE = "#e2e8f0";
-const TINT = "#eef2ff";
+const TINT = "#EAF0F7";
 
 const initialZones = [
   { id: "Z1", zone: "Pool deck & changing rooms", owner: "Housekeeping", by: "Ramesh Kumar", at: "07:20", checks: [["Deck swept & mopped", true], ["Changing rooms sanitised", true], ["Towels restocked", false], ["Water clarity / pH log", true]] },
@@ -243,6 +243,9 @@ export default function UpkeepTab() {
                         sx={{
                           fontSize: "0.85rem",
                           color: isChecked ? MUT : INK,
+                          textDecoration: isChecked ? "line-through" : "none",
+                          textDecorationColor: MUT,
+                          textDecorationThickness: "1px",
                         }}
                       >
                         {c[0]}

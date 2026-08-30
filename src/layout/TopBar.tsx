@@ -94,15 +94,15 @@ export default function TopBar({ handleDrawerToggle, currentRole, onBackToAdmin 
             <Button
               onClick={onBackToAdmin}
               sx={{
-                bgcolor: "#eff6ff",
-                color: "#1d4ed8",
+                bgcolor: "#EAF0F7",
+                color: "#24528C",
                 fontWeight: 700,
                 borderRadius: "20px",
                 px: 3,
                 py: 0.75,
                 textTransform: "none",
                 "&:hover": {
-                  bgcolor: "#dbeafe",
+                  bgcolor: "#EAF0F7",
                 },
               }}
             >
@@ -120,8 +120,8 @@ export default function TopBar({ handleDrawerToggle, currentRole, onBackToAdmin 
               </Box>
               <Box 
                 sx={{ 
-                  bgcolor: "#f3e8ff", 
-                  color: "#7e22ce", 
+                  bgcolor: "#F3E8FF", 
+                  color: "#7A4FB5", 
                   fontWeight: 600, 
                   fontSize: "0.85rem", 
                   px: 1.5, 

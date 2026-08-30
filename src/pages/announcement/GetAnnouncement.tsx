@@ -30,7 +30,7 @@ import {
 } from '@/apis/announcement';
 
 const INTER = "'Inter', system-ui, sans-serif";
-const NAVY = '#2c4d93';
+const NAVY = '#24528C';
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 const fmtDate = (iso: string) => {
@@ -129,7 +129,7 @@ function AnnCard({ ann, onClick }: { ann: any; onClick: () => void }) {
             <Box
               sx={{
                 width: 34, height: 34, borderRadius: '8px', overflow: 'hidden',
-                flexShrink: 0, mt: '1px', bgcolor: '#eff6ff',
+                flexShrink: 0, mt: '1px', bgcolor: '#EAF0F7',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}
             >

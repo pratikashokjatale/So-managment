@@ -74,7 +74,7 @@ export default function FacilityBookingsTab({
                     <Typography variant="body2" fontWeight="700">{row.user?.name}</Typography>
                     <Typography variant="caption" color="text.secondary">{row.user?.role}</Typography>
                   </TableCell>
-                  <TableCell sx={{ fontWeight: 600, color: '#1e3a8a' }}>{row.bookingCode}</TableCell>
+                  <TableCell sx={{ fontWeight: 600, color: '#24528C' }}>{row.bookingCode}</TableCell>
                   <TableCell>
                     <StatusBadge status={row.status} variantType="text" />
                   </TableCell>

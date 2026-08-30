@@ -213,7 +213,7 @@ export default function GetGuest() {
             label: (
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 Active Guests
-                {activeCount > 0 && <Chip label={activeCount} size="small" sx={{ height: 18, fontSize: '0.7rem', fontWeight: 800, bgcolor: '#e0f2fe', color: '#0369a1' }} />}
+                {activeCount > 0 && <Chip label={activeCount} size="small" sx={{ height: 18, fontSize: '0.7rem', fontWeight: 800, bgcolor: '#e0f2fe', color: '#24528C' }} />}
               </Box>
             ),
             value: 0
@@ -265,7 +265,7 @@ export default function GetGuest() {
             label: 'Flat',
             render: (row) => (
               <Chip label={row.apartment} size="small"
-                sx={{ borderRadius: '6px', fontWeight: 700, bgcolor: '#eff6ff', color: '#1d4ed8', fontSize: '0.72rem' }} />
+                sx={{ borderRadius: '6px', fontWeight: 700, bgcolor: '#EAF0F7', color: '#24528C', fontSize: '0.72rem' }} />
             )
           },
           {
@@ -304,7 +304,7 @@ export default function GetGuest() {
               <Stack direction="row" spacing={0.5} justifyContent="flex-end">
                 <Tooltip title="View Details">
                   <IconButton size="small"
-                    sx={{ color: '#091542', bgcolor: '#eff6ff', borderRadius: '8px', '&:hover': { bgcolor: '#dbeafe' } }}
+                    sx={{ color: '#091542', bgcolor: '#EAF0F7', borderRadius: '8px', '&:hover': { bgcolor: '#EAF0F7' } }}
                     onClick={() => setDrawerGuest(row)}>
                     <VisibilityOutlinedIcon fontSize="small" />
                   </IconButton>
@@ -475,7 +475,7 @@ export default function GetGuest() {
                   Flat Details
                 </Typography>
                 {g.flat ? (
-                  <Box sx={{ p: 2, bgcolor: '#eff6ff', borderRadius: '12px', border: '1px solid #bfdbfe' }}>
+                  <Box sx={{ p: 2, bgcolor: '#EAF0F7', borderRadius: '12px', border: '1px solid #EAF0F7' }}>
                     <Grid container spacing={1.5}>
                       {[
                         ['Flat Number', g.flat.flatNumber],

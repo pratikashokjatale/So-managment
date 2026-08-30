@@ -99,7 +99,7 @@ const calendarStyles = {
   '.react-calendar__tile--now': {
     backgroundColor: '#f0f9ff',
     '& abbr': {
-      color: '#0284c7',
+      color: '#24528C',
       fontWeight: 'bold',
       backgroundColor: '#bae6fd',
       width: '24px',
@@ -116,9 +116,9 @@ const calendarStyles = {
   '.react-calendar__tile--active': {
     backgroundColor: '#f1f5f9 !important',
     color: '#0f172a !important',
-    border: '2px solid #3b82f6 !important',
+    border: '2px solid #24528C !important',
     '& abbr': {
-      color: '#3b82f6',
+      color: '#24528C',
     }
   },
   '.react-calendar__month-view__days__tile--neighboringMonth': {
@@ -455,7 +455,7 @@ export default function BookingCalendar() {
                 ) : (
                   selectedDateBookings.map((row) => (
                     <TableRow key={row.id} hover>
-                      <TableCell sx={{ fontWeight: 600, color: '#2c4d93' }}>{row.bookingCode}</TableCell>
+                      <TableCell sx={{ fontWeight: 600, color: '#24528C' }}>{row.bookingCode}</TableCell>
                       <TableCell sx={{ fontWeight: 500 }}>
                         {row.startTime?.substring(0, 5)} - {row.endTime?.substring(0, 5)}
                       </TableCell>

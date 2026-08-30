@@ -242,7 +242,7 @@ export default function GetTower() {
     ".MuiOutlinedInput-notchedOutline": { borderColor: "#e2e8f0" },
     "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#cbd5e1" },
     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#2c4d93",
+      borderColor: "#24528C",
     },
   };
 
@@ -277,8 +277,8 @@ export default function GetTower() {
             px: 3,
             fontWeight: 600,
             boxShadow: "none",
-            bgcolor: "#2c4d93",
-            "&:hover": { bgcolor: "#2c4d93" },
+            bgcolor: "#24528C",
+            "&:hover": { bgcolor: "#24528C" },
           }}
         >
           Add Tower
@@ -290,17 +290,17 @@ export default function GetTower() {
         <Grid size={{ xs: 12, sm: 4 }}>
           <Card
             sx={{
-              bgcolor: "#faf5ff",
+              bgcolor: "#F3E8FF",
               borderRadius: "12px",
               boxShadow: "none",
-              border: "1px solid #f3e8ff",
+              border: "1px solid #F3E8FF",
             }}
           >
             <CardContent sx={{ display: "flex", alignItems: "center", gap: 2 }}>
               <Box
                 sx={{
                   p: 1.5,
-                  bgcolor: "#8b5cf6",
+                  bgcolor: "#7A4FB5",
                   color: "#ffffff",
                   borderRadius: "8px",
                   display: "flex",
@@ -370,7 +370,7 @@ export default function GetTower() {
         <Grid size={{ xs: 12, sm: 4 }}>
           <Card
             sx={{
-              bgcolor: "#eff6ff",
+              bgcolor: "#EAF0F7",
               borderRadius: "12px",
               boxShadow: "none",
               border: "1px solid #d0e1fd",
@@ -380,7 +380,7 @@ export default function GetTower() {
               <Box
                 sx={{
                   p: 1.5,
-                  bgcolor: "#2c4d93",
+                  bgcolor: "#24528C",
                   color: "#ffffff",
                   borderRadius: "8px",
                   display: "flex",
@@ -611,8 +611,8 @@ export default function GetTower() {
                       <IconButton
                         size="small"
                         sx={{
-                          color: "#2c4d93",
-                          bgcolor: "#eff6ff",
+                          color: "#24528C",
+                          bgcolor: "#EAF0F7",
                           mr: 1,
                           "&:hover": { bgcolor: "#d0e1fd" },
                         }}

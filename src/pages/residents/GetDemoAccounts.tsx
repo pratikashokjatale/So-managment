@@ -183,7 +183,7 @@ export default function GetDemoAccounts() {
               <>
                 <IconButton
                   size="small"
-                  sx={{ color: "primary.main", bgcolor: "#eff6ff", mr: 1 }}
+                  sx={{ color: "primary.main", bgcolor: "#EAF0F7", mr: 1 }}
                   onClick={() => navigate(`/residents/${row.id}`)}
                 >
                   <VisibilityOutlinedIcon fontSize="small" />

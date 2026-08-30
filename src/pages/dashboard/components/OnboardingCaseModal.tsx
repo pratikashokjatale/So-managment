@@ -172,13 +172,13 @@ const OnboardingCaseModal: React.FC<OnboardingCaseModalProps> = ({ open, onClose
               startIcon={<FileUploadOutlinedIcon />}
               sx={{
                 color: "#7A4FB5",
-                borderColor: "#e9d5ff",
-                bgcolor: "#faf5ff",
+                borderColor: "#F3E8FF",
+                bgcolor: "#F3E8FF",
                 textTransform: "none",
                 fontWeight: 600,
                 borderRadius: "8px",
                 px: 2,
-                "&:hover": { borderColor: "#d8b4fe", bgcolor: "#f3e8ff" }
+                "&:hover": { borderColor: "#F3E8FF", bgcolor: "#F3E8FF" }
               }}
             >
               Add
@@ -210,11 +210,11 @@ const OnboardingCaseModal: React.FC<OnboardingCaseModalProps> = ({ open, onClose
                       target="_blank"
                       sx={{ display: "flex", alignItems: "center", justifyContent: "center", width: 32, height: 32, borderRadius: "8px", bgcolor: "#f1f5f9", cursor: "pointer", "&:hover": { bgcolor: "#e2e8f0" }, color: "inherit" }}
                     >
-                      <DownloadOutlinedIcon sx={{ fontSize: 18, color: "#3b82f6" }} />
+                      <DownloadOutlinedIcon sx={{ fontSize: 18, color: "#24528C" }} />
                     </Box>
                   )}
                   <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", width: 32, height: 32, borderRadius: "8px", bgcolor: "#f1f5f9", cursor: "pointer", "&:hover": { bgcolor: "#e2e8f0" } }}>
-                    <ShareOutlinedIcon sx={{ fontSize: 18, color: "#3b82f6" }} />
+                    <ShareOutlinedIcon sx={{ fontSize: 18, color: "#24528C" }} />
                   </Box>
                 </Box>
               </Box>

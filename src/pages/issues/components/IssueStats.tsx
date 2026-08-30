@@ -70,7 +70,7 @@ export default function IssueStats({
             "&:hover": { transform: "translateY(-2px)" },
           }}
         >
-          <Avatar sx={{ bgcolor: "#eff6ff", color: "#1d4ed8", width: 44, height: 44 }}>
+          <Avatar sx={{ bgcolor: "#EAF0F7", color: "#24528C", width: 44, height: 44 }}>
             <InProgressIcon sx={{ fontSize: 22 }} />
           </Avatar>
           <Box>

@@ -203,18 +203,18 @@ export default function AddDemoAccount() {
                 <Typography variant="caption" fontWeight="800" color="#64748b">
                   CARD NUMBER
                 </Typography>
-                <Typography variant="body1" fontWeight="700" color="#1d4ed8">
+                <Typography variant="body1" fontWeight="700" color="#24528C">
                   {credentials.cardNumber || "N/A"}
                 </Typography>
               </Box>
 
-              <Box sx={{ p: 2, bgcolor: "#eff6ff", borderRadius: "12px", border: "1px solid #bfdbfe" }}>
+              <Box sx={{ p: 2, bgcolor: "#EAF0F7", borderRadius: "12px", border: "1px solid #EAF0F7" }}>
                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                   <Box>
-                    <Typography variant="caption" fontWeight="800" color="#2c4d93">
+                    <Typography variant="caption" fontWeight="800" color="#24528C">
                       EMAIL / USERNAME
                     </Typography>
-                    <Typography variant="body1" fontWeight="700" color="#2c4d93">
+                    <Typography variant="body1" fontWeight="700" color="#24528C">
                       {credentials.credentials?.identifier || credentials.email}
                     </Typography>
                   </Box>
@@ -222,18 +222,18 @@ export default function AddDemoAccount() {
                     size="small"
                     onClick={() => handleCopy(credentials.credentials?.identifier || credentials.email, "Email")}
                   >
-                    <CopyIcon fontSize="small" sx={{ color: "#2c4d93" }} />
+                    <CopyIcon fontSize="small" sx={{ color: "#24528C" }} />
                   </IconButton>
                 </Stack>
               </Box>
 
-              <Box sx={{ p: 2, bgcolor: "#eff6ff", borderRadius: "12px", border: "1px solid #bfdbfe" }}>
+              <Box sx={{ p: 2, bgcolor: "#EAF0F7", borderRadius: "12px", border: "1px solid #EAF0F7" }}>
                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                   <Box>
-                    <Typography variant="caption" fontWeight="800" color="#2c4d93">
+                    <Typography variant="caption" fontWeight="800" color="#24528C">
                       PASSWORD
                     </Typography>
-                    <Typography variant="body1" fontWeight="700" color="#2c4d93">
+                    <Typography variant="body1" fontWeight="700" color="#24528C">
                       {credentials.credentials?.password || password}
                     </Typography>
                   </Box>
@@ -241,7 +241,7 @@ export default function AddDemoAccount() {
                     size="small"
                     onClick={() => handleCopy(credentials.credentials?.password || password, "Password")}
                   >
-                    <CopyIcon fontSize="small" sx={{ color: "#2c4d93" }} />
+                    <CopyIcon fontSize="small" sx={{ color: "#24528C" }} />
                   </IconButton>
                 </Stack>
               </Box>
@@ -255,7 +255,7 @@ export default function AddDemoAccount() {
                 borderRadius: "12px",
                 textTransform: "none",
                 fontWeight: 800,
-                bgcolor: "#2c4d93",
+                bgcolor: "#24528C",
                 py: 1.5,
               }}
             >
@@ -275,8 +275,8 @@ export default function AddDemoAccount() {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                      <PersonOutlineIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                    <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                      <PersonOutlineIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                     </Box>
                   </InputAdornment>
                 ),
@@ -295,8 +295,8 @@ export default function AddDemoAccount() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <EmailOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <EmailOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -312,8 +312,8 @@ export default function AddDemoAccount() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <PhoneOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <PhoneOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -333,8 +333,8 @@ export default function AddDemoAccount() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <LockOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <LockOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -358,8 +358,8 @@ export default function AddDemoAccount() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <BadgeOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <BadgeOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -385,8 +385,8 @@ export default function AddDemoAccount() {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                          <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                        <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                          <EventOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                         </Box>
                       </InputAdornment>
                     ),
@@ -411,8 +411,8 @@ export default function AddDemoAccount() {
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                            <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                          <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                            <EventOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                           </Box>
                         </InputAdornment>
                       ),
@@ -441,8 +441,8 @@ export default function AddDemoAccount() {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                          <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                        <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                          <EventOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                         </Box>
                       </InputAdornment>
                     ),
@@ -464,8 +464,8 @@ export default function AddDemoAccount() {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                          <BadgeOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                        <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                          <BadgeOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                         </Box>
                       </InputAdornment>
                     ),
@@ -490,8 +490,8 @@ export default function AddDemoAccount() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <EventOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -523,7 +523,7 @@ export default function AddDemoAccount() {
                   textTransform: "none",
                   fontWeight: 800,
                   px: 4,
-                  bgcolor: "#2c4d93",
+                  bgcolor: "#24528C",
                 }}
               >
                 {submitting ? <CircularProgress size={20} color="inherit" /> : "Create"}

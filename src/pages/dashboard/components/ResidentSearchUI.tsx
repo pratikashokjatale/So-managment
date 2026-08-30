@@ -58,7 +58,7 @@ const ResidentSearchUI: React.FC<ResidentSearchUIProps> = ({
                   bgcolor: "#ffffff",
                   "& fieldset": { borderColor: "#e2e8f0" },
                   "&:hover fieldset": { borderColor: "#cbd5e1" },
-                  "&.Mui-focused fieldset": { borderColor: "#3b82f6" },
+                  "&.Mui-focused fieldset": { borderColor: "#24528C" },
                 },
                 "& .MuiInputBase-input": {
                   p: "10px 14px",
@@ -83,7 +83,7 @@ const ResidentSearchUI: React.FC<ResidentSearchUIProps> = ({
           variant="contained"
           disabled={!selectedResident && !loadingResidents} // Keep enabled if we want to "load" based on text, but Autocomplete handles it mostly.
           sx={{
-            bgcolor: "#2c5282",
+            bgcolor: "#24528C",
             color: "#ffffff",
             textTransform: "none",
             fontWeight: 600,
@@ -92,7 +92,7 @@ const ResidentSearchUI: React.FC<ResidentSearchUIProps> = ({
             py: 1.5,
             whiteSpace: "nowrap",
             boxShadow: "none",
-            "&:hover": { bgcolor: "#1a365d", boxShadow: "none" },
+            "&:hover": { bgcolor: "#1D4270", boxShadow: "none" },
           }}
         >
            Member Details
@@ -130,11 +130,11 @@ const ResidentSearchUI: React.FC<ResidentSearchUIProps> = ({
             component="span"
             onClick={() => setResidentSearchQuery(id)}
             sx={{
-              color: "#204a7b",
+              color: "#24528C",
               textDecoration: "underline",
               cursor: "pointer",
               mr: 1,
-              "&:hover": { color: "#162d4a" },
+              "&:hover": { color: "#1D4270" },
             }}
           >
             {id}

@@ -169,7 +169,7 @@ const ResidentProfileCard: React.FC<ResidentProfileCardProps> = ({
       {/* Profile Header section */}
       <Box sx={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
         <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-          <Avatar sx={{ width: 56, height: 56, bgcolor: "#1e3a8a", fontSize: "1.2rem", fontWeight: "bold" }}>
+          <Avatar sx={{ width: 56, height: 56, bgcolor: "#24528C", fontSize: "1.2rem", fontWeight: "bold" }}>
             {initials}
           </Avatar>
           <Box>
@@ -208,13 +208,13 @@ const ResidentProfileCard: React.FC<ResidentProfileCardProps> = ({
               label={label}
               onClick={() => setSelectedFacility(isActive ? null : fac)}
               sx={{
-                bgcolor: isActive ? "#2c5282" : "#f1f5f9",
+                bgcolor: isActive ? "#24528C" : "#f1f5f9",
                 color: isActive ? "#ffffff" : "#475569",
                 fontWeight: 600,
                 cursor: "pointer",
                 border: "none",
                 "&:hover": {
-                  bgcolor: isActive ? "#1a365d" : "#e2e8f0",
+                  bgcolor: isActive ? "#1D4270" : "#e2e8f0",
                 },
               }}
             />
@@ -365,7 +365,7 @@ const ResidentProfileCard: React.FC<ResidentProfileCardProps> = ({
                         onClick={() => handleBook(slot)}
                         disabled={isBooking}
                         sx={{
-                          bgcolor: "#2c5282",
+                          bgcolor: "#24528C",
                           color: "#ffffff",
                           textTransform: "none",
                           borderRadius: "8px",
@@ -375,7 +375,7 @@ const ResidentProfileCard: React.FC<ResidentProfileCardProps> = ({
                           fontSize: "0.85rem",
                           minWidth: "auto",
                           boxShadow: "none",
-                          "&:hover": { bgcolor: "#1a365d", boxShadow: "none" },
+                          "&:hover": { bgcolor: "#1D4270", boxShadow: "none" },
                         }}
                       >
                         {isBooking ? <CircularProgress size={16} sx={{ color: "#fff" }} /> : "Book"}

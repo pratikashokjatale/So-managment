@@ -63,7 +63,7 @@ export default function FacilitySchedulePricing({ data, onChange, errors }: Prop
         icon={<AccessTimeOutlinedIcon fontSize="small" />}
         title="Operating Hours"
         subtitle="Set the daily opening and closing times for this facility"
-        color="#2c4d93" bgColor="#eff6ff"
+        color="#24528C" bgColor="#EAF0F7"
       />
       <Box sx={{ px: 4, py: 3.5 }}>
         <Grid container spacing={3}>
@@ -80,8 +80,8 @@ export default function FacilitySchedulePricing({ data, onChange, errors }: Prop
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
-                      <AccessTimeIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                    <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                      <AccessTimeIcon sx={{ color: '#24528C', fontSize: 20 }} />
                     </Box>
                   </InputAdornment>
                 ),
@@ -101,8 +101,8 @@ export default function FacilitySchedulePricing({ data, onChange, errors }: Prop
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
-                      <AccessTimeIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                    <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                      <AccessTimeIcon sx={{ color: '#24528C', fontSize: 20 }} />
                     </Box>
                   </InputAdornment>
                 ),
@@ -120,7 +120,7 @@ export default function FacilitySchedulePricing({ data, onChange, errors }: Prop
                   <Checkbox
                     checked={data.allDay}
                     onChange={(e) => onChange("allDay", e.target.checked)}
-                    sx={{ color: "#E2E8F0", "&.Mui-checked": { color: "#2c4d93" }, p: 1 }}
+                    sx={{ color: "#E2E8F0", "&.Mui-checked": { color: "#24528C" }, p: 1 }}
                   />
                 }
                 label={<Typography variant="body2" fontWeight={600} sx={{ color: "#374151", fontFamily: "'Inter', system-ui, sans-serif" }}>Open All Day (24hrs)</Typography>}
@@ -165,9 +165,9 @@ export default function FacilitySchedulePricing({ data, onChange, errors }: Prop
               transition: "all 0.18s ease",
               boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
               "&.Mui-selected": {
-                bgcolor: "#2c4d93",
+                bgcolor: "#24528C",
                 color: "white",
-                borderColor: "#2c4d93 !important",
+                borderColor: "#24528C !important",
                 boxShadow: "0 4px 12px rgba(37,99,235,0.2)",
               },
               "&:hover:not(.Mui-selected)": {
@@ -211,8 +211,8 @@ export default function FacilitySchedulePricing({ data, onChange, errors }: Prop
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
-                          <AttachMoneyOutlinedIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                        <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                          <AttachMoneyOutlinedIcon sx={{ color: '#24528C', fontSize: 20 }} />
                         </Box>
                       </InputAdornment>
                     ),
@@ -231,7 +231,7 @@ export default function FacilitySchedulePricing({ data, onChange, errors }: Prop
             icon={<EventRepeatOutlinedIcon fontSize="small" />}
             title="Booking Rules"
             subtitle="Advance booking and cancellation window policies"
-            color="#9333ea" bgColor="#f5f3ff"
+            color="#7A4FB5" bgColor="#F3E8FF"
           />
           <Box sx={{ px: 4, py: 3.5 }}>
             <Grid container spacing={3}>
@@ -246,8 +246,8 @@ export default function FacilitySchedulePricing({ data, onChange, errors }: Prop
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
-                          <HistoryToggleOffIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                        <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                          <HistoryToggleOffIcon sx={{ color: '#24528C', fontSize: 20 }} />
                         </Box>
                       </InputAdornment>
                     ),
@@ -265,8 +265,8 @@ export default function FacilitySchedulePricing({ data, onChange, errors }: Prop
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
-                          <SettingsIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                        <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                          <SettingsIcon sx={{ color: '#24528C', fontSize: 20 }} />
                         </Box>
                       </InputAdornment>
                     ),
@@ -285,8 +285,8 @@ export default function FacilitySchedulePricing({ data, onChange, errors }: Prop
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start" sx={{ alignSelf: 'flex-start', mt: 1 }}>
-                        <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
-                          <RuleIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                        <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                          <RuleIcon sx={{ color: '#24528C', fontSize: 20 }} />
                         </Box>
                       </InputAdornment>
                     ),

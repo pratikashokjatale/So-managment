@@ -161,14 +161,14 @@ const CRMGroupOfficeView = ({ dashboard }: { dashboard: any }) => {
               onClick={() => setView("home")}
               startIcon={<WorkOutlineIcon sx={{ fontSize: 18 }} />}
               sx={{
-                backgroundColor: "#f3e8ff",
-                color: "#7e22ce",
+                backgroundColor: "#F3E8FF",
+                color: "#7A4FB5",
                 boxShadow: "none",
                 textTransform: "none",
                 borderRadius: "12px",
                 padding: "8px 16px",
                 fontWeight: 600,
-                "&:hover": { backgroundColor: "#e9d5ff", boxShadow: "none" },
+                "&:hover": { backgroundColor: "#F3E8FF", boxShadow: "none" },
               }}
             >
               Group Office · Switch

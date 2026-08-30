@@ -208,7 +208,7 @@ export default function GuestDetails() {
               }}
             >
               <Stack direction="row" spacing={2} alignItems="center">
-                <Avatar sx={{ bgcolor: '#eff6ff', color: '#3b82f6', borderRadius: '12px' }}>
+                <Avatar sx={{ bgcolor: '#EAF0F7', color: '#24528C', borderRadius: '12px' }}>
                   <ArticleOutlinedIcon />
                 </Avatar>
                 <Box>

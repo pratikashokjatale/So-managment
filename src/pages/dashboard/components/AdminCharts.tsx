@@ -85,11 +85,11 @@ export default function AdminCharts({
                 type="monotone"
                 dataKey="total"
                 name="All Transactions"
-                stroke="#2c4d93"
+                stroke="#24528C"
                 strokeWidth={3}
                 dot={{
                   r: 4,
-                  fill: "#2c4d93",
+                  fill: "#24528C",
                   strokeWidth: 2,
                   stroke: "#fff",
                 }}

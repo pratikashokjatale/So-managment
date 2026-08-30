@@ -73,8 +73,8 @@ export default function ResidentOverviewTab({ resident }: ResidentOverviewTabPro
         mt: 0.5,
         p: 1, 
         borderRadius: '12px', 
-        bgcolor: '#eff6ff', 
-        color: '#3b82f6',
+        bgcolor: '#EAF0F7', 
+        color: '#24528C',
         display: 'flex' 
       }}>
         {icon}
@@ -224,7 +224,7 @@ export default function ResidentOverviewTab({ resident }: ResidentOverviewTabPro
 
               {/* Title and ID */}
               <Box sx={{ mt: 2.5, textAlign: "center" }}>
-                <Typography sx={{ fontFamily: "'Inter', system-ui, sans-serif", fontSize: "0.7rem", fontWeight: 700, color: "#1e3a8a", letterSpacing: "1px" }}>
+                <Typography sx={{ fontFamily: "'Inter', system-ui, sans-serif", fontSize: "0.7rem", fontWeight: 700, color: "#24528C", letterSpacing: "1px" }}>
                   RESIDENT ID NUMBER
                 </Typography>
                 <Typography sx={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "1.4rem", fontWeight: 600, color: "#1e293b", letterSpacing: "3px", mt: 0.5 }}>

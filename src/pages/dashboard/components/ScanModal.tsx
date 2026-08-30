@@ -175,9 +175,9 @@ export default function ScanModal({
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: "16px", boxShadow: "0 10px 40px rgba(0,0,0,0.1)" } }}>
       <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", pb: 2, pt: 2, px: 3 }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-          <SensorsIcon sx={{ color: "#204a7b" }} />
+          <SensorsIcon sx={{ color: "#24528C" }} />
           <Typography sx={{ fontWeight: "bold", color: "#091542", fontSize: "1.1rem" }}>Scan QR / RFID</Typography>
-          <Chip label="CRM" size="small" sx={{ height: 20, fontSize: "0.7rem", bgcolor: "#eff6ff", color: "#3b82f6", fontWeight: 600 }} />
+          <Chip label="CRM" size="small" sx={{ height: 20, fontSize: "0.7rem", bgcolor: "#EAF0F7", color: "#24528C", fontWeight: 600 }} />
         </Box>
         <IconButton onClick={handleClose} size="small" sx={{ color: "#64748b", border: "1px solid #e2e8f0", borderRadius: "10px" }}>
           <CloseIcon fontSize="small" />
@@ -265,14 +265,14 @@ export default function ScanModal({
                 variant="outlined"
                 onClick={() => setVerifiedData(null)}
                 sx={{
-                  bgcolor: "#eff6ff",
+                  bgcolor: "#EAF0F7",
                   borderColor: "transparent",
-                  color: "#1e3a8a",
+                  color: "#24528C",
                   fontWeight: 600,
                   textTransform: "none",
                   borderRadius: "12px",
                   py: 1.2,
-                  "&:hover": { bgcolor: "#dbeafe", borderColor: "transparent" }
+                  "&:hover": { bgcolor: "#EAF0F7", borderColor: "transparent" }
                 }}
               >
                 Scan another
@@ -427,7 +427,7 @@ export default function ScanModal({
                 variant="contained" 
                 onClick={() => handleVerifyScan(scannedText)}
                 disabled={!scannedText.trim() || isProcessing.current}
-                sx={{ bgcolor: "#091542", color: "white", borderRadius: "8px", minWidth: "80px", "&:hover": { bgcolor: "#162d4a" } }}
+                sx={{ bgcolor: "#091542", color: "white", borderRadius: "8px", minWidth: "80px", "&:hover": { bgcolor: "#1D4270" } }}
               >
                 Verify
               </Button>

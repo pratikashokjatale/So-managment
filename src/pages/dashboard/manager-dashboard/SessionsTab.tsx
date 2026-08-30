@@ -15,7 +15,7 @@ import {
 } from "@mui/icons-material";
 import { getBookingsApi } from "@/apis/booking";
 
-const BRAND = "#204a7b";
+const BRAND = "#24528C";
 const GREEN = "#22c55e";
 const GOLD = "#bca47c";
 const GOLD_D = "#a17a3f";

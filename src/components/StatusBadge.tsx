@@ -19,7 +19,7 @@ const statusColors: Record<string, { text: string; bg?: string }> = {
   cancelled: { text: '#d32f2f', bg: '#ffebee' },
   rejected: { text: '#d32f2f', bg: '#ffebee' },
   failed: { text: '#d32f2f', bg: '#ffebee' },
-  refunded: { text: '#1976d2', bg: '#e3f2fd' },
+  refunded: { text: '#24528C', bg: '#EAF0F7' },
 };
 
 export default function StatusBadge({ status, variantType = 'text', sx, ...props }: StatusBadgeProps) {

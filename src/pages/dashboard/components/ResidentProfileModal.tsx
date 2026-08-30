@@ -12,6 +12,10 @@ interface ResidentProfileModalProps {
   user: any;
 }
 
+const BLUE = "#24528C";
+const BLUE_HOVER = "#1D4270";
+const BLUE_SOFT = "#EAF0F7";
+
 const ResidentProfileModal: React.FC<ResidentProfileModalProps> = ({ open, onClose, user }) => {
   const [household, setHousehold] = useState<any[]>([]);
 
@@ -42,12 +46,22 @@ const ResidentProfileModal: React.FC<ResidentProfileModalProps> = ({ open, onClo
         sx: {
           borderRadius: "16px",
           bgcolor: "#ffffff",
-          overflow: "hidden",
+          overflowY: "auto",
+          scrollbarWidth: "thin",
+          scrollbarColor: `${BLUE} #f1f5f9`,
+          "&::-webkit-scrollbar": { width: "8px" },
+          "&::-webkit-scrollbar-track": { bgcolor: "#f1f5f9" },
+          "&::-webkit-scrollbar-thumb": {
+            bgcolor: BLUE,
+            borderRadius: "8px",
+            border: "2px solid #f1f5f9",
+          },
+          "&::-webkit-scrollbar-thumb:hover": { bgcolor: BLUE_HOVER },
         },
       }}
     >
       {/* Header */}
-      <Box sx={{ bgcolor: "#1e3a8a", p: 3, position: "relative" }}>
+      <Box sx={{ bgcolor: BLUE, p: 3, position: "relative" }}>
         <Box
           onClick={onClose}
           sx={{
@@ -98,8 +112,8 @@ const ResidentProfileModal: React.FC<ResidentProfileModalProps> = ({ open, onClo
         <Box sx={{ display: "flex", gap: 1, mb: 4 }}>
           <Box
             sx={{
-              bgcolor: "#dcfce7",
-              color: "#166534",
+              bgcolor: BLUE_SOFT,
+              color: BLUE,
               px: 1.5,
               py: 0.5,
               borderRadius: "6px",
@@ -111,8 +125,8 @@ const ResidentProfileModal: React.FC<ResidentProfileModalProps> = ({ open, onClo
           </Box>
           <Box
             sx={{
-              bgcolor: "#e0e7ff",
-              color: "#3730a3",
+              bgcolor: BLUE_SOFT,
+              color: BLUE,
               px: 1.5,
               py: 0.5,
               borderRadius: "6px",
@@ -139,7 +153,7 @@ const ResidentProfileModal: React.FC<ResidentProfileModalProps> = ({ open, onClo
 
         {/* Household */}
         <Box sx={{ mb: 4 }}>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2, color: "#b45309" }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2, color: BLUE }}>
             <PeopleAltOutlinedIcon sx={{ fontSize: 18 }} />
             <Typography sx={{ fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.5px" }}>
               THIS HOUSEHOLD - {household.length || 4} people
@@ -162,10 +176,10 @@ const ResidentProfileModal: React.FC<ResidentProfileModalProps> = ({ open, onClo
                     <Typography sx={{ fontWeight: 600, color: "#1e293b", fontSize: "0.9rem" }}>{hName}</Typography>
                     <Typography sx={{ color: "#94a3b8", fontSize: "0.8rem" }}>{hRel} · {hAge}</Typography>
                     {h.badge && (
-                      <Typography sx={{ fontSize: "0.6rem", fontWeight: 700, color: "#2563eb", ml: 1 }}>{h.badge}</Typography>
+                      <Typography sx={{ fontSize: "0.6rem", fontWeight: 700, color: BLUE, ml: 1 }}>{h.badge}</Typography>
                     )}
                   </Box>
-                  <Typography sx={{ color: "#16a34a", fontSize: "0.8rem", fontWeight: 500 }}>living</Typography>
+                  <Typography sx={{ color: BLUE, fontSize: "0.8rem", fontWeight: 500 }}>living</Typography>
                 </Box>
               )
             })}
@@ -174,7 +188,7 @@ const ResidentProfileModal: React.FC<ResidentProfileModalProps> = ({ open, onClo
 
         {/* Home Story */}
         <Box sx={{ mb: 2 }}>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2, color: "#b45309" }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2, color: BLUE }}>
             <HistoryOutlinedIcon sx={{ fontSize: 18 }} />
             <Typography sx={{ fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.5px" }}>
               THIS HOME'S STORY
@@ -183,7 +197,7 @@ const ResidentProfileModal: React.FC<ResidentProfileModalProps> = ({ open, onClo
           
           <Box sx={{ position: "relative", pl: 3, "&::before": { content: '""', position: "absolute", left: 7, top: 8, bottom: 0, width: "2px", bgcolor: "#e2e8f0" } }}>
             <Box sx={{ position: "relative", mb: 3 }}>
-              <Box sx={{ position: "absolute", left: -27, top: 6, width: 8, height: 8, borderRadius: "50%", bgcolor: "#1e3a8a" }} />
+              <Box sx={{ position: "absolute", left: -27, top: 6, width: 8, height: 8, borderRadius: "50%", bgcolor: BLUE }} />
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <Typography sx={{ fontWeight: 600, color: "#1e293b", fontSize: "0.9rem" }}>New sale</Typography>
                 <Typography sx={{ color: "#94a3b8", fontSize: "0.8rem" }}>· Jul 2024</Typography>
@@ -193,8 +207,8 @@ const ResidentProfileModal: React.FC<ResidentProfileModalProps> = ({ open, onClo
               </Typography>
             </Box>
             
-            <Box sx={{ bgcolor: "#dcfce7", p: 1.5, borderRadius: "8px" }}>
-              <Typography sx={{ color: "#166534", fontSize: "0.85rem" }}>
+            <Box sx={{ bgcolor: BLUE_SOFT, p: 1.5, borderRadius: "8px" }}>
+              <Typography sx={{ color: BLUE, fontSize: "0.85rem" }}>
                 <strong>Living now:</strong> Rohit Mehra, Priya Mehra, Aarav Mehra, Sita Mehra
               </Typography>
             </Box>
@@ -210,7 +224,7 @@ const ResidentProfileModal: React.FC<ResidentProfileModalProps> = ({ open, onClo
             View only — the CRM desk can browse the population but not edit records.
           </Typography>
         </Box>
-        <Button onClick={onClose} variant="contained" sx={{ bgcolor: "#1e3a8a", color: "#ffffff", textTransform: "none", borderRadius: "8px", "&:hover": { bgcolor: "#1e3a8a" } }}>
+        <Button onClick={onClose} variant="contained" sx={{ bgcolor: BLUE, color: "#ffffff", textTransform: "none", borderRadius: "8px", "&:hover": { bgcolor: BLUE_HOVER } }}>
           Close
         </Button>
       </Box>

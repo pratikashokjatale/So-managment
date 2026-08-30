@@ -122,13 +122,13 @@ export default function AddTower() {
             width: 48,
             height: 48,
             borderRadius: '50%',
-            bgcolor: '#e8effc',
+            bgcolor: '#EAF0F7',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center'
           }}
         >
-          <ApartmentIcon sx={{ color: '#2c4d93' }} />
+          <ApartmentIcon sx={{ color: '#24528C' }} />
         </Box>
       </Box>
 
@@ -141,14 +141,14 @@ export default function AddTower() {
                 width: 40,
                 height: 40,
                 borderRadius: '8px',
-                bgcolor: '#e8effc',
+                bgcolor: '#EAF0F7',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 mr: 2
               }}
             >
-              <DescriptionIcon sx={{ color: '#2c4d93' }} />
+              <DescriptionIcon sx={{ color: '#24528C' }} />
             </Box>
             <Box>
               <Typography variant="subtitle1" fontWeight="bold" color="#091542">
@@ -175,8 +175,8 @@ export default function AddTower() {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex' }}>
-                      <BusinessIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                    <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', display: 'flex' }}>
+                      <BusinessIcon sx={{ color: '#24528C', fontSize: 20 }} />
                     </Box>
                   </InputAdornment>
                 ),
@@ -200,8 +200,8 @@ export default function AddTower() {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex' }}>
-                      <ApartmentIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                    <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', display: 'flex' }}>
+                      <ApartmentIcon sx={{ color: '#24528C', fontSize: 20 }} />
                     </Box>
                   </InputAdornment>
                 ),
@@ -222,8 +222,8 @@ export default function AddTower() {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex' }}>
-                      <LayersIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                    <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', display: 'flex' }}>
+                      <LayersIcon sx={{ color: '#24528C', fontSize: 20 }} />
                     </Box>
                   </InputAdornment>
                 ),
@@ -263,8 +263,8 @@ export default function AddTower() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start" sx={{ alignSelf: 'flex-start', mt: 1 }}>
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex' }}>
-                        <DescriptionIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', display: 'flex' }}>
+                        <DescriptionIcon sx={{ color: '#24528C', fontSize: 20 }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -305,7 +305,7 @@ export default function AddTower() {
               py: 1,
               fontWeight: 600, 
               boxShadow: 'none',
-              bgcolor: '#2c4d93',
+              bgcolor: '#24528C',
               '&:hover': { bgcolor: '#1f3b73', boxShadow: 'none' }
             }}
           >

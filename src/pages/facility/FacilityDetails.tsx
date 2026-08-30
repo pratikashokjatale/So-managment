@@ -100,10 +100,10 @@ export default function FacilityDetails() {
 
           let color = '#4b5563';
           const catLower = normCategory.toLowerCase();
-          if (catLower === 'sports') color = '#1d4ed8';
+          if (catLower === 'sports') color = '#24528C';
           else if (catLower === 'fitness') color = '#ea580c';
-          else if (catLower === 'leisure') color = '#7c3aed';
-          else if (catLower === 'wellness') color = '#db2777';
+          else if (catLower === 'leisure') color = '#7A4FB5';
+          else if (catLower === 'wellness') color = '#7A4FB5';
 
           setFacility({
             id: f.id,

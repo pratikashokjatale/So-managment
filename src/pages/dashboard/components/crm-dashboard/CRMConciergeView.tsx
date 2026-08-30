@@ -72,6 +72,7 @@ import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
 import SendIcon from "@mui/icons-material/Send";
 import SendOutlinedIcon from "@mui/icons-material/SendOutlined";
+import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import CRMProfileHeader from "./CRMProfileHeader";
 import GroupOfficeTabs, {
   type GroupOfficeTab,
@@ -151,14 +152,14 @@ const CRMConciergeView = ({ dashboard }: { dashboard: any }) => {
               onClick={() => setView("home")}
               startIcon={<HeadsetMicIcon sx={{ fontSize: 18 }} />}
               sx={{
-                backgroundColor: "#e8eff7",
-                color: "#2a5c8d",
+                backgroundColor: "#EAF0F7",
+                color: "#24528C",
                 boxShadow: "none",
                 textTransform: "none",
                 borderRadius: "12px",
                 padding: "8px 16px",
                 fontWeight: 600,
-                "&:hover": { backgroundColor: "#d0e1f0", boxShadow: "none" },
+                "&:hover": { backgroundColor: "#EAF0F7", boxShadow: "none" },
               }}
             >
               Residence Concierge · Switch
@@ -206,14 +207,14 @@ const CRMConciergeView = ({ dashboard }: { dashboard: any }) => {
                 onClick={() => setPopulationModalOpen(true)}
                 startIcon={<PeopleAltOutlinedIcon sx={{ fontSize: 18 }} />}
                 sx={{
-                  backgroundColor: "#e8eff7",
-                  color: "#2a5c8d",
+                  backgroundColor: "#EAF0F7",
+                  color: "#24528C",
                   boxShadow: "none",
                   textTransform: "none",
                   borderRadius: "12px",
                   padding: "8px 16px",
                   fontWeight: 600,
-                  "&:hover": { backgroundColor: "#d0e1f0", boxShadow: "none" },
+                  "&:hover": { backgroundColor: "#EAF0F7", boxShadow: "none" },
                 }}
               >
                 Population
@@ -223,14 +224,14 @@ const CRMConciergeView = ({ dashboard }: { dashboard: any }) => {
                 onClick={() => setScanModalOpen(true)}
                 startIcon={<SensorsIcon sx={{ fontSize: 18 }} />}
                 sx={{
-                  backgroundColor: "#5a3d7a",
+                  backgroundColor: "#67409A",
                   color: "#fff",
                   boxShadow: "none",
                   textTransform: "none",
                   borderRadius: "12px",
                   padding: "8px 16px",
                   fontWeight: 600,
-                  "&:hover": { backgroundColor: "#472e61", boxShadow: "none" },
+                  "&:hover": { backgroundColor: "#563580", boxShadow: "none" },
                 }}
               >
                 Scan / block card
@@ -243,7 +244,7 @@ const CRMConciergeView = ({ dashboard }: { dashboard: any }) => {
             <Button
               onClick={() => setActiveTab("helpdesk")}
               sx={{
-                bgcolor: activeTab === "helpdesk" ? "#2c5282" : "#f0f2f5",
+                bgcolor: activeTab === "helpdesk" ? "#24528C" : "#f0f2f5",
                 color: activeTab === "helpdesk" ? "#fff" : "#666",
                 textTransform: "none",
                 borderRadius: "12px",
@@ -251,7 +252,7 @@ const CRMConciergeView = ({ dashboard }: { dashboard: any }) => {
                 fontWeight: 600,
                 fontSize: "14px",
                 "&:hover": {
-                  bgcolor: activeTab === "helpdesk" ? "#1a365d" : "#e2e8f0",
+                  bgcolor: activeTab === "helpdesk" ? "#1D4270" : "#e2e8f0",
                 },
               }}
             >
@@ -260,7 +261,7 @@ const CRMConciergeView = ({ dashboard }: { dashboard: any }) => {
             <Button
               onClick={() => setActiveTab("rfid")}
               sx={{
-                bgcolor: activeTab === "rfid" ? "#2c5282" : "#f0f2f5",
+                bgcolor: activeTab === "rfid" ? "#24528C" : "#f0f2f5",
                 color: activeTab === "rfid" ? "#fff" : "#666",
                 textTransform: "none",
                 borderRadius: "12px",
@@ -268,7 +269,7 @@ const CRMConciergeView = ({ dashboard }: { dashboard: any }) => {
                 fontWeight: 600,
                 fontSize: "14px",
                 "&:hover": {
-                  bgcolor: activeTab === "rfid" ? "#1a365d" : "#e2e8f0",
+                  bgcolor: activeTab === "rfid" ? "#1D4270" : "#e2e8f0",
                 },
               }}
             >
@@ -277,7 +278,7 @@ const CRMConciergeView = ({ dashboard }: { dashboard: any }) => {
             <Button
               onClick={() => setActiveTab("intake")}
               sx={{
-                bgcolor: activeTab === "intake" ? "#2c5282" : "#f0f2f5",
+                bgcolor: activeTab === "intake" ? "#24528C" : "#f0f2f5",
                 color: activeTab === "intake" ? "#fff" : "#666",
                 textTransform: "none",
                 borderRadius: "12px",
@@ -285,17 +286,116 @@ const CRMConciergeView = ({ dashboard }: { dashboard: any }) => {
                 fontWeight: 600,
                 fontSize: "14px",
                 "&:hover": {
-                  bgcolor: activeTab === "intake" ? "#1a365d" : "#e2e8f0",
+                  bgcolor: activeTab === "intake" ? "#1D4270" : "#e2e8f0",
                 },
               }}
             >
               Intake
+            </Button>
+            <Button
+              onClick={() => setActiveTab("approvals")}
+              sx={{
+                bgcolor: activeTab === "approvals" ? "#24528C" : "#f0f2f5",
+                color: activeTab === "approvals" ? "#fff" : "#666",
+                textTransform: "none",
+                borderRadius: "12px",
+                padding: "6px 20px",
+                fontWeight: 600,
+                fontSize: "14px",
+                "&:hover": {
+                  bgcolor: activeTab === "approvals" ? "#1D4270" : "#e2e8f0",
+                },
+              }}
+            >
+              Approvals
             </Button>
           </Box>
 
           {/* Tabs Content */}
           <ConciergeMemberSection dashboard={dashboard} />
           <ConciergeIntakeSection dashboard={dashboard} />
+
+          {activeTab === "approvals" && (
+            <Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  justifyContent: "space-between",
+                  gap: 2,
+                  mb: 2,
+                }}
+              >
+                <Box>
+                  <Typography
+                    sx={{
+                      color: "#1e293b",
+                      fontFamily: '"Cormorant Garamond", serif',
+                      fontSize: "1.65rem",
+                      fontWeight: 600,
+                    }}
+                  >
+                    Approvals
+                  </Typography>
+                  <Typography sx={{ color: "#64748b", fontSize: "0.9rem" }}>
+                    Profiles created at the counter or gate need your sign-off
+                  </Typography>
+                </Box>
+                <Button
+                  startIcon={<DownloadOutlinedIcon />}
+                  sx={{
+                    bgcolor: "#EAF0F7",
+                    color: "#24528C",
+                    borderRadius: "10px",
+                    px: 2,
+                    py: 1,
+                    fontWeight: 600,
+                    "&:hover": { bgcolor: "#dce6f1" },
+                  }}
+                >
+                  Export Excel
+                </Button>
+              </Box>
+
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                  border: "1px solid #eadfc9",
+                  bgcolor: "#fffdfa",
+                  borderRadius: "14px",
+                  px: 2,
+                  py: 1.5,
+                  color: "#64748b",
+                  mb: 2,
+                }}
+              >
+                <VerifiedUserOutlinedIcon sx={{ color: "#b58b3d", fontSize: 18 }} />
+                <Typography sx={{ fontSize: "0.85rem" }}>
+                  A profile created by the manager, security or a member themselves stays <strong>pending</strong> until Admin or CRM approves it. No RFID card can be issued before approval.
+                </Typography>
+              </Box>
+
+              <Box
+                sx={{
+                  minHeight: 170,
+                  border: "1px solid #dbe4ef",
+                  borderRadius: "14px",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 1,
+                }}
+              >
+                <CheckCircleOutlineIcon sx={{ color: "#10b981", fontSize: 24 }} />
+                <Typography sx={{ color: "#64748b", fontSize: "0.95rem" }}>
+                  Nothing waiting for approval.
+                </Typography>
+              </Box>
+            </Box>
+          )}
         </Box>
 
         <ConciergeModals dashboard={dashboard} />

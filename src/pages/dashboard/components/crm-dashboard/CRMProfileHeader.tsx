@@ -22,14 +22,14 @@ const CRMProfileHeader = ({ userName }: CRMProfileHeaderProps) => (
         sx={{
           width: 44,
           height: 44,
-          bgcolor: "#f3e8ff",
+          bgcolor: "#F3E8FF",
           borderRadius: "12px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
         }}
       >
-        <HeadsetMicIcon sx={{ color: "#7e22ce", fontSize: 22 }} />
+        <HeadsetMicIcon sx={{ color: "#7A4FB5", fontSize: 22 }} />
       </Box>
       <Box>
         <Typography
@@ -44,8 +44,8 @@ const CRMProfileHeader = ({ userName }: CRMProfileHeaderProps) => (
     </Box>
     <Box
       sx={{
-        bgcolor: "#f3e8ff",
-        color: "#7e22ce",
+        bgcolor: "#F3E8FF",
+        color: "#7A4FB5",
         fontWeight: 600,
         fontSize: "0.75rem",
         px: 1.5,

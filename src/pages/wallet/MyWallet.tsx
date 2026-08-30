@@ -151,13 +151,13 @@ export default function MyWallet() {
           startIcon={<AddCircleOutlineIcon />}
           onClick={() => setRechargeModalOpen(true)}
           sx={{ 
-            bgcolor: '#2c4d93', 
+            bgcolor: '#24528C', 
             fontWeight: 600, 
             px: 3, 
             py: 1, 
             borderRadius: 2,
             textTransform: 'none',
-            '&:hover': { bgcolor: '#2c4d93' } 
+            '&:hover': { bgcolor: '#24528C' } 
           }}
         >
           Recharge Wallet
@@ -228,7 +228,7 @@ export default function MyWallet() {
                       {tx.type === 'CREDIT' ? '+' : (tx.type === 'DEBIT' ? '-' : '')}₹{tx.amount}
                     </TableCell>
                     <TableCell>
-                      <Typography variant="body2" sx={{ color: '#2c4d93', fontWeight: 600 }}>
+                      <Typography variant="body2" sx={{ color: '#24528C', fontWeight: 600 }}>
                         #{tx.id.substring(0, 8).toUpperCase()}
                       </Typography>
                     </TableCell>
@@ -283,7 +283,7 @@ export default function MyWallet() {
             onClick={handleRecharge} 
             variant="contained" 
             disabled={recharging}
-            sx={{ bgcolor: '#2c4d93', px: 4, borderRadius: 2, textTransform: 'none', '&:hover': { bgcolor: '#2c4d93' } }}
+            sx={{ bgcolor: '#24528C', px: 4, borderRadius: 2, textTransform: 'none', '&:hover': { bgcolor: '#24528C' } }}
           >
             {recharging ? <CircularProgress size={24} color="inherit" /> : 'Proceed to Pay'}
           </Button>

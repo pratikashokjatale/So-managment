@@ -121,7 +121,7 @@ const RegisterPage = () => {
             sx={{
               width: 70,
               height: 70,
-              bgcolor: "#eff6ff",
+              bgcolor: "#EAF0F7",
               borderRadius: "50%",
               display: "flex",
               alignItems: "center",
@@ -129,7 +129,7 @@ const RegisterPage = () => {
               mb: 3,
             }}
           >
-            <PersonIcon sx={{ fontSize: 32, color: "#1d4ed8" }} />
+            <PersonIcon sx={{ fontSize: 32, color: "#24528C" }} />
           </Box>
 
           <Typography
@@ -255,10 +255,10 @@ const RegisterPage = () => {
                   fontWeight: 800,
                   textTransform: "none",
                   fontSize: "1.05rem",
-                  bgcolor: "#1d4ed8",
+                  bgcolor: "#24528C",
                   boxShadow: "0 4px 12px rgba(29, 78, 216, 0.2)",
                   "&:hover": {
-                    bgcolor: "#1e40af",
+                    bgcolor: "#24528C",
                     boxShadow: "0 6px 16px rgba(29, 78, 216, 0.3)",
                   },
                 }}
@@ -286,7 +286,7 @@ const RegisterPage = () => {
               variant="body2"
               sx={{
                 fontWeight: 700,
-                color: "#1d4ed8",
+                color: "#24528C",
                 textDecoration: "none",
                 "&:hover": { textDecoration: "underline" },
               }}
@@ -301,7 +301,7 @@ const RegisterPage = () => {
               display: "flex",
               alignItems: "center",
               gap: 1,
-              color: "#1d4ed8",
+              color: "#24528C",
             }}
           >
             <ShieldIcon sx={{ fontSize: 18 }} />

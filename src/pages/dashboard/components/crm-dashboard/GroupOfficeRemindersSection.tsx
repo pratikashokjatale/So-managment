@@ -144,15 +144,15 @@ const GroupOfficeRemindersSection = ({ dashboard }: { dashboard: any }) => {
                     <VisibilityOffOutlinedIcon sx={{ fontSize: 16 }} />
                   }
                   sx={{
-                    backgroundColor: "#f3e8ff",
-                    color: "#7e22ce",
+                    backgroundColor: "#F3E8FF",
+                    color: "#7A4FB5",
                     boxShadow: "none",
                     textTransform: "none",
                     borderRadius: "8px",
                     padding: "6px 16px",
                     fontWeight: 600,
                     fontSize: "0.8rem",
-                    "&:hover": { backgroundColor: "#e9d5ff" },
+                    "&:hover": { backgroundColor: "#F3E8FF" },
                   }}
                 >
                   Hide template
@@ -293,7 +293,7 @@ const GroupOfficeRemindersSection = ({ dashboard }: { dashboard: any }) => {
                           variant="contained" 
                           onClick={handleSaveTemplate}
                           disabled={savingTemplate}
-                          sx={{ bgcolor: '#7e22ce', '&:hover': { bgcolor: '#6b21a8' }, textTransform: 'none' }}
+                          sx={{ bgcolor: '#7A4FB5', '&:hover': { bgcolor: '#7A4FB5' }, textTransform: 'none' }}
                         >
                           {savingTemplate ? <CircularProgress size={20} color="inherit" /> : "Save Template"}
                         </Button>
@@ -362,7 +362,7 @@ const GroupOfficeRemindersSection = ({ dashboard }: { dashboard: any }) => {
 
                   <Box sx={{ display: "flex", gap: 1.5, alignItems: "flex-start" }}>
                     <AutoAwesomeIcon
-                      sx={{ color: "#9333ea", fontSize: 18, mt: 0.25 }}
+                      sx={{ color: "#7A4FB5", fontSize: 18, mt: 0.25 }}
                     />
                     <Typography
                       sx={{
@@ -374,7 +374,7 @@ const GroupOfficeRemindersSection = ({ dashboard }: { dashboard: any }) => {
                       The highlighted{" "}
                       <Box
                         component="span"
-                        sx={{ color: "#7e22ce", fontWeight: 700 }}
+                        sx={{ color: "#7A4FB5", fontWeight: 700 }}
                       >
                         fields
                       </Box>{" "}
@@ -414,15 +414,15 @@ const GroupOfficeRemindersSection = ({ dashboard }: { dashboard: any }) => {
                     }
                   }}
                   sx={{
-                    bgcolor: "#f3e8ff",
-                    color: "#7e22ce",
+                    bgcolor: "#F3E8FF",
+                    color: "#7A4FB5",
                     textTransform: "none",
                     borderRadius: "8px",
                     px: 2,
                     py: 0.5,
                     fontWeight: 600,
                     fontSize: "0.75rem",
-                    "&:hover": { bgcolor: "#e9d5ff" },
+                    "&:hover": { bgcolor: "#F3E8FF" },
                   }}
                 >
                   {selectedBuyers.length === eligibleBuyers.length && eligibleBuyers.length > 0 ? "Deselect all" : "Select all eligible"}
@@ -432,7 +432,7 @@ const GroupOfficeRemindersSection = ({ dashboard }: { dashboard: any }) => {
               {/* Buyers List */}
               {loadingEligibleBuyers ? (
                 <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-                  <CircularProgress size={24} sx={{ color: '#7e22ce' }} />
+                  <CircularProgress size={24} sx={{ color: '#7A4FB5' }} />
                 </Box>
               ) : eligibleBuyers.length === 0 ? (
                 <Typography sx={{ p: 4, textAlign: 'center', color: '#64748b', fontSize: '0.85rem' }}>
@@ -450,7 +450,7 @@ const GroupOfficeRemindersSection = ({ dashboard }: { dashboard: any }) => {
                   <Box
                     key={i}
                     sx={{
-                      border: isSelected ? "1px solid #7e22ce" : "1px solid #e2e8f0",
+                      border: isSelected ? "1px solid #7A4FB5" : "1px solid #e2e8f0",
                       borderRadius: "12px",
                       p: 2.5,
                       bgcolor: isSelected ? "#fdfafc" : "#ffffff",
@@ -476,7 +476,7 @@ const GroupOfficeRemindersSection = ({ dashboard }: { dashboard: any }) => {
                           width: 18,
                           height: 18,
                           border: isSelected ? "none" : "1.5px solid #cbd5e1",
-                          bgcolor: isSelected ? "#7e22ce" : "transparent",
+                          bgcolor: isSelected ? "#7A4FB5" : "transparent",
                           borderRadius: "4px",
                           cursor: "pointer",
                           display: "flex",
@@ -644,8 +644,8 @@ const GroupOfficeRemindersSection = ({ dashboard }: { dashboard: any }) => {
                   }
                 }}
                 sx={{
-                  bgcolor: "#7e22ce",
-                  "&:hover": { bgcolor: "#6b21a8" },
+                  bgcolor: "#7A4FB5",
+                  "&:hover": { bgcolor: "#7A4FB5" },
                   borderRadius: "8px",
                   textTransform: "none",
                   fontWeight: 600,
@@ -698,8 +698,8 @@ const GroupOfficeRemindersSection = ({ dashboard }: { dashboard: any }) => {
                 }
               }}
               sx={{
-                bgcolor: "#7e22ce",
-                "&:hover": { bgcolor: "#6b21a8" },
+                bgcolor: "#7A4FB5",
+                "&:hover": { bgcolor: "#7A4FB5" },
                 borderRadius: "8px",
                 px: 3,
                 py: 1,

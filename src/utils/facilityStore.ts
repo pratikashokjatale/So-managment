@@ -21,7 +21,7 @@ const DEFAULT_FACILITIES: Facility[] = [
     status: 'Operational', 
     price: '₹200/hr', 
     slots: '5/12 Booked', 
-    color: '#1d4ed8',
+    color: '#24528C',
     description: 'Standard sizing indoor squash court with professional flooring and equipment.',
     managerName: 'Alex Rivera',
     managerContact: '+91 98765 43210',
@@ -49,7 +49,7 @@ const DEFAULT_FACILITIES: Facility[] = [
     status: 'In Use', 
     price: '₹500/show', 
     slots: 'Live Slot Taken', 
-    color: '#7c3aed',
+    color: '#7A4FB5',
     description: '4K Dolby Atmos surround sound mini multiplex theater setup.',
     managerName: 'Mike Miller',
     managerContact: '+91 98765 43212',
@@ -91,7 +91,7 @@ const DEFAULT_FACILITIES: Facility[] = [
     status: 'Operational', 
     price: '₹150/class', 
     slots: '10/20 Enrolled', 
-    color: '#db2777',
+    color: '#7A4FB5',
     description: 'Quiet meditative spaces equipped with premium mats and aromatherapy diffusers.',
     managerName: 'Aria Sharma',
     managerContact: '+91 98765 43215',
@@ -135,13 +135,13 @@ const isBrowser = typeof window !== 'undefined';
 const getCategoryColor = (category: string): string => {
   switch (category.toLowerCase()) {
     case 'sports':
-      return '#1d4ed8';
+      return '#24528C';
     case 'fitness':
       return '#ea580c';
     case 'leisure':
-      return '#7c3aed';
+      return '#7A4FB5';
     case 'wellness':
-      return '#db2777';
+      return '#7A4FB5';
     default:
       return '#4b5563';
   }

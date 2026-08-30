@@ -185,7 +185,7 @@ const CRMHomeView = ({ dashboard }: { dashboard: any }) => {
               cursor: "pointer",
               transition: "all 0.2s",
               "&:hover": {
-                borderColor: "#3b82f6",
+                borderColor: "#24528C",
                 boxShadow: "0 8px 24px rgba(59, 130, 246, 0.08)",
               },
             }}
@@ -194,7 +194,7 @@ const CRMHomeView = ({ dashboard }: { dashboard: any }) => {
               sx={{
                 width: 48,
                 height: 48,
-                bgcolor: "#eff6ff",
+                bgcolor: "#EAF0F7",
                 borderRadius: "12px",
                 display: "flex",
                 alignItems: "center",
@@ -202,11 +202,11 @@ const CRMHomeView = ({ dashboard }: { dashboard: any }) => {
                 mb: 3,
               }}
             >
-              <HeadsetMicIcon sx={{ color: "#3b82f6" }} />
+              <HeadsetMicIcon sx={{ color: "#24528C" }} />
             </Box>
             <Typography
               sx={{
-                color: "#1e40af",
+                color: "#24528C",
                 fontWeight: 700,
                 letterSpacing: "1px",
                 fontSize: "0.7rem",
@@ -258,7 +258,7 @@ const CRMHomeView = ({ dashboard }: { dashboard: any }) => {
             </Typography>
             <Typography
               sx={{
-                color: "#3b82f6",
+                color: "#24528C",
                 fontWeight: 600,
                 fontSize: "0.9rem",
                 display: "flex",
@@ -283,7 +283,7 @@ const CRMHomeView = ({ dashboard }: { dashboard: any }) => {
               display: "flex",
               flexDirection: "column",
               "&:hover": {
-                borderColor: "#9333ea",
+                borderColor: "#7A4FB5",
                 boxShadow: "0 8px 24px rgba(147, 51, 234, 0.08)",
               },
             }}
@@ -292,7 +292,7 @@ const CRMHomeView = ({ dashboard }: { dashboard: any }) => {
               sx={{
                 width: 48,
                 height: 48,
-                bgcolor: "#faf5ff",
+                bgcolor: "#F3E8FF",
                 borderRadius: "12px",
                 display: "flex",
                 alignItems: "center",
@@ -300,11 +300,11 @@ const CRMHomeView = ({ dashboard }: { dashboard: any }) => {
                 mb: 3,
               }}
             >
-              <WorkOutlineIcon sx={{ color: "#9333ea" }} />
+              <WorkOutlineIcon sx={{ color: "#7A4FB5" }} />
             </Box>
             <Typography
               sx={{
-                color: "#6b21a8",
+                color: "#7A4FB5",
                 fontWeight: 700,
                 letterSpacing: "1px",
                 fontSize: "0.7rem",
@@ -342,7 +342,7 @@ const CRMHomeView = ({ dashboard }: { dashboard: any }) => {
             <Box sx={{ flexGrow: 1 }} />
             <Typography
               sx={{
-                color: "#9333ea",
+                color: "#7A4FB5",
                 fontWeight: 600,
                 fontSize: "0.9rem",
                 display: "flex",
@@ -447,8 +447,8 @@ const CRMHomeView = ({ dashboard }: { dashboard: any }) => {
             variant="contained"
             disabled={recharging || !rechargeAmount}
             sx={{
-              bgcolor: "#0284c7",
-              "&:hover": { bgcolor: "#0369a1" },
+              bgcolor: "#24528C",
+              "&:hover": { bgcolor: "#24528C" },
               borderRadius: "8px",
               px: 3,
             }}

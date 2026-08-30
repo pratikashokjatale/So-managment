@@ -223,7 +223,7 @@ export default function TowerDetails() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Occupied":
-        return { bg: "#eff6ff", text: "#1d4ed8", border: "#bfdbfe" }; // blue
+        return { bg: "#EAF0F7", text: "#24528C", border: "#EAF0F7" }; // blue
       case "Vacant":
         return { bg: "#ecfdf5", text: "#047857", border: "#a7f3d0" }; // green
       case "Maintenance":
@@ -287,7 +287,7 @@ export default function TowerDetails() {
                 >
                   PROJECT NAME
                 </Typography>
-                <Typography variant="body1" fontWeight="700" color="#2c4d93">
+                <Typography variant="body1" fontWeight="700" color="#24528C">
                   {tower.projectName}
                 </Typography>
               </Grid>
@@ -389,10 +389,10 @@ export default function TowerDetails() {
               <Grid size={{ xs: 12 }}>
                 <Card
                   sx={{
-                    bgcolor: "#eff6ff",
+                    bgcolor: "#EAF0F7",
                     borderRadius: "12px",
                     boxShadow: "none",
-                    border: "1px solid #bfdbfe",
+                    border: "1px solid #EAF0F7",
                   }}
                 >
                   <CardContent
@@ -408,11 +408,11 @@ export default function TowerDetails() {
                     <Typography
                       variant="subtitle2"
                       fontWeight="700"
-                      color="#1d4ed8"
+                      color="#24528C"
                     >
                       Occupied Flats
                     </Typography>
-                    <Typography variant="h6" fontWeight="800" color="#1d4ed8">
+                    <Typography variant="h6" fontWeight="800" color="#24528C">
                       {occupiedCount}
                     </Typography>
                   </CardContent>
@@ -548,7 +548,7 @@ export default function TowerDetails() {
                       sx={{
                         py: 2,
                         fontWeight: 700,
-                        color: "#2c4d93",
+                        color: "#24528C",
                         borderBottomColor: "#f0f0f0",
                       }}
                     >

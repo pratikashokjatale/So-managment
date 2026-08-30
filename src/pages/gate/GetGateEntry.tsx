@@ -52,7 +52,7 @@ export default function GetGateEntry() {
         <Grid size={{ xs: 12, md: 4 }}>
           <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
             <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 3 }}>
-              <Box sx={{ p: 1, bgcolor: '#eff6ff', borderRadius: '10px', color: '#1d4ed8' }}><GateIcon /></Box>
+              <Box sx={{ p: 1, bgcolor: '#EAF0F7', borderRadius: '10px', color: '#24528C' }}><GateIcon /></Box>
               <Typography variant="h6" fontWeight="900" color="#091542">Main Basement</Typography>
               <Box sx={{ flexGrow: 1 }} />
               <Chip label="ONLINE" size="small" sx={{ bgcolor: '#f0fdf4', color: '#10b981', fontWeight: 900 }} />
@@ -63,7 +63,7 @@ export default function GetGateEntry() {
         <Grid size={{ xs: 12, md: 4 }}>
           <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
             <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 3 }}>
-              <Box sx={{ p: 1, bgcolor: '#fdf2f8', borderRadius: '10px', color: '#db2777' }}><GateIcon /></Box>
+              <Box sx={{ p: 1, bgcolor: '#F3E8FF', borderRadius: '10px', color: '#7A4FB5' }}><GateIcon /></Box>
               <Typography variant="h6" fontWeight="900" color="#091542">Club Entry</Typography>
               <Box sx={{ flexGrow: 1 }} />
               <Chip label="ONLINE" size="small" sx={{ bgcolor: '#f0fdf4', color: '#10b981', fontWeight: 900 }} />

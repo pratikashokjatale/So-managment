@@ -228,8 +228,8 @@ export default function GetProject() {
             px: 3,
             fontWeight: 600,
             boxShadow: "none",
-            bgcolor: "#2c4d93",
-            "&:hover": { bgcolor: "#2c4d93" },
+            bgcolor: "#24528C",
+            "&:hover": { bgcolor: "#24528C" },
           }}
         >
           Add Project
@@ -241,7 +241,7 @@ export default function GetProject() {
         <Grid size={{ xs: 12, sm: 6 }}>
           <Card
             sx={{
-              bgcolor: "#eff6ff",
+              bgcolor: "#EAF0F7",
               borderRadius: "12px",
               boxShadow: "none",
               border: "1px solid #d0e1fd",
@@ -251,7 +251,7 @@ export default function GetProject() {
               <Box
                 sx={{
                   p: 1.5,
-                  bgcolor: "#2c4d93",
+                  bgcolor: "#24528C",
                   color: "#ffffff",
                   borderRadius: "8px",
                   display: "flex",
@@ -366,7 +366,7 @@ export default function GetProject() {
             label: "Project Code",
             sortable: true,
             render: (row) => (
-              <Typography variant="body2" fontWeight={700} color="#2c4d93">
+              <Typography variant="body2" fontWeight={700} color="#24528C">
                 {row.code}
               </Typography>
             ),
@@ -429,8 +429,8 @@ export default function GetProject() {
                 <IconButton
                   size="small"
                   sx={{
-                    color: "#2c4d93",
-                    bgcolor: "#eff6ff",
+                    color: "#24528C",
+                    bgcolor: "#EAF0F7",
                     mr: 1,
                     "&:hover": { bgcolor: "#d0e1fd" },
                   }}

@@ -251,8 +251,8 @@ export default function AddGuest() {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                          <PersonOutlineIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                        <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                          <PersonOutlineIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                         </Box>
                       </InputAdornment>
                     ),
@@ -266,8 +266,8 @@ export default function AddGuest() {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                          <PhoneOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                        <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                          <PhoneOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                         </Box>
                       </InputAdornment>
                     ),
@@ -281,8 +281,8 @@ export default function AddGuest() {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                          <EmailOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                        <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                          <EmailOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                         </Box>
                       </InputAdornment>
                     ),
@@ -296,8 +296,8 @@ export default function AddGuest() {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                          <LockOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                        <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                          <LockOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                         </Box>
                       </InputAdornment>
                     ),
@@ -320,8 +320,8 @@ export default function AddGuest() {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                          <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                        <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                          <EventOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                         </Box>
                       </InputAdornment>
                     ),
@@ -338,8 +338,8 @@ export default function AddGuest() {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                          <SearchOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                        <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                          <SearchOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                         </Box>
                       </InputAdornment>
                     ),
@@ -355,7 +355,7 @@ export default function AddGuest() {
                     <Box key={f.id} onClick={() => setFlatId(flatId === f.id ? '' : f.id)}
                       sx={{
                         px: 2, py: 1.5, cursor: 'pointer',
-                        bgcolor: flatId === f.id ? '#eff6ff' : 'transparent',
+                        bgcolor: flatId === f.id ? '#EAF0F7' : 'transparent',
                         borderLeft: flatId === f.id ? '3px solid #091542' : '3px solid transparent',
                         '&:hover': { bgcolor: '#f8fafc' },
                         borderBottom: '1px solid #f1f5f9',

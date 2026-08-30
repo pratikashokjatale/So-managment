@@ -20,7 +20,7 @@ import {
   Attachment as ClipIcon,
 } from "@mui/icons-material";
 
-const BRAND = "#204a7b";
+const BRAND = "#24528C";
 const GREEN = "#22c55e";
 const GOLD = "#bca47c";
 const GOLD_D = "#a17a3f";
@@ -37,7 +37,7 @@ const seedReqs = [
 
 const REQ_STATUS = {
   pending: { label: "With CRM", tone: GOLD_D, bg: `${GOLD}14` },
-  with_purchase: { label: "With Purchase", tone: BRAND, bg: "#eef2ff" },
+  with_purchase: { label: "With Purchase", tone: BRAND, bg: "#EAF0F7" },
   approved: { label: "Approved", tone: GREEN, bg: "#dcfce7" },
   rejected: { label: "Rejected", tone: "#ef4444", bg: "#fee2e2" },
 };
@@ -109,7 +109,7 @@ export default function RequestsTab({ isCrm = false }: { isCrm?: boolean }) {
                 fontWeight: 600,
                 fontSize: "0.85rem",
                 boxShadow: "none",
-                "&:hover": { bgcolor: "#163a62", boxShadow: "none" },
+                "&:hover": { bgcolor: "#24528C", boxShadow: "none" },
               }}
             >
               New request

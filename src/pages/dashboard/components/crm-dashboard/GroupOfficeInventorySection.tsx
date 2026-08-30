@@ -165,14 +165,14 @@ const GroupOfficeInventorySection = ({ dashboard }: { dashboard: any }) => {
                     key={i}
                     onClick={() => setActiveInventoryTab(tab)}
                     sx={{
-                      bgcolor: activeInventoryTab === tab ? "#1e3a8a" : "#f1f5f9",
+                      bgcolor: activeInventoryTab === tab ? "#24528C" : "#f1f5f9",
                       color: activeInventoryTab === tab ? "#ffffff" : "#475569",
                       textTransform: "none",
                       borderRadius: "8px",
                       padding: "6px 16px",
                       fontWeight: 600,
                       fontSize: "0.85rem",
-                      "&:hover": { bgcolor: activeInventoryTab === tab ? "#1e3a8a" : "#e2e8f0" },
+                      "&:hover": { bgcolor: activeInventoryTab === tab ? "#24528C" : "#e2e8f0" },
                     }}
                   >
                     {tab}
@@ -236,7 +236,7 @@ const GroupOfficeInventorySection = ({ dashboard }: { dashboard: any }) => {
                   {/* Stat Cards (dynamic projects) */}
                   {loadingResidentSummary ? (
                 <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-                  <CircularProgress size={24} sx={{ color: '#1e3a8a' }} />
+                  <CircularProgress size={24} sx={{ color: '#24528C' }} />
                 </Box>
               ) : (
               <Box
@@ -486,7 +486,7 @@ const GroupOfficeInventorySection = ({ dashboard }: { dashboard: any }) => {
                             fontSize: "0.8rem",
                             fontWeight: 600,
                             cursor: "pointer",
-                            bgcolor: inventoryProject === opt ? "#1e3a8a" : "#f8fafc",
+                            bgcolor: inventoryProject === opt ? "#24528C" : "#f8fafc",
                             color: inventoryProject === opt ? "#ffffff" : "#64748b",
                           }}
                         >
@@ -521,7 +521,7 @@ const GroupOfficeInventorySection = ({ dashboard }: { dashboard: any }) => {
                             fontSize: "0.8rem",
                             fontWeight: 600,
                             cursor: "pointer",
-                            bgcolor: inventoryStatus === opt ? "#1e3a8a" : "#f8fafc",
+                            bgcolor: inventoryStatus === opt ? "#24528C" : "#f8fafc",
                             color: inventoryStatus === opt ? "#ffffff" : "#64748b",
                           }}
                         >
@@ -553,7 +553,7 @@ const GroupOfficeInventorySection = ({ dashboard }: { dashboard: any }) => {
                             fontSize: "0.8rem",
                             fontWeight: 600,
                             cursor: "pointer",
-                            bgcolor: inventoryVisibility === opt ? "#1e3a8a" : "#f8fafc",
+                            bgcolor: inventoryVisibility === opt ? "#24528C" : "#f8fafc",
                             color: inventoryVisibility === opt ? "#ffffff" : "#64748b",
                           }}
                         >
@@ -680,8 +680,8 @@ const GroupOfficeInventorySection = ({ dashboard }: { dashboard: any }) => {
                                   px: 1,
                                   py: 0.25,
                                   borderRadius: "4px",
-                                  bgcolor: flat.status === "SOLD" ? "#eef2ff" : (flat.status === "HELD" ? "#fef3c7" : "#ecfdf5"),
-                                  color: flat.status === "SOLD" ? "#4f46e5" : (flat.status === "HELD" ? "#d97706" : "#10b981"),
+                                  bgcolor: flat.status === "SOLD" ? "#EAF0F7" : (flat.status === "HELD" ? "#fef3c7" : "#ecfdf5"),
+                                  color: flat.status === "SOLD" ? "#24528C" : (flat.status === "HELD" ? "#d97706" : "#10b981"),
                                   fontSize: "0.65rem",
                                   fontWeight: 700,
                                 }}
@@ -699,7 +699,7 @@ const GroupOfficeInventorySection = ({ dashboard }: { dashboard: any }) => {
                   })}
                   {loadingInventoryFlats && (
                     <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-                      <CircularProgress size={24} sx={{ color: '#1e3a8a' }} />
+                      <CircularProgress size={24} sx={{ color: '#24528C' }} />
                     </Box>
                   )}
                   </>

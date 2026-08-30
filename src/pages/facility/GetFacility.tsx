@@ -83,10 +83,10 @@ const mapBackendFacilityToFrontend = (f: any) => {
 
   let color = "#4b5563";
   const catLower = normCategory.toLowerCase();
-  if (catLower === "sports") color = "#1d4ed8";
+  if (catLower === "sports") color = "#24528C";
   else if (catLower === "fitness") color = "#ea580c";
-  else if (catLower === "leisure") color = "#7c3aed";
-  else if (catLower === "wellness") color = "#db2777";
+  else if (catLower === "leisure") color = "#7A4FB5";
+  else if (catLower === "wellness") color = "#7A4FB5";
 
   return {
     id: f.id,
@@ -222,7 +222,7 @@ export default function GetFacility() {
       case "Operational":
         return { bg: "#f0fdf4", color: "#10b981" };
       case "In Use":
-        return { bg: "#eff6ff", color: "#1d4ed8" };
+        return { bg: "#EAF0F7", color: "#24528C" };
       case "Maintenance":
         return { bg: "#fff7ed", color: "#ea580c" };
       default: // Inactive
@@ -259,7 +259,7 @@ export default function GetFacility() {
             >
               Total Units
             </Typography>
-            <Typography variant="h5" fontWeight="800" color="#1d4ed8" sx={{ mb: 0.5 }}>
+            <Typography variant="h5" fontWeight="800" color="#24528C" sx={{ mb: 0.5 }}>
               {totalUnits}
             </Typography>
             <Typography variant="caption" color="#64748b" fontWeight="800">
@@ -353,7 +353,7 @@ export default function GetFacility() {
                         variant="body1"
                         fontWeight="800"
                         color="#091542"
-                        sx={{ "&:hover": { color: "#1d4ed8" } }}
+                        sx={{ "&:hover": { color: "#24528C" } }}
                       >
                         {facility.name}
                       </Typography>
@@ -441,7 +441,7 @@ export default function GetFacility() {
                     <IconButton
                       size="small"
                       onClick={() => navigate(`/facility/${facility.id}`)}
-                      sx={{ color: "#0284c7" }}
+                      sx={{ color: "#24528C" }}
                     >
                       <VisibilityIcon fontSize="small" />
                     </IconButton>

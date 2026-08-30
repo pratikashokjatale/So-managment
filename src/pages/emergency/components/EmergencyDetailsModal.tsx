@@ -50,10 +50,10 @@ const severityColors: Record<string, { bg: string; color: string }> = {
 
 const statusColors: Record<string, { bg: string; color: string }> = {
   OPEN: { bg: "#fef2f2", color: "#dc2626" },
-  ACKNOWLEDGED: { bg: "#eff6ff", color: "#1d4ed8" },
+  ACKNOWLEDGED: { bg: "#EAF0F7", color: "#24528C" },
   RESOLVED: { bg: "#f0fdf4", color: "#16a34a" },
   FALSE_ALARM: { bg: "#f8fafc", color: "#64748b" },
-  CANCELLED: { bg: "#faf5ff", color: "#7c3aed" },
+  CANCELLED: { bg: "#F3E8FF", color: "#7A4FB5" },
 };
 
 export default function EmergencyDetailsModal({
@@ -234,7 +234,7 @@ export default function EmergencyDetailsModal({
                 </Typography>
                 <Stack spacing={2} sx={{ mt: 2, mb: 4 }}>
                   <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                    <Avatar sx={{ bgcolor: "#eff6ff", color: "#1d4ed8" }}>
+                    <Avatar sx={{ bgcolor: "#EAF0F7", color: "#24528C" }}>
                       <PersonIcon />
                     </Avatar>
                     <Box>
@@ -248,7 +248,7 @@ export default function EmergencyDetailsModal({
                   </Box>
 
                   <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                    <Avatar sx={{ bgcolor: "#faf5ff", color: "#7c3aed" }}>
+                    <Avatar sx={{ bgcolor: "#F3E8FF", color: "#7A4FB5" }}>
                       <HomeIcon />
                     </Avatar>
                     <Box>
@@ -328,11 +328,11 @@ export default function EmergencyDetailsModal({
                       <Typography variant="caption" color="text.secondary" fontWeight="700" display="block">
                         CANCELLED
                       </Typography>
-                      <Typography variant="body2" fontWeight="700" color="#7c3aed">
+                      <Typography variant="body2" fontWeight="700" color="#7A4FB5">
                         Cancelled at {alert.cancelledAt ? new Date(alert.cancelledAt).toLocaleString() : "N/A"}
                       </Typography>
                       {alert.cancellationReason && (
-                        <Typography variant="body2" sx={{ bgcolor: "#faf5ff", p: 1.5, borderRadius: "8px", mt: 0.5, fontStyle: "italic", fontSize: "0.85rem", color: "#581c87" }}>
+                        <Typography variant="body2" sx={{ bgcolor: "#F3E8FF", p: 1.5, borderRadius: "8px", mt: 0.5, fontStyle: "italic", fontSize: "0.85rem", color: "#581c87" }}>
                           Reason: {alert.cancellationReason}
                         </Typography>
                       )}
@@ -348,8 +348,8 @@ export default function EmergencyDetailsModal({
                 </Typography>
 
                 {status === "OPEN" && isSecurityOrAdmin && (
-                  <Box sx={{ mt: 2, p: 2.5, borderRadius: "16px", border: "1px solid #dbeafe", bgcolor: "#f8fafc" }}>
-                    <Typography variant="subtitle2" fontWeight="800" color="#1d4ed8" sx={{ mb: 1 }}>
+                  <Box sx={{ mt: 2, p: 2.5, borderRadius: "16px", border: "1px solid #EAF0F7", bgcolor: "#f8fafc" }}>
+                    <Typography variant="subtitle2" fontWeight="800" color="#24528C" sx={{ mb: 1 }}>
                       Acknowledge & Dispatch Response
                     </Typography>
                     <TextField
@@ -370,10 +370,10 @@ export default function EmergencyDetailsModal({
                       fullWidth
                       sx={{
                         borderRadius: "10px",
-                        bgcolor: "#1d4ed8",
+                        bgcolor: "#24528C",
                         fontWeight: 700,
                         textTransform: "none",
-                        "&:hover": { bgcolor: "#1e40af" },
+                        "&:hover": { bgcolor: "#24528C" },
                       }}
                     >
                       {submitting ? "Acknowledging..." : "Acknowledge Alert"}
@@ -430,8 +430,8 @@ export default function EmergencyDetailsModal({
                 )}
 
                 {(status === "OPEN" || status === "ACKNOWLEDGED") && (isOwner || isSecurityOrAdmin) && (
-                  <Box sx={{ mt: 3, p: 2.5, borderRadius: "16px", border: "1px solid #faf5ff", bgcolor: "#f8fafc" }}>
-                    <Typography variant="subtitle2" fontWeight="800" color="#7c3aed" sx={{ mb: 1 }}>
+                  <Box sx={{ mt: 3, p: 2.5, borderRadius: "16px", border: "1px solid #F3E8FF", bgcolor: "#f8fafc" }}>
+                    <Typography variant="subtitle2" fontWeight="800" color="#7A4FB5" sx={{ mb: 1 }}>
                       Cancel Emergency
                     </Typography>
                     <TextField
@@ -452,7 +452,7 @@ export default function EmergencyDetailsModal({
                       fullWidth
                       sx={{
                         borderRadius: "10px",
-                        bgcolor: "#7c3aed",
+                        bgcolor: "#7A4FB5",
                         fontWeight: 700,
                         textTransform: "none",
                         "&:hover": { bgcolor: "#6d28d9" },

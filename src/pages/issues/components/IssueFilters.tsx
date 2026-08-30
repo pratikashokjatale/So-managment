@@ -65,7 +65,7 @@ export default function IssueFilters({
     borderRadius: "10px",
     "& .MuiOutlinedInput-notchedOutline": { border: "1px solid #cbd5e1" },
     "&:hover .MuiOutlinedInput-notchedOutline": { border: "1px solid #94a3b8" },
-    "&.Mui-focused .MuiOutlinedInput-notchedOutline": { border: "1px solid #2c4d93" },
+    "&.Mui-focused .MuiOutlinedInput-notchedOutline": { border: "1px solid #24528C" },
   };
 
   const dateInputSx = {

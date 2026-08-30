@@ -172,7 +172,7 @@ export default function RejectedRequests() {
                       </Button>
                       <IconButton
                         size="small"
-                        sx={{ color: 'primary.main', bgcolor: '#eff6ff' }}
+                        sx={{ color: 'primary.main', bgcolor: '#EAF0F7' }}
                         onClick={() => handleOpenDialog(row)}
                       >
                         <VisibilityOutlinedIcon fontSize="small" />

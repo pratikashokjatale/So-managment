@@ -192,8 +192,8 @@ const AdminQRRechargeModal: React.FC<AdminQRRechargeModalProps> = ({
             disabled={generating || !amount || Number(amount) <= 0}
             variant="contained"
             sx={{
-              bgcolor: "#1e40af",
-              "&:hover": { bgcolor: "#1e3a8a" },
+              bgcolor: "#24528C",
+              "&:hover": { bgcolor: "#24528C" },
             }}
           >
             {generating ? <CircularProgress size={24} color="inherit" /> : "Generate QR"}

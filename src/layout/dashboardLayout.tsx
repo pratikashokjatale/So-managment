@@ -364,7 +364,7 @@ export default function DashboardLayout() {
                     ? theme.palette.primary.main
                     : "#475569",
                 fontWeight: currentRole === role.label ? 600 : 400,
-                bgcolor: currentRole === role.label ? "#eff6ff" : "transparent",
+                bgcolor: currentRole === role.label ? "#EAF0F7" : "transparent",
                 borderRadius: "8px",
                 mx: 1,
                 my: 0.25,

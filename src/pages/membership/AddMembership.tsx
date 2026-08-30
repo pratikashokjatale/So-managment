@@ -162,7 +162,7 @@ export default function AddMembership() {
       >
         <Box
           sx={{
-            background: "linear-gradient(135deg, #091542 0%, #1a3a8a 100%)",
+            background: "linear-gradient(135deg, #091542 0%, #24528C 100%)",
             p: 3,
             display: "flex",
             alignItems: "center",
@@ -205,7 +205,7 @@ export default function AddMembership() {
                   width: 300,
                 }}
               >
-                <AccountCircleIcon sx={{ color: "#1a3a8a", fontSize: 20 }} />
+                <AccountCircleIcon sx={{ color: "#24528C", fontSize: 20 }} />
                 <Typography
                   variant="subtitle2"
                   fontWeight="700"
@@ -274,7 +274,7 @@ export default function AddMembership() {
                      width: 300,
                 }}
               >
-                <CardMembershipIcon sx={{ color: "#1a3a8a", fontSize: 20 }} />
+                <CardMembershipIcon sx={{ color: "#24528C", fontSize: 20 }} />
                 <Typography
                   variant="subtitle2"
                   fontWeight="700"
@@ -316,7 +316,7 @@ export default function AddMembership() {
                 }}
               >
                 <CardMembershipIcon
-                  sx={{ color: "#1a3a8a", opacity: 0.6, fontSize: 20 }}
+                  sx={{ color: "#24528C", opacity: 0.6, fontSize: 20 }}
                 />
                 <Typography
                   variant="subtitle2"
@@ -389,7 +389,7 @@ export default function AddMembership() {
                       
                     }}
                   >
-                    <PaymentIcon sx={{ color: "#1a3a8a", fontSize: 24 }} />
+                    <PaymentIcon sx={{ color: "#24528C", fontSize: 24 }} />
                     <Typography variant="h6" fontWeight="800" color="#091542">
                       Initial Payment Method
                     </Typography>
@@ -430,13 +430,13 @@ export default function AddMembership() {
                     </MenuItem>
                     <MenuItem
                       value="UPI"
-                      sx={{ fontWeight: 600, color: "#0284c7" }}
+                      sx={{ fontWeight: 600, color: "#24528C" }}
                     >
                       UPI
                     </MenuItem>
                     <MenuItem
                       value="BANK_TRANSFER"
-                      sx={{ fontWeight: 600, color: "#7c3aed" }}
+                      sx={{ fontWeight: 600, color: "#7A4FB5" }}
                     >
                       Net Banking
                     </MenuItem>
@@ -491,7 +491,7 @@ export default function AddMembership() {
                 boxShadow: "0 8px 20px rgba(9, 21, 66, 0.15)",
                 bgcolor: "#091542",
                 "&:hover": {
-                  bgcolor: "#1a3a8a",
+                  bgcolor: "#24528C",
                   transform: "translateY(-2px)",
                 },
                 transition: "all 0.2s",

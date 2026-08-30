@@ -349,7 +349,7 @@ export default function StaffDetails() {
                       <BadgeIcon
                         color="primary"
                         fontSize="small"
-                        sx={{ color: "#1d4ed8" }}
+                        sx={{ color: "#24528C" }}
                       />
                       <Typography
                         variant="subtitle2"
@@ -377,7 +377,7 @@ export default function StaffDetails() {
                       <ApartmentIcon
                         color="primary"
                         fontSize="small"
-                        sx={{ color: "#1d4ed8" }}
+                        sx={{ color: "#24528C" }}
                       />
                       <Typography
                         variant="subtitle2"
@@ -405,7 +405,7 @@ export default function StaffDetails() {
                       <PhoneIcon
                         color="primary"
                         fontSize="small"
-                        sx={{ color: "#1d4ed8" }}
+                        sx={{ color: "#24528C" }}
                       />
                       <Typography
                         variant="subtitle2"
@@ -433,7 +433,7 @@ export default function StaffDetails() {
                       <EmailIcon
                         color="primary"
                         fontSize="small"
-                        sx={{ color: "#1d4ed8" }}
+                        sx={{ color: "#24528C" }}
                       />
                       <Typography
                         variant="subtitle2"
@@ -482,7 +482,7 @@ export default function StaffDetails() {
                       <CalendarTodayIcon
                         color="primary"
                         fontSize="small"
-                        sx={{ color: "#1d4ed8" }}
+                        sx={{ color: "#24528C" }}
                       />
                       <Typography
                         variant="subtitle2"
@@ -510,7 +510,7 @@ export default function StaffDetails() {
                       <ApartmentIcon
                         color="primary"
                         fontSize="small"
-                        sx={{ color: "#1d4ed8" }}
+                        sx={{ color: "#24528C" }}
                       />
                       <Typography
                         variant="subtitle2"
@@ -783,7 +783,7 @@ export default function StaffDetails() {
                           p: 0,
                           textTransform: "none",
                           fontWeight: 700,
-                          color: "#1d4ed8",
+                          color: "#24528C",
                           "&:hover": { textDecoration: "underline" },
                         }}
                       >

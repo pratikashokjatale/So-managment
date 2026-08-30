@@ -32,7 +32,7 @@ const GroupOfficeTabs = ({ activeTab, onChange }: GroupOfficeTabsProps) => (
           key={tab.value}
           onClick={() => onChange(tab.value)}
           sx={{
-            bgcolor: isSelected ? "#2c5282" : "#EEF3FA",
+            bgcolor: isSelected ? "#24528C" : "#EAF0F7",
             color: isSelected ? "#f7f7f7" : "#6B7794",
             textTransform: "none",
             borderRadius: "10px",
@@ -40,7 +40,7 @@ const GroupOfficeTabs = ({ activeTab, onChange }: GroupOfficeTabsProps) => (
             py: 1,
             fontWeight: 600,
             fontSize: "0.85rem",
-            "&:hover": { bgcolor: "#2c5282", color: "#fff" },
+            "&:hover": { bgcolor: "#24528C", color: "#fff" },
           }}
         >
           {tab.label}

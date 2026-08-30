@@ -122,9 +122,9 @@ const GroupOfficeOnboardingSection = ({ dashboard }: { dashboard: any }) => {
                 }}
               >
                 {[
-                  { value: crmSummary?.data?.counts?.collecting ?? "0", label: "COLLECTING", color: "#ab68eaff" },
+                  { value: crmSummary?.data?.counts?.collecting ?? "0", label: "COLLECTING", color: "#7A4FB5" },
                   { value: crmSummary?.data?.counts?.paidUp ?? "0", label: "PAID UP", color: "#bca462" },
-                  { value: crmSummary?.data?.counts?.released ?? "0", label: "RELEASED", color: "#a667e2ff" },
+                  { value: crmSummary?.data?.counts?.released ?? "0", label: "RELEASED", color: "#7A4FB5" },
                   { value: crmSummary?.data?.counts?.complete ?? "0", label: "COMPLETE", color: "#10b981" },
                 ].map((stat, i) => (
                   <Box
@@ -202,7 +202,7 @@ const GroupOfficeOnboardingSection = ({ dashboard }: { dashboard: any }) => {
                 <Box sx={{ maxHeight: 350, overflowY: "auto" }}>
                   {loadingCases ? (
                     <Box sx={{ p: 4, display: 'flex', justifyContent: 'center' }}>
-                      <CircularProgress size={24} sx={{ color: '#7e22ce' }} />
+                      <CircularProgress size={24} sx={{ color: '#7A4FB5' }} />
                     </Box>
                   ) : onboardingCases.length === 0 ? (
                     <Typography sx={{ p: 3, textAlign: 'center', color: '#64748b', fontSize: '0.85rem' }}>No onboarding cases found.</Typography>
@@ -213,7 +213,7 @@ const GroupOfficeOnboardingSection = ({ dashboard }: { dashboard: any }) => {
                     const meta = `${roleLabel} · ${flatNum} · ${towerName}`;
                     
                     let status = "Collecting · 70% paid";
-                    let statusColor = "#7e22ce";
+                    let statusColor = "#7A4FB5";
                     let isBar = true;
                     let barProgress = "70%";
 
@@ -223,7 +223,7 @@ const GroupOfficeOnboardingSection = ({ dashboard }: { dashboard: any }) => {
                       isBar = false;
                     } else if (user.status === "PENDING") {
                       status = "Released — handover pending";
-                      statusColor = "#4f46e5";
+                      statusColor = "#24528C";
                       isBar = false;
                     }
 
@@ -247,7 +247,7 @@ const GroupOfficeOnboardingSection = ({ dashboard }: { dashboard: any }) => {
                           sx={{
                             width: 44,
                             height: 44,
-                            bgcolor: "#f5edff",
+                            bgcolor: "#F3E8FF",
                             borderRadius: "50%",
                             display: "flex",
                             alignItems: "center",
@@ -255,7 +255,7 @@ const GroupOfficeOnboardingSection = ({ dashboard }: { dashboard: any }) => {
                           }}
                         >
                           <BusinessOutlinedIcon
-                            sx={{ color: "#9333ea", fontSize: 20 }}
+                            sx={{ color: "#7A4FB5", fontSize: 20 }}
                           />
                         </Box>
                         <Box>
@@ -327,7 +327,7 @@ const GroupOfficeOnboardingSection = ({ dashboard }: { dashboard: any }) => {
                             px: 3,
                             py: 0.5,
                             "&:hover": {
-                              bgcolor: "#653F97",
+                              bgcolor: "#7A4FB5",
                               boxShadow: "none",
                             },
                           }}

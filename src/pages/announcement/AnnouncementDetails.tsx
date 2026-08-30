@@ -24,7 +24,7 @@ import {
 } from '@/apis/announcement';
 
 const INTER = "'Inter', system-ui, sans-serif";
-const NAVY = '#2c4d93';
+const NAVY = '#24528C';
 
 const fmtDate = (iso: string) => {
   if (!iso) return '—';
@@ -156,7 +156,7 @@ export default function AnnouncementDetails() {
         
         {/* Title area */}
         <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
-          <Box sx={{ width: 44, height: 44, borderRadius: '10px', bgcolor: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <Box sx={{ width: 44, height: 44, borderRadius: '10px', bgcolor: '#EAF0F7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <DocIcon sx={{ fontSize: 22, color: NAVY }} />
           </Box>
           <Box>
@@ -186,7 +186,7 @@ export default function AnnouncementDetails() {
           />
           {ann.pinned && (
             <Chip label="Pinned" icon={<PinIcon sx={{ fontSize: '12px !important', transform: 'rotate(45deg)' }} />}
-              sx={{ fontFamily: INTER, fontWeight: 600, fontSize: '0.75rem', height: 26, bgcolor: '#eff6ff', color: NAVY, border: '1px solid #bfdbfe' }}
+              sx={{ fontFamily: INTER, fontWeight: 600, fontSize: '0.75rem', height: 26, bgcolor: '#EAF0F7', color: NAVY, border: '1px solid #EAF0F7' }}
             />
           )}
         </Box>

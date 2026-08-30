@@ -46,7 +46,7 @@ const switchSx = {
     "&.Mui-checked": {
       transform: "translateX(20px)",
       color: "white",
-      "& + .MuiSwitch-track": { bgcolor: "#2c4d93", opacity: 1, border: 0 },
+      "& + .MuiSwitch-track": { bgcolor: "#24528C", opacity: 1, border: 0 },
     },
   },
   "& .MuiSwitch-thumb": { width: 18, height: 18, boxShadow: "0 1px 4px rgba(0,0,0,0.2)" },
@@ -54,10 +54,10 @@ const switchSx = {
 };
 
 const ACCESS_TYPE_INFO: Record<string, { label: string; description: string; color: string }> = {
-  SLOT_BOOKING: { label: "Slot Booking Only", description: "Residents pay per slot — no subscription needed.", color: "#2c4d93" },
+  SLOT_BOOKING: { label: "Slot Booking Only", description: "Residents pay per slot — no subscription needed.", color: "#24528C" },
   SUBSCRIPTION: { label: "Subscription Only", description: "Residents pay a monthly plan for open access.", color: "#16a34a" },
   MIXED: { label: "Subscription + Slot", description: "Subscription required, then resident reserves a slot.", color: "#ea580c" },
-  EVENT_SHOW: { label: "Event / Show", description: "Fixed session or show-based access.", color: "#9333ea" },
+  EVENT_SHOW: { label: "Event / Show", description: "Fixed session or show-based access.", color: "#7A4FB5" },
 };
 
 interface Props {
@@ -97,8 +97,8 @@ export default function FacilityAccessRules({ data, onChange, errors }: Props) {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
-                      <SettingsIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                    <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                      <SettingsIcon sx={{ color: '#24528C', fontSize: 20 }} />
                     </Box>
                   </InputAdornment>
                 ),
@@ -121,8 +121,8 @@ export default function FacilityAccessRules({ data, onChange, errors }: Props) {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
-                      <EventAvailableIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                    <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                      <EventAvailableIcon sx={{ color: '#24528C', fontSize: 20 }} />
                     </Box>
                   </InputAdornment>
                 ),
@@ -197,8 +197,8 @@ export default function FacilityAccessRules({ data, onChange, errors }: Props) {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
-                          <GroupIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                        <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                          <GroupIcon sx={{ color: '#24528C', fontSize: 20 }} />
                         </Box>
                       </InputAdornment>
                     ),
@@ -217,8 +217,8 @@ export default function FacilityAccessRules({ data, onChange, errors }: Props) {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
-                          <AccessTimeIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                        <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                          <AccessTimeIcon sx={{ color: '#24528C', fontSize: 20 }} />
                         </Box>
                       </InputAdornment>
                     ),
@@ -249,8 +249,8 @@ export default function FacilityAccessRules({ data, onChange, errors }: Props) {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
-                        <GroupIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                        <GroupIcon sx={{ color: '#24528C', fontSize: 20 }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -266,7 +266,7 @@ export default function FacilityAccessRules({ data, onChange, errors }: Props) {
         icon={<ToggleOnOutlinedIcon fontSize="small" />}
         title="Permissions"
         subtitle="Visibility and approval settings for this facility"
-        color="#7c3aed" bgColor="#f5f3ff"
+        color="#7A4FB5" bgColor="#F3E8FF"
       />
       <Box sx={{ px: 4, py: 3 }}>
         <Stack direction={{ xs: "column", md: "row" }} spacing={3}>
@@ -274,7 +274,7 @@ export default function FacilityAccessRules({ data, onChange, errors }: Props) {
           <Box sx={{
             flex: 1, p: 2.5, border: "1.5px solid #EEF2F7", borderRadius: "14px",
             display: "flex", alignItems: "center", justifyContent: "space-between",
-            bgcolor: data.requiresApproval ? "#EFF6FF" : "#FAFAFA",
+            bgcolor: data.requiresApproval ? "#EAF0F7" : "#FAFAFA",
             transition: "all 0.2s",
             cursor: "pointer",
             boxShadow: "0 1px 2px rgba(0,0,0,0.02)",

@@ -167,7 +167,7 @@ const ConciergeModals = ({ dashboard }: { dashboard: any }) => {
                   <Button
                     variant="outlined"
                     fullWidth
-                    sx={{ mt: 2, borderColor: "#1e40af", color: "#1e40af", "&:hover": { bgcolor: "#f0f4ff" } }}
+                    sx={{ mt: 2, borderColor: "#24528C", color: "#24528C", "&:hover": { bgcolor: "#EAF0F7" } }}
                     onClick={() => {
                       setRechargeModalOpen(false);
                       setQrRechargeModalOpen(true);
@@ -209,8 +209,8 @@ const ConciergeModals = ({ dashboard }: { dashboard: any }) => {
               variant="contained"
               disabled={recharging || !rechargeAmount}
               sx={{
-                bgcolor: "#0284c7",
-                "&:hover": { bgcolor: "#0369a1" },
+                bgcolor: "#24528C",
+                "&:hover": { bgcolor: "#24528C" },
                 borderRadius: "8px",
                 px: 3,
               }}

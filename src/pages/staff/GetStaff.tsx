@@ -301,7 +301,7 @@ export default function GetStaff() {
                     variant="body1"
                     fontWeight="800"
                     color="#091542"
-                    sx={{ "&:hover": { color: "#1d4ed8" } }}
+                    sx={{ "&:hover": { color: "#24528C" } }}
                   >
                     {row.name}
                   </Typography>
@@ -318,8 +318,8 @@ export default function GetStaff() {
                   sx={{
                     fontWeight: 900,
                     borderRadius: "8px",
-                    bgcolor: "#eff6ff",
-                    color: "#1d4ed8",
+                    bgcolor: "#EAF0F7",
+                    color: "#24528C",
                   }}
                 />
               ),
@@ -378,7 +378,7 @@ export default function GetStaff() {
                 <Stack direction="row" spacing={1} justifyContent="flex-end">
                   <IconButton
                     size="small"
-                    sx={{ color: "#0284c7" }}
+                    sx={{ color: "#24528C" }}
                     onClick={() => navigate(`/staff/${row.id}`)}
                   >
                     <VisibilityOutlinedIcon fontSize="small" />
@@ -414,7 +414,7 @@ export default function GetStaff() {
         <Box sx={{ width: "100%" }}>
           {loading ? (
             <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", py: 10 }}>
-              <CircularProgress size={40} sx={{ color: "#2c4d93" }} />
+              <CircularProgress size={40} sx={{ color: "#24528C" }} />
             </Box>
           ) : paginatedStaff.length === 0 ? (
             <Box
@@ -542,8 +542,8 @@ export default function GetStaff() {
                             height: "100%",
                             fontSize: "2rem",
                             fontWeight: 900,
-                            bgcolor: "#eff6ff",
-                            color: "#1e40af",
+                            bgcolor: "#EAF0F7",
+                            color: "#24528C",
                             borderRadius: "10px",
                           }}
                         >
@@ -559,7 +559,7 @@ export default function GetStaff() {
                       </Box>
 
                       {/* Name & Rank */}
-                      <Typography variant="body1" fontWeight="900" color="#2c4d93" noWrap sx={{ maxWidth: "100%" }}>
+                      <Typography variant="body1" fontWeight="900" color="#24528C" noWrap sx={{ maxWidth: "100%" }}>
                         {row.name}
                       </Typography>
                       <Typography
@@ -671,7 +671,7 @@ export default function GetStaff() {
                         <Stack direction="row" spacing={0.5}>
                           <IconButton
                             size="small"
-                            sx={{ color: "#0284c7", bgcolor: "#f0f9ff", "&:hover": { bgcolor: "#e0f2fe" }, p: 0.75 }}
+                            sx={{ color: "#24528C", bgcolor: "#f0f9ff", "&:hover": { bgcolor: "#e0f2fe" }, p: 0.75 }}
                             onClick={() => navigate(`/staff/${row.id}`)}
                           >
                             <VisibilityOutlinedIcon sx={{ fontSize: "1.1rem" }} />

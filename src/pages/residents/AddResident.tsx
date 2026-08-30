@@ -505,8 +505,8 @@ export default function AddResident() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <PersonOutlineIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <PersonOutlineIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -525,8 +525,8 @@ export default function AddResident() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <PhoneOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <PhoneOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -545,8 +545,8 @@ export default function AddResident() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <EmailOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <EmailOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -566,8 +566,8 @@ export default function AddResident() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <LockOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <LockOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -587,8 +587,8 @@ export default function AddResident() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <CreditCardOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <CreditCardOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -606,8 +606,8 @@ export default function AddResident() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <EventOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -632,8 +632,8 @@ export default function AddResident() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <EventOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -656,8 +656,8 @@ export default function AddResident() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <EventOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -687,8 +687,8 @@ export default function AddResident() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <BadgeOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <BadgeOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -712,8 +712,8 @@ export default function AddResident() {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                          <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                        <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                          <EventOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                         </Box>
                       </InputAdornment>
                     ),
@@ -737,8 +737,8 @@ export default function AddResident() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <CreditCardOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <CreditCardOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -785,8 +785,8 @@ export default function AddResident() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <CreditCardOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <CreditCardOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -848,8 +848,8 @@ export default function AddResident() {
                   px: 3,
                   py: 1,
                   fontWeight: 700,
-                  bgcolor: "#2c4d93",
-                  "&:hover": { bgcolor: "#2c4d93" },
+                  bgcolor: "#24528C",
+                  "&:hover": { bgcolor: "#24528C" },
                 }}
               >
                 Add Family Member
@@ -888,8 +888,8 @@ export default function AddResident() {
                         label={member.relationship}
                         size="small"
                         sx={{
-                          bgcolor: "#eff6ff",
-                          color: "#2c4d93",
+                          bgcolor: "#EAF0F7",
+                          color: "#24528C",
                           fontWeight: 700,
                           borderRadius: "6px",
                         }}
@@ -1235,8 +1235,8 @@ export default function AddResident() {
                         label={member.relationship}
                         size="small"
                         sx={{
-                          bgcolor: "#eff6ff",
-                          color: "#2c4d93",
+                          bgcolor: "#EAF0F7",
+                          color: "#24528C",
                           fontWeight: 700,
                           borderRadius: "6px",
                         }}
@@ -1360,7 +1360,7 @@ export default function AddResident() {
                   fontWeight: 800,
                   textTransform: "none",
                   px: 4,
-                  bgcolor: "#2c4d93",
+                  bgcolor: "#24528C",
                 }}
               >
                 {submitting ? (
@@ -1379,7 +1379,7 @@ export default function AddResident() {
                   fontWeight: 800,
                   textTransform: "none",
                   px: 4,
-                  bgcolor: "#2c4d93",
+                  bgcolor: "#24528C",
                 }}
               >
                 Continue
@@ -1435,8 +1435,8 @@ export default function AddResident() {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                      <PersonOutlineIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                    <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                      <PersonOutlineIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                     </Box>
                   </InputAdornment>
                 ),
@@ -1454,8 +1454,8 @@ export default function AddResident() {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                      <BadgeOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                    <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                      <BadgeOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                     </Box>
                   </InputAdornment>
                 ),
@@ -1477,8 +1477,8 @@ export default function AddResident() {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                      <PhoneOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                    <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                      <PhoneOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                     </Box>
                   </InputAdornment>
                 ),
@@ -1495,8 +1495,8 @@ export default function AddResident() {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                      <EmailOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                    <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                      <EmailOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                     </Box>
                   </InputAdornment>
                 ),
@@ -1515,8 +1515,8 @@ export default function AddResident() {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                      <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                    <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                      <EventOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                     </Box>
                   </InputAdornment>
                 ),
@@ -1534,8 +1534,8 @@ export default function AddResident() {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                      <PersonOutlineIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                    <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                      <PersonOutlineIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                     </Box>
                   </InputAdornment>
                 ),
@@ -1557,8 +1557,8 @@ export default function AddResident() {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                      <CreditCardOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                    <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                      <CreditCardOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                     </Box>
                   </InputAdornment>
                 ),
@@ -1576,8 +1576,8 @@ export default function AddResident() {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                      <CreditCardOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                    <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                      <CreditCardOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                     </Box>
                   </InputAdornment>
                 ),
@@ -1595,8 +1595,8 @@ export default function AddResident() {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                      <CreditCardOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                    <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                      <CreditCardOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                     </Box>
                   </InputAdornment>
                 ),
@@ -1666,8 +1666,8 @@ export default function AddResident() {
               textTransform: "none",
               px: 3,
               fontWeight: 700,
-              bgcolor: "#2c4d93",
-              "&:hover": { bgcolor: "#2c4d93" },
+              bgcolor: "#24528C",
+              "&:hover": { bgcolor: "#24528C" },
             }}
           >
             Add Member

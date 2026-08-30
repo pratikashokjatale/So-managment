@@ -369,7 +369,7 @@ export default function CreateBookingDialog({ open, onClose, resident }: CreateB
       {/* Header */}
       <DialogTitle sx={{ p: 0 }}>
         <Box sx={{
-          background: 'linear-gradient(135deg, #091542 0%, #1a3a8a 100%)',
+          background: 'linear-gradient(135deg, #091542 0%, #24528C 100%)',
           px: 3, py: 2.5,
           display: 'flex', alignItems: 'center', justifyContent: 'end'
         }}>

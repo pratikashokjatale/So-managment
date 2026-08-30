@@ -235,8 +235,8 @@ export default function GetProfile() {
                 icon={<RoleIcon sx={{ fontSize: "14px !important" }} />}
                 label={user?.role || "ADMIN"}
                 sx={{
-                  bgcolor: "#eff6ff",
-                  color: "#1e40af",
+                  bgcolor: "#EAF0F7",
+                  color: "#24528C",
                   fontWeight: 800,
                   fontSize: "0.75rem",
                   borderRadius: "10px",

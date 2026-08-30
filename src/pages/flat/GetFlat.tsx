@@ -286,7 +286,7 @@ export default function GetFlat() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Occupied":
-        return { bg: "#eff6ff", text: "#1d4ed8", border: "#bfdbfe" }; // blue
+        return { bg: "#EAF0F7", text: "#24528C", border: "#EAF0F7" }; // blue
       case "Vacant":
         return { bg: "#ecfdf5", text: "#047857", border: "#a7f3d0" }; // green
       case "Maintenance":
@@ -308,7 +308,7 @@ export default function GetFlat() {
     ".MuiOutlinedInput-notchedOutline": { borderColor: "#e2e8f0" },
     "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#cbd5e1" },
     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#2c4d93",
+      borderColor: "#24528C",
     },
   };
 
@@ -344,8 +344,8 @@ export default function GetFlat() {
             px: 3,
             fontWeight: 600,
             boxShadow: "none",
-            bgcolor: "#2c4d93",
-            "&:hover": { bgcolor: "#2c4d93" },
+            bgcolor: "#24528C",
+            "&:hover": { bgcolor: "#24528C" },
           }}
         >
           Add Flat
@@ -397,17 +397,17 @@ export default function GetFlat() {
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <Card
             sx={{
-              bgcolor: "#eff6ff",
+              bgcolor: "#EAF0F7",
               borderRadius: "12px",
               boxShadow: "none",
-              border: "1px solid #bfdbfe",
+              border: "1px solid #EAF0F7",
             }}
           >
             <CardContent sx={{ display: "flex", alignItems: "center", gap: 2 }}>
               <Box
                 sx={{
                   p: 1.5,
-                  bgcolor: "#1d4ed8",
+                  bgcolor: "#24528C",
                   color: "#ffffff",
                   borderRadius: "8px",
                   display: "flex",
@@ -426,7 +426,7 @@ export default function GetFlat() {
                 <Typography
                   variant="h5"
                   fontWeight="800"
-                  sx={{ color: "#1e3a8a" }}
+                  sx={{ color: "#24528C" }}
                 >
                   {occupiedCount}
                 </Typography>
@@ -686,7 +686,7 @@ export default function GetFlat() {
                       sx={{
                         py: 2,
                         fontWeight: 700,
-                        color: "#2c4d93",
+                        color: "#24528C",
                         borderBottomColor: "#f0f0f0",
                       }}
                     >

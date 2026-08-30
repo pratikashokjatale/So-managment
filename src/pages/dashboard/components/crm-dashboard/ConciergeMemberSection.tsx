@@ -352,7 +352,7 @@ const ConciergeMemberSection = ({ dashboard }: { dashboard: any }) => {
                           onClick={() => setRfidCardType(type)}
                           sx={{
                             bgcolor:
-                              rfidCardType === type ? "#1e3a8a" : "#f1f5f9",
+                              rfidCardType === type ? "#24528C" : "#f1f5f9",
                             color:
                               rfidCardType === type ? "#ffffff" : "#64748b",
                             textTransform: "none",
@@ -364,7 +364,7 @@ const ConciergeMemberSection = ({ dashboard }: { dashboard: any }) => {
                             boxShadow: "none",
                             "&:hover": {
                               bgcolor:
-                                rfidCardType === type ? "#1e3a8a" : "#e2e8f0",
+                                rfidCardType === type ? "#24528C" : "#e2e8f0",
                               boxShadow: "none",
                             },
                           }}
@@ -664,7 +664,7 @@ const ConciergeMemberSection = ({ dashboard }: { dashboard: any }) => {
                     variant="contained"
                     startIcon={<PrintOutlinedIcon sx={{ fontSize: 18 }} />}
                     sx={{
-                      bgcolor: "#1e3a8a",
+                      bgcolor: "#24528C",
                       color: "#ffffff",
                       py: 1.5,
                       borderRadius: "8px",
@@ -672,7 +672,7 @@ const ConciergeMemberSection = ({ dashboard }: { dashboard: any }) => {
                       fontWeight: 600,
                       fontSize: "0.9rem",
                       boxShadow: "none",
-                      "&:hover": { bgcolor: "#172554", boxShadow: "none" },
+                      "&:hover": { bgcolor: "#1D4270", boxShadow: "none" },
                     }}
                   >
                     Send to card printer

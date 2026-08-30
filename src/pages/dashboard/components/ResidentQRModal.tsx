@@ -172,12 +172,12 @@ const ResidentQRModal: React.FC<ResidentQRModalProps> = ({
               sx={{
                 borderRadius: "20px",
                 px: 2,
-                bgcolor: selectedAmount === amt ? "#1e40af" : "transparent",
-                color: selectedAmount === amt ? "#ffffff" : "#1e40af",
-                borderColor: "#1e40af",
+                bgcolor: selectedAmount === amt ? "#24528C" : "transparent",
+                color: selectedAmount === amt ? "#ffffff" : "#24528C",
+                borderColor: "#24528C",
                 fontWeight: 600,
                 "&:hover": {
-                   bgcolor: selectedAmount === amt ? "#1e3a8a" : "#eff6ff",
+                   bgcolor: selectedAmount === amt ? "#24528C" : "#EAF0F7",
                 }
               }}
             >
@@ -191,12 +191,12 @@ const ResidentQRModal: React.FC<ResidentQRModalProps> = ({
             sx={{
               borderRadius: "20px",
               px: 2,
-              bgcolor: selectedAmount === "ANY" ? "#1e40af" : "transparent",
-              color: selectedAmount === "ANY" ? "#ffffff" : "#1e40af",
-              borderColor: "#1e40af",
+              bgcolor: selectedAmount === "ANY" ? "#24528C" : "transparent",
+              color: selectedAmount === "ANY" ? "#ffffff" : "#24528C",
+              borderColor: "#24528C",
               fontWeight: 600,
               "&:hover": {
-                 bgcolor: selectedAmount === "ANY" ? "#1e3a8a" : "#eff6ff",
+                 bgcolor: selectedAmount === "ANY" ? "#24528C" : "#EAF0F7",
               }
             }}
           >
@@ -218,7 +218,7 @@ const ResidentQRModal: React.FC<ResidentQRModalProps> = ({
                variant="contained" 
                disabled={!customAmount || generating || status === "SUCCESS"}
                onClick={() => handleGenerate(Number(customAmount))}
-               sx={{ bgcolor: "#1e40af" }}
+               sx={{ bgcolor: "#24528C" }}
             >
               Generate
             </Button>
@@ -271,14 +271,14 @@ const ResidentQRModal: React.FC<ResidentQRModalProps> = ({
             disabled={true} // Just a visual simulation button based on screenshot, backend auto-polls anyway
             sx={{
               flex: 1,
-              bgcolor: "#1e3a8a",
+              bgcolor: "#24528C",
               color: "#ffffff",
               borderRadius: "8px",
               fontWeight: 600,
               textTransform: "none",
               py: 1.5,
               boxShadow: "none",
-              "&:hover": { bgcolor: "#1e3a8a", boxShadow: "none" },
+              "&:hover": { bgcolor: "#24528C", boxShadow: "none" },
             }}
           >
             Simulate payment

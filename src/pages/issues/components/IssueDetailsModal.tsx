@@ -53,11 +53,11 @@ const categoryLabels: Record<string, string> = {
 
 const statusColors: Record<string, { bg: string; color: string }> = {
   OPEN: { bg: "#fff7ed", color: "#ea580c" },
-  IN_PROGRESS: { bg: "#eff6ff", color: "#1d4ed8" },
+  IN_PROGRESS: { bg: "#EAF0F7", color: "#24528C" },
   RESOLVED: { bg: "#f0fdf4", color: "#16a34a" },
   CLOSED: { bg: "#f8fafc", color: "#64748b" },
   REJECTED: { bg: "#fef2f2", color: "#dc2626" },
-  CANCELLED: { bg: "#faf5ff", color: "#7c3aed" },
+  CANCELLED: { bg: "#F3E8FF", color: "#7A4FB5" },
 };
 
 const priorityColors: Record<string, { bg: string; color: string }> = {
@@ -322,7 +322,7 @@ export default function IssueDetailsModal({
                       <Typography variant="caption" color="text.secondary" fontWeight="800" display="block" sx={{ mb: 0.5 }}>
                         CANCELLATION REASON
                       </Typography>
-                      <Paper variant="outlined" sx={{ p: 2, borderRadius: "12px", bgcolor: "#faf5ff", borderColor: "#e9d5ff" }}>
+                      <Paper variant="outlined" sx={{ p: 2, borderRadius: "12px", bgcolor: "#F3E8FF", borderColor: "#F3E8FF" }}>
                         <Typography variant="body2" sx={{ whiteSpace: "pre-wrap", color: "#581c87", fontWeight: 600 }}>
                           {details.cancellationReason}
                         </Typography>
@@ -341,7 +341,7 @@ export default function IssueDetailsModal({
                       REPORTER RESIDENT
                     </Typography>
                     <Stack direction="row" spacing={2} alignItems="center">
-                      <Avatar sx={{ bgcolor: "#2c4d93", width: 44, height: 44 }}>
+                      <Avatar sx={{ bgcolor: "#24528C", width: 44, height: 44 }}>
                         <PersonIcon />
                       </Avatar>
                       <Box>
@@ -436,11 +436,11 @@ export default function IssueDetailsModal({
                               onClick={() => setActionType("IN_PROGRESS")}
                               sx={{
                                 borderRadius: "10px",
-                                bgcolor: "#1d4ed8",
+                                bgcolor: "#24528C",
                                 textTransform: "none",
                                 fontWeight: 700,
                                 boxShadow: "none",
-                                "&:hover": { bgcolor: "#1e40af" },
+                                "&:hover": { bgcolor: "#24528C" },
                               }}
                             >
                               Assign & Start Work

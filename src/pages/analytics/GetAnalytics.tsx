@@ -222,7 +222,7 @@ export default function GetAnalytics() {
                     <Tooltip cursor={{ fill: "rgba(0,0,0,0.02)" }} contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }} />
                     <Bar dataKey="bookings" barSize={40} radius={[0, 6, 6, 0]}>
                       {bookingsData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={index === 0 ? "#bca47c" : "#204a7b"} />
+                        <Cell key={`cell-${index}`} fill={index === 0 ? "#bca47c" : "#24528C"} />
                       ))}
                     </Bar>
                   </BarChart>
@@ -268,7 +268,7 @@ export default function GetAnalytics() {
                     <Tooltip cursor={{ fill: "rgba(0,0,0,0.02)" }} contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }} formatter={(val: any) => [`₹${Number(val || 0).toLocaleString()}`, "v "]} />
                     <Bar dataKey="revenue" barSize={140} radius={[6, 6, 0, 0]}>
                       {revenueData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={index === 0 ? "#bca47c" : "#204a7b"} />
+                        <Cell key={`cell-${index}`} fill={index === 0 ? "#bca47c" : "#24528C"} />
                       ))}
                     </Bar>
                   </BarChart>

@@ -104,7 +104,7 @@ export default function GetOverview() {
   const getAlertIcon = (key: string, severity: string) => {
     if (key === "blocked_cards") return <ShieldWarningIcon sx={{ color: "#c25e40", fontSize: 22 }} />;
     if (key === "membership_expiring_3_days") return <ClockIcon sx={{ color: "#bca47c", fontSize: 22 }} />;
-    if (key === "low_wallet") return <WalletAlertIcon sx={{ color: "#204a7b", fontSize: 22 }} />;
+    if (key === "low_wallet") return <WalletAlertIcon sx={{ color: "#24528C", fontSize: 22 }} />;
     if (key === "active_rfid_devices") return <WifiIcon sx={{ color: "#bca47c", fontSize: 22 }} />;
     
     if (severity === "WARNING") return <ShieldWarningIcon sx={{ color: "#c25e40", fontSize: 22 }} />;
@@ -502,10 +502,10 @@ export default function GetOverview() {
                     >
                       <stop
                         offset="5%"
-                        stopColor="#204a7b"
+                        stopColor="#24528C"
                         stopOpacity={0.15}
                       />
-                      <stop offset="95%" stopColor="#204a7b" stopOpacity={0} />
+                      <stop offset="95%" stopColor="#24528C" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid
@@ -536,7 +536,7 @@ export default function GetOverview() {
                   <Area
                     type="monotone"
                     dataKey="events"
-                    stroke="#204a7b"
+                    stroke="#24528C"
                     strokeWidth={3}
                     fillOpacity={1}
                     fill="url(#colorEvents)"

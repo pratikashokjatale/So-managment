@@ -2,15 +2,15 @@
 // Set from JS when theme changes (utils/themeCssVars.ts). Use in SCSS: color: var(--primary-main);
 
 :root {
-  --primary-light: #e3f2fd;
-  --primary-main: #1976d2;
+  --primary-light: #EAF0F7;
+  --primary-main: #24528C;
   --primary-dark: #0d47a1;
-  --primary-200: #90caf9;
+  --primary-200: #EAF0F7;
   --primary-800: #1565c0;
-  --secondary-light: #e3f2fd;
-  --secondary-main: #2196f3;
+  --secondary-light: #EAF0F7;
+  --secondary-main: #24528C;
   --secondary-dark: #1565c0;
-  --secondary-200: #90caf9;
+  --secondary-200: #EAF0F7;
   --secondary-800: #0d47a1;
   --success-main: #22c55e;
   --error-main: #ef4444;

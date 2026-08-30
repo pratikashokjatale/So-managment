@@ -14,9 +14,9 @@ import {
 import { getStaffAttendanceStatsApi } from '@/apis/logdasboard';
 
 const mockLogsFallback = [
-  { id: 1, type: 'Access', user: 'Rahul Sharma', action: 'Basement Entry', time: '11:42 PM', status: 'Success', detail: 'RFID Card #CMR101-S01', icon: <SecurityIcon sx={{ color: '#1d4ed8' }} />, bgcolor: '#eff6ff' },
+  { id: 1, type: 'Access', user: 'Rahul Sharma', action: 'Basement Entry', time: '11:42 PM', status: 'Success', detail: 'RFID Card #CMR101-S01', icon: <SecurityIcon sx={{ color: '#24528C' }} />, bgcolor: '#EAF0F7' },
   { id: 2, type: 'Payment', user: 'Graziele Lopes', action: 'Activity Recharge', time: '10:15 PM', status: 'Success', detail: 'Amount: ₹5,000.00 via UPI', icon: <PaymentIcon sx={{ color: '#10b981' }} />, bgcolor: '#f0fdf4' },
-  { id: 3, type: 'Resident', user: 'Admin', action: 'New Resident Added', time: '09:30 PM', status: 'Success', detail: 'Graziele Lopes (Flat 1001)', icon: <ResidentIcon sx={{ color: '#7c3aed' }} />, bgcolor: '#f5f3ff' },
+  { id: 3, type: 'Resident', user: 'Admin', action: 'New Resident Added', time: '09:30 PM', status: 'Success', detail: 'Graziele Lopes (Flat 1001)', icon: <ResidentIcon sx={{ color: '#7A4FB5' }} />, bgcolor: '#F3E8FF' },
   { id: 4, type: 'Security', user: 'System', action: 'Emergency SOS Triggered', time: '08:45 PM', status: 'Alert', detail: 'Basement Zone B - Resolved', icon: <SecurityIcon sx={{ color: '#ef4444' }} />, bgcolor: '#fef2f2' },
   { id: 5, type: 'Access', user: 'Unknown', action: 'Invalid Card Attempt', time: '07:20 PM', status: 'Denied', detail: 'Main Gate Reader #4', icon: <SecurityIcon sx={{ color: '#f59e0b' }} />, bgcolor: '#fffbeb' },
   { id: 6, type: 'Booking', user: 'Amit Singh', action: 'Squash Court Booked', time: '06:10 PM', status: 'Success', detail: 'Slot: 5:00 PM - 7:00 PM', icon: <HistoryIcon sx={{ color: '#0ea5e9' }} />, bgcolor: '#f0f9ff' },
@@ -27,8 +27,8 @@ const getLogMeta = (eventType: string) => {
   switch (type.toLowerCase()) {
     case 'access':
       return {
-        icon: <SecurityIcon sx={{ color: '#1d4ed8' }} />,
-        bgcolor: '#eff6ff'
+        icon: <SecurityIcon sx={{ color: '#24528C' }} />,
+        bgcolor: '#EAF0F7'
       };
     case 'payment':
       return {
@@ -38,8 +38,8 @@ const getLogMeta = (eventType: string) => {
     case 'resident':
     case 'user':
       return {
-        icon: <ResidentIcon sx={{ color: '#7c3aed' }} />,
-        bgcolor: '#f5f3ff'
+        icon: <ResidentIcon sx={{ color: '#7A4FB5' }} />,
+        bgcolor: '#F3E8FF'
       };
     case 'security':
     case 'alert':
@@ -179,7 +179,7 @@ export default function GetLogs() {
         <Grid size={{ xs: 12, md: 3 }}>
           <Paper elevation={0} sx={{ p: 4, borderRadius: '32px', border: '1px solid #e2e8f0', bgcolor: 'white' }}>
             <Typography variant="h6" fontWeight="900" color="#091542" sx={{ mb: 1 }}>Total Events</Typography>
-            <Typography variant="h3" fontWeight="900" color="#1d4ed8">
+            <Typography variant="h3" fontWeight="900" color="#24528C">
               {loading && logs.length === mockLogsFallback.length ? <CircularProgress size={24} /> : totalEventsCount.toLocaleString()}
             </Typography>
             <Typography variant="caption" color="#64748b" fontWeight="800">AUDIT LEDGER SIZE</Typography>

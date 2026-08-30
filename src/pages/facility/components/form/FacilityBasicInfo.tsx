@@ -81,7 +81,7 @@ export default function FacilityBasicInfo({ data, onChange, errors }: Props) {
       {/* ── Cover Photo ─────────────────────────── */}
       <SectionHeader
         icon={<ImageOutlinedIcon fontSize="small" />}
-        color="#7c3aed" bgColor="#f5f3ff"
+        color="#7A4FB5" bgColor="#F3E8FF"
         title="Cover Photo"
         subtitle="Upload a representative photo for this facility"
       />
@@ -127,7 +127,7 @@ export default function FacilityBasicInfo({ data, onChange, errors }: Props) {
               borderRadius: "10px", fontWeight: 600, textTransform: "none",
               borderColor: "#E2E8F0", color: "#475569", fontSize: "0.8125rem",
               fontFamily: "'Inter', system-ui, sans-serif", px: 2.5, py: 1,
-              "&:hover": { borderColor: "#2c4d93", color: "#2c4d93", bgcolor: "#EFF6FF" },
+              "&:hover": { borderColor: "#24528C", color: "#24528C", bgcolor: "#EAF0F7" },
             }}
           >
             Choose Image
@@ -138,7 +138,7 @@ export default function FacilityBasicInfo({ data, onChange, errors }: Props) {
       {/* ── Facility Identity ────────────────────── */}
       <SectionHeader
         icon={<InfoOutlinedIcon fontSize="small" />}
-        color="#2c4d93" bgColor="#eff6ff"
+        color="#24528C" bgColor="#EAF0F7"
         title="Facility Identity"
         subtitle="Name, unique code, category and display icon"
       />
@@ -158,8 +158,8 @@ export default function FacilityBasicInfo({ data, onChange, errors }: Props) {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
-                      <CodeIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                    <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                      <CodeIcon sx={{ color: '#24528C', fontSize: 20 }} />
                     </Box>
                   </InputAdornment>
                 ),
@@ -178,8 +178,8 @@ export default function FacilityBasicInfo({ data, onChange, errors }: Props) {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
-                      <CodeIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                    <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                      <CodeIcon sx={{ color: '#24528C', fontSize: 20 }} />
                     </Box>
                   </InputAdornment>
                 ),
@@ -197,8 +197,8 @@ export default function FacilityBasicInfo({ data, onChange, errors }: Props) {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
-                      <CategoryIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                    <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                      <CategoryIcon sx={{ color: '#24528C', fontSize: 20 }} />
                     </Box>
                   </InputAdornment>
                 ),
@@ -218,8 +218,8 @@ export default function FacilityBasicInfo({ data, onChange, errors }: Props) {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
-                      <EmojiEmotionsIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                    <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                      <EmojiEmotionsIcon sx={{ color: '#24528C', fontSize: 20 }} />
                     </Box>
                   </InputAdornment>
                 ),
@@ -256,8 +256,8 @@ export default function FacilityBasicInfo({ data, onChange, errors }: Props) {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
-                      <LocationCityIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                    <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                      <LocationCityIcon sx={{ color: '#24528C', fontSize: 20 }} />
                     </Box>
                   </InputAdornment>
                 ),
@@ -276,8 +276,8 @@ export default function FacilityBasicInfo({ data, onChange, errors }: Props) {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
-                      <LayersIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                    <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                      <LayersIcon sx={{ color: '#24528C', fontSize: 20 }} />
                     </Box>
                   </InputAdornment>
                 ),
@@ -310,8 +310,8 @@ export default function FacilityBasicInfo({ data, onChange, errors }: Props) {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
-                      <PersonIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                    <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                      <PersonIcon sx={{ color: '#24528C', fontSize: 20 }} />
                     </Box>
                   </InputAdornment>
                 ),
@@ -332,8 +332,8 @@ export default function FacilityBasicInfo({ data, onChange, errors }: Props) {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
-                      <PhoneIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                    <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                      <PhoneIcon sx={{ color: '#24528C', fontSize: 20 }} />
                     </Box>
                   </InputAdornment>
                 ),
@@ -354,8 +354,8 @@ export default function FacilityBasicInfo({ data, onChange, errors }: Props) {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start" sx={{ alignSelf: 'flex-start', mt: 1 }}>
-                    <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
-                      <DescriptionIcon sx={{ color: '#2c4d93', fontSize: 20 }} />
+                    <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', display: 'flex', ml: 1, mr: 1 }}>
+                      <DescriptionIcon sx={{ color: '#24528C', fontSize: 20 }} />
                     </Box>
                   </InputAdornment>
                 ),

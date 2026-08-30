@@ -79,8 +79,8 @@ export default function ResidentDependentsTab({
                     size="small" 
                     sx={{ 
                       mt: 0.5,
-                      bgcolor: '#eff6ff', 
-                      color: '#1d4ed8', 
+                      bgcolor: '#EAF0F7', 
+                      color: '#24528C', 
                       fontWeight: 800, 
                       fontSize: '0.7rem', 
                       borderRadius: '8px' 

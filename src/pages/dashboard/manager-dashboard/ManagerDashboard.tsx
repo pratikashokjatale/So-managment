@@ -91,7 +91,7 @@ const ACCESS_COLOR: Record<string, string> = {
 };
 
 const OCCUPANCY_COLOR = (pct: number) =>
-  pct >= 90 ? "#c25e40" : pct >= 70 ? "#f59e0b" : "#204a7b";
+  pct >= 90 ? "#c25e40" : pct >= 70 ? "#f59e0b" : "#24528C";
 
 export default function ManagerDashboard() {
   const theme = useTheme();
@@ -432,7 +432,7 @@ export default function ManagerDashboard() {
                   onClick={() => setScanModalOpen(true)}
                   variant="contained" 
                   startIcon={<ScanIcon />} 
-                  sx={{ bgcolor: "#1e3a5f", color: "white", textTransform: "none", borderRadius: "10px", px: 2.5, py: 1, fontWeight: 600, fontSize: "0.85rem", boxShadow: "none", "&:hover": { bgcolor: "#162d4a", boxShadow: "none" } }}
+                  sx={{ bgcolor: "#1e3a5f", color: "white", textTransform: "none", borderRadius: "10px", px: 2.5, py: 1, fontWeight: 600, fontSize: "0.85rem", boxShadow: "none", "&:hover": { bgcolor: "#1D4270", boxShadow: "none" } }}
                 >
                   Scan / block
                 </Button>
@@ -456,7 +456,7 @@ export default function ManagerDashboard() {
                     <Typography sx={{ fontSize: "0.6rem", fontWeight: 700, color: "#94a3b8", letterSpacing: "0.6px", textTransform: "uppercase" }}>{card.label}</Typography>
                   </Box>
                   {card.value === null
-                    ? <CircularProgress size={22} thickness={4} sx={{ color: "#204a7b", my: 0.5 }} />
+                    ? <CircularProgress size={22} thickness={4} sx={{ color: "#24528C", my: 0.5 }} />
                     : <Typography sx={{ 
                         fontFamily: SERIF, 
                         fontSize: "1.8rem", 
@@ -485,7 +485,7 @@ export default function ManagerDashboard() {
                     onClick={() => setActiveTab(tab.id)}
                     startIcon={tab.icon}
                     sx={{
-                      bgcolor: isActive ? "#204a7b" : "#f1f5f9",
+                      bgcolor: isActive ? "#24528C" : "#f1f5f9",
                       color: isActive ? "#ffffff" : "#64748b",
                       textTransform: "none",
                       borderRadius: "10px",
@@ -496,7 +496,7 @@ export default function ManagerDashboard() {
                       whiteSpace: "nowrap",
                       boxShadow: "none",
                       "&:hover": {
-                        bgcolor: isActive ? "#163a62" : "#e2e8f0",
+                        bgcolor: isActive ? "#24528C" : "#e2e8f0",
                         boxShadow: "none"
                       }
                     }}
@@ -540,11 +540,11 @@ export default function ManagerDashboard() {
                 {/* Bookings by Activity */}
                 <Paper elevation={0} sx={{ p: "18px 22px", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.8 }}>
-                    <BarChartOutlined sx={{ fontSize: 18, color: "#204a7b" }} />
+                    <BarChartOutlined sx={{ fontSize: 18, color: "#24528C" }} />
                     <Typography sx={{ fontWeight: 600, fontSize: "0.88rem", color: "#1e293b" }}>Bookings by Activity</Typography>
                   </Box>
                   {loadingBookings ? (
-                    <Box sx={{ display: "flex", justifyContent: "center", py: 3 }}><CircularProgress size={28} sx={{ color: "#204a7b" }} /></Box>
+                    <Box sx={{ display: "flex", justifyContent: "center", py: 3 }}><CircularProgress size={28} sx={{ color: "#24528C" }} /></Box>
                   ) : bookingsByActivity.length === 0 ? (
                     <Typography sx={{ fontSize: "0.82rem", color: "#94a3b8", textAlign: "center", py: 3 }}>No booking data</Typography>
                   ) : (
@@ -560,9 +560,9 @@ export default function ManagerDashboard() {
                                   <Chip label={item.category} size="small" sx={{ height: 16, fontSize: "0.58rem", bgcolor: "#f1f5f9", color: "#64748b", "& .MuiChip-label": { px: 0.7 } }} />
                                 )}
                               </Box>
-                              <Typography sx={{ fontSize: "0.83rem", color: "#204a7b", fontWeight: 700 }}>{item.bookings}</Typography>
+                              <Typography sx={{ fontSize: "0.83rem", color: "#24528C", fontWeight: 700 }}>{item.bookings}</Typography>
                             </Box>
-                            <LinearProgress variant="determinate" value={pct} sx={{ height: 6, borderRadius: 4, bgcolor: "#f1f5f9", "& .MuiLinearProgress-bar": { bgcolor: "#204a7b", borderRadius: 4 } }} />
+                            <LinearProgress variant="determinate" value={pct} sx={{ height: 6, borderRadius: 4, bgcolor: "#f1f5f9", "& .MuiLinearProgress-bar": { bgcolor: "#24528C", borderRadius: 4 } }} />
                           </Box>
                         );
                       })}
@@ -577,14 +577,14 @@ export default function ManagerDashboard() {
                     <Typography sx={{ fontWeight: 600, fontSize: "0.88rem", color: "#1e293b" }}>Revenue by Activity</Typography>
                   </Box>
                   {loadingRevenue ? (
-                    <Box sx={{ display: "flex", justifyContent: "center", py: 3 }}><CircularProgress size={28} sx={{ color: "#204a7b" }} /></Box>
+                    <Box sx={{ display: "flex", justifyContent: "center", py: 3 }}><CircularProgress size={28} sx={{ color: "#24528C" }} /></Box>
                   ) : revenueByActivity.length === 0 ? (
                     <Typography sx={{ fontSize: "0.82rem", color: "#94a3b8", textAlign: "center", py: 3 }}>No revenue data</Typography>
                   ) : (
                     <Stack spacing={2}>
                       {revenueByActivity.map((item: any, idx: number) => {
                         const pct = Math.round((item.revenue / maxRevenue) * 100);
-                        const barColor = pct >= 80 ? "#22c55e" : pct >= 50 ? "#204a7b" : "#94a3b8";
+                        const barColor = pct >= 80 ? "#22c55e" : pct >= 50 ? "#24528C" : "#94a3b8";
                         return (
                           <Box key={idx}>
                             <Box sx={{ display: "flex", justifyContent: "space-between", mb: 0.6 }}>
@@ -608,14 +608,14 @@ export default function ManagerDashboard() {
               {/* ── Right Column (Hourly Access Events) ── */}
               <Paper elevation={0} sx={{ p: "18px 22px", borderRadius: "12px", border: "1px solid #e2e8f0", height: "100%", display: "flex", flexDirection: "column" }}>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
-                  <BarChartOutlined sx={{ fontSize: 18, color: "#204a7b" }} />
+                  <BarChartOutlined sx={{ fontSize: 18, color: "#24528C" }} />
                   <Typography sx={{ fontWeight: 600, fontSize: "0.88rem", color: "#1e293b" }}>Access Events by Hour</Typography>
                 </Box>
                 <Typography sx={{ fontSize: "0.7rem", color: "#94a3b8", mb: 1.5 }}>Today's access activity per hour</Typography>
 
                 {loadingStats ? (
                   <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", flex: 1, py: 4 }}>
-                    <CircularProgress size={28} sx={{ color: "#204a7b" }} />
+                    <CircularProgress size={28} sx={{ color: "#24528C" }} />
                   </Box>
                 ) : hourlyData.length === 0 ? (
                   <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1, minHeight: 160 }}>
@@ -656,7 +656,7 @@ export default function ManagerDashboard() {
                           {hourlyData.map((entry, idx) => (
                             <Cell
                               key={idx}
-                              fill={entry.count >= maxHourly * 0.75 ? "#c25e40" : entry.count >= maxHourly * 0.4 ? "#204a7b" : "#93c5fd"}
+                              fill={entry.count >= maxHourly * 0.75 ? "#c25e40" : entry.count >= maxHourly * 0.4 ? "#24528C" : "#93c5fd"}
                             />
                           ))}
                         </Bar>
@@ -667,7 +667,7 @@ export default function ManagerDashboard() {
 
                 {/* Legend */}
                 <Box sx={{ display: "flex", gap: 2, mt: "auto", pt: 2, justifyContent: "center" }}>
-                  {[{ color: "#c25e40", label: "High" }, { color: "#204a7b", label: "Medium" }, { color: "#93c5fd", label: "Low" }].map((l) => (
+                  {[{ color: "#c25e40", label: "High" }, { color: "#24528C", label: "Medium" }, { color: "#93c5fd", label: "Low" }].map((l) => (
                     <Box key={l.label} sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
                       <Box sx={{ width: 8, height: 8, borderRadius: "2px", bgcolor: l.color }} />
                       <Typography sx={{ fontSize: "0.68rem", color: "#94a3b8" }}>{l.label}</Typography>
@@ -695,7 +695,42 @@ export default function ManagerDashboard() {
               <SpendTab />
             )}
             {activeTab === "requests" && (
-              <RequestsTab />
+              <Box sx={{ position: "relative" }}>
+                <Box sx={{ opacity: 0.6, pointerEvents: "none", userSelect: "none" }}>
+                  <RequestsTab />
+                </Box>
+                <Box
+                  sx={{
+                    position: "absolute",
+                    inset: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    bgcolor: "rgba(255,255,255,0.4)",
+                    backdropFilter: "blur(6px)",
+                    WebkitBackdropFilter: "blur(6px)",
+                    zIndex: 10,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      bgcolor: "#ffffff",
+                      border: "1px solid #e2e8f0",
+                      borderRadius: "16px",
+                      boxShadow: "0 10px 40px rgba(0,0,0,0.1)",
+                      p: 4,
+                      textAlign: "center",
+                    }}
+                  >
+                    <Typography sx={{ fontWeight: 700, color: "#1e293b", fontSize: "1.5rem", mb: 1, fontFamily: SERIF }}>
+                      Coming soon
+                    </Typography>
+                    <Typography sx={{ color: "#64748b", fontSize: "0.95rem" }}>
+                      The Requests feature is currently being wired up.
+                    </Typography>
+                  </Box>
+                </Box>
+              </Box>
             )}
             {activeTab !== "counter" && activeTab !== "banquet" && activeTab !== "sessions" && activeTab !== "staff" && activeTab !== "upkeep" && activeTab !== "spend" && activeTab !== "requests" && (
               <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "300px", bgcolor: "#f8fafc", borderRadius: "16px", border: "1px dashed #cbd5e1", textAlign: "center" }}>
@@ -773,7 +808,7 @@ export default function ManagerDashboard() {
             onClick={handleRecharge}
             variant="contained" 
             disabled={recharging || !rechargeAmount}
-            sx={{ bgcolor: '#0284c7', '&:hover': { bgcolor: '#0369a1' }, borderRadius: '8px', px: 3 }}
+            sx={{ bgcolor: '#24528C', '&:hover': { bgcolor: '#24528C' }, borderRadius: '8px', px: 3 }}
           >
             {recharging ? <CircularProgress size={24} color="inherit" /> : 'Confirm Recharge'}
           </Button>

@@ -162,8 +162,8 @@ const PopulationModal: React.FC<PopulationModalProps> = ({ open, onClose, onResi
               <Box
                 sx={{
                   display: "inline-block",
-                  bgcolor: "#eef2ff",
-                  color: "#4f46e5",
+                  bgcolor: "#EAF0F7",
+                  color: "#24528C",
                   px: 1.5,
                   py: 0.5,
                   borderRadius: "6px",
@@ -287,9 +287,9 @@ const PopulationModal: React.FC<PopulationModalProps> = ({ open, onClose, onResi
               }}
             >
               {[
-                { value: ageGroups.adults , subtext: "Adults", color: "#1e3a8a" },
+                { value: ageGroups.adults , subtext: "Adults", color: "#24528C" },
                 { value: ageGroups.children , subtext: "Children", color: "#bca462" },
-                { value: ageGroups.seniors , subtext: "Seniors", color: "#7e22ce" },
+                { value: ageGroups.seniors , subtext: "Seniors", color: "#7A4FB5" },
               ].map((stat, i) => (
                 <Box
                   key={i}
@@ -379,7 +379,7 @@ const PopulationModal: React.FC<PopulationModalProps> = ({ open, onClose, onResi
                           fontSize: "0.75rem",
                           fontWeight: 600,
                           cursor: "pointer",
-                          bgcolor: whoFilter === opt.value ? "#1e3a8a" : "#f1f5f9",
+                          bgcolor: whoFilter === opt.value ? "#24528C" : "#f1f5f9",
                           color: whoFilter === opt.value ? "#ffffff" : "#64748b",
                         }}
                       >
@@ -414,7 +414,7 @@ const PopulationModal: React.FC<PopulationModalProps> = ({ open, onClose, onResi
                           fontSize: "0.75rem",
                           fontWeight: 600,
                           cursor: "pointer",
-                          bgcolor: ageFilter === opt.value ? "#1e3a8a" : "#f1f5f9",
+                          bgcolor: ageFilter === opt.value ? "#24528C" : "#f1f5f9",
                           color: ageFilter === opt.value ? "#ffffff" : "#64748b",
                         }}
                       >
@@ -456,7 +456,7 @@ const PopulationModal: React.FC<PopulationModalProps> = ({ open, onClose, onResi
                         fontSize: "0.75rem",
                         fontWeight: 600,
                         cursor: "pointer",
-                        bgcolor: projectFilter === opt.value ? "#1e3a8a" : "#f1f5f9",
+                        bgcolor: projectFilter === opt.value ? "#24528C" : "#f1f5f9",
                         color: projectFilter === opt.value ? "#ffffff" : "#64748b",
                       }}
                     >
@@ -561,7 +561,7 @@ const PopulationModal: React.FC<PopulationModalProps> = ({ open, onClose, onResi
                     <Avatar
                       sx={{
                         bgcolor: "#f1f5f9",
-                        color: "#1e3a8a",
+                        color: "#24528C",
                         width: 40,
                         height: 40,
                         fontSize: "0.9rem",
@@ -580,8 +580,8 @@ const PopulationModal: React.FC<PopulationModalProps> = ({ open, onClose, onResi
                         {person?.role && (
                           <Box
                             sx={{
-                              bgcolor: "#eef2ff",
-                              color: "#4f46e5",
+                              bgcolor: "#EAF0F7",
+                              color: "#24528C",
                               px: 1,
                               py: 0.25,
                               borderRadius: "4px",

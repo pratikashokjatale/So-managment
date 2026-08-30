@@ -416,7 +416,7 @@ export default function ResidentWallets({ userId, onWalletUpdated, wallets, acti
                               {tx.type === 'CREDIT' ? '+' : (tx.type === 'DEBIT' ? '-' : '')}₹{tx.amount}
                             </TableCell>
                             <TableCell>
-                              <Typography variant="body2" sx={{ color: '#2c4d93', fontWeight: 600 }}>
+                              <Typography variant="body2" sx={{ color: '#24528C', fontWeight: 600 }}>
                                 #{tx.id.substring(0, 8).toUpperCase()}
                               </Typography>
                             </TableCell>

@@ -440,8 +440,8 @@ export default function EditStaff() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <EventOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -470,8 +470,8 @@ export default function EditStaff() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <PersonOutlineIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <PersonOutlineIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -491,8 +491,8 @@ export default function EditStaff() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <BadgeOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <BadgeOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -516,8 +516,8 @@ export default function EditStaff() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <BadgeOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <BadgeOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -540,8 +540,8 @@ export default function EditStaff() {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                          <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                        <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                          <EventOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                         </Box>
                       </InputAdornment>
                     ),
@@ -572,8 +572,8 @@ export default function EditStaff() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <PhoneOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <PhoneOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -594,8 +594,8 @@ export default function EditStaff() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <EmailOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <EmailOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -616,8 +616,8 @@ export default function EditStaff() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <LockOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <LockOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -647,8 +647,8 @@ export default function EditStaff() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <EventOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -668,8 +668,8 @@ export default function EditStaff() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <PhoneOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <PhoneOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -691,8 +691,8 @@ export default function EditStaff() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <BadgeOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <BadgeOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -717,8 +717,8 @@ export default function EditStaff() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <PersonOutlineIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <PersonOutlineIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -739,8 +739,8 @@ export default function EditStaff() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <BadgeOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <BadgeOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -764,8 +764,8 @@ export default function EditStaff() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <BadgeOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <BadgeOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -787,8 +787,8 @@ export default function EditStaff() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <EventOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -808,8 +808,8 @@ export default function EditStaff() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <EventOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -840,10 +840,10 @@ export default function EditStaff() {
                     bgcolor: 'white',
                     color: '#64748b',
                     '&.Mui-selected': {
-                      bgcolor: '#3b82f6',
+                      bgcolor: '#24528C',
                       color: 'white',
                       '&:hover': {
-                        bgcolor: '#2c4d93',
+                        bgcolor: '#24528C',
                       }
                     }
                   }
@@ -870,8 +870,8 @@ export default function EditStaff() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <LockOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <LockOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -900,8 +900,8 @@ export default function EditStaff() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <LockOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <LockOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -935,8 +935,8 @@ export default function EditStaff() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <CreditCardOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <CreditCardOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -960,8 +960,8 @@ export default function EditStaff() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <CreditCardOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <CreditCardOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),

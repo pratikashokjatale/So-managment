@@ -61,7 +61,7 @@ export default function FacilitySidebar({ facility, handleStatusToggle }: Facili
         </Typography>
         <Stack spacing={2}>
           <Stack direction="row" spacing={1.5} alignItems="center">
-            <Avatar sx={{ bgcolor: '#eff6ff', color: '#1d4ed8', width: 36, height: 36 }}>
+            <Avatar sx={{ bgcolor: '#EAF0F7', color: '#24528C', width: 36, height: 36 }}>
               <SupervisorAccountOutlinedIcon fontSize="small" />
             </Avatar>
             <Box>

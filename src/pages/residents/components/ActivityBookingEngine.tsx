@@ -66,17 +66,17 @@ export default function ActivityBookingEngine() {
                 alignItems: 'center',
                 gap: 2,
                 transition: 'all 0.2s',
-                bgcolor: selectedActivity.id === act.id ? '#eff6ff' : 'transparent',
+                bgcolor: selectedActivity.id === act.id ? '#EAF0F7' : 'transparent',
                 border: '1px solid',
-                borderColor: selectedActivity.id === act.id ? '#1d4ed8' : '#f1f5f9',
+                borderColor: selectedActivity.id === act.id ? '#24528C' : '#f1f5f9',
                 '&:hover': { bgcolor: '#f8fafc' }
               }}
             >
-              <Box sx={{ color: selectedActivity.id === act.id ? '#1d4ed8' : 'text.secondary' }}>
+              <Box sx={{ color: selectedActivity.id === act.id ? '#24528C' : 'text.secondary' }}>
                 {act.icon}
               </Box>
               <Box>
-                <Typography variant="body2" fontWeight="800" color={selectedActivity.id === act.id ? '#1d4ed8' : '#091542'}>
+                <Typography variant="body2" fontWeight="800" color={selectedActivity.id === act.id ? '#24528C' : '#091542'}>
                   {act.name}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">₹{act.price} / Slot</Typography>
@@ -112,9 +112,9 @@ export default function ActivityBookingEngine() {
                     fontWeight: 700,
                     height: 50,
                     borderColor: '#e2e8f0',
-                    bgcolor: isSelected ? '#1d4ed8' : 'transparent',
+                    bgcolor: isSelected ? '#24528C' : 'transparent',
                     color: isSelected ? 'white' : 'text.primary',
-                    '&:hover': { bgcolor: isSelected ? '#1e40af' : '#f8fafc' }
+                    '&:hover': { bgcolor: isSelected ? '#24528C' : '#f8fafc' }
                   }}
                 >
                   {slot}

@@ -76,7 +76,7 @@ export default function EmergencyStats({
           sx={{
             p: 2,
             borderRadius: "12px",
-            border: "1px solid #eff6ff",
+            border: "1px solid #EAF0F7",
             bgcolor: "#f0f7ff",
             display: "flex",
             alignItems: "center",
@@ -90,14 +90,14 @@ export default function EmergencyStats({
             },
           }}
         >
-          <Avatar sx={{ bgcolor: "#dbeafe", color: "#2c4d93", width: 44, height: 44 }}>
+          <Avatar sx={{ bgcolor: "#EAF0F7", color: "#24528C", width: 44, height: 44 }}>
             <AcknowledgedIcon sx={{ fontSize: 22 }} />
           </Avatar>
           <Box>
             <Typography variant="caption" color="primary.main" fontWeight="800" letterSpacing="0.5px">
               RESPONDING / ACKED
             </Typography>
-            <Typography variant="h5" fontWeight="950" color="#1d4ed8" sx={{ lineHeight: 1.2 }}>
+            <Typography variant="h5" fontWeight="950" color="#24528C" sx={{ lineHeight: 1.2 }}>
               {acknowledgedCount}
             </Typography>
           </Box>

@@ -29,10 +29,10 @@ const severityColors: Record<string, { bg: string; color: string }> = {
 
 const statusColors: Record<string, { bg: string; color: string }> = {
   OPEN: { bg: "#fef2f2", color: "#dc2626" },
-  ACKNOWLEDGED: { bg: "#eff6ff", color: "#1d4ed8" },
+  ACKNOWLEDGED: { bg: "#EAF0F7", color: "#24528C" },
   RESOLVED: { bg: "#f0fdf4", color: "#16a34a" },
   FALSE_ALARM: { bg: "#f8fafc", color: "#64748b" },
-  CANCELLED: { bg: "#faf5ff", color: "#7c3aed" },
+  CANCELLED: { bg: "#F3E8FF", color: "#7A4FB5" },
 };
 
 const typeIcons: Record<string, React.ReactNode> = {
@@ -300,7 +300,7 @@ export default function GetEmergency() {
                   </Typography>
                 )}
                 {row.status === "CANCELLED" && (
-                  <Typography variant="body2" fontWeight="700" color="#7c3aed" sx={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>
+                  <Typography variant="body2" fontWeight="700" color="#7A4FB5" sx={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>
                     Cancelled: {row.cancellationReason || "Pressed accidentally"}
                   </Typography>
                 )}
@@ -340,7 +340,7 @@ export default function GetEmergency() {
                   textTransform: "none",
                   fontWeight: 800,
                   fontSize: "0.75rem",
-                  bgcolor: severityColors[row.severity]?.color || "#2c4d93",
+                  bgcolor: severityColors[row.severity]?.color || "#24528C",
                   color: "#ffffff",
                   boxShadow: "none",
                   "&:hover": {

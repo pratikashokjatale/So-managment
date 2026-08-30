@@ -17,7 +17,7 @@ import {
 } from "@mui/icons-material";
 import { getStaffListApi } from "@/apis/staff";
 
-const BRAND = "#204a7b";
+const BRAND = "#24528C";
 const GREEN = "#22c55e";
 const GOLD = "#bca47c";
 const GOLD_D = "#a17a3f";
@@ -209,7 +209,7 @@ export default function StaffTab() {
               fontWeight: 600,
               bgcolor: activeFilter === dep ? BRAND : BG,
               color: activeFilter === dep ? "#fff" : MUT,
-              "&:hover": { bgcolor: activeFilter === dep ? "#163a62" : "#e2e8f0" },
+              "&:hover": { bgcolor: activeFilter === dep ? "#24528C" : "#e2e8f0" },
             }}
           >
             {dep}
@@ -258,7 +258,7 @@ export default function StaffTab() {
                       flexShrink: 0,
                     }}
                   >
-                    <GroupIcon sx={{ fontSize: 20, color: "#3b82f6" }} />
+                    <GroupIcon sx={{ fontSize: 20, color: "#24528C" }} />
                   </Box>
 
                   {/* Details */}

@@ -218,8 +218,8 @@ export default function AddAnnouncement() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <EventOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -246,8 +246,8 @@ export default function AddAnnouncement() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <BadgeOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <BadgeOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -274,8 +274,8 @@ export default function AddAnnouncement() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <NotificationsActiveOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <NotificationsActiveOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -299,8 +299,8 @@ export default function AddAnnouncement() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <SubjectOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <SubjectOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -323,8 +323,8 @@ export default function AddAnnouncement() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <PriorityHighOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <PriorityHighOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -358,8 +358,8 @@ export default function AddAnnouncement() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <GroupsOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <GroupsOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -387,8 +387,8 @@ export default function AddAnnouncement() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <EventOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
@@ -416,8 +416,8 @@ export default function AddAnnouncement() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Box sx={{ bgcolor: '#e8effc', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
-                        <EventOutlinedIcon sx={{ color: '#2c4d93', fontSize: '1.2rem' }} />
+                      <Box sx={{ bgcolor: '#EAF0F7', p: 0.5, borderRadius: '4px', mr: 1, ml: 1, display: 'flex' }}>
+                        <EventOutlinedIcon sx={{ color: '#24528C', fontSize: '1.2rem' }} />
                       </Box>
                     </InputAdornment>
                   ),
