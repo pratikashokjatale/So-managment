@@ -474,15 +474,17 @@ const CRMDashboard = ({ user }: { user: any }) => {
     handleSaveTemplate, handleRecharge, setView,
   };
 
-  if (view === "groupOffice") {
-    return <CRMGroupOfficeView dashboard={dashboard} />;
-  }
+  const activeView = view === "groupOffice"
+    ? <CRMGroupOfficeView dashboard={dashboard} />
+    : view === "concierge"
+      ? <CRMConciergeView dashboard={dashboard} />
+      : <CRMHomeView dashboard={dashboard} />;
 
-  if (view === "concierge") {
-    return <CRMConciergeView dashboard={dashboard} />;
-  }
-
-  return <CRMHomeView dashboard={dashboard} />;
+  return (
+    <Box sx={{ width: "100%" }}>
+      {activeView}
+    </Box>
+  );
 };
 
 export default CRMDashboard;

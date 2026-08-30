@@ -54,7 +54,6 @@ import SessionsTab from "./SessionsTab";
 import StaffTab from "./StaffTab";
 import UpkeepTab from "./UpkeepTab";
 import SpendTab from "./SpendTab";
-import RequestsTab from "../components/RequestsTab";
 
 const INTER = "'Inter', system-ui, sans-serif";
 const SERIF = "'Cormorant Garamond', Georgia, serif";
@@ -308,7 +307,7 @@ export default function ManagerDashboard() {
   ];
 
   return (
-    <Box sx={{ minHeight: "100vh", bgcolor: "#edf1f9", fontFamily: INTER }}>
+    <Box sx={{ height: "100vh", overflow: "hidden", bgcolor: "#edf1f9", fontFamily: INTER }}>
 
       {/* ── Top Nav ── */}
       <Box component="header" sx={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: theme.zIndex.drawer + 1, bgcolor: "#ffffff", borderBottom: "1px solid #e2e8f0" }}>
@@ -330,11 +329,33 @@ export default function ManagerDashboard() {
       </Box>
 
       {/* ── Content ── */}
-      <Box sx={{ pt: "66px", maxWidth: "1100px", margin: "0 auto", px: { xs: 2, md: 3 }, pb: 5 }}>
-        <Paper elevation={0} sx={{ mt: 2, borderRadius: "20px", border: "1px solid #dde3ed", bgcolor: "#ffffff", overflow: "hidden", boxShadow: "0 4px 24px rgba(99,120,160,0.12)" }}>
+      <Box
+        sx={{
+          pt: "66px",
+          maxWidth: "1100px",
+          height: "100vh",
+          margin: "0 auto",
+          px: { xs: 2, md: 3 },
+          pb: 2,
+        }}
+      >
+        <Paper
+          elevation={0}
+          sx={{
+            mt: 2,
+            height: "calc(100% - 14px)",
+            borderRadius: "20px",
+            border: "1px solid #dde3ed",
+            bgcolor: "#ffffff",
+            overflow: "hidden",
+            display: "flex",
+            flexDirection: "column",
+            boxShadow: "0 4px 24px rgba(99,120,160,0.12)",
+          }}
+        >
 
           {/* ── Profile Header ── */}
-          <Box sx={{ px: 3, py: 2, display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #f1f5f9" }}>
+          <Box sx={{ px: 3, py: 2, flexShrink: 0, display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #f1f5f9" }}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
               <Box sx={{ width: 38, height: 38, borderRadius: "10px", bgcolor: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <WorkOutline sx={{ color: "#475569", fontSize: 18 }} />
@@ -346,7 +367,27 @@ export default function ManagerDashboard() {
             </Box>
           </Box>
 
-          <Box sx={{ p: 3, display: "flex", flexDirection: "column", gap: 3 }}>
+          <Box
+            sx={{
+              p: 3,
+              flex: 1,
+              minHeight: 0,
+              overflowY: "auto",
+              display: "flex",
+              flexDirection: "column",
+              gap: 3,
+              scrollbarWidth: "thin",
+              scrollbarColor: "#94A3B8 #F1F5F9",
+              "&::-webkit-scrollbar": { width: "8px" },
+              "&::-webkit-scrollbar-track": { bgcolor: "#F1F5F9" },
+              "&::-webkit-scrollbar-thumb": {
+                bgcolor: "#94A3B8",
+                borderRadius: "8px",
+                border: "2px solid #F1F5F9",
+              },
+              "&::-webkit-scrollbar-thumb:hover": { bgcolor: "#64748B" },
+            }}
+          >
 
             {/* ── Title + Scan ── */}
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
@@ -403,7 +444,20 @@ export default function ManagerDashboard() {
 
             
             {/* ── Tabs ── */}
-            <Box sx={{ display: "flex", gap: 1, overflowX: "auto", pb: 1, mt: 1, '&::-webkit-scrollbar': { display: 'none' } }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+                minHeight: "42px",
+                py: 0.5,
+                overflowX: "auto",
+                overflowY: "hidden",
+                flexShrink: 0,
+                scrollbarWidth: "none",
+                "&::-webkit-scrollbar": { display: "none" },
+              }}
+            >
               {managerTabs.map((tab) => {
                 const isActive = activeTab === tab.id;
                 return (
@@ -417,9 +471,13 @@ export default function ManagerDashboard() {
                       textTransform: "none",
                       borderRadius: "10px",
                       px: 2,
-                      py: 0.8,
+                      py: 0,
+                      minHeight: "34px",
+                      height: "34px",
+                      flexShrink: 0,
                       fontWeight: 600,
                       fontSize: "0.8rem",
+                      lineHeight: 1.2,
                       whiteSpace: "nowrap",
                       boxShadow: "none",
                       "&:hover": {
@@ -477,40 +535,25 @@ export default function ManagerDashboard() {
               <SpendTab />
             )}
             {activeTab === "requests" && (
-              <Box sx={{ position: "relative" }}>
-                <Box sx={{ opacity: 0.6, pointerEvents: "none", userSelect: "none" }}>
-                  <RequestsTab />
-                </Box>
-                <Box
-                  sx={{
-                    position: "absolute",
-                    inset: 0,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    bgcolor: "rgba(255,255,255,0.4)",
-                    backdropFilter: "blur(6px)",
-                    WebkitBackdropFilter: "blur(6px)",
-                    zIndex: 10,
-                  }}
-                >
-                  <Box
-                    sx={{
-                      bgcolor: "#ffffff",
-                      border: "1px solid #e2e8f0",
-                      borderRadius: "16px",
-                      boxShadow: "0 10px 40px rgba(0,0,0,0.1)",
-                      p: 4,
-                      textAlign: "center",
-                    }}
-                  >
-                    <Typography sx={{ fontWeight: 700, color: "#1e293b", fontSize: "1.5rem", mb: 1, fontFamily: SERIF }}>
-                      Coming soon
-                    </Typography>
-                    <Typography sx={{ color: "#64748b", fontSize: "0.95rem" }}>
-                      The Requests feature is currently being wired up.
-                    </Typography>
-                  </Box>
+              <Box
+                sx={{
+                  minHeight: "240px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  bgcolor: "#f8fafc",
+                  border: "1px dashed #cbd5e1",
+                  borderRadius: "16px",
+                  textAlign: "center",
+                }}
+              >
+                <Box>
+                  <Typography sx={{ fontWeight: 700, color: "#1e293b", fontSize: "1.5rem", mb: 1, fontFamily: SERIF }}>
+                    Coming soon
+                  </Typography>
+                  <Typography sx={{ color: "#64748b", fontSize: "0.95rem" }}>
+                    The Requests feature is currently being wired up.
+                  </Typography>
                 </Box>
               </Box>
             )}

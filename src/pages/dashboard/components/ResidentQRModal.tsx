@@ -110,36 +110,37 @@ const ResidentQRModal: React.FC<ResidentQRModalProps> = ({
     <Dialog
       open={open}
       onClose={() => status !== "PENDING" && onClose()}
-      maxWidth="sm"
+      maxWidth="xs"
       fullWidth
       PaperProps={{
         sx: {
           borderRadius: "16px",
-          p: 2,
+          p: 1,
         },
       }}
     >
-      <DialogContent sx={{ textAlign: "center" }}>
+      <DialogContent sx={{ textAlign: "center", p: 2 }}>
         <Typography
           variant="h5"
           sx={{
             fontFamily: "'Cormorant Garamond', serif",
             fontWeight: 700,
             color: "#1e293b",
-            mb: 2,
+            mb: 1,
+            fontSize: "1.35rem",
           }}
         >
           Recharge wallet
         </Typography>
 
-        <Typography sx={{ color: "#475569", fontSize: "0.95rem", mb: 3, px: 2 }}>
+        <Typography sx={{ color: "#475569", fontSize: "0.82rem", mb: 2, px: 1 }}>
           Show this QR to <strong>{user.name} · Activity Wallet</strong>. Whatever they pay
           against it lands <strong>straight in this wallet</strong> — credited the instant it
           arrives.
         </Typography>
 
         {/* QR Display Area */}
-        <Box sx={{ minHeight: 240, display: "flex", alignItems: "center", justifyContent: "center", mb: 3 }}>
+        <Box sx={{ minHeight: 180, display: "flex", alignItems: "center", justifyContent: "center", mb: 2 }}>
           {status === "SUCCESS" ? (
              <Box>
                 <Typography variant="h5" sx={{ color: "#10b981", fontWeight: "bold" }}>Payment Successful!</Typography>
@@ -150,11 +151,11 @@ const ResidentQRModal: React.FC<ResidentQRModalProps> = ({
             <img
               src={qrData.imageUrl}
               alt="Razorpay QR"
-              style={{ width: 220, height: 220, objectFit: "contain", border: "1px solid #e2e8f0", borderRadius: "12px", padding: "8px" }}
+              style={{ width: 170, height: 170, objectFit: "contain", border: "1px solid #e2e8f0", borderRadius: "10px", padding: "6px" }}
             />
           ) : (
-            <Box sx={{ width: 220, height: 220, border: "1px dashed #cbd5e1", borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Typography color="text.secondary">
+            <Box sx={{ width: 170, height: 170, p: 2, border: "1px dashed #cbd5e1", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Typography color="text.secondary" sx={{ fontSize: "0.8rem" }}>
                 {selectedAmount === "ANY" ? "Enter amount below" : pollingError || "No QR generated"}
               </Typography>
             </Box>
@@ -171,7 +172,9 @@ const ResidentQRModal: React.FC<ResidentQRModalProps> = ({
               disabled={generating || status === "SUCCESS"}
               sx={{
                 borderRadius: "20px",
-                px: 2,
+                px: 1.5,
+                minHeight: 32,
+                fontSize: "0.78rem",
                 bgcolor: selectedAmount === amt ? "#24528C" : "transparent",
                 color: selectedAmount === amt ? "#ffffff" : "#24528C",
                 borderColor: "#24528C",
@@ -190,7 +193,9 @@ const ResidentQRModal: React.FC<ResidentQRModalProps> = ({
             disabled={generating || status === "SUCCESS"}
             sx={{
               borderRadius: "20px",
-              px: 2,
+              px: 1.5,
+              minHeight: 32,
+              fontSize: "0.78rem",
               bgcolor: selectedAmount === "ANY" ? "#24528C" : "transparent",
               color: selectedAmount === "ANY" ? "#ffffff" : "#24528C",
               borderColor: "#24528C",
@@ -230,25 +235,25 @@ const ResidentQRModal: React.FC<ResidentQRModalProps> = ({
           sx={{
             bgcolor: "#fef3c7",
             color: "#92400e",
-            px: 2,
-            py: 1.5,
+            px: 1.5,
+            py: 1,
             borderRadius: "8px",
             fontSize: "0.85rem",
             fontWeight: 500,
-            mb: 2,
-            mx: 2
+            mb: 1.5,
+            mx: 1
           }}
         >
           Unique to this resident & this wallet — not a generic code. Two residents never
           share a QR.
         </Box>
 
-        <Typography sx={{ color: "#94a3b8", fontSize: "0.75rem", mb: 4, letterSpacing: "1px" }}>
+        <Typography sx={{ color: "#94a3b8", fontSize: "0.65rem", mb: 2, letterSpacing: "0.6px", overflowWrap: "anywhere" }}>
           MRB|RECHARGE|{user.residentId || user.id}|ACTIVITY|{actualAmount || 0}
         </Typography>
 
         {/* Action Buttons */}
-        <Box sx={{ display: "flex", justifyContent: "space-between", gap: 2, px: 2 }}>
+        <Box sx={{ display: "flex", justifyContent: "space-between", gap: 1.5, px: 1 }}>
           <Button
             onClick={onClose}
             variant="outlined"
@@ -260,7 +265,7 @@ const ResidentQRModal: React.FC<ResidentQRModalProps> = ({
               borderRadius: "8px",
               fontWeight: 600,
               textTransform: "none",
-              py: 1.5,
+              py: 1,
               "&:hover": { bgcolor: "#e2e8f0", border: "none" },
             }}
           >
@@ -276,7 +281,7 @@ const ResidentQRModal: React.FC<ResidentQRModalProps> = ({
               borderRadius: "8px",
               fontWeight: 600,
               textTransform: "none",
-              py: 1.5,
+              py: 1,
               boxShadow: "none",
               "&:hover": { bgcolor: "#24528C", boxShadow: "none" },
             }}

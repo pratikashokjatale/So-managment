@@ -28,6 +28,7 @@ export default function ThemeCustomization({
     () => ({
       palette,
       typography,
+      spacing: 7,
       shape: { borderRadius: 8 },
       mixins: {
         toolbar: { minHeight: 56, paddingLeft: 16, paddingRight: 16 },

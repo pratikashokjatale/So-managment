@@ -291,7 +291,7 @@ const ResidentProfileCard: React.FC<ResidentProfileCardProps> = ({
       {/* Booking Slots Section */}
       {selectedFacility && (
         <Box sx={{ mt: 2 }}>
-          <Typography sx={{ fontSize: "0.8rem", color: "#64748b", mb: 2 }}>
+          <Typography sx={{ fontSize: "0.72rem", color: "#64748b", mb: 1.5 }}>
             Paid — needs the resident's OTP before any money moves · non-refundable · today · no overbooking
           </Typography>
 
@@ -308,7 +308,7 @@ const ResidentProfileCard: React.FC<ResidentProfileCardProps> = ({
               sx={{
                 display: "grid",
                 gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr", md: "1fr 1fr 1fr" },
-                gap: 2,
+                gap: 1.25,
               }}
             >
               {slots.map((slot, i) => {
@@ -324,17 +324,17 @@ const ResidentProfileCard: React.FC<ResidentProfileCardProps> = ({
                       border: "1px solid",
                       borderColor: isFull ? "#fee2e2" : "#e2e8f0",
                       bgcolor: isFull ? "#fef2f2" : "#ffffff",
-                      borderRadius: "12px",
-                      p: 2,
+                      borderRadius: "10px",
+                      p: 1.25,
                     }}
                   >
                     <Box>
-                      <Typography sx={{ fontWeight: 700, color: "#1e293b", fontSize: "0.95rem" }}>
+                      <Typography sx={{ fontWeight: 700, color: "#1e293b", fontSize: "0.82rem" }}>
                         {formatTime(slot.startTime)} - {formatTime(slot.endTime)}
                       </Typography>
                       <Typography
                         sx={{
-                          fontSize: "0.75rem",
+                          fontSize: "0.68rem",
                           color: isFull ? "#ef4444" : "#10b981",
                           mt: 0.5,
                         }}
@@ -346,8 +346,8 @@ const ResidentProfileCard: React.FC<ResidentProfileCardProps> = ({
                     {isFull ? (
                       <Box
                         sx={{
-                          width: 32,
-                          height: 32,
+                          width: 28,
+                          height: 28,
                           borderRadius: "8px",
                           bgcolor: "#e2e8f0",
                           display: "flex",
@@ -369,10 +369,10 @@ const ResidentProfileCard: React.FC<ResidentProfileCardProps> = ({
                           color: "#ffffff",
                           textTransform: "none",
                           borderRadius: "8px",
-                          px: 2,
-                          py: 0.5,
+                          px: 1.5,
+                          py: 0.35,
                           fontWeight: 600,
-                          fontSize: "0.85rem",
+                          fontSize: "0.75rem",
                           minWidth: "auto",
                           boxShadow: "none",
                           "&:hover": { bgcolor: "#1D4270", boxShadow: "none" },

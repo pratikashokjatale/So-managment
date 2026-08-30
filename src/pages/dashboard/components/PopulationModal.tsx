@@ -100,13 +100,32 @@ const PopulationModal: React.FC<PopulationModalProps> = ({ open, onClose, onResi
     <Dialog
       open={open}
       onClose={onClose}
-      maxWidth="lg"
-      fullWidth
+      maxWidth={false}
+      slotProps={{
+        backdrop: {
+          sx: { bgcolor: "rgba(9, 21, 66, 0.88)" },
+        },
+      }}
       PaperProps={{
         sx: {
-          borderRadius: "24px",
-          p: { xs: 2, md: 4 },
+          width: { xs: "calc(100% - 24px)", md: "1020px" },
+          maxWidth: "1020px",
+          maxHeight: "calc(100vh - 64px)",
+          m: { xs: 1.5, md: 4 },
+          borderRadius: "20px",
+          p: { xs: 2, md: 3 },
           bgcolor: "#ffffff",
+          overflowY: "auto",
+          scrollbarWidth: "thin",
+          scrollbarColor: "#94A3B8 #F1F5F9",
+          "&::-webkit-scrollbar": { width: "8px" },
+          "&::-webkit-scrollbar-track": { bgcolor: "#F1F5F9" },
+          "&::-webkit-scrollbar-thumb": {
+            bgcolor: "#94A3B8",
+            borderRadius: "8px",
+            border: "2px solid #F1F5F9",
+          },
+          "&::-webkit-scrollbar-thumb:hover": { bgcolor: "#64748B" },
         },
       }}
     >
