@@ -99,7 +99,7 @@ const ResidentSearchUI: React.FC<ResidentSearchUIProps> = ({
         </Button>
       </Box>
 
-      <Box
+      {/* <Box
         sx={{
           display: "flex",
           gap: 1,
@@ -120,9 +120,9 @@ const ResidentSearchUI: React.FC<ResidentSearchUIProps> = ({
           printed on their physical RFID card; a member may hold several cards (self,
           dependents, guest). Either loads the same account.
         </Typography>
-      </Box>
+      </Box> */}
 
-      <Typography sx={{ fontSize: "0.85rem", color: "#64748b" }}>
+      {/* <Typography sx={{ fontSize: "0.85rem", color: "#64748b" }}>
         Demo IDs:{" "}
         {demoIds.map((id) => (
           <Box
@@ -140,7 +140,7 @@ const ResidentSearchUI: React.FC<ResidentSearchUIProps> = ({
             {id}
           </Box>
         ))}
-      </Typography>
+      </Typography> */}
     </Box>
   );
 };

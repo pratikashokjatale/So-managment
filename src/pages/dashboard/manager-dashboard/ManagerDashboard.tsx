@@ -6,13 +6,11 @@ import {
   Paper,
   Button,
   TextField,
-  LinearProgress,
   Stack,
   Divider,
   Toolbar,
   useTheme,
   CircularProgress,
-  Chip,
   Tooltip,
   Autocomplete,
   Dialog,
@@ -22,16 +20,6 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip as RTooltip,
-  ResponsiveContainer,
-  Cell,
-} from "recharts";
 import {
   WorkOutline,
   GraphicEqOutlined as ScanIcon,
@@ -43,7 +31,6 @@ import {
   Logout as LogoutIcon,
   RestaurantOutlined,
   SensorsOutlined as AccessIcon,
-  BarChartOutlined,
   TrendingUpOutlined,
 } from "@mui/icons-material";
 import { useAuth } from "@/contexts/AuthContext";
@@ -51,8 +38,6 @@ import logoImg from "@/assets/logo.jpeg";
 import {
   getAnalyticsOverviewApi,
   getAnalyticsAccessEventsApi,
-  getAnalyticsBookingsByActivityApi,
-  getAnalyticsRevenueByActivityApi,
 } from "@/apis/analytics";
 import { getDashbordFacility } from "@/apis/dashboard";
 import { getFacilitiesApi } from "@/apis/facility";
@@ -190,15 +175,6 @@ export default function ManagerDashboard() {
   // ── Access events ──────────────────────────────────────
   const [loadingEvents, setLoadingEvents] = useState(true);
   const [accessEvents, setAccessEvents] = useState<any[]>([]);
-  const [hourlyData, setHourlyData] = useState<{ hour: string; count: number }[]>([]);
-
-  // ── Bookings by Activity ────────────────────────────────
-  const [loadingBookings, setLoadingBookings] = useState(true);
-  const [bookingsByActivity, setBookingsByActivity] = useState<any[]>([]);
-
-  // ── Revenue by Activity ─────────────────────────────────
-  const [loadingRevenue, setLoadingRevenue] = useState(true);
-  const [revenueByActivity, setRevenueByActivity] = useState<any[]>([]);
 
   // ── Occupancy ──────────────────────────────────────────
   const [loadingOccupancy, setLoadingOccupancy] = useState(true);
@@ -222,14 +198,6 @@ export default function ManagerDashboard() {
         setActiveMembers(d?.totals?.activeMembers ?? 0);
         setVipPasses(d?.activeVipPasses ?? 0);
 
-        // Hourly access data from daily.accessEventsByHour
-        const hourly = d?.daily?.accessEventsByHour;
-        if (hourly && typeof hourly === "object") {
-          const sorted = Object.entries(hourly)
-            .map(([h, c]) => ({ hour: `${h}:00`, count: Number(c) }))
-            .sort((a, b) => parseInt(a.hour) - parseInt(b.hour));
-          setHourlyData(sorted);
-        }
       } catch (e) {
         console.warn("analytics/overview error:", e);
       } finally {
@@ -252,40 +220,6 @@ export default function ManagerDashboard() {
         console.warn("access-events error:", e);
       } finally {
         setLoadingEvents(false);
-      }
-    })();
-  }, [isLoggedIn]);
-
-  // ── Fetch analytics/bookings-by-activity ───────────────
-  useEffect(() => {
-    if (!isLoggedIn) return;
-    (async () => {
-      setLoadingBookings(true);
-      try {
-        const res = await getAnalyticsBookingsByActivityApi({ limit: 10 });
-        const items = (res as any)?.data?.items ?? (res as any)?.items ?? [];
-        setBookingsByActivity(Array.isArray(items) ? items : []);
-      } catch (e) {
-        console.warn("bookings-by-activity error:", e);
-      } finally {
-        setLoadingBookings(false);
-      }
-    })();
-  }, [isLoggedIn]);
-
-  // ── Fetch analytics/revenue-by-activity ────────────────
-  useEffect(() => {
-    if (!isLoggedIn) return;
-    (async () => {
-      setLoadingRevenue(true);
-      try {
-        const res = await getAnalyticsRevenueByActivityApi({ limit: 10 });
-        const items = (res as any)?.data?.items ?? (res as any)?.items ?? [];
-        setRevenueByActivity(Array.isArray(items) ? items : []);
-      } catch (e) {
-        console.warn("revenue-by-activity error:", e);
-      } finally {
-        setLoadingRevenue(false);
       }
     })();
   }, [isLoggedIn]);
@@ -362,13 +296,6 @@ export default function ManagerDashboard() {
       sub: "active passes",
     },
   ];
-
-  // Max values for bar width normalization
-  const maxBookings = Math.max(...bookingsByActivity.map((b) => b.bookings || 0), 1);
-  const maxRevenue = Math.max(...revenueByActivity.map((r) => r.revenue || 0), 1);
-
-  // Max count for hourly bars
-  const maxHourly = Math.max(...hourlyData.map((h) => h.count), 1);
 
   const managerTabs = [
     { id: "counter", label: "Counter", icon: <AccountBalanceWalletOutlined sx={{ fontSize: 16 }} /> },
@@ -531,151 +458,6 @@ export default function ManagerDashboard() {
                 onShowRechargeQR={() => setQrRechargeModalOpen(true)}
               />
             </Paper>
-
-            {/* ── Data Panels Row ── */}
-            <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, gap: 1.5, alignItems: "start" }}>
-
-              {/* ── Left Column (Bookings & Revenue) ── */}
-              <Stack spacing={1.5}>
-                {/* Bookings by Activity */}
-                <Paper elevation={0} sx={{ p: "18px 22px", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.8 }}>
-                    <BarChartOutlined sx={{ fontSize: 18, color: "#24528C" }} />
-                    <Typography sx={{ fontWeight: 600, fontSize: "0.88rem", color: "#1e293b" }}>Bookings by Activity</Typography>
-                  </Box>
-                  {loadingBookings ? (
-                    <Box sx={{ display: "flex", justifyContent: "center", py: 3 }}><CircularProgress size={28} sx={{ color: "#24528C" }} /></Box>
-                  ) : bookingsByActivity.length === 0 ? (
-                    <Typography sx={{ fontSize: "0.82rem", color: "#94a3b8", textAlign: "center", py: 3 }}>No booking data</Typography>
-                  ) : (
-                    <Stack spacing={2}>
-                      {bookingsByActivity.map((item: any, idx: number) => {
-                        const pct = Math.round((item.bookings / maxBookings) * 100);
-                        return (
-                          <Box key={idx}>
-                            <Box sx={{ display: "flex", justifyContent: "space-between", mb: 0.6 }}>
-                              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                                <Typography sx={{ fontSize: "0.83rem", color: "#1e293b", fontWeight: 500 }}>{item.facilityName}</Typography>
-                                {item.category && (
-                                  <Chip label={item.category} size="small" sx={{ height: 16, fontSize: "0.58rem", bgcolor: "#f1f5f9", color: "#64748b", "& .MuiChip-label": { px: 0.7 } }} />
-                                )}
-                              </Box>
-                              <Typography sx={{ fontSize: "0.83rem", color: "#24528C", fontWeight: 700 }}>{item.bookings}</Typography>
-                            </Box>
-                            <LinearProgress variant="determinate" value={pct} sx={{ height: 6, borderRadius: 4, bgcolor: "#f1f5f9", "& .MuiLinearProgress-bar": { bgcolor: "#24528C", borderRadius: 4 } }} />
-                          </Box>
-                        );
-                      })}
-                    </Stack>
-                  )}
-                </Paper>
-
-                {/* Revenue by Activity */}
-                <Paper elevation={0} sx={{ p: "18px 22px", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.8 }}>
-                    <TrendingUpOutlined sx={{ fontSize: 18, color: "#22c55e" }} />
-                    <Typography sx={{ fontWeight: 600, fontSize: "0.88rem", color: "#1e293b" }}>Revenue by Activity</Typography>
-                  </Box>
-                  {loadingRevenue ? (
-                    <Box sx={{ display: "flex", justifyContent: "center", py: 3 }}><CircularProgress size={28} sx={{ color: "#24528C" }} /></Box>
-                  ) : revenueByActivity.length === 0 ? (
-                    <Typography sx={{ fontSize: "0.82rem", color: "#94a3b8", textAlign: "center", py: 3 }}>No revenue data</Typography>
-                  ) : (
-                    <Stack spacing={2}>
-                      {revenueByActivity.map((item: any, idx: number) => {
-                        const pct = Math.round((item.revenue / maxRevenue) * 100);
-                        const barColor = pct >= 80 ? "#22c55e" : pct >= 50 ? "#24528C" : "#94a3b8";
-                        return (
-                          <Box key={idx}>
-                            <Box sx={{ display: "flex", justifyContent: "space-between", mb: 0.6 }}>
-                              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                                <Typography sx={{ fontSize: "0.83rem", color: "#1e293b", fontWeight: 500 }}>{item.facilityName}</Typography>
-                                {item.category && (
-                                  <Chip label={item.category} size="small" sx={{ height: 16, fontSize: "0.58rem", bgcolor: "#f1f5f9", color: "#64748b", "& .MuiChip-label": { px: 0.7 } }} />
-                                )}
-                              </Box>
-                              <Typography sx={{ fontSize: "0.83rem", color: "#22c55e", fontWeight: 700 }}>{fmtRupees(item.revenue)}</Typography>
-                            </Box>
-                            <LinearProgress variant="determinate" value={pct} sx={{ height: 6, borderRadius: 4, bgcolor: "#f1f5f9", "& .MuiLinearProgress-bar": { bgcolor: barColor, borderRadius: 4 } }} />
-                          </Box>
-                        );
-                      })}
-                    </Stack>
-                  )}
-                </Paper>
-              </Stack>
-
-              {/* ── Right Column (Hourly Access Events) ── */}
-              <Paper elevation={0} sx={{ p: "18px 22px", borderRadius: "12px", border: "1px solid #e2e8f0", height: "100%", display: "flex", flexDirection: "column" }}>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
-                  <BarChartOutlined sx={{ fontSize: 18, color: "#24528C" }} />
-                  <Typography sx={{ fontWeight: 600, fontSize: "0.88rem", color: "#1e293b" }}>Access Events by Hour</Typography>
-                </Box>
-                <Typography sx={{ fontSize: "0.7rem", color: "#94a3b8", mb: 1.5 }}>Today's access activity per hour</Typography>
-
-                {loadingStats ? (
-                  <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", flex: 1, py: 4 }}>
-                    <CircularProgress size={28} sx={{ color: "#24528C" }} />
-                  </Box>
-                ) : hourlyData.length === 0 ? (
-                  <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1, minHeight: 160 }}>
-                    <Typography sx={{ fontSize: "0.82rem", color: "#94a3b8" }}>No hourly data available</Typography>
-                  </Box>
-                ) : (
-                  <Box sx={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 250 }}>
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={hourlyData} margin={{ top: 4, right: 4, left: -28, bottom: 0 }} barCategoryGap="30%">
-                        <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
-                        <XAxis
-                          dataKey="hour"
-                          tick={{ fontSize: 10, fill: "#94a3b8" }}
-                          tickLine={false}
-                          axisLine={false}
-                          tickFormatter={(v) => v.replace(":00", "")}
-                        />
-                        <YAxis
-                          tick={{ fontSize: 10, fill: "#94a3b8" }}
-                          tickLine={false}
-                          axisLine={false}
-                          allowDecimals={false}
-                        />
-                        <RTooltip
-                          cursor={{ fill: "#f1f5f9" }}
-                          contentStyle={{
-                            background: "#ffffff",
-                            border: "1px solid #e2e8f0",
-                            borderRadius: "8px",
-                            fontSize: "0.78rem",
-                            boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
-                            padding: "6px 12px",
-                          }}
-                          formatter={(val: any) => [`${val} events`, "Access"]}
-                          labelFormatter={(label) => `Hour: ${label}`}
-                        />
-                        <Bar dataKey="count" radius={[4, 4, 0, 0]} maxBarSize={28}>
-                          {hourlyData.map((entry, idx) => (
-                            <Cell
-                              key={idx}
-                              fill={entry.count >= maxHourly * 0.75 ? "#c25e40" : entry.count >= maxHourly * 0.4 ? "#24528C" : "#93c5fd"}
-                            />
-                          ))}
-                        </Bar>
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </Box>
-                )}
-
-                {/* Legend */}
-                <Box sx={{ display: "flex", gap: 2, mt: "auto", pt: 2, justifyContent: "center" }}>
-                  {[{ color: "#c25e40", label: "High" }, { color: "#24528C", label: "Medium" }, { color: "#93c5fd", label: "Low" }].map((l) => (
-                    <Box key={l.label} sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                      <Box sx={{ width: 8, height: 8, borderRadius: "2px", bgcolor: l.color }} />
-                      <Typography sx={{ fontSize: "0.68rem", color: "#94a3b8" }}>{l.label}</Typography>
-                    </Box>
-                  ))}
-                </Box>
-              </Paper>
-            </Box>
 
               </Box>
             )}
