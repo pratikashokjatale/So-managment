@@ -629,7 +629,7 @@ const PopulationModal: React.FC<PopulationModalProps> = ({ open, onClose, onResi
                           fontSize: "0.85rem",
                         }}
                       >
-                        {person?.flat?.unitNumber || "N/A"}
+                        {person?.flat?.unitNumber || ""}
                       </Typography>
                       <Typography
                         sx={{ color: "#94a3b8", fontSize: "0.75rem" }}

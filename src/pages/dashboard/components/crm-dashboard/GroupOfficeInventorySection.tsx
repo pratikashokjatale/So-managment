@@ -615,7 +615,7 @@ const GroupOfficeInventorySection = ({ dashboard }: { dashboard: any }) => {
                   ) : (
                     <>
                       {inventoryFlats.map((flat: any, i: number) => {
-                    const priceFormatted = flat.price ? new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumSignificantDigits: 3 }).format(flat.price) : "Price N/A";
+                    const priceFormatted = flat.price ? new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumSignificantDigits: 3 }).format(flat.price) : "";
                     
                     return (
                       <Box
@@ -645,7 +645,7 @@ const GroupOfficeInventorySection = ({ dashboard }: { dashboard: any }) => {
                                 fontSize: "0.95rem",
                               }}
                             >
-                              {flat.flatNumber || "N/A"}
+                              {flat.flatNumber || ""}
                             </Typography>
                             <Typography sx={{ color: "#64748b", fontSize: "0.9rem" }}>
                               {[flat.flatType, flat.area ? `${flat.area} sq ft` : null, flat.facing].filter(Boolean).join(" · ")}
@@ -653,7 +653,7 @@ const GroupOfficeInventorySection = ({ dashboard }: { dashboard: any }) => {
                           </Box>
                           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                             <Typography sx={{ color: "#94a3b8", fontSize: "0.8rem" }}>
-                              {flat.tower?.project?.name || "N/A"}
+                              {flat.tower?.project?.name || ""}
                             </Typography>
                             <Typography sx={{ color: "#64748b", fontSize: "0.8rem" }}>
                               {[flat.tower?.name || flat.towerName, flat.floor ? `Floor ${flat.floor}` : null, flat.ownerName].filter(Boolean).join(" · ")}
