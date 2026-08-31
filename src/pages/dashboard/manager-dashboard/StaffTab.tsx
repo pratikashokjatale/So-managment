@@ -16,6 +16,7 @@ import {
   GroupOutlined as GroupIcon,
 } from "@mui/icons-material";
 import { getStaffListApi } from "@/apis/staff";
+import { getAttendanceListApi } from "@/apis/attendance";
 
 const BRAND = "#24528C";
 const GREEN = "#22c55e";
@@ -27,57 +28,70 @@ const INK = "#1e293b";
 const BG = "#f1f5f9";
 const LINE = "#e2e8f0";
 
-// Mock helper to simulate attendance data since the basic staff API might not have it
-const getMockAttendance = (staff: any, idx: number) => {
-  // We'll deterministically generate some mock attendance state based on index
-  // so the UI looks like the screenshot.
-  const states = [
-    { status: "on_time", time: "05:58", checkedIn: true },
-    { status: "absent", checkedIn: false },
-    { status: "late", time: "07:03", checkedIn: true, lateMins: 3 },
-  ];
-  return states[idx % 3];
-};
+const todayInIndia = () => new Intl.DateTimeFormat("en-CA", {
+  timeZone: "Asia/Kolkata",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+}).format(new Date());
+
+const checkInTime = (value: string) => value ? new Intl.DateTimeFormat("en-IN", {
+  timeZone: "Asia/Kolkata",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+}).format(new Date(value)) : "—";
 
 export default function StaffTab() {
   const [staff, setStaff] = useState<any[]>([]);
+  const [attendance, setAttendance] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState("All");
 
-  const fetchStaff = async () => {
-    setLoading(true);
+  const fetchStaff = async (showLoader = true) => {
+    if (showLoader) setLoading(true);
     try {
-      const res = await getStaffListApi({ limit: 100 });
-      let items = res?.data?.items || res?.items || res?.data || res || [];
-      if (!Array.isArray(items)) items = [];
-      setStaff(items);
+      const date = todayInIndia();
+      const [staffResponse, attendanceResponse] = await Promise.all([
+        getStaffListApi({ limit: 100, status: "ACTIVE" }),
+        getAttendanceListApi({ dateFrom: date, dateTo: date, page: 1, limit: 100 }),
+      ]);
+      let staffItems = staffResponse?.data?.items || staffResponse?.items || staffResponse?.data || staffResponse || [];
+      let attendanceItems = attendanceResponse?.data?.items || attendanceResponse?.items || attendanceResponse?.data || attendanceResponse || [];
+      setStaff(Array.isArray(staffItems) ? staffItems : []);
+      setAttendance(Array.isArray(attendanceItems) ? attendanceItems : []);
     } catch (error) {
       console.error("Failed to fetch staff:", error);
-      // Mock data fallback if API fails entirely
-      setStaff([
-        { id: "1", name: "Anjali Mehra", department: "Fitness", designation: "Yoga & functional training", phone: "98761 20014", shiftStart: "06:00", shiftEnd: "10:00" },
-        { id: "2", name: "Vikram S. (Gym)", department: "Fitness", designation: "Gym floor · evening", phone: "98761 20015", shiftStart: "16:00", shiftEnd: "21:00" },
-        { id: "3", name: "Rohit Verma", department: "Management", designation: "Club manager", phone: "98761 20001", shiftStart: "09:00", shiftEnd: "18:00" },
-        { id: "4", name: "Gurpreet Singh", department: "Security", designation: "Main gate supervisor", phone: "98761 20031", shiftStart: "06:00", shiftEnd: "18:00" },
-        { id: "5", name: "Ramesh Kumar", department: "Housekeeping", designation: "Block A", phone: "98761 20041", shiftStart: "07:00", shiftEnd: "15:00" },
-        { id: "6", name: "Sunita Devi", department: "Housekeeping", designation: "Block A · pool deck", phone: "98761 20042", shiftStart: "07:00", shiftEnd: "15:00" },
-      ]);
     } finally {
-      setLoading(false);
+      if (showLoader) setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchStaff();
+    const interval = window.setInterval(() => fetchStaff(false), 30000);
+    return () => window.clearInterval(interval);
   }, []);
 
-  // Process data with mock attendance
+  // Join today's live attendance records to the staff directory.
   const staffWithAttendance = useMemo(() => {
-    return staff.map((s, i) => ({
-      ...s,
-      attendance: s.attendance || getMockAttendance(s, i)
-    }));
-  }, [staff]);
+    const byStaffId = new Map(attendance.map(record => [record.staffId || record.staff?.id, record]));
+    return staff.map(s => {
+      const record = byStaffId.get(s.id);
+      if (!record) return { ...s, attendance: { status: "absent", checkedIn: false } };
+      const apiStatus = String(record.status || "ABSENT").toUpperCase();
+      return {
+        ...s,
+        attendance: {
+          ...record,
+          status: apiStatus === "LATE" ? "late" : apiStatus === "ABSENT" || apiStatus === "ON_LEAVE" ? "absent" : "on_time",
+          checkedIn: Boolean(record.checkInAt) && !record.checkOutAt && !["ABSENT", "ON_LEAVE"].includes(apiStatus),
+          time: checkInTime(record.checkInAt),
+          lateMins: record.lateMinutes ?? record.minutesLate ?? record.lateByMinutes ?? 0,
+        },
+      };
+    });
+  }, [staff, attendance]);
 
   // Extract unique departments for filters
   const departments = useMemo(() => {

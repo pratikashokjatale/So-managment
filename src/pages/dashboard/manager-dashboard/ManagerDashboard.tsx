@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -35,11 +35,8 @@ import {
 } from "@mui/icons-material";
 import { useAuth } from "@/contexts/AuthContext";
 import logoImg from "@/assets/logo.jpeg";
-import {
-  getAnalyticsOverviewApi,
-  getAnalyticsAccessEventsApi,
-} from "@/apis/analytics";
-import { getDashbordFacility } from "@/apis/dashboard";
+import { getAnalyticsAccessEventsApi } from "@/apis/analytics";
+import { getDashbordFacility, getManagerDashboardOverviewApi } from "@/apis/dashboard";
 import { getFacilitiesApi } from "@/apis/facility";
 import { getUsersApi } from "@/apis/user";
 import { adminRechargeUserWalletApi } from "@/apis/wallet";
@@ -54,6 +51,7 @@ import SessionsTab from "./SessionsTab";
 import StaffTab from "./StaffTab";
 import UpkeepTab from "./UpkeepTab";
 import SpendTab from "./SpendTab";
+import RequestsTab from "./RequestsTab";
 
 const INTER = "'Inter', system-ui, sans-serif";
 const SERIF = "'Cormorant Garamond', Georgia, serif";
@@ -80,7 +78,13 @@ const OCCUPANCY_COLOR = (pct: number) =>
 export default function ManagerDashboard() {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { logout, isLoggedIn, isAuthLoading, user } = useAuth();
+  const [searchParams] = useSearchParams();
+  const { logout, isLoggedIn, isAuthLoading, user, projectId } = useAuth();
+  const selectedProjectId = searchParams.get("projectId");
+  const managerProjectId = user?.roleProfiles?.find((profile: any) => profile?.projectId)?.projectId || projectId;
+  const activeProjectId = user?.role === "MANAGER"
+    ? managerProjectId
+    : selectedProjectId && selectedProjectId !== "all" ? selectedProjectId : undefined;
   const [memberId, setMemberId] = useState("");
   const [selectedResident, setSelectedResident] = useState<any>(null);
   
@@ -166,10 +170,7 @@ export default function ManagerDashboard() {
 
   // ── KPI stats ──────────────────────────────────────────
   const [loadingStats, setLoadingStats] = useState(true);
-  const [revenue, setRevenue] = useState(0);
-  const [bookingsTotal, setBookingsTotal] = useState(0);
-  const [activeMembers, setActiveMembers] = useState(0);
-  const [vipPasses, setVipPasses] = useState(0);
+  const [managerCards, setManagerCards] = useState<any>({});
 
   // ── Access events ──────────────────────────────────────
   const [loadingEvents, setLoadingEvents] = useState(true);
@@ -184,26 +185,30 @@ export default function ManagerDashboard() {
     if (!isAuthLoading && !isLoggedIn) navigate("/login", { replace: true });
   }, [isAuthLoading, isLoggedIn, navigate]);
 
-  // ── Fetch analytics/overview ───────────────────────────
+  // ── Fetch manager dashboard overview ──────────────────
   useEffect(() => {
     if (!isLoggedIn) return;
     (async () => {
       setLoadingStats(true);
       try {
-        const res = await getAnalyticsOverviewApi();
-        const d = res?.data || (res as any);
-        setRevenue(d?.totals?.revenue ?? 0);
-        setBookingsTotal(d?.totals?.bookings ?? 0);
-        setActiveMembers(d?.totals?.activeMembers ?? 0);
-        setVipPasses(d?.activeVipPasses ?? 0);
-
+        const date = new Intl.DateTimeFormat("en-CA", {
+          timeZone: "Asia/Kolkata",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        }).format(new Date());
+        const res = await getManagerDashboardOverviewApi({
+          ...(activeProjectId ? { projectId: activeProjectId } : {}),
+          date,
+        });
+        setManagerCards((res as any)?.data?.cards || (res as any)?.cards || {});
       } catch (e) {
-        console.warn("analytics/overview error:", e);
+        console.warn("manager/dashboard/overview error:", e);
       } finally {
         setLoadingStats(false);
       }
     })();
-  }, [isLoggedIn]);
+  }, [isLoggedIn, activeProjectId]);
 
   // ── Fetch analytics/access-events ─────────────────────
   useEffect(() => {
@@ -271,28 +276,28 @@ export default function ManagerDashboard() {
 
   const kpiCards = [
     {
-      icon: <AccountBalanceWalletOutlined sx={{ fontSize: 16, color: "#bca47c" }} />,
-      label: "TOTAL REVENUE",
-      value: loadingStats ? null : fmtRupees(revenue),
-      sub: revenue > 0 ? "all time" : "no revenue yet",
+      icon: <CalendarTodayOutlined sx={{ fontSize: 16, color: "#bca47c" }} />,
+      label: "NEXT BANQUET",
+      value: loadingStats ? null : String(managerCards?.nextBanquet?.value ?? "—"),
+      sub: managerCards?.nextBanquet?.subText || "diary clear",
     },
     {
-      icon: <CalendarTodayOutlined sx={{ fontSize: 16, color: "#475569" }} />,
-      label: "TOTAL BOOKINGS",
-      value: loadingStats ? null : String(bookingsTotal),
-      sub: "all bookings",
+      icon: <CardMembershipOutlined sx={{ fontSize: 16, color: "#475569" }} />,
+      label: "SESSIONS LIVE",
+      value: loadingStats ? null : String(managerCards?.sessionsLive?.value ?? 0),
+      sub: managerCards?.sessionsLive?.subText || "none ending soon",
     },
     {
       icon: <PeopleOutlined sx={{ fontSize: 16, color: "#22c55e" }} />,
-      label: "ACTIVE MEMBERS",
-      value: loadingStats ? null : String(activeMembers),
-      sub: "registered members",
+      label: "STAFF ON DUTY",
+      value: loadingStats ? null : String(managerCards?.staffOnDuty?.value ?? 0),
+      sub: managerCards?.staffOnDuty?.subText || "of 0",
     },
     {
-      icon: <CardMembershipOutlined sx={{ fontSize: 16, color: "#f59e0b" }} />,
-      label: "VIP PASSES",
-      value: loadingStats ? null : String(vipPasses),
-      sub: "active passes",
+      icon: <InfoOutlined sx={{ fontSize: 16, color: "#f59e0b" }} />,
+      label: "OPEN REQUESTS",
+      value: loadingStats ? null : String(managerCards?.openRequests?.value ?? 0),
+      sub: managerCards?.openRequests?.subText || "no upkeep items open",
     },
   ];
 
@@ -535,27 +540,7 @@ export default function ManagerDashboard() {
               <SpendTab />
             )}
             {activeTab === "requests" && (
-              <Box
-                sx={{
-                  minHeight: "240px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  bgcolor: "#f8fafc",
-                  border: "1px dashed #cbd5e1",
-                  borderRadius: "16px",
-                  textAlign: "center",
-                }}
-              >
-                <Box>
-                  <Typography sx={{ fontWeight: 700, color: "#1e293b", fontSize: "1.5rem", mb: 1, fontFamily: SERIF }}>
-                    Coming soon
-                  </Typography>
-                  <Typography sx={{ color: "#64748b", fontSize: "0.95rem" }}>
-                    The Requests feature is currently being wired up.
-                  </Typography>
-                </Box>
-              </Box>
+              <RequestsTab />
             )}
             {activeTab !== "counter" && activeTab !== "banquet" && activeTab !== "sessions" && activeTab !== "staff" && activeTab !== "upkeep" && activeTab !== "spend" && activeTab !== "requests" && (
               <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "300px", bgcolor: "#f8fafc", borderRadius: "16px", border: "1px dashed #cbd5e1", textAlign: "center" }}>

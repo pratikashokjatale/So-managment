@@ -93,11 +93,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       if (token) {
         const res = await getCachedMe();
+        const responseData = res?.data || res || {};
+        const responseUser = responseData?.user || responseData;
+        const roleProfiles = responseData?.roleProfiles || responseUser?.roleProfiles || [];
+        const user = { ...responseUser, roleProfiles };
         dispatch({
           type: SET_USER,
           payload: {
             isLoggedIn: true,
-            user: res?.data?.user || res?.user || res?.data || res || {},
+            user,
+            projectId: roleProfiles.find((profile: any) => profile?.projectId)?.projectId || null,
           },
         });
       } else {
@@ -138,7 +143,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         res?.tokens?.refreshToken ||
         res?.refreshToken ||
         res?.data?.refreshToken;
-      const user = res?.data?.user || res?.user || res?.data || res;
+      const responseData = res?.data || res || {};
+      const responseUser = responseData?.user || responseData;
+      const roleProfiles = responseData?.roleProfiles || responseUser?.roleProfiles || [];
+      const user = { ...responseUser, roleProfiles };
 
       if (accessToken) {
         if (isLogin) {
@@ -155,6 +163,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         payload: {
           isLoggedIn: true,
           user: user,
+          projectId: roleProfiles.find((profile: any) => profile?.projectId)?.projectId || null,
         },
       });
 
@@ -192,7 +201,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         res?.tokens?.refreshToken ||
         res?.refreshToken ||
         res?.data?.refreshToken;
-      const user = res?.data?.user || res?.user || res?.data || res;
+      const responseData = res?.data || res || {};
+      const responseUser = responseData?.user || responseData;
+      const roleProfiles = responseData?.roleProfiles || responseUser?.roleProfiles || [];
+      const user = { ...responseUser, roleProfiles };
 
       if (accessToken) {
         if (isLoggingIn) {
@@ -206,7 +218,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       dispatch({
         type: LOGIN,
-        payload: { isLoggedIn: true, user },
+        payload: {
+          isLoggedIn: true,
+          user,
+          projectId: roleProfiles.find((profile: any) => profile?.projectId)?.projectId || null,
+        },
       });
 
       return res;

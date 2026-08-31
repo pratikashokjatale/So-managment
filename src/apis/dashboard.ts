@@ -9,6 +9,21 @@ export interface DashboardParams {
   days?: number;
 }
 
+export interface ManagerDashboardOverviewParams {
+  projectId?: string;
+  date?: string;
+  endingSoonMinutes?: number;
+}
+
+export const getManagerDashboardOverviewApi = async (params?: ManagerDashboardOverviewParams) => {
+  try {
+    const res = await api.get("manager/dashboard/overview", { params });
+    return res?.data;
+  } catch (error) {
+    throw handleApiError(error);
+  }
+};
+
 export const getDashboardApi = async (params?: DashboardParams) => {
   try {
     const res = await api.get("dashboard/overview", { params });

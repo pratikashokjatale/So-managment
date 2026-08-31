@@ -38,7 +38,7 @@ export default function SessionsTab() {
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [now, setNow] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
+  const today = new Date().toISOString().split("T")[0];
 
   // Update "now" every minute so timers refresh
   useEffect(() => {
@@ -49,8 +49,7 @@ export default function SessionsTab() {
   const fetchBookings = async () => {
     setLoading(true);
     try {
-      // Fetch bookings for selected date
-      const res = await getBookingsApi({ dateFrom: selectedDate, dateTo: selectedDate, limit: 100 });
+      const res = await getBookingsApi({ dateFrom: today, dateTo: today, limit: 100 });
       const items = res?.data?.items || res?.items || [];
       
       // Sort by start time
@@ -68,7 +67,7 @@ export default function SessionsTab() {
 
   useEffect(() => {
     fetchBookings();
-  }, [selectedDate]);
+  }, []);
 
   // Compute status for a booking
   const getSessionState = (b: any) => {
@@ -103,11 +102,22 @@ export default function SessionsTab() {
     return { status: "upcoming", color: BRAND, label: "upcoming", bg: "#e0e7ff", text: "#3730a3", subtext: `in ${minsUntil} min`, minsUntil };
   };
 
-  // Find alarms (upcoming in <= 30 mins)
-  const alarms = bookings.map(b => {
+  // Home Theatre bookings are highlighted in Alarms; the schedule stays complete.
+  const alarms = bookings.filter(b => {
+    const facilityName = String(b.facility?.name || "").toLowerCase();
+    return facilityName.includes("home theatre") || facilityName.includes("home theater");
+  }).map(b => {
     const s = getSessionState(b);
     return { ...b, state: s };
-  }).filter(b => b.state.status === "upcoming" && b.state.minsUntil <= 30);
+  });
+
+  const alarmText = (booking: any) => {
+    if (booking.state.status === "ongoing") return `is live · ${booking.state.subtext}`;
+    if (booking.state.status === "upcoming") return `starts ${booking.state.subtext}`;
+    if (booking.state.status === "done") return `${formatTime12h(booking.startTime)}–${formatTime12h(booking.endTime)} · completed`;
+    if (booking.state.status === "cancelled") return "cancelled";
+    return `${formatTime12h(booking.startTime)}–${formatTime12h(booking.endTime)}`;
+  };
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
@@ -127,7 +137,7 @@ export default function SessionsTab() {
             Sessions
           </Typography>
           <Typography sx={{ fontSize: "0.85rem", color: MUT }}>
-            Home theatre, courts & venues — live
+            Today's facility bookings
           </Typography>
         </Box>
         <Box sx={{ ml: "auto" }}>
@@ -166,14 +176,14 @@ export default function SessionsTab() {
           Alarms
         </Typography>
         {alarms.length === 0 ? (
-          <Typography sx={{ fontSize: "0.85rem", color: MUT }}>No sessions starting soon.</Typography>
+          <Typography sx={{ fontSize: "0.85rem", color: MUT }}>No Home Theatre bookings for today.</Typography>
         ) : (
           <Stack spacing={1.5}>
             {alarms.map((b, idx) => (
               <Box key={idx} sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap" }}>
                 <ClockIcon sx={{ fontSize: 16, color: GOLD_D }} />
                 <Typography sx={{ fontSize: "0.85rem", color: INK, flex: 1 }}>
-                  {b.facility?.name} starts in {b.state.minsUntil} min — {b.user?.name || "Unknown"} ({b.attendeeCount || 0} pax)
+                  {b.facility?.name} {alarmText(b)} — {b.user?.name || "Unknown"} ({b.attendeeCount || 0} pax)
                 </Typography>
                 <Typography sx={{ fontSize: "0.75rem", color: MUT }}>
                   {b.user?.cardNumber || "N/A"} · {b.user?.flatNumber || "N/A"}
@@ -196,22 +206,8 @@ export default function SessionsTab() {
       >
         <Box sx={{ px: 3, py: 2, borderBottom: `1px solid ${LINE}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <Typography sx={{ fontSize: "0.85rem", fontWeight: 600, color: MUT }}>
-            {selectedDate === new Date().toISOString().split("T")[0] ? "Today's schedule" : "Schedule"}
+            Today's schedule
           </Typography>
-          <input
-            type="date"
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-            style={{
-              fontSize: "0.8rem",
-              padding: "4px 8px",
-              borderRadius: "6px",
-              border: `1px solid ${LINE}`,
-              color: INK,
-              background: "#fff",
-              outline: "none"
-            }}
-          />
         </Box>
 
         {loading ? (

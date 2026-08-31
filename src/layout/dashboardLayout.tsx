@@ -350,7 +350,7 @@ export default function DashboardLayout() {
                 setCurrentRole(role.label);
                 setAnchorElRole(null);
                 if (role.label === "Manager") {
-                  navigate("/manager");
+                  navigate(projectId !== "all" ? `/manager?projectId=${encodeURIComponent(projectId)}` : "/manager");
                 } else if (role.label === "Admin (you)" || role.label === "CRM") {
                   navigate("/");
                 }
