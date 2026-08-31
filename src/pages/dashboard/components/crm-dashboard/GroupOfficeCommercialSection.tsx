@@ -111,50 +111,7 @@ const GroupOfficeCommercialSection = ({ dashboard }: { dashboard: any }) => {
   return (
     <>
           {activeGroupOfficeTab === "purchase requests" && (
-            <Box sx={{ position: "relative" }}>
-              <Box sx={{ opacity: 0.6, pointerEvents: "none", userSelect: "none" }}>
-                <RequestsTab isCrm={true} />
-              </Box>
-              <Box
-                sx={{
-                  position: "absolute",
-                  inset: 0,
-                  backdropFilter: "blur(6px)",
-                  WebkitBackdropFilter: "blur(6px)",
-                  backgroundColor: "rgba(255, 255, 255, 0.4)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  zIndex: 10,
-                }}
-              >
-                <Box
-                  sx={{
-                    bgcolor: "#ffffff",
-                    borderRadius: "16px",
-                    boxShadow: "0 10px 40px rgba(0,0,0,0.1)",
-                    border: "1px solid #e2e8f0",
-                    p: 4,
-                    textAlign: "center",
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      fontWeight: 700,
-                      color: "#1e293b",
-                      fontSize: "1.5rem",
-                      mb: 1,
-                      fontFamily: '"Cormorant Garamond", serif',
-                    }}
-                  >
-                    Coming soon
-                  </Typography>
-                  <Typography sx={{ color: "#64748b", fontSize: "0.95rem" }}>
-                    The Purchase requests feature is currently being wired up.
-                  </Typography>
-                </Box>
-              </Box>
-            </Box>
+            <RequestsTab isCrm={true} projectId={inventoryProject === "All" ? undefined : inventoryProject} />
           )}
 
           {activeGroupOfficeTab === "payment plans" && (

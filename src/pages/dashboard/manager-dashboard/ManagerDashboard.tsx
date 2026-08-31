@@ -405,7 +405,7 @@ export default function ManagerDashboard() {
                   onClick={() => setScanModalOpen(true)}
                   variant="contained" 
                   startIcon={<ScanIcon />} 
-                  sx={{ bgcolor: "#1e3a5f", color: "white", textTransform: "none", borderRadius: "10px", px: 2.5, py: 1, fontWeight: 600, fontSize: "0.85rem", boxShadow: "none", "&:hover": { bgcolor: "#1D4270", boxShadow: "none" } }}
+                  sx={{ bgcolor: "#1D4270", color: "white", textTransform: "none", borderRadius: "10px", px: 2.5, py: 1, fontWeight: 600, fontSize: "0.85rem", boxShadow: "none", "&:hover": { bgcolor: "#1D4270", boxShadow: "none" } }}
                 >
                   Scan / block
                 </Button>

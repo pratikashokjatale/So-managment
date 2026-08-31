@@ -44,8 +44,8 @@ const CRMProfileHeader = ({ userName }: CRMProfileHeaderProps) => (
     </Box>
     <Box
       sx={{
-        bgcolor: "#F3E8FF",
-        color: "#7A4FB5",
+        bgcolor: "#f2edf5",
+        color: "#7750b3",
         fontWeight: 600,
         fontSize: "0.75rem",
         px: 1.5,

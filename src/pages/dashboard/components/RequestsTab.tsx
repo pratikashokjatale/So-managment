@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -19,6 +19,7 @@ import {
   Link as LinkIcon,
   Attachment as ClipIcon,
 } from "@mui/icons-material";
+import { getManagerRequestsApi, updateManagerRequestStatusApi } from "@/apis/managerRequests";
 
 const BRAND = "#24528C";
 const GREEN = "#22c55e";
@@ -30,9 +31,9 @@ const BG = "#f1f5f9";
 const LINE = "#e2e8f0";
 
 const seedReqs = [
-  { id: "REQ-1041", item: "Pool cleaning gear — telescopic vacuum set", qty: 1, urgency: "Urgent", note: "Existing head cracked; deck cleaning slipping to alternate days.", refs: ["https://www.example.com/pool-vacuum-set"], media: 2, status: "with_purchase", by: "Rohit Verma", at: "18 Aug · 10:12" },
-  { id: "REQ-1042", item: "Gym towels — 120 gsm, navy, 60 nos", qty: 60, urgency: "Normal", note: "Current stock frayed; members complaining.", refs: [], media: 1, status: "pending", by: "Rohit Verma", at: "19 Aug · 16:40" },
-  { id: "REQ-1043", item: "Banquet hall string lights — 30 m", qty: 4, urgency: "Normal", note: "For the Sept event season.", refs: ["https://www.example.com/outdoor-string-lights"], media: 0, status: "approved", by: "Rohit Verma", at: "12 Aug · 09:05" },
+  { id: "REQ-1041", rawId: "1", item: "Pool cleaning gear — telescopic vacuum set", qty: 1, urgency: "Urgent", note: "Existing head cracked; deck cleaning slipping to alternate days.", refs: ["https://www.example.com/pool-vacuum-set"], media: 2, status: "with_purchase", by: "Rohit Verma", at: "18 Aug · 10:12" },
+  { id: "REQ-1042", rawId: "2", item: "Gym towels — 120 gsm, navy, 60 nos", qty: 60, urgency: "Normal", note: "Current stock frayed; members complaining.", refs: [], media: 1, status: "pending", by: "Rohit Verma", at: "19 Aug · 16:40" },
+  { id: "REQ-1043", rawId: "3", item: "Banquet hall string lights — 30 m", qty: 4, urgency: "Normal", note: "For the Sept event season.", refs: ["https://www.example.com/outdoor-string-lights"], media: 0, status: "approved", by: "Rohit Verma", at: "12 Aug · 09:05" },
 ];
 
 const REQ_STATUS = {
@@ -42,16 +43,46 @@ const REQ_STATUS = {
   rejected: { label: "Rejected", tone: "#ef4444", bg: "#fee2e2" },
 };
 
-export default function RequestsTab({ isCrm = false }: { isCrm?: boolean }) {
-  const [reqs, setReqs] = useState(seedReqs);
+export default function RequestsTab({ isCrm = false, projectId }: { isCrm?: boolean; projectId?: string }) {
+  const [reqs, setReqs] = useState<any[]>(seedReqs);
   const [add, setAdd] = useState(false);
   const [f, setF] = useState({ item: "", qty: "1", urgency: "Normal", note: "", ref: "", media: 0 });
+
+  useEffect(() => {
+    if (isCrm) {
+      getManagerRequestsApi({ projectId, page: 1, limit: 20 })
+        .then((res: any) => {
+          const data = res?.data ?? res ?? {};
+          const items = data.items ?? data.requests ?? data.rows ?? (Array.isArray(data) ? data : []);
+          if (items && items.length > 0) {
+            const mapped = items.map((r: any) => ({
+              id: r.requestCode || r.code || r.id,
+              rawId: r.id,
+              item: r.title,
+              qty: r.quantity || 1,
+              urgency: r.urgency || "NORMAL",
+              note: r.note || "",
+              refs: r.referenceLink ? [r.referenceLink] : [],
+              media: r.attachmentUrls?.length || 0,
+              status: (r.status || "OPEN").toLowerCase() === "open" ? "pending" : (r.status || "").toLowerCase(),
+              by: r.createdByUser?.name || r.creator?.name || r.createdByName || "Manager",
+              at: r.createdAt ? new Date(r.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short" }) : "—"
+            }));
+            setReqs(mapped);
+          } else {
+            setReqs([]);
+          }
+        })
+        .catch(console.error);
+    }
+  }, [isCrm, projectId]);
 
   const handleSave = () => {
     if (!f.item.trim()) return alert("Describe what you need");
     setReqs((r) => [
       {
         id: "REQ-" + Math.floor(1100 + Math.random() * 800),
+        rawId: Math.random().toString(),
         item: f.item,
         qty: parseInt(f.qty, 10) || 1,
         urgency: f.urgency,
@@ -68,7 +99,15 @@ export default function RequestsTab({ isCrm = false }: { isCrm?: boolean }) {
     setAdd(false);
   };
 
-  const handleDecide = (id: string, newStatus: string) => {
+  const handleDecide = async (id: string, newStatus: string) => {
+    const req = reqs.find(x => x.id === id);
+    if (req && req.rawId && isCrm) {
+      try {
+        await updateManagerRequestStatusApi(req.rawId, { status: newStatus.toUpperCase() });
+      } catch (e) {
+        console.error(e);
+      }
+    }
     setReqs((r) => r.map((x) => x.id === id ? { ...x, status: newStatus } : x));
   };
 
