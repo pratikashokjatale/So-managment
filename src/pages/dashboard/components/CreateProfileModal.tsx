@@ -334,38 +334,7 @@ const CreateProfileModal: React.FC<CreateProfileModalProps> = ({ open, onClose, 
               <ArrowForwardIcon sx={{ fontSize: 20, opacity: 0.8 }} />
             </Box>
 
-            <Box>
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5, color: "#64748b" }}>
-                <AccessTimeIcon sx={{ fontSize: 16 }} />
-                <Typography sx={{ fontSize: "0.8rem", fontWeight: 500 }}>Resume a saved draft</Typography>
-              </Box>
-              
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                {drafts.map((draft, idx) => (
-                  <Box key={idx} sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", p: 1.5, border: "1px solid #e2e8f0", borderRadius: "12px" }}>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-                      <Box sx={{ bgcolor: "#f8fafc", p: 1, borderRadius: "50%", display: "flex" }}>
-                        <PersonOutlineIcon sx={{ fontSize: 20, color: "#94a3b8" }} />
-                      </Box>
-                      <Box>
-                        <Typography sx={{ fontWeight: 600, fontSize: "0.9rem", color: "#1e293b" }}>{draft.name}</Typography>
-                        <Typography sx={{ fontSize: "0.75rem", color: draft.red ? "#ef4444" : "#64748b" }}>{draft.expires}</Typography>
-                      </Box>
-                    </Box>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <Button size="small" variant="outlined" sx={{ textTransform: "none", borderRadius: "8px", borderColor: "#e2e8f0", color: "#475569", fontWeight: 600 }}>Resume</Button>
-                      <IconButton size="small" sx={{ border: "1px solid #e2e8f0", borderRadius: "8px" }}>
-                        <CloseIcon fontSize="small" sx={{ color: "#94a3b8" }} />
-                      </IconButton>
-                    </Box>
-                  </Box>
-                ))}
-              </Box>
-            </Box>
 
-            <Typography sx={{ fontSize: "0.75rem", color: "#94a3b8", textAlign: "center", mt: 1 }}>
-              Incomplete drafts are kept for 7 days, then removed automatically.
-            </Typography>
           </>
         )}
 

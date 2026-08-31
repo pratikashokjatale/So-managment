@@ -157,22 +157,40 @@ const CRMGroupOfficeView = ({ dashboard }: { dashboard: any }) => {
                 Marbella Group · onboarding, key handover, inventory & sales
               </Typography>
             </Box>
-            <Button
-              onClick={() => setView("home")}
-              startIcon={<WorkOutlineIcon sx={{ fontSize: 18 }} />}
-              sx={{
-                backgroundColor: "#F3E8FF",
-                color: "#7A4FB5",
-                boxShadow: "none",
-                textTransform: "none",
-                borderRadius: "12px",
-                padding: "8px 16px",
-                fontWeight: 600,
-                "&:hover": { backgroundColor: "#F3E8FF", boxShadow: "none" },
-              }}
-            >
-              Group Office · Switch
-            </Button>
+            <Box sx={{ display: "flex", gap: 1.5 }}>
+              <Button
+                onClick={() => setView("home")}
+                startIcon={<WorkOutlineIcon sx={{ fontSize: 18 }} />}
+                sx={{
+                  backgroundColor: "#F3E8FF",
+                  color: "#7A4FB5",
+                  boxShadow: "none",
+                  textTransform: "none",
+                  borderRadius: "12px",
+                  padding: "8px 16px",
+                  fontWeight: 600,
+                  "&:hover": { backgroundColor: "#F3E8FF", boxShadow: "none" },
+                }}
+              >
+                Group Office · Switch
+              </Button>
+              <Button
+                onClick={() => dashboard.setCreateProfileModalOpen?.(true)}
+                startIcon={<PersonAddAltOutlinedIcon sx={{ fontSize: 18 }} />}
+                sx={{
+                  backgroundColor: "#F7F3EB",
+                  color: "#A77C38",
+                  boxShadow: "none",
+                  textTransform: "none",
+                  borderRadius: "12px",
+                  padding: "8px 16px",
+                  fontWeight: 600,
+                  "&:hover": { backgroundColor: "#F7F3EB", boxShadow: "none" },
+                }}
+              >
+                Create profile
+              </Button>
+            </Box>
           </Box>
 
           <GroupOfficeTabs
@@ -185,6 +203,43 @@ const CRMGroupOfficeView = ({ dashboard }: { dashboard: any }) => {
           <GroupOfficeCommercialSection dashboard={dashboard} />
           <GroupOfficeRemindersSection dashboard={dashboard} />
         </Box>
+        
+        <CreateProfileModal 
+          open={createProfileModalOpen} 
+          onClose={() => {
+            dashboard.setCreateProfileModalOpen?.(false);
+            dashboard.setSelectedCreateProfile?.(null);
+          }} 
+          selectedProfile={selectedCreateProfile}
+        />
+
+        {/* Floating Action Button */}
+        <Button
+          variant="contained"
+          startIcon={<PersonAddAltOutlinedIcon />}
+          onClick={() => dashboard.setCreateProfileModalOpen?.(true)}
+          sx={{
+            position: "fixed",
+            bottom: 32,
+            right: 32,
+            bgcolor: "#bca462",
+            color: "#fff",
+            borderRadius: "24px",
+            px: 3,
+            py: 1.5,
+            boxShadow: "0px 8px 24px rgba(188, 164, 98, 0.4)",
+            "&:hover": {
+              bgcolor: "#a38c4d",
+              boxShadow: "0px 12px 32px rgba(188, 164, 98, 0.6)",
+            },
+            textTransform: "none",
+            fontWeight: 600,
+            fontSize: "1rem",
+            zIndex: 1000,
+          }}
+        >
+          Create profile
+        </Button>
       </Box>
     );
   }
