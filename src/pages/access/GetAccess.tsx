@@ -20,19 +20,26 @@ import {
   Sync as RefreshIcon,
   Person as PersonIcon,
   QrCode2 as QrCode2Icon,
+  SettingsEthernet as BridgeIcon,
+  Badge as CardsIcon,
 } from "@mui/icons-material";
-import { Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
+import { Dialog, DialogTitle, DialogContent, DialogActions, Tabs, Tab, MenuItem, Select, FormControl, InputLabel, Tooltip, Alert, Chip } from "@mui/material";
 import { getUsersApi, updateUserApi } from "@/apis/user";
 import { uploadDocumentApi } from "@/apis/document";
 import { getAnalyticsAccessEventsApi } from "@/apis/analytics";
+import { getCardsApi, createCardApi, updateCardApi, type CardItem, type HolderType } from "@/apis/card";
+import { useAuth } from "@/contexts/AuthContext";
 import toast from "react-hot-toast";
 import Pagination from "@/components/Pagination";
 import logoImg from "@/assets/logo.jpeg";
+import DahuaBridgeManager from "./DahuaBridgeManager";
 
 const INTER = "'Inter', system-ui, sans-serif";
 const SERIF = "'Cormorant Garamond', Georgia, serif";
 
 export default function GetAccess() {
+  const { user: currentUser } = useAuth();
+  const [accessTab, setAccessTab] = useState<"cards" | "dahua">("cards");
   const [users, setUsers] = useState<any[]>([]);
   const [recentEvents, setRecentEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -51,12 +58,52 @@ export default function GetAccess() {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadingPdf, setUploadingPdf] = useState(false);
 
+  // Physical Cards State & Modal
+  const [userCardsMap, setUserCardsMap] = useState<Record<string, CardItem[]>>({});
+  const [loadingCardsMap, setLoadingCardsMap] = useState(false);
+  const [openIssueCard, setOpenIssueCard] = useState(false);
+  const [submittingIssueCard, setSubmittingIssueCard] = useState(false);
+  const [selectedUserForCard, setSelectedUserForCard] = useState<any>(null);
+  const [cardForm, setCardForm] = useState({
+    cardUid: "",
+    cardType: "RFID" as "RFID" | "FOB",
+    holderType: "RESIDENT" as HolderType,
+    userId: "",
+    flatId: "",
+  });
+
+  // Role permissions: SUPER_ADMIN, ADMIN, MANAGER can manage cards
+  const canManageCards = ["SUPER_ADMIN", "ADMIN", "MANAGER"].includes(currentUser?.role?.toUpperCase?.() || "");
+
   const cardDesigns = [
     { role: "Resident", title: "RESIDENT ID NUMBER", id: "M B 1 0 4 2", color: "#1e293b", textColor: "#24528C" },
     { role: "Guest", title: "GUEST PASS NUMBER", id: "G B 2 2 1 0", color: "#64748b", textColor: "#475569" },
     { role: "Staff", title: "STAFF ID NUMBER", id: "S T 3 3 0 1", color: "#166534", textColor: "#166534" },
     { role: "Manager", title: "MANAGER ID NUMBER", id: "M G 1 0 0 1", color: "#1e293b", textColor: "#24528C" },
   ];
+
+  const fetchUserCards = async (userIds: string[]) => {
+    if (!userIds || userIds.length === 0) return;
+    setLoadingCardsMap(true);
+    try {
+      // Query cards for current page users in parallel
+      const promises = userIds.map((uid) =>
+        getCardsApi({ userId: uid, limit: 20 })
+          .then((res) => ({ uid, cards: res.items || [] }))
+          .catch(() => ({ uid, cards: [] }))
+      );
+      const results = await Promise.all(promises);
+      const nextMap: Record<string, CardItem[]> = {};
+      results.forEach((r) => {
+        nextMap[r.uid] = r.cards;
+      });
+      setUserCardsMap((prev) => ({ ...prev, ...nextMap }));
+    } catch (e) {
+      console.warn("Could not load user cards map", e);
+    } finally {
+      setLoadingCardsMap(false);
+    }
+  };
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -66,10 +113,100 @@ export default function GetAccess() {
       const total = res?.data?.pagination?.total || res?.pagination?.total || items.length;
       setUsers(items);
       setTotalUsers(total);
+      
+      const userIds = items.map((u: any) => u.id).filter(Boolean);
+      fetchUserCards(userIds);
     } catch (error) {
       toast.error("Failed to load users");
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Helper to open Issue Card modal for a user
+  const handleOpenIssueCardForUser = (user?: any) => {
+    if (!canManageCards) {
+      toast.error("Insufficient permissions to assign cards");
+      return;
+    }
+    const target = user || users[0];
+    let holderType: HolderType = "RESIDENT";
+    const roleUpper = (target?.role || "").toUpperCase();
+    if (roleUpper === "GUEST") holderType = "GUEST";
+    else if (roleUpper === "STAFF" || roleUpper === "SECURITY") holderType = "STAFF";
+
+    setSelectedUserForCard(target || null);
+    setCardForm({
+      cardUid: "",
+      cardType: "RFID",
+      holderType,
+      userId: target?.id || "",
+      flatId: target?.flatId || target?.flat?.id || "",
+    });
+    setOpenIssueCard(true);
+  };
+
+  const handleSaveCard = async () => {
+    if (!cardForm.cardUid.trim()) {
+      toast.error("Please enter the exact physical Card UID");
+      return;
+    }
+    if (!cardForm.userId) {
+      toast.error("Please select a user");
+      return;
+    }
+
+    setSubmittingIssueCard(true);
+    try {
+      await createCardApi({
+        cardUid: cardForm.cardUid.trim(),
+        cardType: cardForm.cardType,
+        holderType: cardForm.holderType,
+        userId: cardForm.userId,
+        flatId: cardForm.flatId ? cardForm.flatId : undefined,
+      });
+      toast.success("Physical card assigned successfully");
+      setOpenIssueCard(false);
+      // Reload cards for this user
+      if (cardForm.userId) {
+        fetchUserCards([cardForm.userId]);
+      }
+    } catch (err: any) {
+      if (err?.status === 409 || err?.response?.status === 409) {
+        toast.error("This physical card UID is already assigned to a user");
+      } else {
+        toast.error(err?.message || "Failed to assign card");
+      }
+    } finally {
+      setSubmittingIssueCard(false);
+    }
+  };
+
+  const handleBlockCard = async (card: CardItem) => {
+    if (!canManageCards) {
+      toast.error("Insufficient permissions to modify card status");
+      return;
+    }
+    try {
+      await updateCardApi(card.id, { status: "BLOCKED" });
+      toast.success(`Card ${card.cardUid} blocked successfully`);
+      fetchUserCards([card.userId]);
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to block card");
+    }
+  };
+
+  const handleUnblockCard = async (card: CardItem) => {
+    if (!canManageCards) {
+      toast.error("Insufficient permissions to modify card status");
+      return;
+    }
+    try {
+      await updateCardApi(card.id, { status: "ACTIVE" });
+      toast.success(`Card ${card.cardUid} unblocked`);
+      fetchUserCards([card.userId]);
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to activate card");
     }
   };
 
@@ -227,15 +364,59 @@ export default function GetAccess() {
   return (
     <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: "#ffffff", minHeight: "100vh", fontFamily: INTER }}>
       {/* Header */}
-      <Box sx={{ mb: 4 }}>
-        <Typography sx={{ fontFamily: SERIF, fontSize: "2rem", fontWeight: 600, color: "#192038", mb: 0.5 }}>
+      <Box sx={{ mb: 3 }}>
+        <Typography sx={{ fontFamily: SERIF, fontSize: "2.2rem", fontWeight: 600, color: "#192038", mb: 0.5 }}>
           Access & Cards
         </Typography>
         <Typography sx={{ fontFamily: INTER, fontSize: "0.875rem", color: "#64748b" }}>
-          Block, replace and monitor RFID cards
+          Block, replace and monitor physical RFID cards and Dahua controller integrations
         </Typography>
       </Box>
 
+      {/* Main Mode Tabs Switcher */}
+      <Box sx={{ display: "flex", gap: 1, mb: 3, bgcolor: "#f1f5f9", p: "4px", borderRadius: "12px", width: "fit-content" }}>
+        <Button
+          onClick={() => setAccessTab("cards")}
+          startIcon={<CardsIcon sx={{ fontSize: 18 }} />}
+          sx={{
+            textTransform: "none",
+            fontWeight: 600,
+            fontSize: "0.85rem",
+            px: 2.2,
+            py: 0.9,
+            borderRadius: "9px",
+            color: accessTab === "cards" ? "#24528C" : "#64748b",
+            bgcolor: accessTab === "cards" ? "#ffffff" : "transparent",
+            boxShadow: accessTab === "cards" ? "0 1px 3px rgba(0,0,0,0.08)" : "none",
+            "&:hover": { bgcolor: accessTab === "cards" ? "#ffffff" : "rgba(255,255,255,0.5)" },
+          }}
+        >
+          Resident & Staff RFID Cards
+        </Button>
+        <Button
+          onClick={() => setAccessTab("dahua")}
+          startIcon={<BridgeIcon sx={{ fontSize: 18 }} />}
+          sx={{
+            textTransform: "none",
+            fontWeight: 600,
+            fontSize: "0.85rem",
+            px: 2.2,
+            py: 0.9,
+            borderRadius: "9px",
+            color: accessTab === "dahua" ? "#24528C" : "#64748b",
+            bgcolor: accessTab === "dahua" ? "#ffffff" : "transparent",
+            boxShadow: accessTab === "dahua" ? "0 1px 3px rgba(0,0,0,0.08)" : "none",
+            "&:hover": { bgcolor: accessTab === "dahua" ? "#ffffff" : "rgba(255,255,255,0.5)" },
+          }}
+        >
+          Dahua RFID Controller Bridge
+        </Button>
+      </Box>
+
+      {accessTab === "dahua" ? (
+        <DahuaBridgeManager />
+      ) : (
+        <>
       {/* Top Actions */}
       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, alignItems: "center", mb: 4 }}>
         <TextField
@@ -265,7 +446,6 @@ export default function GetAccess() {
         />
 
         <Stack direction="row" spacing={1.5} sx={{ ml: "auto" }}>
-          
           <Button
             variant="outlined"
             onClick={() => setOpenCardDesigns(true)}
@@ -274,13 +454,16 @@ export default function GetAccess() {
           >
             Card designs
           </Button>
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            sx={{ bgcolor: "#24528C", textTransform: "none", borderRadius: "8px", fontWeight: 600, px: 2 }}
-          >
-            Issue card
-          </Button>
+          {canManageCards && (
+            <Button
+              variant="contained"
+              onClick={() => handleOpenIssueCardForUser()}
+              startIcon={<AddIcon />}
+              sx={{ bgcolor: "#24528C", textTransform: "none", borderRadius: "8px", fontWeight: 600, px: 2 }}
+            >
+              Issue / Assign Card
+            </Button>
+          )}
         </Stack>
       </Box>
 
@@ -295,54 +478,146 @@ export default function GetAccess() {
         ) : (
           <>
             <Stack spacing={0} divider={<Box sx={{ height: "1px", bgcolor: "#f1f5f9", mx: 2 }} />}>
-              {users.map((user) => (
-                <Box key={user.id} sx={{ display: "flex", alignItems: "center", p: 2, gap: 2 }}>
-                
-                {/* Color Box */}
-                <Box
-                  sx={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: "8px",
-                    bgcolor: getRoleColor(user.role),
-                    flexShrink: 0,
-                  }}
-                />
+              {users.map((user) => {
+                const assignedCards = userCardsMap[user.id] || [];
+                return (
+                  <Box key={user.id} sx={{ p: 2 }}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                      {/* Color Box */}
+                      <Box
+                        sx={{
+                          width: 40,
+                          height: 40,
+                          borderRadius: "8px",
+                          bgcolor: getRoleColor(user.role),
+                          flexShrink: 0,
+                        }}
+                      />
 
-                {/* User Info */}
-                <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-                  <Typography sx={{ fontWeight: 600, color: "#1e293b", fontSize: "0.95rem" }}>
-                    {user.name || "Unknown User"}
-                  </Typography>
-                  <Typography sx={{ fontSize: "0.8rem", color: "#64748b", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                    {user.cardNumber || `MB-${user.id?.substring(0, 4) || "0000"}`} · {user.role || "USER"} · Grand
-                  </Typography>
-                </Box>
+                      {/* User Info */}
+                      <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                          <Typography sx={{ fontWeight: 600, color: "#1e293b", fontSize: "0.95rem" }}>
+                            {user.name || "Unknown User"}
+                          </Typography>
+                          <Typography sx={{ fontSize: "0.75rem", color: "#64748b" }}>
+                            ({user.role || "USER"})
+                          </Typography>
+                        </Box>
+                        <Typography sx={{ fontSize: "0.8rem", color: "#64748b", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                          Member Card: <strong style={{ color: "#334155" }}>{user.cardNumber || `MB-${user.id?.substring(0, 4) || "0000"}`}</strong>
+                          {user.email ? ` · ${user.email}` : ""}
+                          {user.flat?.number ? ` · Flat ${user.flat.number}` : ""}
+                        </Typography>
+                      </Box>
 
-                {/* Status & Actions */}
-                <Box sx={{ display: "flex", alignItems: "center", gap: 2, flexShrink: 0 }}>
-                  {getStatusBadge(user.status)}
-                  
-                  <Box sx={{ display: "flex", gap: 0.5 }}>
-                    <IconButton size="small" sx={{ color: "#64748b", bgcolor: "#f8fafc" }}>
-                      <ScanIcon fontSize="small" />
-                    </IconButton>
-                    <IconButton
-                      size="small"
-                      onClick={() => handleToggleStatus(user)}
-                      sx={{ color: user.status === "ACTIVE" ? "#ef4444" : "#22c55e", bgcolor: "#f8fafc" }}
-                      title={user.status === "ACTIVE" ? "Block User" : "Activate User"}
-                    >
-                      {user.status === "ACTIVE" ? <BlockIcon fontSize="small" /> : <CheckIcon fontSize="small" />}
-                    </IconButton>
-                    <IconButton size="small" sx={{ color: "#64748b", bgcolor: "#f8fafc" }}>
-                      <RefreshIcon fontSize="small" />
-                    </IconButton>
+                      {/* Status & Actions */}
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 2, flexShrink: 0 }}>
+                        {getStatusBadge(user.status)}
+
+                        {canManageCards && (
+                          <Tooltip title="Assign a physical card UID to this user">
+                            <Button
+                              size="small"
+                              variant="outlined"
+                              onClick={() => handleOpenIssueCardForUser(user)}
+                              startIcon={<AddIcon sx={{ fontSize: 16 }} />}
+                              sx={{
+                                textTransform: "none",
+                                fontSize: "0.75rem",
+                                py: 0.4,
+                                px: 1.2,
+                                borderRadius: "6px",
+                                borderColor: "#cbd5e1",
+                                color: "#24528C",
+                              }}
+                            >
+                              Assign Card
+                            </Button>
+                          </Tooltip>
+                        )}
+                        
+                        <Box sx={{ display: "flex", gap: 0.5 }}>
+                          <IconButton
+                            size="small"
+                            onClick={() => handleToggleStatus(user)}
+                            sx={{ color: user.status === "ACTIVE" ? "#ef4444" : "#22c55e", bgcolor: "#f8fafc" }}
+                            title={user.status === "ACTIVE" ? "Block User Account" : "Activate User Account"}
+                          >
+                            {user.status === "ACTIVE" ? <BlockIcon fontSize="small" /> : <CheckIcon fontSize="small" />}
+                          </IconButton>
+                        </Box>
+                      </Box>
+                    </Box>
+
+                    {/* Physical Cards Linked to this User */}
+                    {assignedCards.length > 0 && (
+                      <Box sx={{ mt: 1.5, pl: 7, display: "flex", flexWrap: "wrap", gap: 1, alignItems: "center" }}>
+                        <Typography sx={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>
+                          Physical Dahua/RFID Cards ({assignedCards.length}):
+                        </Typography>
+                        {assignedCards.map((card) => {
+                          const isBlocked = card.status === "BLOCKED";
+                          return (
+                            <Box
+                              key={card.id}
+                              sx={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: 1,
+                                px: 1.2,
+                                py: 0.4,
+                                bgcolor: isBlocked ? "#fee2e2" : "#f1f5f9",
+                                border: isBlocked ? "1px solid #fca5a5" : "1px solid #e2e8f0",
+                                borderRadius: "8px",
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  fontSize: "0.75rem",
+                                  fontFamily: "monospace",
+                                  fontWeight: 600,
+                                  color: isBlocked ? "#991b1b" : "#1e293b",
+                                }}
+                              >
+                                {card.cardUid}
+                              </Typography>
+                              <Chip
+                                size="small"
+                                label={card.status}
+                                sx={{
+                                  height: 18,
+                                  fontSize: "0.65rem",
+                                  fontWeight: 700,
+                                  bgcolor: isBlocked ? "#ef4444" : "#22c55e",
+                                  color: "#ffffff",
+                                }}
+                              />
+                              {canManageCards && (
+                                <Button
+                                  size="small"
+                                  onClick={() => (isBlocked ? handleUnblockCard(card) : handleBlockCard(card))}
+                                  sx={{
+                                    p: 0,
+                                    minWidth: "auto",
+                                    fontSize: "0.7rem",
+                                    textTransform: "none",
+                                    color: isBlocked ? "#22c55e" : "#ef4444",
+                                    fontWeight: 600,
+                                    "&:hover": { textDecoration: "underline", bgcolor: "transparent" },
+                                  }}
+                                >
+                                  {isBlocked ? "Unblock" : "Block"}
+                                </Button>
+                              )}
+                            </Box>
+                          );
+                        })}
+                      </Box>
+                    )}
                   </Box>
-                </Box>
-
-              </Box>
-            ))}
+                );
+              })}
             </Stack>
             <Box sx={{ px: 3, py: 1 }}>
               <Pagination
@@ -408,6 +683,8 @@ export default function GetAccess() {
           </Stack>
         )}
       </Paper>
+      </>
+      )}
 
       {/* Card Designs Modal */}
       <Dialog 
@@ -593,6 +870,129 @@ export default function GetAccess() {
             sx={{ textTransform: 'none', borderRadius: '8px', boxShadow: 'none' }}
           >
             Block User
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Assign Physical RFID Card Modal */}
+      <Dialog
+        open={openIssueCard}
+        onClose={() => !submittingIssueCard && setOpenIssueCard(false)}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{ sx: { borderRadius: "16px", p: 1 } }}
+      >
+        <DialogTitle sx={{ fontWeight: 700, color: "#1e293b", pb: 1 }}>
+          Assign Physical RFID / Dahua Card
+        </DialogTitle>
+        <DialogContent>
+          <Alert severity="info" sx={{ mb: 3, borderRadius: "10px", fontSize: "0.82rem" }}>
+            The physical card UID is read by the Dahua controller. Enter the <strong>exact card number</strong> (keeping leading zeroes). Do not convert hex to decimal.
+          </Alert>
+
+          <Stack spacing={2.5}>
+            <FormControl fullWidth size="small">
+              <InputLabel>Assign To User *</InputLabel>
+              <Select
+                value={cardForm.userId}
+                label="Assign To User *"
+                onChange={(e) => {
+                  const targetId = e.target.value;
+                  const target = users.find((u) => u.id === targetId);
+                  setSelectedUserForCard(target || null);
+                  let hType: HolderType = "RESIDENT";
+                  const roleUpper = (target?.role || "").toUpperCase();
+                  if (roleUpper === "GUEST") hType = "GUEST";
+                  else if (roleUpper === "STAFF" || roleUpper === "SECURITY") hType = "STAFF";
+
+                  setCardForm((prev) => ({
+                    ...prev,
+                    userId: targetId,
+                    holderType: hType,
+                    flatId: target?.flatId || target?.flat?.id || "",
+                  }));
+                }}
+              >
+                {users.map((u) => (
+                  <MenuItem key={u.id} value={u.id}>
+                    {u.name || "Unknown"} ({u.role || "USER"}) — {u.cardNumber || `MB-${u.id?.substring(0, 4)}`}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <TextField
+              label="Physical Card UID *"
+              placeholder="e.g. 04A1B2C3D4 or 12345678"
+              fullWidth
+              size="small"
+              value={cardForm.cardUid}
+              onChange={(e) => setCardForm((prev) => ({ ...prev, cardUid: e.target.value }))}
+              helperText="Exact string output from Dahua device card list / export tool"
+              inputProps={{ style: { fontFamily: "monospace", letterSpacing: "1px" } }}
+            />
+
+            <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2 }}>
+              <FormControl fullWidth size="small">
+                <InputLabel>Card Type</InputLabel>
+                <Select
+                  value={cardForm.cardType}
+                  label="Card Type"
+                  onChange={(e) => setCardForm((prev) => ({ ...prev, cardType: e.target.value as any }))}
+                >
+                  <MenuItem value="RFID">RFID Card</MenuItem>
+                  <MenuItem value="FOB">Key FOB</MenuItem>
+                </Select>
+              </FormControl>
+
+              <FormControl fullWidth size="small">
+                <InputLabel>Holder Type</InputLabel>
+                <Select
+                  value={cardForm.holderType}
+                  label="Holder Type"
+                  onChange={(e) => setCardForm((prev) => ({ ...prev, holderType: e.target.value as any }))}
+                >
+                  <MenuItem value="RESIDENT">Resident (Tenant / Owner)</MenuItem>
+                  <MenuItem value="GUEST">Guest</MenuItem>
+                  <MenuItem value="STAFF">Staff / Facility Worker</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+
+            {selectedUserForCard?.flat && (
+              <TextField
+                label="Associated Flat"
+                size="small"
+                fullWidth
+                disabled
+                value={`Flat ${selectedUserForCard.flat.number || selectedUserForCard.flat.flatNumber || selectedUserForCard.flat.id}`}
+              />
+            )}
+          </Stack>
+        </DialogContent>
+        <DialogActions sx={{ p: 3, pt: 1 }}>
+          <Button
+            onClick={() => setOpenIssueCard(false)}
+            color="inherit"
+            disabled={submittingIssueCard}
+            sx={{ textTransform: "none" }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSaveCard}
+            variant="contained"
+            disabled={submittingIssueCard || !cardForm.cardUid.trim() || !cardForm.userId}
+            startIcon={submittingIssueCard ? <CircularProgress size={16} color="inherit" /> : <AddIcon />}
+            sx={{
+              bgcolor: "#24528C",
+              textTransform: "none",
+              borderRadius: "8px",
+              fontWeight: 600,
+              px: 3,
+            }}
+          >
+            {submittingIssueCard ? "Saving..." : "Assign Card"}
           </Button>
         </DialogActions>
       </Dialog>

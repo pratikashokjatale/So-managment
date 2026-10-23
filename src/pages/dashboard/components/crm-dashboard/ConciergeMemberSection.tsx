@@ -26,6 +26,7 @@ import { getUsersApi } from "@/apis/user";
 import { adminRechargeUserWalletApi } from "@/apis/wallet";
 import ScanModal from "../ScanModal";
 import CreateProfileModal from "../CreateProfileModal";
+import DahuaBridgeManager from "@/pages/access/DahuaBridgeManager";
 import PersonAddAltOutlinedIcon from "@mui/icons-material/PersonAddAltOutlined";
 import OnboardingCaseModal from "../OnboardingCaseModal";
 import PopulationModal from "../PopulationModal";
@@ -175,40 +176,63 @@ const ConciergeMemberSection = ({ dashboard }: { dashboard: any }) => {
                     access & identity.
                   </Typography>
                 </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1,
-                    bgcolor: "#eefcf3",
-                    color: "#16a34a",
-                    px: 1.5,
-                    py: 0.5,
-                    borderRadius: "20px",
-                    fontSize: "0.75rem",
-                    fontWeight: 600,
-                  }}
-                >
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
                   <Box
                     sx={{
-                      width: 6,
-                      height: 6,
-                      borderRadius: "50%",
-                      bgcolor: "#16a34a",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      bgcolor: "#eefcf3",
+                      color: "#16a34a",
+                      px: 1.5,
+                      py: 0.5,
+                      borderRadius: "20px",
+                      fontSize: "0.75rem",
+                      fontWeight: 600,
                     }}
-                  />
-                  Card printer · Evolis Primacy 2 · Ready
+                  >
+                    <Box
+                      sx={{
+                        width: 6,
+                        height: 6,
+                        borderRadius: "50%",
+                        bgcolor: "#16a34a",
+                      }}
+                    />
+                    Card printer · Evolis Primacy 2 · Ready
+                  </Box>
+                  <Button
+                    size="small"
+                    variant={dashboard.rfidSubView === "dahua" ? "contained" : "outlined"}
+                    onClick={() => dashboard.setRfidSubView?.(dashboard.rfidSubView === "dahua" ? "cards" : "dahua")}
+                    sx={{
+                      textTransform: "none",
+                      borderRadius: "20px",
+                      fontSize: "0.75rem",
+                      fontWeight: 600,
+                      bgcolor: dashboard.rfidSubView === "dahua" ? "#24528C" : "transparent",
+                      color: dashboard.rfidSubView === "dahua" ? "#ffffff" : "#24528C",
+                      borderColor: "#24528C",
+                      px: 2,
+                      py: 0.5,
+                    }}
+                  >
+                    {dashboard.rfidSubView === "dahua" ? "← Back to Card Printing" : "⚙ Dahua Controller Bridge"}
+                  </Button>
                 </Box>
               </Box>
 
-              {/* Grid Layout */}
-              <Box
-                sx={{
-                  display: "grid",
-                  gridTemplateColumns: { xs: "1fr", lg: "1fr 1fr" },
-                  gap: 3,
-                }}
-              >
+              {dashboard.rfidSubView === "dahua" ? (
+                <DahuaBridgeManager />
+              ) : (
+                /* Grid Layout */
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: { xs: "1fr", lg: "1fr 1fr" },
+                    gap: 3,
+                  }}
+                >
                 {/* Left Column - Member List */}
                 <Box sx={{ display: "flex", flexDirection: "column" }}>
                   <Box
@@ -679,6 +703,7 @@ const ConciergeMemberSection = ({ dashboard }: { dashboard: any }) => {
                   </Button>
                 </Box>
               </Box>
+            )}
             </Box>
           )}
 

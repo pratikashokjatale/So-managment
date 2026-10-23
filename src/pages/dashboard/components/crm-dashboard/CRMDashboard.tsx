@@ -368,6 +368,7 @@ const CRMDashboard = ({ user }: { user: any }) => {
   ];
   const [selectedRfidUser, setSelectedRfidUser] = useState(mockRfidUsers[0]);
   const [rfidCardType, setRfidCardType] = useState("Master");
+  const [rfidSubView, setRfidSubView] = useState<"cards" | "dahua">("cards");
 
   useEffect(() => {
     if (!residentSearchQuery && !selectedResident) {
@@ -470,7 +471,7 @@ const CRMDashboard = ({ user }: { user: any }) => {
     setSelectedResidentProfile, rechargeAmount, setRechargeAmount,
     rechargeMethod, setRechargeMethod, rechargeRefId, setRechargeRefId,
     rechargeRemarks, setRechargeRemarks, mockRfidUsers, selectedRfidUser,
-    setSelectedRfidUser, rfidCardType, setRfidCardType, renderTemplateWithTokens,
+    setSelectedRfidUser, rfidCardType, setRfidCardType, rfidSubView, setRfidSubView, renderTemplateWithTokens,
     handleSaveTemplate, handleRecharge, setView,
   };
 
