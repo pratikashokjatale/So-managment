@@ -36,9 +36,11 @@ import {
   Lock as LockIcon,
   CheckCircleOutline as SuccessIcon,
   HighlightOff as FailIcon,
+  DeleteOutline as DeleteIcon,
 } from "@mui/icons-material";
 import toast from "react-hot-toast";
 import Pagination from "@/components/Pagination";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   getDahuaBridgeStatusApi,
   getRfidDevicesApi,
@@ -46,6 +48,8 @@ import {
   getDahuaMappingsApi,
   createDahuaMappingApi,
   updateDahuaMappingApi,
+  deleteDahuaMappingApi,
+  deleteRfidDeviceApi,
   getDahuaAttemptsApi,
   type DahuaBridgeStatus,
   type DahuaMapping,
@@ -59,10 +63,14 @@ import {
 import { getProjectsApi } from "@/apis/project";
 import { getFacilitiesApi } from "@/apis/facility";
 
+
 const INTER = "'Inter', system-ui, sans-serif";
 const SERIF = "'Cormorant Garamond', Georgia, serif";
 
 export default function DahuaBridgeManager() {
+  const { user: currentUser } = useAuth();
+  const canManageAccess = ["SUPER_ADMIN", "ADMIN", "MANAGER"].includes(currentUser?.role?.toUpperCase?.() || "");
+
   const [activeTab, setActiveTab] = useState<"mappings" | "devices" | "attempts">("mappings");
 
   // Status
@@ -71,6 +79,7 @@ export default function DahuaBridgeManager() {
 
   // Mappings
   const [mappings, setMappings] = useState<DahuaMapping[]>([]);
+  const [allMappings, setAllMappings] = useState<DahuaMapping[]>([]);
   const [loadingMappings, setLoadingMappings] = useState(false);
   const [mappingsPage, setMappingsPage] = useState(1);
   const [mappingsTotal, setMappingsTotal] = useState(0);
@@ -78,6 +87,33 @@ export default function DahuaBridgeManager() {
   // Devices
   const [devices, setDevices] = useState<RfidDevice[]>([]);
   const [loadingDevices, setLoadingDevices] = useState(false);
+
+  // Delete Mapping states (Dialog A and Dialog B)
+  const [mappingTurnOffTarget, setMappingTurnOffTarget] = useState<DahuaMapping | null>(null);
+  const [submittingTurnOff, setSubmittingTurnOff] = useState(false);
+  const [mappingDeleteTarget, setMappingDeleteTarget] = useState<DahuaMapping | null>(null);
+  const [submittingDeleteMapping, setSubmittingDeleteMapping] = useState(false);
+  const [deleteMappingError, setDeleteMappingError] = useState<string | null>(null);
+  const [countdownSeconds, setCountdownSeconds] = useState<number | null>(null);
+
+  // Delete Device state
+  const [deviceDeleteTarget, setDeviceDeleteTarget] = useState<RfidDevice | null>(null);
+  const [submittingDeleteDevice, setSubmittingDeleteDevice] = useState(false);
+
+  // Countdown timer effect for 409 retry seconds
+  useEffect(() => {
+    if (countdownSeconds === null || countdownSeconds <= 0) return;
+    const interval = setInterval(() => {
+      setCountdownSeconds((prev) => {
+        if (prev === null || prev <= 1) {
+          clearInterval(interval);
+          return null;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [countdownSeconds]);
 
   // Attempts Audit
   const [attempts, setAttempts] = useState<AccessAttempt[]>([]);
@@ -98,7 +134,7 @@ export default function DahuaBridgeManager() {
     deviceId: "",
     cgiDeviceId: "",
     doorIndex: 0,
-    accessMode: "AUTO",
+    accessMode: "SUBSCRIPTION",
     bookingGraceMinutes: 15,
     enabled: true,
   });
@@ -113,7 +149,7 @@ export default function DahuaBridgeManager() {
     facilityId: "",
     purpose: "FACILITY_ACCESS",
     direction: "ENTRY",
-    accessZone: "MAIN_GATE",
+    accessZone: "",
     status: "ACTIVE",
   });
 
@@ -122,18 +158,22 @@ export default function DahuaBridgeManager() {
     fetchBridgeStatus();
     fetchProjectsAndFacilities();
     fetchDevices();
+    fetchAllMappings();
   }, []);
 
   useEffect(() => {
     if (activeTab === "mappings") {
       fetchMappings();
       fetchDevices();
+      fetchAllMappings();
     } else if (activeTab === "devices") {
       fetchDevices();
+      fetchAllMappings();
     } else if (activeTab === "attempts") {
       fetchAttempts();
     }
   }, [activeTab, mappingsPage, attemptsPage, attemptResultFilter, anomalyOnly]);
+
 
   const fetchBridgeStatus = async () => {
     setLoadingStatus(true);
@@ -249,18 +289,140 @@ export default function DahuaBridgeManager() {
     }
   };
 
+  const fetchAllMappings = async () => {
+    try {
+      const res = await getDahuaMappingsApi({ page: 1, limit: 100 });
+      setAllMappings(res.items || []);
+    } catch (e) {
+      console.warn("Failed to load all mappings for conflict checking", e);
+    }
+  };
+
   const handleToggleMapping = async (mapping: DahuaMapping) => {
     const nextState = !mapping.enabled;
     try {
       await updateDahuaMappingApi(mapping.id, { enabled: nextState });
-      toast.success(`Door mapping ${nextState ? "enabled" : "disabled"}`);
+      toast.success("Saved. The door updates within about a minute.");
       setMappings((prev) =>
+        prev.map((m) => (m.id === mapping.id ? { ...m, enabled: nextState } : m))
+      );
+      setAllMappings((prev) =>
         prev.map((m) => (m.id === mapping.id ? { ...m, enabled: nextState } : m))
       );
     } catch (err: any) {
       toast.error(err?.message || "Failed to update mapping state");
     }
   };
+
+  const handleOpenDeleteMapping = (mapping: DahuaMapping) => {
+    if (!canManageAccess) return;
+    setDeleteMappingError(null);
+    setCountdownSeconds(null);
+    if (mapping.enabled) {
+      // Row toggle is ON -> Show Dialog A
+      setMappingTurnOffTarget(mapping);
+    } else {
+      // Row toggle is OFF -> Show Dialog B
+      setMappingDeleteTarget(mapping);
+    }
+  };
+
+  const handleConfirmTurnOff = async () => {
+    if (!mappingTurnOffTarget) return;
+    setSubmittingTurnOff(true);
+    try {
+      await updateDahuaMappingApi(mappingTurnOffTarget.id, { enabled: false });
+      toast.success("Saved. The door updates within about a minute.");
+      toast("Door turned off. You can delete it after 2 minutes.", { icon: "ℹ️" });
+      const targetId = mappingTurnOffTarget.id;
+      setMappingTurnOffTarget(null);
+      setMappings((prev) =>
+        prev.map((m) => (m.id === targetId ? { ...m, enabled: false } : m))
+      );
+      setAllMappings((prev) =>
+        prev.map((m) => (m.id === targetId ? { ...m, enabled: false } : m))
+      );
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to turn off door");
+    } finally {
+      setSubmittingTurnOff(false);
+    }
+  };
+
+  const handleConfirmDeleteMapping = async () => {
+    if (!mappingDeleteTarget) return;
+    setSubmittingDeleteMapping(true);
+    setDeleteMappingError(null);
+    try {
+      await deleteDahuaMappingApi(mappingDeleteTarget.id);
+      toast.success("Door mapping deleted");
+      const deletedId = mappingDeleteTarget.id;
+      setMappingDeleteTarget(null);
+      setMappings((prev) => prev.filter((m) => m.id !== deletedId));
+      setAllMappings((prev) => prev.filter((m) => m.id !== deletedId));
+      setMappingsTotal((prev) => Math.max(0, prev - 1));
+      fetchDevices(); // update mapped device states
+    } catch (err: any) {
+      const msg = err?.message || "Failed to delete door mapping";
+      const status = err?.status || err?.response?.status;
+      if (status === 404) {
+        toast.error(msg);
+        setMappingDeleteTarget(null);
+        fetchMappings();
+        fetchAllMappings();
+      } else if (status === 409) {
+        setDeleteMappingError(msg);
+        toast.error(msg);
+        // If row is required to be disabled first
+        if (msg.toLowerCase().includes("disable this door mapping first")) {
+          const currentTarget = mappingDeleteTarget;
+          setMappingDeleteTarget(null);
+          setMappingTurnOffTarget(currentTarget);
+          return;
+        }
+        // Check for seconds in message: "Try again in 45 seconds"
+        const secMatch = msg.match(/in\s+(\d+)\s+seconds/i);
+        if (secMatch && secMatch[1]) {
+          setCountdownSeconds(parseInt(secMatch[1], 10));
+        }
+      } else {
+        toast.error(msg);
+        setMappingDeleteTarget(null);
+      }
+    } finally {
+      setSubmittingDeleteMapping(false);
+    }
+  };
+
+  const handleConfirmDeleteDevice = async () => {
+    if (!deviceDeleteTarget) return;
+    setSubmittingDeleteDevice(true);
+    try {
+      await deleteRfidDeviceApi(deviceDeleteTarget.id);
+      toast.success("RFID device deleted");
+      const deletedId = deviceDeleteTarget.id;
+      setDeviceDeleteTarget(null);
+      setDevices((prev) => prev.filter((d) => d.id !== deletedId));
+    } catch (err: any) {
+      const msg = err?.message || "Failed to delete reader";
+      const status = err?.status || err?.response?.status;
+      if (status === 404) {
+        toast.error(msg);
+        setDeviceDeleteTarget(null);
+        fetchDevices();
+      } else if (status === 409) {
+        toast.error(msg);
+        setDeviceDeleteTarget(null);
+        setActiveTab("mappings");
+      } else {
+        toast.error(msg);
+        setDeviceDeleteTarget(null);
+      }
+    } finally {
+      setSubmittingDeleteDevice(false);
+    }
+  };
+
 
   const handleCreateMappingSubmit = async () => {
     if (!mappingForm.deviceId || !mappingForm.cgiDeviceId) {
@@ -362,7 +524,7 @@ export default function DahuaBridgeManager() {
             </Box>
             <Typography sx={{ color: "#64748b", fontSize: "0.85rem", lineHeight: 1.5, maxWidth: 620 }}>
               {bridgeStatus?.enabled
-                ? "Normalized JSON verification & real-time door open commands active."
+                ? "Offline sync: the reader enforces Marbella's card list and expiry dates. Changes reach the door within about a minute."
                 : "Standby: Secret is configured. Keep disabled until CGI mappings are set, then set DAHUA_BRIDGE_ENABLED=true in backend env."}
             </Typography>
           </Box>
@@ -528,7 +690,10 @@ export default function DahuaBridgeManager() {
                     <th style={{ padding: "14px 20px", color: "#64748b", fontWeight: 700, fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>Policy / Mode</th>
                     <th style={{ padding: "14px 20px", color: "#64748b", fontWeight: 700, fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>Grace Window</th>
                     <th style={{ padding: "14px 20px", color: "#64748b", fontWeight: 700, fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>Status</th>
-                    <th style={{ padding: "14px 20px", color: "#64748b", fontWeight: 700, fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.5px", textAlign: "right" }}>Toggle</th>
+                    <th style={{ padding: "14px 20px", color: "#64748b", fontWeight: 700, fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.5px", textAlign: "center" }}>Toggle</th>
+                    {canManageAccess && (
+                      <th style={{ padding: "14px 20px", color: "#64748b", fontWeight: 700, fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.5px", textAlign: "right" }}>Actions</th>
+                    )}
                   </tr>
                 </thead>
                 <tbody>
@@ -584,7 +749,7 @@ export default function DahuaBridgeManager() {
                           }}
                         />
                       </td>
-                      <td style={{ padding: "16px 20px", textAlign: "right" }}>
+                      <td style={{ padding: "16px 20px", textAlign: "center" }}>
                         <Switch
                           checked={Boolean(m.enabled)}
                           onChange={() => handleToggleMapping(m)}
@@ -595,6 +760,22 @@ export default function DahuaBridgeManager() {
                           }}
                         />
                       </td>
+                      {canManageAccess && (
+                        <td style={{ padding: "16px 20px", textAlign: "right" }}>
+                          <Tooltip title="Delete door mapping">
+                            <IconButton
+                              size="small"
+                              onClick={() => handleOpenDeleteMapping(m)}
+                              sx={{
+                                color: "#94a3b8",
+                                "&:hover": { color: "#ef4444", bgcolor: "#fef2f2" },
+                              }}
+                            >
+                              <DeleteIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                        </td>
+                      )}
                     </tr>
                   ))}
                 </tbody>
@@ -650,57 +831,89 @@ export default function DahuaBridgeManager() {
                     <th style={{ padding: "14px 20px", color: "#64748b", fontWeight: 700, fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>Direction & Zone</th>
                     <th style={{ padding: "14px 20px", color: "#64748b", fontWeight: 700, fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>Facility / Project</th>
                     <th style={{ padding: "14px 20px", color: "#64748b", fontWeight: 700, fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>Status</th>
+                    {canManageAccess && (
+                      <th style={{ padding: "14px 20px", color: "#64748b", fontWeight: 700, fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.5px", textAlign: "right" }}>Actions</th>
+                    )}
                   </tr>
                 </thead>
                 <tbody>
-                  {devices.map((d) => (
-                    <tr key={d.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
-                      <td style={{ padding: "16px 20px", fontWeight: 600, color: "#1e293b" }}>
-                        <Typography sx={{ fontWeight: 600, fontSize: "0.9rem", color: "#1e293b" }}>
-                          {d.name}
-                        </Typography>
-                        <Typography sx={{ fontSize: "0.75rem", color: "#94a3b8" }}>
-                          DAHUA ASI6213S-PW
-                        </Typography>
-                      </td>
-                      <td style={{ padding: "16px 20px", color: "#475569" }}>
-                        <code style={{ background: "#f1f5f9", padding: "4px 8px", borderRadius: "6px", fontSize: "0.85rem", color: "#1e293b", border: "1px solid #e2e8f0" }}>
-                          {d.serialNumber || d.id.slice(0, 8)}
-                        </code>
-                      </td>
-                      <td style={{ padding: "16px 20px" }}>
-                        <Chip
-                          label={d.purpose}
-                          size="small"
-                          sx={{ fontSize: "0.7rem", fontWeight: 600, bgcolor: "#f1f5f9", color: "#334155", borderRadius: "6px" }}
-                        />
-                      </td>
-                      <td style={{ padding: "16px 20px", color: "#475569", fontSize: "0.85rem", fontWeight: 500 }}>
-                        {d.direction} · <strong>{d.accessZone}</strong>
-                      </td>
-                      <td style={{ padding: "16px 20px", color: "#334155" }}>
-                        <Typography sx={{ fontSize: "0.85rem", fontWeight: 600 }}>
-                          {d.facility?.name || "Society Gate"}
-                        </Typography>
-                        <Typography sx={{ fontSize: "0.75rem", color: "#94a3b8" }}>
-                          {d.project?.name || "Marbella Grand"}
-                        </Typography>
-                      </td>
-                      <td style={{ padding: "16px 20px" }}>
-                        <Chip
-                          label={d.status}
-                          size="small"
-                          sx={{
-                            fontWeight: 700,
-                            fontSize: "0.68rem",
-                            borderRadius: "6px",
-                            bgcolor: d.status === "ACTIVE" ? "#dcfce7" : "#fee2e2",
-                            color: d.status === "ACTIVE" ? "#15803d" : "#b91c1c",
-                          }}
-                        />
-                      </td>
-                    </tr>
-                  ))}
+                  {devices.map((d) => {
+                    const isMapped = allMappings.some((m) => m.deviceId === d.id);
+                    return (
+                      <tr key={d.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                        <td style={{ padding: "16px 20px", fontWeight: 600, color: "#1e293b" }}>
+                          <Typography sx={{ fontWeight: 600, fontSize: "0.9rem", color: "#1e293b" }}>
+                            {d.name}
+                          </Typography>
+                          <Typography sx={{ fontSize: "0.75rem", color: "#94a3b8" }}>
+                            DAHUA ASI6213S-PW
+                          </Typography>
+                        </td>
+                        <td style={{ padding: "16px 20px", color: "#475569" }}>
+                          <code style={{ background: "#f1f5f9", padding: "4px 8px", borderRadius: "6px", fontSize: "0.85rem", color: "#1e293b", border: "1px solid #e2e8f0" }}>
+                            {d.serialNumber || d.id.slice(0, 8)}
+                          </code>
+                        </td>
+                        <td style={{ padding: "16px 20px" }}>
+                          <Chip
+                            label={d.purpose}
+                            size="small"
+                            sx={{ fontSize: "0.7rem", fontWeight: 600, bgcolor: "#f1f5f9", color: "#334155", borderRadius: "6px" }}
+                          />
+                        </td>
+                        <td style={{ padding: "16px 20px", color: "#475569", fontSize: "0.85rem", fontWeight: 500 }}>
+                          {d.direction} · <strong>{d.accessZone}</strong>
+                        </td>
+                        <td style={{ padding: "16px 20px", color: "#334155" }}>
+                          <Typography sx={{ fontSize: "0.85rem", fontWeight: 600 }}>
+                            {d.facility?.name || "Society Gate"}
+                          </Typography>
+                          <Typography sx={{ fontSize: "0.75rem", color: "#94a3b8" }}>
+                            {d.project?.name || "Marbella Grand"}
+                          </Typography>
+                        </td>
+                        <td style={{ padding: "16px 20px" }}>
+                          <Chip
+                            label={d.status}
+                            size="small"
+                            sx={{
+                              fontWeight: 700,
+                              fontSize: "0.68rem",
+                              borderRadius: "6px",
+                              bgcolor: d.status === "ACTIVE" ? "#dcfce7" : "#fee2e2",
+                              color: d.status === "ACTIVE" ? "#15803d" : "#b91c1c",
+                            }}
+                          />
+                        </td>
+                        {canManageAccess && (
+                          <td style={{ padding: "16px 20px", textAlign: "right" }}>
+                            {isMapped ? (
+                              <Tooltip title="Delete this reader's door mapping first">
+                                <span>
+                                  <IconButton size="small" disabled sx={{ color: "#cbd5e1" }}>
+                                    <DeleteIcon fontSize="small" />
+                                  </IconButton>
+                                </span>
+                              </Tooltip>
+                            ) : (
+                              <Tooltip title="Delete reader">
+                                <IconButton
+                                  size="small"
+                                  onClick={() => setDeviceDeleteTarget(d)}
+                                  sx={{
+                                    color: "#94a3b8",
+                                    "&:hover": { color: "#ef4444", bgcolor: "#fef2f2" },
+                                  }}
+                                >
+                                  <DeleteIcon fontSize="small" />
+                                </IconButton>
+                              </Tooltip>
+                            )}
+                          </td>
+                        )}
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </Box>
@@ -771,77 +984,174 @@ export default function DahuaBridgeManager() {
                     <th style={{ padding: "14px 18px", color: "#64748b", fontWeight: 700, fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>Card UID</th>
                     <th style={{ padding: "14px 18px", color: "#64748b", fontWeight: 700, fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>User / Resident</th>
                     <th style={{ padding: "14px 18px", color: "#64748b", fontWeight: 700, fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>Decision</th>
-                    <th style={{ padding: "14px 18px", color: "#64748b", fontWeight: 700, fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>Evaluation Reason</th>
+                    <th style={{ padding: "14px 18px", color: "#64748b", fontWeight: 700, fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>Reason</th>
                     <th style={{ padding: "14px 18px", color: "#64748b", fontWeight: 700, fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>Hardware Outcome</th>
+                    <th style={{ padding: "14px 18px", color: "#64748b", fontWeight: 700, fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>Source</th>
                     <th style={{ padding: "14px 18px", color: "#64748b", fontWeight: 700, fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>Correlation</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {attempts.map((att) => (
-                    <tr key={att.id || att.transmissionUuid} style={{ borderBottom: "1px solid #f1f5f9" }}>
-                      <td style={{ padding: "14px 18px", color: "#475569", whiteSpace: "nowrap", fontWeight: 500 }}>
-                        {att.scannedAt ? new Date(att.scannedAt).toLocaleTimeString() : "—"}
-                      </td>
-                      <td style={{ padding: "14px 18px", fontWeight: 600, color: "#1e293b" }}>
-                        <code style={{ background: "#f1f5f9", padding: "4px 8px", borderRadius: "6px", fontSize: "0.85rem", color: "#1e293b", border: "1px solid #e2e8f0" }}>
-                          {att.cardUid}
-                        </code>
-                      </td>
-                      <td style={{ padding: "14px 18px", color: "#1e293b", fontWeight: 600 }}>
-                        {att.user?.name || att.vendorUserId || "Unknown Identity"}
-                      </td>
-                      <td style={{ padding: "14px 18px" }}>
-                        <Chip
-                          icon={att.accessGranted ? <SuccessIcon sx={{ fontSize: 14 }} /> : <FailIcon sx={{ fontSize: 14 }} />}
-                          label={att.accessGranted ? "GRANTED" : "DENIED"}
-                          size="small"
-                          sx={{
-                            fontWeight: 700,
-                            fontSize: "0.68rem",
-                            borderRadius: "6px",
-                            bgcolor: att.accessGranted ? "#dcfce7" : "#fee2e2",
-                            color: att.accessGranted ? "#15803d" : "#b91c1c",
-                          }}
-                        />
-                      </td>
-                      <td style={{ padding: "14px 18px", color: "#64748b", fontSize: "0.82rem" }}>
-                        {att.reason}
-                      </td>
-                      <td style={{ padding: "14px 18px" }}>
-                        {att.hardwareAnomaly ? (
+                  {attempts.map((att) => {
+                    // Reason label dictionary
+                    const reasonMap: Record<string, string> = {
+                      ACTIVE_SUBSCRIPTION: "Active subscription",
+                      NO_ACTIVE_SUBSCRIPTION: "No active paid subscription",
+                      CARD_BLOCKED: "Card blocked",
+                      CARD_INACTIVE: "Card inactive",
+                      CARD_EXPIRED: "Card expired",
+                      CARD_NOT_FOUND: "Card not registered in Marbella",
+                      PROJECT_NOT_ALLOWED: "Resident belongs to another project",
+                      USER_NOT_ACTIVE: "User inactive",
+                      GUEST_EXPIRED: "Stay ended",
+                      TENANT_EXPIRED: "Stay ended",
+                      FACILITY_NOT_AVAILABLE: "Facility closed or in maintenance",
+                      DAHUA_MAPPING_DISABLED: "Door turned off",
+                      STAFF_ACCESS_ALLOWED: "Staff",
+                    };
+                    const displayReason = reasonMap[att.reason] || att.reason;
+
+                    // Error code label
+                    const errorCodeMap: Record<string, string> = {
+                      "0": "Opened",
+                      "16": "Card not on the reader",
+                      "18": "No permission for this door",
+                      "20": "Outside validity dates (expired)",
+                      "96": "Remote verification is switched on",
+                    };
+                    const rawCode = att.hardwareErrorCode ?? att.errorCode;
+                    const displayErrorCode = rawCode !== null && rawCode !== undefined && errorCodeMap[String(rawCode)]
+                      ? errorCodeMap[String(rawCode)]
+                      : null;
+
+                    // Source label
+                    const isDeviceLocal = att.decision?.source === "DEVICE_LOCAL" || (att as any).source === "DEVICE_LOCAL";
+                    const displaySource = isDeviceLocal ? "Reader decision" : "Live check";
+
+                    // Correlation label: local:rec-178-1792857212 -> Reader record #178
+                    let correlationDisplay = att.transmissionUuid ? `${att.transmissionUuid.slice(0, 8)}...` : "—";
+                    if (att.transmissionUuid) {
+                      const match = att.transmissionUuid.match(/local:rec-(\d+)/i);
+                      if (match && match[1]) {
+                        correlationDisplay = `Reader record #${match[1]}`;
+                      }
+                    }
+
+                    // Asia/Kolkata tap time
+                    let formattedTapTime = "—";
+                    if (att.scannedAt) {
+                      try {
+                        formattedTapTime = new Intl.DateTimeFormat("en-IN", {
+                          timeZone: "Asia/Kolkata",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          second: "2-digit",
+                          day: "2-digit",
+                          month: "short",
+                        }).format(new Date(att.scannedAt));
+                      } catch (e) {
+                        formattedTapTime = new Date(att.scannedAt).toLocaleTimeString();
+                      }
+                    }
+
+                    return (
+                      <tr key={att.id || att.transmissionUuid} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                        <td style={{ padding: "14px 18px", color: "#475569", whiteSpace: "nowrap", fontWeight: 500, fontSize: "0.8rem" }}>
+                          {formattedTapTime}
+                        </td>
+                        <td style={{ padding: "14px 18px", fontWeight: 600, color: "#1e293b" }}>
+                          <code style={{ background: "#f1f5f9", padding: "4px 8px", borderRadius: "6px", fontSize: "0.85rem", color: "#1e293b", border: "1px solid #e2e8f0" }}>
+                            {att.cardUid}
+                          </code>
+                        </td>
+                        <td style={{ padding: "14px 18px", color: "#1e293b" }}>
+                          <Typography sx={{ fontWeight: 600, fontSize: "0.88rem", color: "#1e293b" }}>
+                            {att.userName || att.user?.name || "Unknown card"}
+                          </Typography>
+                          {att.vendorUserId && (
+                            <Typography sx={{ fontSize: "0.72rem", color: "#94a3b8", mt: 0.2 }}>
+                              controller ID {att.vendorUserId}
+                            </Typography>
+                          )}
+                        </td>
+                        <td style={{ padding: "14px 18px" }}>
                           <Chip
-                            icon={<WarningIcon sx={{ fontSize: 14 }} />}
-                            label="ANOMALY (UNAUTHORIZED OPEN)"
-                            size="small"
-                            color="error"
-                            sx={{ fontWeight: 700, fontSize: "0.68rem", borderRadius: "6px" }}
-                          />
-                        ) : att.hardwareResult ? (
-                          <Chip
-                            label={att.hardwareResult}
+                            icon={att.accessGranted ? <SuccessIcon sx={{ fontSize: 14 }} /> : <FailIcon sx={{ fontSize: 14 }} />}
+                            label={att.accessGranted ? "GRANTED" : "DENIED"}
                             size="small"
                             sx={{
                               fontWeight: 700,
                               fontSize: "0.68rem",
                               borderRadius: "6px",
-                              bgcolor: att.hardwareResult === "OPENED" ? "#eff6ff" : "#f1f5f9",
-                              color: att.hardwareResult === "OPENED" ? "#1d4ed8" : "#475569",
-                              border: `1px solid ${att.hardwareResult === "OPENED" ? "#bfdbfe" : "#e2e8f0"}`,
+                              bgcolor: att.accessGranted ? "#dcfce7" : "#fee2e2",
+                              color: att.accessGranted ? "#15803d" : "#b91c1c",
                             }}
                           />
-                        ) : (
-                          <Typography sx={{ fontSize: "0.75rem", color: "#94a3b8" }}>Pending report</Typography>
-                        )}
-                      </td>
-                      <td style={{ padding: "14px 18px", color: "#94a3b8", fontSize: "0.75rem" }}>
-                        <Tooltip title={att.transmissionUuid || ""}>
-                          <span style={{ cursor: "pointer", textDecoration: "underline dotted" }}>
-                            {att.transmissionUuid ? `${att.transmissionUuid.slice(0, 8)}...` : "—"}
-                          </span>
-                        </Tooltip>
-                      </td>
-                    </tr>
-                  ))}
+                        </td>
+                        <td style={{ padding: "14px 18px", color: "#475569", fontSize: "0.82rem", fontWeight: 500 }}>
+                          {displayReason}
+                        </td>
+                        <td style={{ padding: "14px 18px" }}>
+                          {att.hardwareAnomaly ? (
+                            <Tooltip
+                              title="The door opened although Marbella refuses this card. Usually the card was also added by hand on the reader under a person Marbella does not manage. Remove it in the reader's Person Management."
+                              arrow
+                            >
+                              <Chip
+                                icon={<WarningIcon sx={{ fontSize: 14 }} />}
+                                label="ANOMALY (UNAUTHORIZED OPEN)"
+                                size="small"
+                                color="error"
+                                sx={{ fontWeight: 700, fontSize: "0.68rem", borderRadius: "6px", cursor: "help" }}
+                              />
+                            </Tooltip>
+                          ) : att.hardwareResult ? (
+                            <Box sx={{ display: "flex", flexDirection: "column", gap: 0.3, alignItems: "flex-start" }}>
+                              <Chip
+                                label={att.hardwareResult}
+                                size="small"
+                                sx={{
+                                  fontWeight: 700,
+                                  fontSize: "0.68rem",
+                                  borderRadius: "6px",
+                                  bgcolor: att.hardwareResult === "OPENED" ? "#eff6ff" : "#f1f5f9",
+                                  color: att.hardwareResult === "OPENED" ? "#1d4ed8" : "#475569",
+                                  border: `1px solid ${att.hardwareResult === "OPENED" ? "#bfdbfe" : "#e2e8f0"}`,
+                                }}
+                              />
+                              {displayErrorCode && (
+                                <Typography sx={{ fontSize: "0.7rem", color: "#94a3b8" }}>
+                                  {displayErrorCode}
+                                </Typography>
+                              )}
+                            </Box>
+                          ) : (
+                            <Typography sx={{ fontSize: "0.75rem", color: "#94a3b8" }}>Pending report</Typography>
+                          )}
+                        </td>
+                        <td style={{ padding: "14px 18px" }}>
+                          <Chip
+                            label={displaySource}
+                            size="small"
+                            sx={{
+                              fontWeight: 600,
+                              fontSize: "0.7rem",
+                              borderRadius: "6px",
+                              bgcolor: isDeviceLocal ? "#f8fafc" : "#eff6ff",
+                              color: isDeviceLocal ? "#64748b" : "#2563eb",
+                              border: `1px solid ${isDeviceLocal ? "#e2e8f0" : "#dbeafe"}`,
+                            }}
+                          />
+                        </td>
+                        <td style={{ padding: "14px 18px", color: "#64748b", fontSize: "0.78rem" }}>
+                          <Tooltip title={att.transmissionUuid || ""}>
+                            <span style={{ cursor: "pointer", textDecoration: "underline dotted" }}>
+                              {correlationDisplay}
+                            </span>
+                          </Tooltip>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
               {attemptsTotal > 15 && (
@@ -875,51 +1185,63 @@ export default function DahuaBridgeManager() {
             The CGI registration ID is configured in your Dahua controller's network setup. One physical registry device maps to one zero-based door index.
           </Alert>
 
+          {/* Reader Dropdown (Task 4) */}
           <Box>
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 0.8 }}>
               <Typography sx={{ fontSize: "0.8rem", fontWeight: 600, color: "#334155" }}>
-                Associated RFID Device UUID / Reader
+                Reader
               </Typography>
               <Button
                 size="small"
-                onClick={() => setOpenRegisterDevice(true)}
+                onClick={() => {
+                  setOpenCreateMapping(false);
+                  setOpenRegisterDevice(true);
+                }}
                 sx={{ textTransform: "none", fontSize: "0.75rem", p: 0, minWidth: 0, color: "#24528C", fontWeight: 600 }}
               >
                 + Register New Device
               </Button>
             </Box>
 
-            {devices.length > 0 ? (
-              <FormControl fullWidth size="small">
-                <InputLabel>Select Device</InputLabel>
-                <Select
-                  value={mappingForm.deviceId}
-                  label="Select Device"
-                  onChange={(e) => setMappingForm({ ...mappingForm, deviceId: e.target.value })}
-                >
-                  {devices.map((d) => (
-                    <MenuItem key={d.id} value={d.id}>
-                      {d.name} (SN: {d.serialNumber || "N/A"}) · {d.facility?.name || d.accessZone || "Gate"} ({d.direction || "ENTRY"})
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            ) : (
-              <TextField
-                fullWidth
-                size="small"
-                label="RFID Device ID (UUID)"
-                placeholder="Enter existing RFID device UUID or click Register above"
-                value={mappingForm.deviceId}
-                onChange={(e) => setMappingForm({ ...mappingForm, deviceId: e.target.value })}
-                helperText="No Dahua devices currently in list. You can enter an existing UUID or click '+ Register New Device'."
-              />
-            )}
+            {(() => {
+              // 1. Keep only provider === "DAHUA"
+              // 2. Remove readers that already have a mapping
+              const availableDahuaDevices = devices.filter((d) => {
+                const isDahua = !d.provider || d.provider.toUpperCase() === "DAHUA";
+                const isMapped = allMappings.some((m) => m.deviceId === d.id);
+                return isDahua && !isMapped;
+              });
+
+              if (availableDahuaDevices.length > 0) {
+                return (
+                  <FormControl fullWidth size="small">
+                    <InputLabel>Select Reader</InputLabel>
+                    <Select
+                      value={mappingForm.deviceId}
+                      label="Select Reader"
+                      onChange={(e) => setMappingForm({ ...mappingForm, deviceId: e.target.value })}
+                    >
+                      {availableDahuaDevices.map((d) => (
+                        <MenuItem key={d.id} value={d.id}>
+                          {d.name} · {d.serialNumber || "No SN"} · {d.facility?.name || d.accessZone || "Gate"}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                );
+              }
+
+              return (
+                <Alert severity="warning" sx={{ fontSize: "0.82rem", borderRadius: "10px" }}>
+                  All Dahua readers are already mapped. Register a new reader first.
+                </Alert>
+              );
+            })()}
           </Box>
 
           <TextField
             label="CGI Device Registration ID"
-            placeholder="e.g. 8B071B2AAJ4E4DF or controller registration ID"
+            placeholder="e.g. MARBELLATEST01"
             size="small"
             fullWidth
             value={mappingForm.cgiDeviceId}
@@ -944,22 +1266,44 @@ export default function DahuaBridgeManager() {
                 label="Access Mode"
                 onChange={(e) => setMappingForm({ ...mappingForm, accessMode: e.target.value as AccessMode })}
               >
-                <MenuItem value="AUTO">AUTO (Dynamic subscription / booking)</MenuItem>
                 <MenuItem value="SUBSCRIPTION">SUBSCRIPTION (Monthly RFID pass only)</MenuItem>
+                <MenuItem value="AUTO">AUTO (Dynamic subscription / booking)</MenuItem>
                 <MenuItem value="BOOKING">BOOKING (Requires active slot booking)</MenuItem>
               </Select>
             </FormControl>
           </Box>
 
-          <TextField
-            label="Booking Grace Window (minutes)"
-            type="number"
-            size="small"
-            fullWidth
-            value={mappingForm.bookingGraceMinutes}
-            onChange={(e) => setMappingForm({ ...mappingForm, bookingGraceMinutes: Number(e.target.value) })}
-            helperText="Allows early arrival and late departure around slot bookings (default 15m)"
-          />
+          {/* Task 8: Booking warning */}
+          {(() => {
+            const selectedDevice = devices.find((d) => d.id === mappingForm.deviceId);
+            const facility = selectedDevice?.facilityId
+              ? facilities.find((f) => (f.id || f._id) === selectedDevice.facilityId)
+              : null;
+            const isBookingMode = mappingForm.accessMode === "BOOKING";
+            const isAutoNonSub = mappingForm.accessMode === "AUTO" && facility && facility.accessType && facility.accessType !== "SUBSCRIPTION";
+
+            if (isBookingMode || isAutoNonSub) {
+              return (
+                <Alert severity="warning" sx={{ fontSize: "0.82rem", borderRadius: "10px" }}>
+                  Booking access is not available on Dahua readers yet. Nobody will be let in through this door.
+                </Alert>
+              );
+            }
+            return null;
+          })()}
+
+          {/* Task 8: Booking Grace Window only when Access Mode is BOOKING */}
+          {mappingForm.accessMode === "BOOKING" && (
+            <TextField
+              label="Booking Grace Window (minutes)"
+              type="number"
+              size="small"
+              fullWidth
+              value={mappingForm.bookingGraceMinutes}
+              onChange={(e) => setMappingForm({ ...mappingForm, bookingGraceMinutes: Number(e.target.value) })}
+              helperText="Allows early arrival and late departure around slot bookings (default 15m)"
+            />
+          )}
         </DialogContent>
         <DialogActions sx={{ p: 2.5 }}>
           <Button onClick={() => setOpenCreateMapping(false)} disabled={submittingMapping} sx={{ color: "#64748b" }}>
@@ -976,7 +1320,7 @@ export default function DahuaBridgeManager() {
         </DialogActions>
       </Dialog>
 
-      {/* ── Dialog: Register Physical Controller ── */}
+      {/* ── Dialog: Register Physical Controller (Task 5) ── */}
       <Dialog
         open={openRegisterDevice}
         onClose={() => !submittingDevice && setOpenRegisterDevice(false)}
@@ -990,7 +1334,7 @@ export default function DahuaBridgeManager() {
         <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2.5, pt: 1 }}>
           <TextField
             label="Device Friendly Name"
-            placeholder="e.g. Grand Gym Main Entry"
+            placeholder="e.g. Gym Entry (Dahua ASI6213S)"
             size="small"
             fullWidth
             value={deviceForm.name}
@@ -999,7 +1343,7 @@ export default function DahuaBridgeManager() {
 
           <TextField
             label="Serial Number"
-            placeholder="Controller hardware serial number"
+            placeholder="e.g. CE001CDPAJ58DDB"
             size="small"
             fullWidth
             value={deviceForm.serialNumber}
@@ -1007,59 +1351,59 @@ export default function DahuaBridgeManager() {
           />
 
           {projects.length > 0 ? (
-            <FormControl fullWidth size="small">
-              <InputLabel>Project</InputLabel>
-              <Select
-                value={deviceForm.projectId}
-                label="Project"
-                onChange={(e) => setDeviceForm({ ...deviceForm, projectId: e.target.value })}
-              >
-                {projects.map((p) => (
-                  <MenuItem key={p.id || p._id} value={p.id || p._id}>
-                    {p.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            <Box>
+              <FormControl fullWidth size="small">
+                <InputLabel>Project</InputLabel>
+                <Select
+                  value={deviceForm.projectId}
+                  label="Project"
+                  onChange={(e) => setDeviceForm({ ...deviceForm, projectId: e.target.value })}
+                >
+                  {projects.map((p) => (
+                    <MenuItem key={p.id || p._id} value={p.id || p._id}>
+                      {p.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <Typography sx={{ fontSize: "0.75rem", color: "#64748b", mt: 0.6, ml: 1.5 }}>
+                Only residents of this project can use this reader.
+              </Typography>
+            </Box>
           ) : (
-            <TextField
-              label="Project ID (UUID)"
-              placeholder="e.g. your-project-uuid"
-              size="small"
-              fullWidth
-              value={deviceForm.projectId}
-              onChange={(e) => setDeviceForm({ ...deviceForm, projectId: e.target.value })}
-              helperText="Enter the Project UUID to associate this reader with"
-            />
+            <Box>
+              <TextField
+                label="Project ID (UUID)"
+                placeholder="e.g. your-project-uuid"
+                size="small"
+                fullWidth
+                value={deviceForm.projectId}
+                onChange={(e) => setDeviceForm({ ...deviceForm, projectId: e.target.value })}
+                helperText="Enter the Project UUID to associate this reader with"
+              />
+              <Typography sx={{ fontSize: "0.75rem", color: "#64748b", mt: 0.6, ml: 1.5 }}>
+                Only residents of this project can use this reader.
+              </Typography>
+            </Box>
           )}
 
-          {facilities.length > 0 ? (
-            <FormControl fullWidth size="small">
-              <InputLabel>Facility (Optional)</InputLabel>
-              <Select
-                value={deviceForm.facilityId || ""}
-                label="Facility (Optional)"
-                onChange={(e) => setDeviceForm({ ...deviceForm, facilityId: e.target.value })}
-              >
-                <MenuItem value="">None / Society Main Gate</MenuItem>
-                {facilities.map((f) => (
-                  <MenuItem key={f.id || f._id} value={f.id || f._id}>
-                    {f.name} ({f.category || "Amenity"})
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          ) : (
-            <TextField
-              label="Facility ID (Optional UUID)"
-              placeholder="e.g. gym-facility-uuid or leave blank for Society Gate"
-              size="small"
-              fullWidth
+          <FormControl fullWidth size="small" required={deviceForm.purpose === "FACILITY_ACCESS"}>
+            <InputLabel>Facility {deviceForm.purpose === "FACILITY_ACCESS" ? "(Required for Facility Access)" : "(Optional)"}</InputLabel>
+            <Select
               value={deviceForm.facilityId || ""}
+              label={`Facility ${deviceForm.purpose === "FACILITY_ACCESS" ? "(Required for Facility Access)" : "(Optional)"}`}
               onChange={(e) => setDeviceForm({ ...deviceForm, facilityId: e.target.value })}
-              helperText="Leave empty if this reader is at a society main gate / staff attendance"
-            />
-          )}
+            >
+              {deviceForm.purpose !== "FACILITY_ACCESS" && (
+                <MenuItem value="">None / Society Main Gate</MenuItem>
+              )}
+              {facilities.map((f) => (
+                <MenuItem key={f.id || f._id} value={f.id || f._id}>
+                  {f.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
           <Box sx={{ display: "flex", gap: 2 }}>
             <FormControl fullWidth size="small">
@@ -1067,7 +1411,14 @@ export default function DahuaBridgeManager() {
               <Select
                 value={deviceForm.purpose}
                 label="Purpose"
-                onChange={(e) => setDeviceForm({ ...deviceForm, purpose: e.target.value as any })}
+                onChange={(e) => {
+                  const newPurpose = e.target.value as any;
+                  setDeviceForm({
+                    ...deviceForm,
+                    purpose: newPurpose,
+                    facilityId: newPurpose === "FACILITY_ACCESS" ? deviceForm.facilityId : "",
+                  });
+                }}
               >
                 <MenuItem value="FACILITY_ACCESS">FACILITY_ACCESS</MenuItem>
                 <MenuItem value="SOCIETY_GATE">SOCIETY_GATE</MenuItem>
@@ -1091,11 +1442,12 @@ export default function DahuaBridgeManager() {
 
           <TextField
             label="Access Zone Code"
-            placeholder="e.g. GYM, MAIN_GATE, CLUBHOUSE"
+            placeholder="e.g. GYM"
             size="small"
             fullWidth
             value={deviceForm.accessZone}
             onChange={(e) => setDeviceForm({ ...deviceForm, accessZone: e.target.value })}
+            helperText="Code identifying the physical zone (e.g. GYM for the gym)"
           />
         </DialogContent>
         <DialogActions sx={{ p: 2.5 }}>
@@ -1112,6 +1464,144 @@ export default function DahuaBridgeManager() {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* ── Dialog A: Turn this door off first (Task 1) ── */}
+      <Dialog
+        open={Boolean(mappingTurnOffTarget)}
+        onClose={() => !submittingTurnOff && setMappingTurnOffTarget(null)}
+        maxWidth="xs"
+        fullWidth
+        PaperProps={{ sx: { borderRadius: "16px", p: 1 } }}
+      >
+        <DialogTitle sx={{ fontWeight: 700, color: "#1e293b", fontFamily: INTER, fontSize: "1.1rem" }}>
+          Turn this door off first
+        </DialogTitle>
+        <DialogContent>
+          <Typography sx={{ color: "#475569", fontSize: "0.875rem", lineHeight: 1.6 }}>
+            <strong>{mappingTurnOffTarget?.cgiDeviceId} · Door {mappingTurnOffTarget?.doorIndex}</strong> is active. Turning it off removes access for every member at this door within about a minute. After 2 minutes you can delete it.
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ p: 2, pt: 1, gap: 1 }}>
+          <Button
+            onClick={() => setMappingTurnOffTarget(null)}
+            disabled={submittingTurnOff}
+            sx={{ color: "#64748b", textTransform: "none", fontWeight: 600 }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleConfirmTurnOff}
+            variant="contained"
+            disabled={submittingTurnOff}
+            sx={{
+              bgcolor: "#d97706",
+              "&:hover": { bgcolor: "#b45309" },
+              textTransform: "none",
+              borderRadius: "8px",
+              fontWeight: 600,
+              px: 2.5,
+            }}
+          >
+            {submittingTurnOff ? <CircularProgress size={18} color="inherit" /> : "Turn off door"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* ── Dialog B: Delete door mapping? (Task 1) ── */}
+      <Dialog
+        open={Boolean(mappingDeleteTarget)}
+        onClose={() => !submittingDeleteMapping && setMappingDeleteTarget(null)}
+        maxWidth="xs"
+        fullWidth
+        PaperProps={{ sx: { borderRadius: "16px", p: 1 } }}
+      >
+        <DialogTitle sx={{ fontWeight: 700, color: "#1e293b", fontFamily: INTER, fontSize: "1.1rem" }}>
+          Delete door mapping?
+        </DialogTitle>
+        <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+          <Typography sx={{ color: "#475569", fontSize: "0.875rem", lineHeight: 1.6 }}>
+            <strong>{mappingDeleteTarget?.cgiDeviceId} · Door {mappingDeleteTarget?.doorIndex}</strong> will be removed. Access history stays in the audit.
+          </Typography>
+          {deleteMappingError && (
+            <Alert severity="error" sx={{ fontSize: "0.8rem", borderRadius: "8px" }}>
+              {deleteMappingError}
+            </Alert>
+          )}
+        </DialogContent>
+        <DialogActions sx={{ p: 2, pt: 1, gap: 1 }}>
+          <Button
+            onClick={() => setMappingDeleteTarget(null)}
+            disabled={submittingDeleteMapping}
+            sx={{ color: "#64748b", textTransform: "none", fontWeight: 600 }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleConfirmDeleteMapping}
+            variant="contained"
+            disabled={submittingDeleteMapping || (countdownSeconds !== null && countdownSeconds > 0)}
+            sx={{
+              bgcolor: "#ef4444",
+              "&:hover": { bgcolor: "#dc2626" },
+              textTransform: "none",
+              borderRadius: "8px",
+              fontWeight: 600,
+              px: 2.5,
+            }}
+          >
+            {submittingDeleteMapping ? (
+              <CircularProgress size={18} color="inherit" />
+            ) : countdownSeconds !== null && countdownSeconds > 0 ? (
+              `Delete (${countdownSeconds}s)`
+            ) : (
+              "Delete"
+            )}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* ── Dialog: Delete reader? (Task 2) ── */}
+      <Dialog
+        open={Boolean(deviceDeleteTarget)}
+        onClose={() => !submittingDeleteDevice && setDeviceDeleteTarget(null)}
+        maxWidth="xs"
+        fullWidth
+        PaperProps={{ sx: { borderRadius: "16px", p: 1 } }}
+      >
+        <DialogTitle sx={{ fontWeight: 700, color: "#1e293b", fontFamily: INTER, fontSize: "1.1rem" }}>
+          Delete reader?
+        </DialogTitle>
+        <DialogContent>
+          <Typography sx={{ color: "#475569", fontSize: "0.875rem", lineHeight: 1.6 }}>
+            <strong>{deviceDeleteTarget?.name} · serial {deviceDeleteTarget?.serialNumber || "N/A"}</strong> will be removed.
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ p: 2, pt: 1, gap: 1 }}>
+          <Button
+            onClick={() => setDeviceDeleteTarget(null)}
+            disabled={submittingDeleteDevice}
+            sx={{ color: "#64748b", textTransform: "none", fontWeight: 600 }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleConfirmDeleteDevice}
+            variant="contained"
+            disabled={submittingDeleteDevice}
+            sx={{
+              bgcolor: "#ef4444",
+              "&:hover": { bgcolor: "#dc2626" },
+              textTransform: "none",
+              borderRadius: "8px",
+              fontWeight: 600,
+              px: 2.5,
+            }}
+          >
+            {submittingDeleteDevice ? <CircularProgress size={18} color="inherit" /> : "Delete"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
     </Box>
   );
 }

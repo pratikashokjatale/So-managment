@@ -19,6 +19,7 @@ import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import StatusBadge from '@/components/StatusBadge';
 import { cancelSubscriptionApi, paySubscriptionFromWalletApi } from '@/apis/subscription';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 import { getFileUrl } from '@/utils/file';
 
 interface MembershipDetailsDialogProps {
@@ -31,6 +32,7 @@ interface MembershipDetailsDialogProps {
 
 export default function MembershipDetailsDialog({ open, onClose, membership, onRefresh }: MembershipDetailsDialogProps) {
   const [cancelling, setCancelling] = useState(false);
+  const [paying, setPaying] = useState(false);
 
   if (!membership) return null;
 
@@ -39,10 +41,12 @@ export default function MembershipDetailsDialog({ open, onClose, membership, onR
     setCancelling(true);
     try {
       await cancelSubscriptionApi(membership.id);
+      toast.success("Subscription cancelled successfully");
       onRefresh();
       onClose();
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      toast.error(err?.message || "Failed to cancel subscription");
     } finally {
       setCancelling(false);
     }
@@ -50,17 +54,20 @@ export default function MembershipDetailsDialog({ open, onClose, membership, onR
 
   const handlePayFromWallet = async () => {
     if (!window.confirm("Are you sure you want to pay for this subscription using your wallet balance?")) return;
-    setCancelling(true); // Reusing the state for loading
+    setPaying(true);
     try {
       await paySubscriptionFromWalletApi(membership.id);
+      toast.success("Payment completed successfully from wallet");
       onRefresh();
       onClose();
     } catch (err: any) {
-      alert(err?.message || "Failed to pay from wallet.");
+      console.error(err);
+      toast.error(err?.message || "Failed to pay from wallet.");
     } finally {
-      setCancelling(false);
+      setPaying(false);
     }
   };
+
 
   return (
     <Dialog 
@@ -200,7 +207,7 @@ export default function MembershipDetailsDialog({ open, onClose, membership, onR
           {membership.status !== 'CANCELLED' && (
             <Button 
               onClick={handleCancel} 
-              disabled={cancelling}
+              disabled={cancelling || paying}
               color="error"
               variant="outlined"
               sx={{ px: 3, py: 1, borderRadius: 2, textTransform: 'none', fontWeight: 600 }}
@@ -211,12 +218,12 @@ export default function MembershipDetailsDialog({ open, onClose, membership, onR
           {membership.paymentStatus === 'PENDING' && membership.status !== 'CANCELLED' && (
             <Button 
               onClick={handlePayFromWallet} 
-              disabled={cancelling}
+              disabled={cancelling || paying}
               color="primary"
               variant="outlined"
               sx={{ px: 3, py: 1, borderRadius: 2, textTransform: 'none', fontWeight: 600 }}
             >
-              Pay from Wallet
+              {paying ? <CircularProgress size={24} color="inherit" /> : 'Pay from Wallet'}
             </Button>
           )}
         </Box>

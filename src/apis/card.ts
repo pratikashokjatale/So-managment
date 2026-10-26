@@ -109,3 +109,16 @@ export const updateCardApi = async (cardId: string, payload: UpdateCardPayload):
     throw handleApiError(error);
   }
 };
+
+/**
+ * DELETE /api/v1/cards/:id
+ * Removes the card from the user. It leaves the door within about a minute and the card number can be reused. Old history is kept.
+ */
+export const deleteCardApi = async (cardId: string): Promise<void> => {
+  try {
+    await api.delete(`cards/${cardId}`);
+  } catch (error) {
+    throw handleApiError(error);
+  }
+};
+

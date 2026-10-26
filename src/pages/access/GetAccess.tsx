@@ -27,7 +27,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Tabs, Tab, MenuItem,
 import { getUsersApi, updateUserApi } from "@/apis/user";
 import { uploadDocumentApi } from "@/apis/document";
 import { getAnalyticsAccessEventsApi } from "@/apis/analytics";
-import { getCardsApi, createCardApi, updateCardApi, type CardItem, type HolderType } from "@/apis/card";
+import { getCardsApi, createCardApi, updateCardApi, deleteCardApi, type CardItem, type HolderType } from "@/apis/card";
 import { useAuth } from "@/contexts/AuthContext";
 import toast from "react-hot-toast";
 import Pagination from "@/components/Pagination";
@@ -146,8 +146,12 @@ export default function GetAccess() {
     setOpenIssueCard(true);
   };
 
+  const [cardToDelete, setCardToDelete] = useState<{ card: CardItem; userName: string } | null>(null);
+  const [submittingRemoveCard, setSubmittingRemoveCard] = useState(false);
+
   const handleSaveCard = async () => {
-    if (!cardForm.cardUid.trim()) {
+    const formattedCardUid = cardForm.cardUid.trim().toUpperCase();
+    if (!formattedCardUid) {
       toast.error("Please enter the exact physical Card UID");
       return;
     }
@@ -159,13 +163,13 @@ export default function GetAccess() {
     setSubmittingIssueCard(true);
     try {
       await createCardApi({
-        cardUid: cardForm.cardUid.trim(),
+        cardUid: formattedCardUid,
         cardType: cardForm.cardType,
         holderType: cardForm.holderType,
         userId: cardForm.userId,
         flatId: cardForm.flatId ? cardForm.flatId : undefined,
       });
-      toast.success("Physical card assigned successfully");
+      toast.success("Saved. The door updates within about a minute.");
       setOpenIssueCard(false);
       // Reload cards for this user
       if (cardForm.userId) {
@@ -173,7 +177,7 @@ export default function GetAccess() {
       }
     } catch (err: any) {
       if (err?.status === 409 || err?.response?.status === 409) {
-        toast.error("This physical card UID is already assigned to a user");
+        toast.error("This card number is already assigned.");
       } else {
         toast.error(err?.message || "Failed to assign card");
       }
@@ -189,7 +193,7 @@ export default function GetAccess() {
     }
     try {
       await updateCardApi(card.id, { status: "BLOCKED" });
-      toast.success(`Card ${card.cardUid} blocked successfully`);
+      toast.success("Saved. The door updates within about a minute.");
       fetchUserCards([card.userId]);
     } catch (err: any) {
       toast.error(err?.message || "Failed to block card");
@@ -203,12 +207,39 @@ export default function GetAccess() {
     }
     try {
       await updateCardApi(card.id, { status: "ACTIVE" });
-      toast.success(`Card ${card.cardUid} unblocked`);
+      toast.success("Saved. The door updates within about a minute.");
       fetchUserCards([card.userId]);
     } catch (err: any) {
       toast.error(err?.message || "Failed to activate card");
     }
   };
+
+  const handleConfirmRemoveCard = async () => {
+    if (!cardToDelete || !canManageCards) return;
+    setSubmittingRemoveCard(true);
+    try {
+      await deleteCardApi(cardToDelete.card.id);
+      toast.success("Card removed. The door updates within about a minute.");
+      const uId = cardToDelete.card.userId;
+      setCardToDelete(null);
+      if (uId) {
+        fetchUserCards([uId]);
+      }
+    } catch (err: any) {
+      if (err?.status === 404 || err?.response?.status === 404) {
+        toast.error(err?.message || "Card not found");
+        if (cardToDelete.card.userId) {
+          fetchUserCards([cardToDelete.card.userId]);
+        }
+      } else {
+        toast.error(err?.message || "Failed to remove card");
+      }
+      setCardToDelete(null);
+    } finally {
+      setSubmittingRemoveCard(false);
+    }
+  };
+
 
   // Debounced search and pagination effect
   useEffect(() => {
@@ -594,21 +625,39 @@ export default function GetAccess() {
                                 }}
                               />
                               {canManageCards && (
-                                <Button
-                                  size="small"
-                                  onClick={() => (isBlocked ? handleUnblockCard(card) : handleBlockCard(card))}
-                                  sx={{
-                                    p: 0,
-                                    minWidth: "auto",
-                                    fontSize: "0.7rem",
-                                    textTransform: "none",
-                                    color: isBlocked ? "#22c55e" : "#ef4444",
-                                    fontWeight: 600,
-                                    "&:hover": { textDecoration: "underline", bgcolor: "transparent" },
-                                  }}
-                                >
-                                  {isBlocked ? "Unblock" : "Block"}
-                                </Button>
+                                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                                  <Button
+                                    size="small"
+                                    onClick={() => (isBlocked ? handleUnblockCard(card) : handleBlockCard(card))}
+                                    sx={{
+                                      p: 0,
+                                      minWidth: "auto",
+                                      fontSize: "0.7rem",
+                                      textTransform: "none",
+                                      color: isBlocked ? "#22c55e" : "#ef4444",
+                                      fontWeight: 600,
+                                      "&:hover": { textDecoration: "underline", bgcolor: "transparent" },
+                                    }}
+                                  >
+                                    {isBlocked ? "Unblock" : "Block"}
+                                  </Button>
+                                  <span style={{ color: "#cbd5e1", fontSize: "0.7rem" }}>•</span>
+                                  <Button
+                                    size="small"
+                                    onClick={() => setCardToDelete({ card, userName: user?.name || "this user" })}
+                                    sx={{
+                                      p: 0,
+                                      minWidth: "auto",
+                                      fontSize: "0.7rem",
+                                      textTransform: "none",
+                                      color: "#64748b",
+                                      fontWeight: 600,
+                                      "&:hover": { textDecoration: "underline", color: "#ef4444", bgcolor: "transparent" },
+                                    }}
+                                  >
+                                    Remove
+                                  </Button>
+                                </Box>
                               )}
                             </Box>
                           );
@@ -996,6 +1045,49 @@ export default function GetAccess() {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* ── Dialog: Confirm Remove Card ── */}
+      <Dialog
+        open={Boolean(cardToDelete)}
+        onClose={() => !submittingRemoveCard && setCardToDelete(null)}
+        maxWidth="xs"
+        fullWidth
+        PaperProps={{ sx: { borderRadius: "16px", p: 1 } }}
+      >
+        <DialogTitle sx={{ fontWeight: 700, color: "#1e293b", fontFamily: INTER, fontSize: "1.1rem" }}>
+          Remove card {cardToDelete?.card.cardUid} from {cardToDelete?.userName}?
+        </DialogTitle>
+        <DialogContent>
+          <Typography sx={{ color: "#475569", fontSize: "0.875rem", lineHeight: 1.6 }}>
+            The card stops working at Dahua doors within about a minute and can then be assigned to someone else.
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ p: 2, pt: 1, gap: 1 }}>
+          <Button
+            onClick={() => setCardToDelete(null)}
+            disabled={submittingRemoveCard}
+            sx={{ color: "#64748b", textTransform: "none", fontWeight: 600 }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleConfirmRemoveCard}
+            variant="contained"
+            disabled={submittingRemoveCard}
+            sx={{
+              bgcolor: "#ef4444",
+              "&:hover": { bgcolor: "#dc2626" },
+              textTransform: "none",
+              borderRadius: "8px",
+              fontWeight: 600,
+              px: 2.5,
+            }}
+          >
+            {submittingRemoveCard ? <CircularProgress size={18} color="inherit" /> : "Remove card"}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }
+

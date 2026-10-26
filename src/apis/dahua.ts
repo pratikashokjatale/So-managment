@@ -95,6 +95,7 @@ export interface AccessAttempt {
   doorIndex?: number;
   cardUid: string;
   vendorUserId?: string;
+  userName?: string;
   direction: RfidDirection;
   scannedAt: string;
   evaluatedAt: string;
@@ -103,16 +104,23 @@ export interface AccessAttempt {
   reason: string;
   hardwareResult?: HardwareResult | null;
   hardwareAnomaly?: boolean;
+  hardwareErrorCode?: number | string | null;
   errorCode?: string | null;
   occurredAt?: string | null;
   projectId?: string;
   facilityId?: string;
   userId?: string;
   mappingId?: string;
+  decision?: {
+    source?: string;
+    [key: string]: any;
+  };
   user?: { id: string; name: string; email?: string; role?: string };
   project?: { id: string; name: string };
   facility?: { id: string; name: string };
 }
+
+
 
 export interface GetAttemptsParams {
   page?: number;
@@ -147,7 +155,7 @@ export const getDahuaBridgeStatusApi = async (): Promise<DahuaBridgeStatus> => {
  * GET /api/v1/rfid/devices
  * List registered RFID devices (supports DAHUA, etc.)
  */
-export const getRfidDevicesApi = async (params?: { projectId?: string; provider?: string }): Promise<RfidDevice[]> => {
+export const getRfidDevicesApi = async (params?: { projectId?: string; provider?: string; page?: number; limit?: number }): Promise<RfidDevice[]> => {
   try {
     const res = await api.get("rfid/devices", { params });
     const data = res?.data;
@@ -170,6 +178,18 @@ export const registerRfidDeviceApi = async (payload: RegisterDevicePayload): Pro
   try {
     const res = await api.post("rfid/devices", payload);
     return res?.data?.data || res?.data;
+  } catch (error) {
+    throw handleApiError(error);
+  }
+};
+
+/**
+ * DELETE /api/v1/rfid/devices/:id
+ * Refused while the reader still has a door mapping.
+ */
+export const deleteRfidDeviceApi = async (id: string): Promise<void> => {
+  try {
+    await api.delete(`rfid/devices/${id}`);
   } catch (error) {
     throw handleApiError(error);
   }
@@ -219,6 +239,7 @@ export const updateDahuaMappingApi = async (id: string, payload: UpdateMappingPa
 
 /**
  * DELETE /api/v1/rfid/dahua/mappings/:id
+ * Rule: Only after the mapping has been turned off for 2 minutes. Otherwise its cards would stay valid on the controller.
  */
 export const deleteDahuaMappingApi = async (id: string): Promise<void> => {
   try {
@@ -230,7 +251,8 @@ export const deleteDahuaMappingApi = async (id: string): Promise<void> => {
 
 /**
  * GET /api/v1/rfid/dahua/attempts
- * Audit and verify real-time controller attempts and hardware results
+ * Audit and verify real-time controller attempts and hardware results.
+ * Returns newest tap first, plus a userName field (e.g. "Yash" instead of controller ID "2").
  */
 export const getDahuaAttemptsApi = async (params?: GetAttemptsParams): Promise<{ items: AccessAttempt[]; total: number }> => {
   try {
@@ -243,3 +265,4 @@ export const getDahuaAttemptsApi = async (params?: GetAttemptsParams): Promise<{
     throw handleApiError(error);
   }
 };
+

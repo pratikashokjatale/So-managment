@@ -6,7 +6,7 @@ import { clearSession, getSession, getSessionRefreshToken } from "./session";
 // Create axios instance
 export const api = axios.create({
   baseURL: `${API_URL}/api/v1`,
-  timeout: 5000, // 5sec
+  timeout: 15000, // 15sec
 });
 
 api.interceptors.request.use(
@@ -115,12 +115,23 @@ export const handleApiError = (error: any): ApiError => {
       error.response.data?.message ||
       error.response.data?.error ||
       error.response.data?.errors?.[0]?.msg ||
+      error.response.data?.errors?.[0]?.message ||
       "An error occurred";
 
     return new ApiError(message, error.response?.status, error.response?.data);
+  } else if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
+    return new ApiError("Request timed out. Please check your connection and try again.", 408);
+  } else if (error.code === 'ERR_CANCELED' || error.name === 'CanceledError') {
+    return new ApiError("Request was canceled.", 499);
   } else if (error.request) {
-    return new ApiError("Network error - no response received", 0);
+    return new ApiError(
+      error.message && error.message !== "Network Error"
+        ? error.message
+        : "Network error - unable to connect to server. Please check your connection or backend status.",
+      0
+    );
   } else {
-    return new ApiError(error.message, 0);
+    return new ApiError(error.message || "An unexpected error occurred", 0);
   }
 };
+

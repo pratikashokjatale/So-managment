@@ -526,14 +526,7 @@ export default function DashboardLayout() {
         })}
       </List>
 
-      <Box sx={{ p: 2, display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
-        <WifiIcon sx={{ fontSize: 14, color: "#10b981" }} />
-        <Typography
-          sx={{ fontSize: "0.75rem", color: "#10b981", fontWeight: 700 }}
-        >
-          All gates online
-        </Typography>
-      </Box>
+
     </Box>
   );
 
