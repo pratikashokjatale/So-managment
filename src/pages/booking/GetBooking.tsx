@@ -87,7 +87,7 @@ export default function GetBooking() {
 
   const fetchPendingCount = async () => {
     try {
-      const res = await getBookingsApi({ status: 'PENDING', limit: 1 });
+      const res = await getBookingsApi({ status: 'PENDING_APPROVAL', limit: 1 });
       if (res?.success && res?.data?.pagination) {
         setPendingCount(res.data.pagination.total || 0);
       }
@@ -119,7 +119,7 @@ export default function GetBooking() {
       
       // Handle status filter by active tab state
       if (activeTab === 'REQUESTS') {
-        params.status = 'PENDING';
+        params.status = 'PENDING_APPROVAL';
       } else if (statusFilter !== 'ALL') {
         params.status = statusFilter;
       }
@@ -298,7 +298,8 @@ export default function GetBooking() {
   };
 
   const filteredBookings = bookings.filter(b => {
-    if (activeTab === 'REQUESTS' && b.status?.toUpperCase() !== 'PENDING') {
+    const bStatus = b.status?.toUpperCase();
+    if (activeTab === 'REQUESTS' && bStatus !== 'PENDING_APPROVAL' && bStatus !== 'PENDING') {
       return false;
     }
     if (!searchQuery) return true;
@@ -557,7 +558,7 @@ export default function GetBooking() {
                         >
                           <VisibilityOutlinedIcon fontSize="small" />
                         </IconButton>
-                        {row.status === 'PENDING' && (
+                        {(row.status === 'PENDING_APPROVAL' || row.status === 'PENDING') && (
                           <>
                             <IconButton 
                               size="small" 
@@ -767,7 +768,7 @@ export default function GetBooking() {
             </DialogContent>
             <Divider />
             <DialogActions sx={{ px: 3, py: 2, gap: 1 }}>
-              {selectedBooking.status === 'PENDING' && (
+              {(selectedBooking.status === 'PENDING_APPROVAL' || selectedBooking.status === 'PENDING') && (
                 <>
                   <Button 
                     variant="contained" 

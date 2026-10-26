@@ -62,7 +62,15 @@ export default function MembershipDetailsDialog({ open, onClose, membership, onR
       onClose();
     } catch (err: any) {
       console.error(err);
-      toast.error(err?.message || "Failed to pay from wallet.");
+      const errMsg = (err?.message || "").toLowerCase();
+      const status = err?.status || err?.response?.status;
+      if (status === 409 || errMsg.includes("already paid")) {
+        toast.success("Subscription is already paid!");
+        onRefresh();
+        onClose();
+      } else {
+        toast.error(err?.message || "Failed to pay from wallet.");
+      }
     } finally {
       setPaying(false);
     }

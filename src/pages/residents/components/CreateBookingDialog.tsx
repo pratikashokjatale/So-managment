@@ -324,9 +324,15 @@ export default function CreateBookingDialog({ open, onClose, resident }: CreateB
         await paySubscriptionFromWalletApi(createdBooking.id);
       }
       toast.success("Paid successfully from wallet!");
-      setCreatedBooking({ ...createdBooking, paymentStatus: 'PAID' });
     } catch (err: any) {
-      toast.error(err?.message || "Failed to pay from wallet");
+      const errMsg = (err?.message || "").toLowerCase();
+      const status = err?.status || err?.response?.status;
+      if (status === 409 || errMsg.includes("already paid")) {
+        toast.success("Already paid!");
+        setCreatedBooking({ ...createdBooking, paymentStatus: 'PAID' });
+      } else {
+        toast.error(err?.message || "Failed to pay from wallet");
+      }
     } finally {
       setPaying(false);
     }
